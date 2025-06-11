@@ -1,0 +1,132 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #aeefff, #b9a6f9, #7fffd4);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    color: #fff;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.hero-onboarding {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: calc(100vh - 40px); 
+    width: calc(100vw - 40px); 
+    padding: 60px 40px;
+    gap: 50px;
+
+   
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
+}
+
+
+
+.logo-hero {
+    width:15rem;
+}
+
+
+.minded-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    text-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+}
+
+.highlight {
+    color: #7fffd4;
+    font-weight: 800;
+}
+
+.typed-text {
+    font-size: 1.6rem;
+    font-weight: 400;
+    color: #f0f0f0;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    height: 50px;
+    line-height: 1.4;
+}
+
+
+.btn-start {
+    background: linear-gradient(135deg, #7fffd4, #6bd1f3);
+    padding: 16px 40px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 40px;
+    color: #fff;
+    text-decoration: none;
+    border: none;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s ease;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.btn-start:hover {
+    background: linear-gradient(135deg, #b9a6f9, #7fffd4);
+    transform: scale(1.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+
+.fade-in {
+    animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    50% { opacity: 1; }
+    100% { opacity: 1; }
+}
+
+
+@media (max-width: 600px) {
+    .hero-onboarding {
+        padding: 30px 20px;
+        gap: 30px;
+    }
+
+    .minded-title {
+        font-size: 2.2rem;
+    }
+
+    .typed-text {
+        font-size: 1.2rem;
+        height: 40px;
+    }
+
+    .btn-start {
+        padding: 12px 32px;
+        font-size: 1rem;
+    }
+}

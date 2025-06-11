@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>MindED - Personalização de Perfil</title>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+    <div class="container preferencias-page">
+        <h1>Personalize sua experiência</h1>
+        <p>Selecione seu perfil cognitivo e como você prefere estudar.</p>
+
+        <form action="#" method="POST" class="preferencias-form">
+            <fieldset>
+                <legend>Seu perfil cognitivo</legend>
+                <label><input type="checkbox" name="perfil[]" value="tdah"> TDAH</label>
+                <label><input type="checkbox" name="perfil[]" value="dislexia"> Dislexia</label>
+                <label><input type="checkbox" name="perfil[]" value="autismo"> Autismo</label>
+                <label><input type="checkbox" name="perfil[]" value="outros"> Outros</label>
+            </fieldset>
+
+            <fieldset>
+                <legend>Preferência de consumo</legend>
+                <label><input type="radio" name="consumo" value="texto" required> Texto</label>
+                <label><input type="radio" name="consumo" value="audio"> Áudio</label>
+                <label><input type="radio" name="consumo" value="video"> Vídeo</label>
+            </fieldset>
+
+            <button type="submit" class="btn-start">Avançar</button>
+        </form>
+
+        <a href="upload.html" class="back-link">Voltar</a>
+    </div>
+</body>
+</html>

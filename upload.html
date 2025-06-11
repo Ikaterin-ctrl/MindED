@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>MindED - Upload de Conteúdo</title>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+    <div class="container upload-page">
+        <h1>Adicionar Conteúdo</h1>
+        <p>Insira um link ou envie um arquivo para adaptar seu aprendizado.</p>
+
+        <!-- Formulário de upload -->
+        <form action="#" method="POST" enctype="multipart/form-data" class="upload-form">
+            <!-- Campo de link -->
+            <input type="url" name="content-link" placeholder="Cole aqui um link (YouTube, site, etc.)" class="input-link" />
+
+            <span>ou</span>
+
+            <!-- Botão de upload -->
+            <label for="file-upload" class="custom-file-upload">
+                Selecionar Arquivo
+            </label>
+            <input id="file-upload" type="file" name="content-file" accept=".pdf,.txt,.mp4,.mp3,.wav,.avi,.mov"/>
+
+            <!-- Botão de envio -->
+            <button type="submit" class="btn-start">Avançar</button>
+        </form>
+
+        <!-- Voltar para home -->
+        <a href="index.html" class="back-link">Voltar</a>
+    </div>
+</body>
+</html>

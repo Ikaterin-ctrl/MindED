@@ -4,32 +4,49 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>MindED - Upload de Conteúdo</title>
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="style-glass.css" />
 </head>
 <body>
-    <div class="container upload-page">
-        <h1>Adicionar Conteúdo</h1>
-        <p>Insira um link ou envie um arquivo para adaptar seu aprendizado.</p>
 
-        <!-- Formulário de upload -->
-        <form action="#" method="POST" enctype="multipart/form-data" class="upload-form">
-            <!-- Campo de link -->
-            <input type="url" name="content-link" placeholder="Cole aqui um link (YouTube, site, etc.)" class="input-link" />
+    <!-- Cabeçalho -->
+    <header class="header">
+        <div class="header-logo">
+            <img src="/assets/MindED_logo-removebg-preview.png" alt="MindED Logo" />
+            
+        </div>
+        <nav class="header-nav">
+            <a href="index.html">Home</a>
+            <a href="sobre.html">Sobre</a>
+            <a href="#">Perfil</a>
+        </nav>
+    </header>
 
-            <span>ou</span>
+    <!-- Conteúdo principal -->
+    <main class="upload-main">
+        <div class="upload-container">
 
-            <!-- Botão de upload -->
-            <label for="file-upload" class="custom-file-upload">
-                Selecionar Arquivo
-            </label>
-            <input id="file-upload" type="file" name="content-file" accept=".pdf,.txt,.mp4,.mp3,.wav,.avi,.mov"/>
+            <!-- Mensagem de boas-vindas -->
+            <h1>Vamos personalizar seu conteúdo</h1>
+            <p>Envie o material que você quer estudar e escolha como deseja receber.</p>
 
-            <!-- Botão de envio -->
-            <button type="submit" class="btn-start">Avançar</button>
-        </form>
+            <!-- Área de dropzone -->
+            <div class="dropzone" id="dropzone">
+                <p>Arraste e solte seu arquivo aqui ou <span class="file-select">clique para escolher</span></p>
+                <input type="file" id="fileUpload" hidden />
+            </div>
 
-        <!-- Voltar para home -->
-        <a href="index.html" class="back-link">Voltar</a>
-    </div>
+            <!-- Botão enviar -->
+            <button class="upload-btn" id="uploadBtn">Enviar</button>
+
+            <!-- Preview -->
+            <p class="upload-preview-text">
+                Seu conteúdo poderá ser apresentado como:<br>
+                ✔ Texto simplificado | ✔ Vídeo com IA | ✔ Áudio adaptado
+            </p>
+
+        </div>
+    </main>
+
+   
 </body>
 </html>

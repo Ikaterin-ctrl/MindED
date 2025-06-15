@@ -130,3 +130,213 @@ body {
         font-size: 1rem;
     }
 }
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 16px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  background: rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-logo img {
+  width: 50px;
+}
+
+.header-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.header-nav a {
+  margin-left: 20px;
+  font-size: 1rem;
+  color: #ffffff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.header-nav a:hover {
+  color: #7fffd4;
+}
+
+.upload-main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 140px 20px 40px; /* espaço pra não ficar atrás do header */
+  min-height: 100vh;
+}
+
+.upload-container {
+  backdrop-filter: blur(15px);
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  padding: 60px 40px;
+  text-align: center;
+  max-width: 700px;
+  width: 100%;
+}
+.upload-container > * {
+    margin-bottom: 24px;
+}
+
+.upload-container > *:last-child {
+    margin-bottom: 0; /* remove margin do último elemento */
+}
+
+
+.upload-container h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #ffffff;
+}
+
+.upload-container p {
+  font-size: 1rem;
+  margin-bottom: 30px;
+  color: #f0f0f0;
+}
+
+.upload-info {
+  margin-top: 40px;
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+.dropzone {
+  border: 2px dashed #7fffd4;
+  padding: 40px;
+  border-radius: 16px;
+  transition: 0.3s ease;
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dropzone p {
+  color: #f0f0f0;
+  font-size: 1rem;
+  margin-bottom: 20px;
+}
+
+.dropzone span {
+  font-size: 0.85rem;
+  color: #ccc;
+}
+
+.dropzone.hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  border-color: #b9a6f9;
+}
+
+.upload-btn {
+  background: linear-gradient(135deg, #7fffd4, #6bd1f3);
+  padding: 14px 40px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-radius: 40px;
+  color: #fff;
+  text-decoration: none;
+  border: none;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.upload-btn:hover {
+  background: linear-gradient(135deg, #b9a6f9, #7fffd4);
+  transform: scale(1.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.sobre-main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 140px 20px 40px;
+    min-height: 100vh;
+}
+
+.sobre-container {
+    backdrop-filter: blur(15px);
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    padding: 60px 40px;
+    text-align: center;
+    max-width: 800px;
+    width: 100%;
+    color: #f0f0f0;
+}
+
+.sobre-container h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    color: #ffffff;
+}
+
+.sobre-container h2 {
+    font-size: 1.8rem;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    color: #ffffff;
+}
+
+.sobre-container p {
+    font-size: 1rem;
+    margin-bottom: 20px;
+    color: #f0f0f0;
+    line-height: 1.6;
+}
+
+.sobre-container ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 30px;
+}
+
+.sobre-container ul li {
+    font-size: 1rem;
+    margin-bottom: 10px;
+    color: #f0f0f0;
+    text-align: left;
+    padding-left: 20px;
+    position: relative;
+}
+
+.sobre-container ul li::before {
+    content: '✔';
+    position: absolute;
+    left: 0;
+    color: #7fffd4;
+}
+
+.sobre-frase-final {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #7fffd4;
+    margin-top: 30px;
+}

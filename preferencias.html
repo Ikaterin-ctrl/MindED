@@ -2,35 +2,94 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>MindED - Personalização de Perfil</title>
-    <link rel="stylesheet" href="css/style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MindED - Preferências</title>
+    <link rel="stylesheet" href="style-glass.css" />
 </head>
 <body>
-    <div class="container preferencias-page">
-        <h1>Personalize sua experiência</h1>
-        <p>Selecione seu perfil cognitivo e como você prefere estudar.</p>
+    <!-- Cabeçalho -->
+    <header class="header">
+        <div class="header-logo">
+            <img src="/assets/MindED_logo-removebg-preview.png" alt="MindED Logo" />
+            
+        </div>
+        <nav class="header-nav">
+            <a href="upload.html">Ínicio</a>
+            <a href="sobre.html">Conteúdos</a>
+            <a href="preferencias.html">Preferências</a>
+        </nav>
+    </header>
 
-        <form action="#" method="POST" class="preferencias-form">
-            <fieldset>
-                <legend>Seu perfil cognitivo</legend>
-                <label><input type="checkbox" name="perfil[]" value="tdah"> TDAH</label>
-                <label><input type="checkbox" name="perfil[]" value="dislexia"> Dislexia</label>
-                <label><input type="checkbox" name="perfil[]" value="autismo"> Autismo</label>
-                <label><input type="checkbox" name="perfil[]" value="outros"> Outros</label>
-            </fieldset>
+    <main class="container">
+        <section class="section perfil">
+            <h2>Perfil do Usuário</h2>
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" placeholder="Seu nome completo">
 
-            <fieldset>
-                <legend>Preferência de consumo</legend>
-                <label><input type="radio" name="consumo" value="texto" required> Texto</label>
-                <label><input type="radio" name="consumo" value="audio"> Áudio</label>
-                <label><input type="radio" name="consumo" value="video"> Vídeo</label>
-            </fieldset>
+            <label for="email">E-mail:</label>
+            <input type="email" id="email" placeholder="seuemail@exemplo.com">
 
-            <button type="submit" class="btn-start">Avançar</button>
-        </form>
+            <label for="senha">Nova Senha:</label>
+            <input type="password" id="senha" placeholder="********">
 
-        <a href="upload.html" class="back-link">Voltar</a>
-    </div>
+            <label for="foto">Foto de Perfil:</label>
+            <input type="file" id="foto">
+
+            <button>Salvar alterações</button>
+        </section>
+
+        <section class="section acessibilidade">
+            <h2>Preferências de Acessibilidade</h2>
+            <label><input type="checkbox" id="dislexia"> Ativar modo Disléxico</label><br>
+            <label><input type="checkbox" id="darkmode"> Modo Escuro</label><br>
+
+            <label for="font-size">Tamanho da fonte:</label>
+            <select id="font-size">
+                <option value="small">Pequena</option>
+                <option value="medium" selected>Média</option>
+                <option value="large">Grande</option>
+            </select>
+
+            <label for="contraste">Contraste:</label>
+            <select id="contraste">
+                <option value="normal" selected>Padrão</option>
+                <option value="alto">Alto contraste</option>
+            </select>
+        </section>
+
+        <section class="section narrador">
+            <h2>Narrador de Voz</h2>
+            <label><input type="checkbox" id="narrador"> Ativar narrador</label><br>
+
+            <label for="velocidade">Velocidade:</label>
+            <select id="velocidade">
+                <option value="lento">Lento</option>
+                <option value="medio" selected>Médio</option>
+                <option value="rapido">Rápido</option>
+            </select>
+
+            <label for="voz">Voz:</label>
+            <select id="voz">
+                <option value="feminina">Feminina</option>
+                <option value="masculina">Masculina</option>
+            </select>
+        </section>
+
+        <section class="section sistema">
+            <h2>Preferências do Sistema</h2>
+            <label for="idioma">Idioma:</label>
+            <select id="idioma">
+                <option value="pt" selected>Português</option>
+                <option value="en">Inglês</option>
+            </select>
+
+            <label><input type="checkbox" id="notificacoes"> Receber notificações</label><br>
+            <button>Reiniciar preferências</button>
+        </section>
+
+        <section class="section logout">
+            <button class="logout-btn">Sair da conta</button>
+        </section>
+    </main>
 </body>
 </html>

@@ -1,342 +1,400 @@
-
+/*=============================
+  Reset Global
+  Zera margens, paddings e define box-sizing para todos os elementos
+=============================*/
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
+  margin: 0;                 /* Remove margem externa padrão */
+  padding: 0;                /* Remove preenchimento interno padrão */
+  box-sizing: border-box;    /* Inclui padding e borda no cálculo de width/height */
+  font-family: 'Poppins', sans-serif; /* Define fonte base para todo o site */
 }
 
+/*=============================
+  Estilo do Body (todas as telas)
+  Fundo animado, centralização e cor do texto
+=============================*/
 body {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #aeefff, #b9a6f9, #7fffd4);
-    background-size: 400% 400%;
-    animation: gradientBG 15s ease infinite;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    color: #fff;
+  min-height: 100vh;         /* Garante altura mínima da viewport */
+  background: linear-gradient(135deg, #aeefff, #b9a6f9, #7fffd4); /* Gradiente diagonal */
+  background-size: 400% 400%; /* Expande fundo para animar */
+  animation: gradientBG 15s ease infinite; /* Animação contínua do gradiente */
+  display: flex;             /* Flexbox para centralizar conteúdo */
+  align-items: center;       /* Centraliza verticalmente */
+  justify-content: center;   /* Centraliza horizontalmente */
+  padding: 20px;             /* Espaço interno em volta */
+  color: #fff;               /* Cor padrão do texto */
 }
 
+/*=============================
+  Animação do Fundo Gradiente
+  Move o gradiente para criar dinamismo
+=============================*/
 @keyframes gradientBG {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+  0%   { background-position: 0% 50%; }   /* Início da animação */
+  50%  { background-position: 100% 50%; } /* Meio da animação */
+  100% { background-position: 0% 50%; }   /* Fim - volta ao início */
 }
 
+/*=============================
+  Tela de Boas-Vindas (.hero-onboarding)
+  Container central com efeito glassmorphism
+=============================*/
 .hero-onboarding {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    min-height: calc(100vh - 40px); 
-    width: calc(100vw - 40px); 
-    padding: 60px 40px;
-    gap: 50px;
-
-   
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-radius: 24px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
+  display: flex;             /* Flex container */
+  flex-direction: column;    /* Itens em coluna */
+  justify-content: center;   /* Centraliza verticalmente */
+  align-items: center;       /* Centraliza horizontalmente */
+  text-align: center;        /* Texto centralizado */
+  min-height: calc(100vh - 40px); /* Altura ajustada para padding */
+  width: calc(100vw - 40px); /* Largura ajustada para padding */
+  padding: 60px 40px;        /* Espaçamento interno */
+  gap: 50px;                 /* Espaço entre elementos */
+  background: rgba(255,255,255,0.08); /* Fundo semi-transparente */
+  backdrop-filter: blur(20px);       /* Desfoque do fundo */
+  -webkit-backdrop-filter: blur(20px); /* Safari */
+  border-radius: 24px;       /* Cantos arredondados */
+  border: 1px solid rgba(255,255,255,0.2); /* Borda leve */
+  box-shadow: 0 8px 40px rgba(0,0,0,0.2); /* Sombra para profundidade */
 }
 
-
-
+/*=============================
+  Logo na Tela Inicial (.logo-hero)
+  Ajusta tamanho da imagem
+=============================*/
 .logo-hero {
-    width:15rem;
+  width: 15rem;              /* Largura fixa da logo */
 }
 
-
+/*=============================
+  Título Principal (.minded-title)
+  Fonte, tamanho, cor e sombra
+=============================*/
 .minded-title {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 3.5rem;
-    font-weight: 700;
-    color: #ffffff;
-    text-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
-    margin-bottom: 10px;
-    text-transform: uppercase;
-    letter-spacing: 4px;
+  font-family: 'Montserrat', sans-serif; /* Fonte de destaque */
+  font-size: 3.5rem;         /* Tamanho grande */
+  font-weight: 700;          /* Negrito */
+  color: #ffffff;            /* Cor branca */
+  text-shadow: 0 0 25px rgba(255,255,255,0.4); /* Sombra luminosa */
+  margin-bottom: 10px;       /* Espaço abaixo */
+  text-transform: uppercase; /* Letras maiúsculas */
+  letter-spacing: 4px;       /* Espaço entre letras */
 }
 
+/*=============================
+  Destaque de Palavras (.highlight)
+  Cor especial para chamar atenção
+=============================*/
 .highlight {
-    color: #7fffd4;
-    font-weight: 800;
+  color: #7fffd4;            /* Verde-água */
+  font-weight: 800;          /* Negrito extra */
 }
 
+/*=============================
+  Texto Animado (.typed-text)
+  Estilo para texto digitado/animado
+=============================*/
 .typed-text {
-    font-size: 1.6rem;
-    font-weight: 400;
-    color: #f0f0f0;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-    height: 50px;
-    line-height: 1.4;
+  font-size: 1.6rem;         /* Tamanho médio */
+  font-weight: 400;          /* Peso normal */
+  color: #f0f0f0;            /* Cinza claro */
+  text-shadow: 0 0 10px rgba(255,255,255,0.3); /* Sombra sutil */
+  height: 50px;              /* Altura fixa */
+  line-height: 1.4;          /* Espaçamento de linha */
 }
 
-
+/*=============================
+  Botão Inicial (.btn-start)
+  Gradiente, bordas e animação hover
+=============================*/
 .btn-start {
-    background: linear-gradient(135deg, #7fffd4, #6bd1f3);
-    padding: 16px 40px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    border-radius: 40px;
-    color: #fff;
-    text-decoration: none;
-    border: none;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-    transition: all 0.3s ease;
-    display: inline-block;
-    margin-top: 10px;
+  background: linear-gradient(135deg, #7fffd4, #6bd1f3); /* Gradiente */
+  padding: 16px 40px;        /* Espaço interno */
+  font-size: 1.2rem;         /* Tamanho do texto */
+  font-weight: bold;         /* Negrito */
+  border-radius: 40px;       /* Bordas arredondadas */
+  color: #fff;               /* Texto branco */
+  text-decoration: none;     /* Sem sublinhado */
+  border: none;              /* Sem borda extra */
+  box-shadow: 0 8px 25px rgba(0,0,0,0.4); /* Sombra */
+  transition: all 0.3s ease; /* Transição suave */
+  display: inline-block;     /* Exibição inline */
+  margin-top: 10px;          /* Espaço acima */
 }
 
+/*=============================
+  Hover do Botão Inicial
+=============================*/
 .btn-start:hover {
-    background: linear-gradient(135deg, #b9a6f9, #7fffd4);
-    transform: scale(1.05);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  background: linear-gradient(135deg, #b9a6f9, #7fffd4); /* Novo gradiente */
+  transform: scale(1.05);    /* Aumenta levemente */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5); /* Sombra maior */
 }
 
-
+/*=============================
+  Animação Fade-In (.fade-in)
+=============================*/
 .fade-in {
-    animation: fadeIn 1s ease-in-out;
+  animation: fadeIn 1s ease-in-out; /* Aparecimento suave */
 }
-
 @keyframes fadeIn {
-    0% { opacity: 0; }
-    50% { opacity: 1; }
-    100% { opacity: 1; }
+  0%   { opacity: 0; }
+  50%  { opacity: 1; }
+  100% { opacity: 1; }
 }
 
-
+/*=============================
+  Responsividade (<600px)
+  Ajustes para mobile
+=============================*/
 @media (max-width: 600px) {
-    .hero-onboarding {
-        padding: 30px 20px;
-        gap: 30px;
-    }
-
-    .minded-title {
-        font-size: 2.2rem;
-    }
-
-    .typed-text {
-        font-size: 1.2rem;
-        height: 40px;
-    }
-
-    .btn-start {
-        padding: 12px 32px;
-        font-size: 1rem;
-    }
+  .hero-onboarding {
+    padding: 30px 20px;      /* Padding reduzido */
+    gap: 30px;               /* Menos espaço */
+  }
+  .minded-title {
+    font-size: 2.2rem;       /* Título menor */
+  }
+  .typed-text {
+    font-size: 1.2rem;       /* Texto menor */
+    height: 40px;            /* Altura reduzida */
+  }
+  .btn-start {
+    padding: 12px 32px;      /* Botão menor */
+    font-size: 1rem;         /* Texto menor */
+  }
 }
 
+/*=============================
+  Cabeçalho Fixo (.header)
+  Transparente com blur e links
+=============================*/
 .header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  padding: 16px 40px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  background: rgba(255, 255, 255, 0.08);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
+  position: fixed;           /* Fixa no topo */
+  top: 0; left: 0;           /* Posição inicial */
+  width: 100%;               /* Largura total */
+  padding: 16px 40px;        /* Espaço interno */
+  display: flex;             /* Flexbox */
+  justify-content: space-between; /* Espaço entre itens */
+  align-items: center;       /* Centraliza verticalmente */
+  background: rgba(255,255,255,0.08); /* Fundo semi-trans*/
+  backdrop-filter: blur(15px); /* Blur */
+  -webkit-backdrop-filter: blur(15px);/* Safari */
+  border-bottom: 1px solid rgba(255,255,255,0.2); /* Borda */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* Sombra */
+  z-index: 1000;             /* Acima de tudo */
 }
 
+/*=============================
+  Logo no Header
+=============================*/
 .header-logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  display: flex;             /* Flexbox */
+  align-items: center;       /* Centraliza */
+  gap: 12px;                 /* Espaçamento */
 }
-
 .header-logo img {
-  width: 50px;
+  width: 50px;               /* Tamanho da logo */
 }
 
-.header-title {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #ffffff;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-}
-
+/*=============================
+  Links do Header (.header-nav a)
+=============================*/
 .header-nav a {
-  margin-left: 20px;
-  font-size: 1rem;
-  color: #ffffff;
-  text-decoration: none;
-  transition: color 0.3s ease;
+  margin-left: 20px;         /* Espaçamento */
+  font-size: 1rem;           /* Tamanho */
+  color: #ffffff;            /* Cor branca */
+  text-decoration: none;     /* Sem sublinhado */
+  transition: color 0.3s ease; /* Transição */
 }
-
 .header-nav a:hover {
-  color: #7fffd4;
+  color: #7fffd4;            /* Cor no hover */
 }
 
+/*=============================
+  Página Upload (.upload-main)
+  Espaço centralizado para formulário
+=============================*/
 .upload-main {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 140px 20px 40px; /* espaço pra não ficar atrás do header */
-  min-height: 100vh;
+  display: flex;             /* Flexbox */
+  justify-content: center;   /* Centraliza horizontalmente */
+  align-items: center;       /* Centraliza verticalmente */
+  padding: 140px 20px 40px;  /* Espaço incluindo header */
+  min-height: 100vh;         /* Altura mínima */
 }
 
+/*=============================
+  Container de Upload (.upload-container)
+=============================*/
 .upload-container {
-  backdrop-filter: blur(15px);
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-  padding: 60px 40px;
-  text-align: center;
-  max-width: 700px;
-  width: 100%;
+  backdrop-filter: blur(15px); /* Glassmorphism */
+  background: rgba(255,255,255,0.08); /* Fundo semi-trans */
+  border-radius: 20px;        /* Bordas arredondadas */
+  border: 1px solid rgba(255,255,255,0.2); /* Borda */
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25); /* Sombra */
+  padding: 60px 40px;         /* Espaçamento */
+  text-align: center;         /* Alinha textos */
+  max-width: 700px;           /* Largura máxima */
+  width: 100%;                /* Responsivo */
 }
 .upload-container > * {
-    margin-bottom: 24px;
+  margin-bottom: 24px;        /* Espaço entre elementos */
 }
-
 .upload-container > *:last-child {
-    margin-bottom: 0; /* remove margin do último elemento */
+  margin-bottom: 0;           /* Remove no último */
 }
 
-
+/*=============================
+  Títulos e textos no Upload
+=============================*/
 .upload-container h1 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 2rem;
-  margin-bottom: 20px;
-  color: #ffffff;
+  font-family: 'Montserrat', sans-serif; /* Fonte */
+  font-size: 2rem;           /* Tamanho */
+  color: #ffffff;            /* Cor */
+  margin-bottom: 20px;       /* Espaço */
 }
-
 .upload-container p {
-  font-size: 1rem;
-  margin-bottom: 30px;
-  color: #f0f0f0;
+  font-size: 1rem;           /* Tamanho */
+  color: #f0f0f0;            /* Cor */
+  margin-bottom: 30px;       /* Espaço */
 }
 
+/*=============================
+  Info extra de upload (.upload-info)
+=============================*/
 .upload-info {
-  margin-top: 40px;
-  font-size: 0.9rem;
-  color: #ccc;
+  margin-top: 40px;           /* Espaço acima */
+  font-size: 0.9rem;          /* Texto menor */
+  color: #ccc;                /* Cinza médio */
 }
 
+/*=============================
+  Zona de Drag & Drop (.dropzone)
+=============================*/
 .dropzone {
-  border: 2px dashed #7fffd4;
-  padding: 40px;
-  border-radius: 16px;
-  transition: 0.3s ease;
-  cursor: pointer;
-  background-color: rgba(255, 255, 255, 0.05);
+  border: 2px dashed #7fffd4; /* Borda tracejada */
+  padding: 40px;              /* Espaço interno */
+  border-radius: 16px;        /* Bordas arredondadas */
+  background-color: rgba(255,255,255,0.05); /* Fundo leve */
+  cursor: pointer;            /* Indica clique */
+  transition: background 0.3s ease; /* Transição */
+}
+.dropzone p {
+  color: #f0f0f0;            /* Cor do texto */
+  margin-bottom: 20px;       /* Espaço abaixo */
+}
+.dropzone span {
+  font-size: 0.85rem;        /* Texto menor */
+  color: #ccc;               /* Cinza médio */
+}
+.dropzone.hover {
+  background-color: rgba(255,255,255,0.12); /* Fundo hover */
+  border-color: #b9a6f9;     /* Cor da borda hover */
 }
 
-.dropzone p {
+/*=============================
+  Botões de ação (.upload-btn)
+=============================*/
+.upload-btn {
+  background: linear-gradient(135deg, #7fffd4, #6bd1f3); /* Gradiente */
+  padding: 14px 40px;          /* Espaçamento */
+  font-size: 1.1rem;          /* Tamanho */
+  font-weight: bold;          /* Negrito */
+  border-radius: 40px;        /* Bordas */
+  color: #fff;                /* Texto branco */
+  text-decoration: none;      /* Sem sublinhado */
+  border: none;               /* Sem borda extra */
+  box-shadow: 0 8px 25px rgba(0,0,0,0.4); /* Sombra */
+  cursor: pointer;            /* Clique */
+  transition: all 0.3s ease;  /* Transição */
+}
+.upload-btn:hover {
+  background: linear-gradient(135deg, #b9a6f9, #7fffd4); /* Gradiente */
+  transform: scale(1.05);     /* Aumenta no hover */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5); /* Sombra */
+}
+
+/*=============================
+  Página Sobre (.sobre-main/.sobre-container)
+=============================*/
+.sobre-main {
+  display: flex;             /* Flex para centralizar */
+  justify-content: center;   /* Centraliza horizontalmente */
+  align-items: center;       /* Centraliza verticalmente */
+  padding: 140px 20px 40px;  /* Espaço */
+  min-height: 100vh;         /* Altura mínima */
+}
+.sobre-container {
+  backdrop-filter: blur(15px); /* Vidro fosco */
+  background: rgba(255,255,255,0.08);
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.2);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  padding: 60px 40px;
+  max-width: 800px;
+  width: 100%;
+  text-align: center;
   color: #f0f0f0;
-  font-size: 1rem;
+}
+.sobre-container h1 {
+  font-size: 2.5rem;
+  color: #ffffff;
   margin-bottom: 20px;
 }
-
-.dropzone span {
-  font-size: 0.85rem;
-  color: #ccc;
+.sobre-container h2 {
+  font-size: 1.8rem;
+  color: #ffffff;
+  margin: 40px 0 20px;
 }
-
-.dropzone.hover {
-  background-color: rgba(255, 255, 255, 0.12);
-  border-color: #b9a6f9;
+.sobre-container p {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 20px;
 }
-
-.upload-btn {
-  background: linear-gradient(135deg, #7fffd4, #6bd1f3);
-  padding: 14px 40px;
+.sobre-container ul {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 30px;
+}
+.sobre-container ul li {
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 10px;
+}
+.sobre-container ul li::before {
+  content: '✔';
+  position: absolute;
+  left: 0;
+  color: #7fffd4;
+}
+.sobre-frase-final {
   font-size: 1.1rem;
   font-weight: bold;
-  border-radius: 40px;
-  color: #fff;
-  text-decoration: none;
+  color: #7fffd4;
+  margin-top: 30px;
+}
+
+/*=============================
+  Botão Google (.google-btn/.google-icon)
+=============================*/
+.google-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: #ffffff;
+  color: #333;
+  font-weight: bold;
+  padding: 12px 24px;
+  border-radius: 30px;
   border: none;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-  transition: all 0.3s ease;
   cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
 }
-
-.upload-btn:hover {
-  background: linear-gradient(135deg, #b9a6f9, #7fffd4);
-  transform: scale(1.05);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+.google-btn:hover {
+  background: #e0e0e0;
+  transform: scale(1.03);
 }
-
-.sobre-main {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 140px 20px 40px;
-    min-height: 100vh;
-}
-
-.sobre-container {
-    backdrop-filter: blur(15px);
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-    padding: 60px 40px;
-    text-align: center;
-    max-width: 800px;
-    width: 100%;
-    color: #f0f0f0;
-}
-
-.sobre-container h1 {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-    color: #ffffff;
-}
-
-.sobre-container h2 {
-    font-size: 1.8rem;
-    margin-top: 40px;
-    margin-bottom: 20px;
-    color: #ffffff;
-}
-
-.sobre-container p {
-    font-size: 1rem;
-    margin-bottom: 20px;
-    color: #f0f0f0;
-    line-height: 1.6;
-}
-
-.sobre-container ul {
-    list-style: none;
-    padding: 0;
-    margin-bottom: 30px;
-}
-
-.sobre-container ul li {
-    font-size: 1rem;
-    margin-bottom: 10px;
-    color: #f0f0f0;
-    text-align: left;
-    padding-left: 20px;
-    position: relative;
-}
-
-.sobre-container ul li::before {
-    content: '✔';
-    position: absolute;
-    left: 0;
-    color: #7fffd4;
-}
-
-.sobre-frase-final {
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: #7fffd4;
-    margin-top: 30px;
+.google-icon {
+  width: 20px;
+  height: 20px;
 }

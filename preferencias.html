@@ -1,95 +1,174 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MindED - Preferências</title>
-    <link rel="stylesheet" href="style-glass.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MindED – Perfil & Preferências</title>
+  <link rel="stylesheet" href="style-glass.css" />
 </head>
 <body>
-    <!-- Cabeçalho -->
-    <header class="header">
-        <div class="header-logo">
-            <img src="/assets/MindED_logo-removebg-preview.png" alt="MindED Logo" />
-            
-        </div>
-        <nav class="header-nav">
-            <a href="upload.html">Ínicio</a>
-            <a href="sobre.html">Conteúdos</a>
-            <a href="preferencias.html">Preferências</a>
-        </nav>
-    </header>
+  <!-- Header fixo -->
+  <header class="header">
+    <div class="header-logo">
+      <img src="/assets/MindED_logo-removebg-preview.png" alt="MindED Logo"/>
+    </div>
+    <nav class="header-nav">
+      <a href="upload.html">Início</a>
+      <a href="sobre.html">Conteúdos</a>
+      <a href="preferencias.html" class="active">Preferências</a>
+    </nav>
+  </header>
 
-    <main class="container">
-        <section class="section perfil">
-            <h2>Perfil do Usuário</h2>
-            <label for="nome">Nome:</label>
-            <input type="text" id="nome" placeholder="Seu nome completo">
+  <!-- Container geral -->
+  <main class="preferences">
+    <!-- Barra de progresso -->
+    <div class="progress-bar">
+      <div class="progress" style="width: 20%;"></div>
+      <span class="progress-text">Módulo 1 de 5</span>
+    </div>
 
-            <label for="email">E-mail:</label>
-            <input type="email" id="email" placeholder="seuemail@exemplo.com">
+    <!-- Módulo 1: Estilo de Aprendizagem -->
+    <section class="module" data-step="1">
+      <h2>1. Como você prefere receber conteúdo?</h2>
+      <div class="options">
+        <button class="option-btn" data-value="texto">📄 Texto</button>
+        <button class="option-btn" data-value="video">🎥 Vídeo</button>
+        <button class="option-btn" data-value="audio">🔊 Áudio</button>
+        <button class="option-btn" data-value="infografico">📊 Infográfico</button>
+      </div>
+      <h3>Você gosta de interagir enquanto aprende?</h3>
+      <div class="options">
+        <button class="option-btn" data-value="interativo">Sim, prefiro quizzes e exercícios rápidos</button>
+        <button class="option-btn" data-value="absorver">Não, prefiro só absorver informação</button>
+      </div>
+      <h3>Com que frequência você faz anotações?</h3>
+      <div class="options">
+        <button class="option-btn" data-value="sempre">Sempre, ajuda a fixar</button>
+        <button class="option-btn" data-value="asvezes">Às vezes, se for relevante</button>
+        <button class="option-btn" data-value="raramente">Raramente, me distraio</button>
+      </div>
+    </section>
 
-            <label for="senha">Nova Senha:</label>
-            <input type="password" id="senha" placeholder="********">
+    <!-- Módulo 2: Ambiente de Estudo -->
+    <section class="module" data-step="2" hidden>
+      <h2>2. Qual tema te ajuda a focar?</h2>
+      <div class="options">
+        <button class="option-btn" data-value="noite">🌙 Modo Noturno</button>
+        <button class="option-btn" data-value="clean">✨ Tema Clean</button>
+        <button class="option-btn" data-value="foco">🎯 Modo Foco</button>
+      </div>
+      <h3>Você prefere estudar com…</h3>
+      <div class="options">
+        <button class="option-btn" data-value="limao">Música ambiente / Lo-fi</button>
+        <button class="option-btn" data-value="branco">Som branco / ruído neutro</button>
+        <button class="option-btn" data-value="silencio">Silêncio total</button>
+      </div>
+      <h3>Quanta organização você precisa na tela?</h3>
+      <div class="options">
+        <button class="option-btn" data-value="compacto">Tudo compacto, sem scroll</button>
+        <button class="option-btn" data-value="expansivel">Seções “expansíveis”</button>
+        <button class="option-btn" data-value="painel">Painel dividido (texto + vídeo + notas)</button>
+      </div>
+    </section>
 
-            <label for="foto">Foto de Perfil:</label>
-            <input type="file" id="foto">
+    <!-- Módulo 3: Ritmo de Consumo -->
+    <section class="module" data-step="3" hidden>
+      <h2>3. Qual seu ritmo de estudo?</h2>
+      <div class="options">
+        <button class="option-btn" data-value="lento">🐢 Lento (50–75%)</button>
+        <button class="option-btn" data-value="medio">🚶 Médio (100%)</button>
+        <button class="option-btn" data-value="rapido">🏃 Rápido (125–150%)</button>
+      </div>
+      <h3>Você costuma pausar ou voltar em trechos?</h3>
+      <div class="options">
+        <button class="option-btn" data-value="frequente">Frequentemente</button>
+        <button class="option-btn" data-value="asvezes">Às vezes</button>
+        <button class="option-btn" data-value="nunca">Quase nunca</button>
+      </div>
+      <h3>Quanto tempo, em média, você estuda por sessão?</h3>
+      <div class="options">
+        <button class="option-btn" data-value="curta">< 15 minutos</button>
+        <button class="option-btn" data-value="media">15–30 minutos</button>
+        <button class="option-btn" data-value="longa">> 30 minutos</button>
+      </div>
+    </section>
 
-            <button>Salvar alterações</button>
-        </section>
+    <!-- Módulo 4: Perfil Cognitivo -->
+    <section class="module" data-step="4" hidden>
+      <h2>4. Marque seus perfis cognitivos (pode escolher mais de um)</h2>
+      <div class="options checkbox-group">
+        <label><input type="checkbox" value="tdah"> TDAH</label>
+        <label><input type="checkbox" value="dislexia"> Dislexia</label>
+        <label><input type="checkbox" value="autismo"> Autismo</label>
+        <label><input type="checkbox" value="analitico"> Analítico</label>
+        <label><input type="checkbox" value="criativo"> Criativo</label>
+        <label><input type="checkbox" value="visual"> Visual</label>
+        <label><input type="checkbox" value="auditivo"> Auditivo</label>
+      </div>
+    </section>
 
-        <section class="section acessibilidade">
-            <h2>Preferências de Acessibilidade</h2>
-            <label><input type="checkbox" id="dislexia"> Ativar modo Disléxico</label><br>
-            <label><input type="checkbox" id="darkmode"> Modo Escuro</label><br>
+    <!-- Módulo 5: Mini-Desafio de Estudo -->
+    <section class="module" data-step="5" hidden>
+      <h2>5. Mini-Desafio de Estudo</h2>
+      <h3>Você se distrai se há muitas cores na página?</h3>
+      <div class="options">
+        <button class="option-btn" data-value="sim">Sim</button>
+        <button class="option-btn" data-value="nao">Não</button>
+      </div>
+      <h3>Prefere textos longos ou divididos em tópicos?</h3>
+      <div class="options">
+        <button class="option-btn" data-value="longos">Longos e contínuos</button>
+        <button class="option-btn" data-value="topicos">Tópicos curtos</button>
+      </div>
+      <h3>Em uma prova, você se sente mais confortável com…</h3>
+      <div class="options">
+        <button class="option-btn" data-value="multipla">Múltipla escolha</button>
+        <button class="option-btn" data-value="dissertativa">Dissertativas</button>
+        <button class="option-btn" data-value="mapas">Mapas mentais</button>
+      </div>
+    </section>
 
-            <label for="font-size">Tamanho da fonte:</label>
-            <select id="font-size">
-                <option value="small">Pequena</option>
-                <option value="medium" selected>Média</option>
-                <option value="large">Grande</option>
-            </select>
+    <!-- Navegação entre módulos -->
+    <div class="module-nav">
+      <button id="prev-btn" disabled>« Anterior</button>
+      <button id="next-btn">Próximo »</button>
+    </div>
+  </main>
 
-            <label for="contraste">Contraste:</label>
-            <select id="contraste">
-                <option value="normal" selected>Padrão</option>
-                <option value="alto">Alto contraste</option>
-            </select>
-        </section>
+  <script>
+    // JS para navegação dos módulos e atualização de progresso
+    const modules = Array.from(document.querySelectorAll('.module'));
+    let current = 0;
+    const progress = document.querySelector('.progress');
+    const progressText = document.querySelector('.progress-text');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
 
-        <section class="section narrador">
-            <h2>Narrador de Voz</h2>
-            <label><input type="checkbox" id="narrador"> Ativar narrador</label><br>
+    function updateModules() {
+      modules.forEach((m,i) => m.hidden = i !== current);
+      prevBtn.disabled = current === 0;
+      nextBtn.textContent = current === modules.length - 1 ? 'Concluir' : 'Próximo »';
+      const pct = ((current+1)/modules.length)*100;
+      progress.style.width = pct + '%';
+      progressText.textContent = `Módulo ${current+1} de ${modules.length}`;
+    }
 
-            <label for="velocidade">Velocidade:</label>
-            <select id="velocidade">
-                <option value="lento">Lento</option>
-                <option value="medio" selected>Médio</option>
-                <option value="rapido">Rápido</option>
-            </select>
+    prevBtn.addEventListener('click', () => {
+      if (current>0) current--;
+      updateModules();
+    });
+    nextBtn.addEventListener('click', () => {
+      if (current < modules.length -1) {
+        current++;
+        updateModules();
+      } else {
+        // Aqui: salvar preferências e redirecionar
+        alert('Preferências salvas! Redirecionando...');
+        window.location.href = 'upload.html';
+      }
+    });
 
-            <label for="voz">Voz:</label>
-            <select id="voz">
-                <option value="feminina">Feminina</option>
-                <option value="masculina">Masculina</option>
-            </select>
-        </section>
-
-        <section class="section sistema">
-            <h2>Preferências do Sistema</h2>
-            <label for="idioma">Idioma:</label>
-            <select id="idioma">
-                <option value="pt" selected>Português</option>
-                <option value="en">Inglês</option>
-            </select>
-
-            <label><input type="checkbox" id="notificacoes"> Receber notificações</label><br>
-            <button>Reiniciar preferências</button>
-        </section>
-
-        <section class="section logout">
-            <button class="logout-btn">Sair da conta</button>
-        </section>
-    </main>
+    updateModules();
+  </script>
 </body>
 </html>

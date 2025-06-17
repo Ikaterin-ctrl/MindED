@@ -590,3 +590,80 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* Container principal */
+.conteudos-main {
+  width: 100%;
+  max-width: 1000px;
+  margin: 100px auto 40px;
+  padding: 0 20px;
+}
+
+/* Busca e filtro */
+.search-filter {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.search-filter input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  backdrop-filter: blur(10px);
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+}
+.search-filter select {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  backdrop-filter: blur(10px);
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+}
+
+/* Grid de cards */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px,1fr));
+  gap: 20px;
+}
+.card {
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(12px);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.card-thumb img {
+  width: 48px;
+  margin-bottom: 12px;
+}
+.card-title {
+  font-size: 1.1rem;
+  color: #e0f7fa;
+  margin-bottom: 8px;
+}
+.card-meta {
+  font-size: 0.9rem;
+  color: #ccc;
+  margin-bottom: 16px;
+}
+.card-btn {
+  margin-top: auto;
+  background: linear-gradient(135deg, #7fffd4, #6bd1f3);
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.card-btn:hover {
+  transform: scale(1.05);
+}

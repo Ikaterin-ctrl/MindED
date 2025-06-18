@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>MindED – Conteúdo Adaptado</title>
+  <link rel="stylesheet" href="style-glass.css"/>
+  <!-- se quiser um CSS específico para layout de conteúdo -->
+  <link rel="stylesheet" href="adapted.css"/>
+</head>
+<body>
+    <!-- Header comum -->
+  <header class="header">
+    <div class="header-logo">
+      <img src="/assets/MindED_logo-removebg-preview.png" alt="MindED Logo" />
+    </div>
+    <nav class="header-nav">
+      <a href="index.html">Início</a>
+      <a href="upload.html">Upload</a>
+      <a href="conteudo.html">Conteúdos</a>
+      <a href="preferencias.html">Preferências</a>
+      <button id="theme-toggle">🌓 Modo Noturno</button>
+    </nav>
+    
+  </header>
+
+  <!-- Área principal onde a IA injecta o HTML adaptado -->
+  <main class="adapted-main" style="padding: 140px 20px 40px; min-height:100vh;">
+    <div class="adapted-container" id="adapted-content">
+      <!--
+        Aqui entra o HTML que a API devolver:
+        ex: <h2>Resumo do texto...</h2>
+             <p>...</p>
+             <video src="..." controls>...</video>
+        ou qualquer combinação.
+      -->
+      <p class="loading">Carregando conteúdo adaptado...</p>
+    </div>
+
+    <!-- Botões de ação -->
+    <div class="adapted-actions" style="text-align:center; margin-top:32px;">
+      <button id="refazer-btn" class="upload-btn">Refazer Adaptação</button>
+      <button id="voltar-upload" class="upload-btn">Enviar Novo Conteúdo</button>
+    </div>
+  </main>
+
+  <script src="js/adapted.js" defer></script>
+  <script src="js/theme-toggle.js" defer></script>
+</body>
+</html>

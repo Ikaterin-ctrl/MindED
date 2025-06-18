@@ -24,31 +24,39 @@
 
 
     <!-- Conteúdo principal -->
-    <main class="upload-main">
-        <div class="upload-container">
+   <main class="upload-main">
+  <div class="upload-container">
 
-            <!-- Mensagem de boas-vindas -->
-            <h1>Vamos personalizar seu conteúdo</h1>
-            <p>Envie o material que você quer estudar e escolha como deseja receber.</p>
+    <!-- Mensagem de boas-vindas -->
+    <h1>Vamos personalizar seu conteúdo</h1>
+    <p>Envie o material que você quer estudar e escolha como deseja receber.</p>
 
-            <!-- Área de dropzone -->
-            <div class="dropzone" id="dropzone">
-                <p>Arraste e solte seu arquivo aqui ou <span class="file-select">clique para escolher</span></p>
-                <input type="file" id="fileUpload" hidden />
-            </div>
+    <!-- Área de dropzone -->
+    <div class="dropzone" id="dropzone">
+      <p>Arraste e solte seu arquivo aqui ou <span class="file-select">clique para escolher</span></p>
+      <input type="file" id="fileUpload" hidden />
+    </div>
 
-            <!-- Botão enviar -->
-               <button class="upload-btn" id="uploadBtn" onclick="location.href='preferencias.html'">Enviar</button>
+    <!-- Botão enviar -->
+     <button class="upload-btn" id="uploadBtn">
+      Enviar 
+     </button>
 
-            <!-- Preview -->
-            <p class="upload-preview-text">
-                Seu conteúdo poderá ser apresentado como:<br>
-                ✔ Texto simplificado | ✔ Vídeo com IA | ✔ Áudio adaptado
-            </p>
 
-        </div>
-    </main>
+    <!-- Preview -->
+    <p class="upload-preview-text">
+      Seu conteúdo poderá ser apresentado como:<br>
+      ✔ Texto simplificado | ✔ Vídeo com IA | ✔ Áudio adaptado
+    </p>
 
-<script src="js/theme-toggle.js" defer></script>   
+    <!-- Container para injetar resultado da IA (inicialmente oculto) -->
+    <div id="adapted-content" class="upload-container" hidden></div>
+
+  </div>
+</main>
+
+
+<script src="js/upload.js" defer></script>
+<script src="js/theme-toggle.js" defer></script> 
 </body>
 </html>

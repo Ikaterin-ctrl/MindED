@@ -617,3 +617,65 @@ body {
   .progress-bar { height: 10px; }
   .option-btn { padding: 10px; font-size: .9rem; }
 }
+/*=============================
+  adapted.css — Conteúdo Adaptado
+=============================*/
+
+/* 1) Container principal da área de conteúdo */
+.adapted-main {
+  padding: 140px 20px 40px;      /* espaço para não ficar atrás do header */
+  min-height: 100vh;             /* cobre toda a viewport */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 2) “Glass box” onde o HTML da IA aparece */
+.adapted-container {
+  width: 100%;
+  max-width: 900px;              /* largura máxima confortavel */
+  background: var(--glass-bg);   /* semi-transparente via variável */
+  backdrop-filter: blur(15px);    /* desfoque do fundo */
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  padding: 40px;
+  color: var(--text-primary);
+  transition: background 0.3s ease;
+}
+
+/* 3) Texto de carregamento / erro */
+.adapted-container .loading,
+.adapted-container .error {
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+/* 4) Ações (botões) pós-adaptação */
+.adapted-actions {
+  margin-top: 24px;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.adapted-actions .upload-btn {
+  /* herda o estilo de botão principal */
+  min-width: 160px;
+}
+
+/* 5) Responsividade geral */
+@media (max-width: 600px) {
+  .adapted-container {
+    padding: 24px;
+    margin: 0 16px;
+  }
+  .adapted-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .adapted-actions .upload-btn {
+    width: 100%;
+  }
+}

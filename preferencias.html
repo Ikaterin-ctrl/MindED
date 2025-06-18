@@ -14,7 +14,7 @@
     </div>
     <nav class="header-nav">
       <a href="upload.html">Início</a>
-      <a href="sobre.html">Conteúdos</a>
+      <a href="conteudo.html">Conteúdos</a>
       <a href="preferencias.html" class="active">Preferências</a>
     </nav>
   </header>
@@ -135,40 +135,8 @@
     </div>
   </main>
 
-  <script>
-    // JS para navegação dos módulos e atualização de progresso
-    const modules = Array.from(document.querySelectorAll('.module'));
-    let current = 0;
-    const progress = document.querySelector('.progress');
-    const progressText = document.querySelector('.progress-text');
-    const prevBtn = document.getElementById('prev-btn');
-    const nextBtn = document.getElementById('next-btn');
-
-    function updateModules() {
-      modules.forEach((m,i) => m.hidden = i !== current);
-      prevBtn.disabled = current === 0;
-      nextBtn.textContent = current === modules.length - 1 ? 'Concluir' : 'Próximo »';
-      const pct = ((current+1)/modules.length)*100;
-      progress.style.width = pct + '%';
-      progressText.textContent = `Módulo ${current+1} de ${modules.length}`;
-    }
-
-    prevBtn.addEventListener('click', () => {
-      if (current>0) current--;
-      updateModules();
-    });
-    nextBtn.addEventListener('click', () => {
-      if (current < modules.length -1) {
-        current++;
-        updateModules();
-      } else {
-        // Aqui: salvar preferências e redirecionar
-        alert('Preferências salvas! Redirecionando...');
-        window.location.href = 'upload.html';
-      }
-    });
-
-    updateModules();
-  </script>
+  <!-- Scripts externos -->
+  <script src="js/preferences.js" defer></script>
+  <script src="js/theme-toggle.js" defer></script>
 </body>
 </html>

@@ -1,34 +1,56 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>MindED - Feedback</title>
-    <link rel="stylesheet" href="css/style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MindED - Feedback</title>
+  <!-- Estilos compartilhados de glassmorphism e tema -->
+  <link rel="stylesheet" href="style-glass.css" />
+  <!-- Se tiver um CSS específico para feedback, importe aqui -->
+  <!-- <link rel="stylesheet" href="css/feedback.css" /> -->
 </head>
 <body>
-    <div class="container feedback-page">
-        <h1>Obrigado por estudar com o MindED!</h1>
-        <p>Queremos saber sua opinião para melhorar ainda mais sua experiência.</p>
 
-        <form action="#" method="POST" class="feedback-form">
-            <fieldset>
-                <legend>O conteúdo foi útil?</legend>
-                <label><input type="radio" name="util" value="sim" required> Sim</label>
-                <label><input type="radio" name="util" value="nao"> Não</label>
-            </fieldset>
-
-            <fieldset>
-                <legend>Deseja deixar algum comentário ou sugestão?</legend>
-                <textarea name="comentario" rows="4" placeholder="Digite seu comentário aqui..."></textarea>
-            </fieldset>
-
-            <button type="submit" class="btn-start">Enviar Feedback</button>
-        </form>
-
-        <!-- Link para voltar ao início -->
-        <a href="index.html" class="back-link">Voltar para Início</a>
+  <!-- Header comum -->
+  <header class="header">
+    <div class="header-logo">
+      <img src="/assets/MindED_logo-removebg-preview.png" alt="MindED Logo" />
     </div>
+    <nav class="header-nav">
+      <a href="index.html">Início</a>
+      <a href="upload.html">Upload</a>
+      <a href="conteudo.html">Conteúdos</a>
+      <a href="preferencias.html">Preferências</a>
+    </nav>
+    <button id="theme-toggle">🌓</button>
+  </header>
+
+  <!-- Página de Feedback -->
+  <main class="container feedback-page" style="padding: 140px 20px 40px;">
+    <h1>Obrigado por estudar com o MindED!</h1>
+    <p>Queremos saber sua opinião para melhorar ainda mais sua experiência.</p>
+
+    <form action="#" method="POST" class="feedback-form">
+      <fieldset>
+        <legend>O conteúdo foi útil?</legend>
+        <label><input type="radio" name="util" value="sim" required> Sim</label>
+        <label><input type="radio" name="util" value="nao"> Não</label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Deseja deixar algum comentário ou sugestão?</legend>
+        <textarea name="comentario" rows="4" placeholder="Digite seu comentário aqui..."></textarea>
+      </fieldset>
+
+      <button type="submit" class="btn-start">Enviar Feedback</button>
+    </form>
+
+    <a href="index.html" class="back-link" style="display: inline-block; margin-top: 24px; color: var(--accent-start);">
+      ← Voltar para Início
+    </a>
+  </main>
+
+  <!-- Scripts -->
+  <script src="js/theme-toggle.js" defer></script>
 </body>
 </html>
-

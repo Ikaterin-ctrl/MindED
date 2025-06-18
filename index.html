@@ -1,30 +1,33 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>MindED - Boas-vindas</title>
-    <link rel="stylesheet" href="style-glass.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MindED – Boas-vindas</title>
+  <link rel="stylesheet" href="style-glass.css" />
 </head>
-
 <body>
   <!-- Cabeçalho -->
-<header class="header">
-  <div class="header-logo">
-    <img src="/assets/MindED_logo-removebg-preview.png" alt="MindED Logo" />
+  <header class="header">
+    <div class="header-logo">
+      <img src="/assets/MindED_logo-removebg-preview.png" alt="MindED Logo" />
+    </div>
+    <nav class="header-nav">    
+      <a href="login.html" class="btn-login">Entrar / Criar conta</a>
+      
+    </nav>
+  </header>
+
+  <!-- Hero Onboarding -->
+  <div class="hero-onboarding">
+    <button id="theme-toggle">🌓</button>
+    <img src="/assets/MindED_logo-removebg-preview.png" alt="MindED Logo" class="logo-hero"/>
+    <div id="typed-text" class="typed-text">Transforme seu aprendizado.</div>
+    <a href="upload.html" class="btn-start">Começar</a>
   </div>
-  <nav class="header-nav">    
-    <a href="login.html" class="btn-login">Entrar / Criar conta</a>
-  </nav>
-</header>
 
-
-    <div class="hero-onboarding">
-        <img src="/assets/MindED_logo-removebg-preview.png" alt="MindED Logo" class="logo-hero"/>       
-        <div id="typed-text" class="typed-text">Transforme seu aprendizado.</div>
-        <a href="upload.html" class="btn-start">Começar</a>
-
-
-    <script src="js/typed-text.js"></script>
+  <!-- Scripts -->
+  <script src="js/typed-text.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>

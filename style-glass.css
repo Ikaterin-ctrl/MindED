@@ -1,225 +1,184 @@
+
 /*=============================
-  Reset Global
+  RESET GLOBAL
   Zera margens, paddings e define box-sizing para todos os elementos
 =============================*/
 * {
-  margin: 0;                 /* Remove margem externa padrão */
-  padding: 0;                /* Remove preenchimento interno padrão */
-  box-sizing: border-box;    /* Inclui padding e borda no cálculo de width/height */
-  font-family: 'Poppins', sans-serif; /* Define fonte base para todo o site */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
 }
 
 /*=============================
-  Estilo do Body (todas as telas)
-  Fundo animado, centralização e cor do texto
+  VARIÁVEIS DE TEMA
+  Claro (padrão) e Escuro
+=============================*/
+:root {
+  /* Tema claro */
+  --bg-main: linear-gradient(135deg, #7fffd4, #b9a6f9, #aeefff);
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --text-primary: #ffffff;
+  --text-secondary: #cccccc;
+  --accent-start: #7fffd4;
+  --accent-end: #6bd1f3;
+}
+
+[data-theme="dark"] {
+  /* Tema escuro */
+  --bg-main: #121419;
+  --glass-bg: rgba(0, 0, 0, 0.25);
+  --text-primary: #e0e0e0;
+  --text-secondary: #888888;
+  --accent-start: #4bb3f7;
+  --accent-end: #7259e8;
+}
+
+/*=============================
+  BODY E FUNDOS PRINCIPAIS
 =============================*/
 body {
-  min-height: 100vh;         /* Garante altura mínima da viewport */
-  background: linear-gradient(135deg, #aeefff, #b9a6f9, #7fffd4); /* Gradiente diagonal */
-  background-size: 400% 400%; /* Expande fundo para animar */
-  animation: gradientBG 15s ease infinite; /* Animação contínua do gradiente */
-  display: flex;             /* Flexbox para centralizar conteúdo */
-  align-items: center;       /* Centraliza verticalmente */
-  justify-content: center;   /* Centraliza horizontalmente */
-  padding: 20px;             /* Espaço interno em volta */
-  color: #fff;               /* Cor padrão do texto */
+  background: var(--bg-main);
+  color: var(--text-primary);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Glass containers (onboarding, módulos, upload, sobre, cards...) */
+.hero-onboarding,
+.container,
+.module,
+.upload-container,
+.sobre-container,
+.card {
+  background: var(--glass-bg);
 }
 
 /*=============================
-  Animação do Fundo Gradiente
-  Move o gradiente para criar dinamismo
+  GRADIENTE ANIMADO (apenas tema claro)
 =============================*/
 @keyframes gradientBG {
-  0%   { background-position: 0% 50%; }   /* Início da animação */
-  50%  { background-position: 100% 50%; } /* Meio da animação */
-  100% { background-position: 0% 50%; }   /* Fim - volta ao início */
+  0%, 100% { background-position: 0% 50%; }
+  50%     { background-position: 100% 50%; }
+}
+
+
+/*=============================
+  HEADER FIXO
+=============================*/
+.header {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  padding: 16px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--glass-bg);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.header-logo img {
+  width: 50px;
+}
+
+.header-nav a,
+.header-nav button {
+  margin-left: 20px;
+  font-size: 1rem;
+  color: var(--text-primary);
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.header-nav a:hover,
+.header-nav button:hover {
+  color: var(--accent-start);
 }
 
 /*=============================
-  Tela de Boas-Vindas (.hero-onboarding)
-  Container central com efeito glassmorphism
+  HERO ONBOARDING
 =============================*/
 .hero-onboarding {
-  display: flex;             /* Flex container */
-  flex-direction: column;    /* Itens em coluna */
-  justify-content: center;   /* Centraliza verticalmente */
-  align-items: center;       /* Centraliza horizontalmente */
-  text-align: center;        /* Texto centralizado */
-  min-height: calc(100vh - 40px); /* Altura ajustada para padding */
-  width: calc(100vw - 40px); /* Largura ajustada para padding */
-  padding: 60px 40px;        /* Espaçamento interno */
-  gap: 50px;                 /* Espaço entre elementos */
-  background: rgba(255,255,255,0.08); /* Fundo semi-transparente */
-  backdrop-filter: blur(20px);       /* Desfoque do fundo */
-  -webkit-backdrop-filter: blur(20px); /* Safari */
-  border-radius: 24px;       /* Cantos arredondados */
-  border: 1px solid rgba(255,255,255,0.2); /* Borda leve */
-  box-shadow: 0 8px 40px rgba(0,0,0,0.2); /* Sombra para profundidade */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: calc(100vh - 40px);
+  width: calc(100vw - 40px);
+  padding: 60px 40px;
+  gap: 50px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
+  transition: background 0.3s ease;
 }
 
-/*=============================
-  Logo na Tela Inicial (.logo-hero)
-  Ajusta tamanho da imagem
-=============================*/
 .logo-hero {
-  width: 15rem;              /* Largura fixa da logo */
+  width: 15rem;
+}
+
+.typed-text {
+  font-size: 1.6rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  height: 50px;
+  line-height: 1.4;
+}
+
+.btn-start {
+  background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+  padding: 16px 40px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-radius: 40px;
+  color: #fff;
+  text-decoration: none;
+  border: none;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
+}
+
+.btn-start:hover {
+  background: linear-gradient(135deg, var(--accent-end), var(--accent-start));
+  transform: scale(1.05);
 }
 
 /*=============================
-  Título Principal (.minded-title)
-  Fonte, tamanho, cor e sombra
+  TEXTOS E TÍTULOS
 =============================*/
 .minded-title {
-  font-family: 'Montserrat', sans-serif; /* Fonte de destaque */
-  font-size: 3.5rem;         /* Tamanho grande */
-  font-weight: 700;          /* Negrito */
-  color: #ffffff;            /* Cor branca */
-  text-shadow: 0 0 25px rgba(255,255,255,0.4); /* Sombra luminosa */
-  margin-bottom: 10px;       /* Espaço abaixo */
-  text-transform: uppercase; /* Letras maiúsculas */
-  letter-spacing: 4px;       /* Espaço entre letras */
+  font-family: 'Montserrat', sans-serif;
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-shadow: 0 0 25px rgba(255,255,255,0.4);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 4px;
 }
 
-/*=============================
-  Destaque de Palavras (.highlight)
-  Cor especial para chamar atenção
-=============================*/
 .highlight {
-  color: #7fffd4;            /* Verde-água */
-  font-weight: 800;          /* Negrito extra */
+  color: var(--accent-start);
+  font-weight: 800;
 }
 
-/*=============================
-  Texto Animado (.typed-text)
-  Estilo para texto digitado/animado
-=============================*/
-.typed-text {
-  font-size: 1.6rem;         /* Tamanho médio */
-  font-weight: 400;          /* Peso normal */
-  color: #f0f0f0;            /* Cinza claro */
-  text-shadow: 0 0 10px rgba(255,255,255,0.3); /* Sombra sutil */
-  height: 50px;              /* Altura fixa */
-  line-height: 1.4;          /* Espaçamento de linha */
-}
-
-/*=============================
-  Botão Inicial (.btn-start)
-  Gradiente, bordas e animação hover
-=============================*/
-.btn-start {
-  background: linear-gradient(135deg, #7fffd4, #6bd1f3); /* Gradiente */
-  padding: 16px 40px;        /* Espaço interno */
-  font-size: 1.2rem;         /* Tamanho do texto */
-  font-weight: bold;         /* Negrito */
-  border-radius: 40px;       /* Bordas arredondadas */
-  color: #fff;               /* Texto branco */
-  text-decoration: none;     /* Sem sublinhado */
-  border: none;              /* Sem borda extra */
-  box-shadow: 0 8px 25px rgba(0,0,0,0.4); /* Sombra */
-  transition: all 0.3s ease; /* Transição suave */
-  display: inline-block;     /* Exibição inline */
-  margin-top: 10px;          /* Espaço acima */
-}
-
-/*=============================
-  Hover do Botão Inicial
-=============================*/
-.btn-start:hover {
-  background: linear-gradient(135deg, #b9a6f9, #7fffd4); /* Novo gradiente */
-  transform: scale(1.05);    /* Aumenta levemente */
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5); /* Sombra maior */
-}
-
-/*=============================
-  Animação Fade-In (.fade-in)
-=============================*/
 .fade-in {
-  animation: fadeIn 1s ease-in-out; /* Aparecimento suave */
+  animation: fadeIn 1s ease-in-out;
 }
+
 @keyframes fadeIn {
   0%   { opacity: 0; }
   50%  { opacity: 1; }
   100% { opacity: 1; }
-}
-
-/*=============================
-  Responsividade (<600px)
-  Ajustes para mobile
-=============================*/
-@media (max-width: 600px) {
-  .hero-onboarding {
-    padding: 30px 20px;      /* Padding reduzido */
-    gap: 30px;               /* Menos espaço */
-  }
-  .minded-title {
-    font-size: 2.2rem;       /* Título menor */
-  }
-  .typed-text {
-    font-size: 1.2rem;       /* Texto menor */
-    height: 40px;            /* Altura reduzida */
-  }
-  .btn-start {
-    padding: 12px 32px;      /* Botão menor */
-    font-size: 1rem;         /* Texto menor */
-  }
-}
-
-/*=============================
-  Cabeçalho Fixo (.header)
-  Transparente com blur e links
-=============================*/
-.header {
-  position: fixed;           /* Fixa no topo */
-  top: 0; left: 0;           /* Posição inicial */
-  width: 100%;               /* Largura total */
-  padding: 16px 40px;        /* Espaço interno */
-  display: flex;             /* Flexbox */
-  justify-content: space-between; /* Espaço entre itens */
-  align-items: center;       /* Centraliza verticalmente */
-  background: rgba(255,255,255,0.08); /* Fundo semi-trans*/
-  backdrop-filter: blur(15px); /* Blur */
-  -webkit-backdrop-filter: blur(15px);/* Safari */
-  border-bottom: 1px solid rgba(255,255,255,0.2); /* Borda */
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* Sombra */
-  z-index: 1000;             /* Acima de tudo */
-}
-
-/*=============================
-  Logo no Header
-=============================*/
-.header-logo {
-  display: flex;             /* Flexbox */
-  align-items: center;       /* Centraliza */
-  gap: 12px;                 /* Espaçamento */
-}
-.header-logo img {
-  width: 50px;               /* Tamanho da logo */
-}
-
-/*=============================
-  Links do Header (.header-nav a)
-=============================*/
-.header-nav a {
-  margin-left: 20px;         /* Espaçamento */
-  font-size: 1rem;           /* Tamanho */
-  color: #ffffff;            /* Cor branca */
-  text-decoration: none;     /* Sem sublinhado */
-  transition: color 0.3s ease; /* Transição */
-}
-.header-nav a:hover {
-  color: #7fffd4;            /* Cor no hover */
-}
-
-/*=============================
-  Página Upload (.upload-main)
-  Espaço centralizado para formulário
-=============================*/
-.upload-main {
-  display: flex;             /* Flexbox */
-  justify-content: center;   /* Centraliza horizontalmente */
-  align-items: center;       /* Centraliza verticalmente */
-  padding: 140px 20px 40px;  /* Espaço incluindo header */
-  min-height: 100vh;         /* Altura mínima */
 }
 
 /*=============================
@@ -313,130 +272,71 @@ body {
   box-shadow: 0 10px 30px rgba(0,0,0,0.5); /* Sombra */
 }
 
+@media (max-width: 768px) {
+  .upload-main {
+    padding: 120px 16px 24px;      /* menos top/bottom, mais laterais */
+  }
+  .upload-container {
+    padding: 40px 20px;            /* container menor */
+    max-width: 100%;               /* ocupa tela inteira */
+    margin: 0 10px;                /* afasta das bordas */
+  }
+  .dropzone {
+    padding: 24px;                 /* dropzone mais compacto */
+  }
+  .upload-btn {
+    width: 100%;                   /* botão full-width */
+    padding: 12px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .upload-main {
+    padding: 100px 12px 20px;
+  }
+  .upload-container {
+    margin: 0 8px;
+    padding: 30px 16px;
+  }
+  .dropzone { padding: 20px; }
+  .upload-btn { padding: 10px 0; font-size: .95rem; }
+}
+
+
 /*=============================
-  Página Sobre (.sobre-main/.sobre-container)
+  SOBRE PAGE
 =============================*/
 .sobre-main {
-  display: flex;             /* Flex para centralizar */
-  justify-content: center;   /* Centraliza horizontalmente */
-  align-items: center;       /* Centraliza verticalmente */
-  padding: 140px 20px 40px;  /* Espaço */
-  min-height: 100vh;         /* Altura mínima */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 140px 20px 40px;
+  min-height: 100vh;
 }
+
 .sobre-container {
-  backdrop-filter: blur(15px); /* Vidro fosco */
-  background: rgba(255,255,255,0.08);
-  border-radius: 20px;
-  border: 1px solid rgba(255,255,255,0.2);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
   padding: 60px 40px;
   max-width: 800px;
   width: 100%;
   text-align: center;
-  color: #f0f0f0;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.2);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  transition: background 0.3s ease;
 }
-.sobre-container h1 {
-  font-size: 2.5rem;
-  color: #ffffff;
-  margin-bottom: 20px;
-}
-.sobre-container h2 {
-  font-size: 1.8rem;
-  color: #ffffff;
-  margin: 40px 0 20px;
-}
-.sobre-container p {
-  font-size: 1rem;
-  line-height: 1.6;
-  margin-bottom: 20px;
-}
-.sobre-container ul {
-  list-style: none;
-  padding: 0;
-  margin-bottom: 30px;
-}
+
+.sobre-container h1,
+.sobre-container h2,
+.sobre-container p,
 .sobre-container ul li {
-  position: relative;
-  padding-left: 20px;
-  margin-bottom: 10px;
-}
-.sobre-container ul li::before {
-  content: '✔';
-  position: absolute;
-  left: 0;
-  color: #7fffd4;
-}
-.sobre-frase-final {
-  font-size: 1.1rem;
-  font-weight: bold;
-  color: #7fffd4;
-  margin-top: 30px;
+  color: var(--text-primary);
 }
 
 /*=============================
-  Botão Google (.google-btn/.google-icon)
+  PREFERENCES PAGE
+  (o restante dos estilos RPG permanece igual,
+   desde que use var(--glass-bg) no fundo dos módulos e bg-main para body)
 =============================*/
-.google-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  background: #ffffff;
-  color: #333;
-  font-weight: bold;
-  padding: 12px 24px;
-  border-radius: 30px;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-}
-.google-btn:hover {
-  background: #e0e0e0;
-  transform: scale(1.03);
-}
-.google-icon {
-  width: 20px;
-  height: 20px;
-}
-
-/*=======================================================
-  PREFERENCES PAGE – CSS ESPECÍFICO
-  Estilo RPG + Glassmorphism + Paleta MindED
-=======================================================*/
-
-/* 1) RESET BÁSICO */
-* {
-  margin: 0;               /* Remove margens padrão */
-  padding: 0;              /* Remove paddings padrão */
-  box-sizing: border-box;  /* Inclui borda/padding no tamanho */
-  font-family: 'Poppins', sans-serif; /* Fonte base legível */
-}
-
-/* 2) BODY – GRADIENTE MIND⁺ED E CENTRALIZAÇÃO */
-body {
-  min-height: 100vh;  
-  background: linear-gradient(135deg, #7fffd4, #b9a6f9, #aeefff);
-  background-size: 400% 400%;
-  animation: gradientBG 15s ease infinite;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  color: #fff;
-}
-@keyframes gradientBG {
-  0%,100% { background-position: 0% 50%; }
-  50%     { background-position: 100% 50%; }
-}
-
-/* 3) CONTAINER PRINCIPAL */
-.preferences {
-  width: 100%;
-  max-width: 800px;       /* Limita em telas grandes */
-  margin: 100px auto 40px;/* Espaço acima do header */
-  padding: 20px;          /* Espaço interno */
-}
-
 /* 4) BARRA DE PROGRESSO – “BARRA DE VIDA” */
 .progress-bar {
   position: relative;
@@ -580,17 +480,9 @@ body {
 #next-btn:hover {
   transform: scale(1.05);
 }
-
-/* 9) RESPONSIVIDADE */
-@media (max-width: 600px) {
-  .option-btn {
-    flex: 1 1 100%;  /* Uma coluna no mobile */
-  }
-  .checkbox-group {
-    grid-template-columns: 1fr;
-  }
-}
-
+/*=============================
+  CONTEUDO
+=============================*/
 /* Container principal */
 .conteudos-main {
   width: 100%;
@@ -666,4 +558,62 @@ body {
 }
 .card-btn:hover {
   transform: scale(1.05);
+}
+/*=============================
+  RESPONSIVIDADE
+=============================*/
+@media (max-width: 600px) {
+  .hero-onboarding { padding: 30px 20px; gap: 30px; }
+  .minded-title  { font-size: 2.2rem; }
+  .typed-text    { font-size: 1.2rem; height: 40px; }
+  .btn-start     { padding: 12px 32px; font-size: 1rem; }
+  .upload-container,
+  .sobre-container {
+    padding: 40px 20px;
+    margin: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .preferences {
+    padding: 20px 16px;            /* container mais estreito */
+    margin: 80px 0 24px;           /* ajusta topo/margem */
+  }
+  .module {
+    padding: 16px;                 /* cards menores */
+  }
+  .options {
+    gap: 8px;                      /* menos espaço entre botões */
+  }
+  .option-btn {
+    flex: 1 1 100%;                /* botão full-width no mobile */
+  }
+  .checkbox-group {
+    grid-template-columns: 1fr;    /* uma coluna de checks */
+  }
+  .module-nav {
+    flex-direction: column;        /* botões empilhados */
+    gap: 8px;
+  }
+  #prev-btn, #next-btn {
+    width: 100%;                   /* botões cheios */
+    text-align: center;
+  }
+}
+
+/* 1) Força o dark-mode em TODOS os containers “glass” */
+.hero-onboarding,
+.upload-container,
+.container,
+.sobre-container,
+.preferences,
+.cards-grid .card {
+  background: var(--glass-bg) !important;
+}
+
+@media (max-width: 480px) {
+  .preferences { margin: 60px 8px 20px; padding: 16px; }
+  .module { padding: 12px; }
+  .progress-bar { height: 10px; }
+  .option-btn { padding: 10px; font-size: .9rem; }
 }

@@ -4,7 +4,9 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>MindED – Conteúdos</title>
+  <!-- reset + tema + glassmorphism geral -->
   <link rel="stylesheet" href="style-glass.css"/>
+  <!-- estilos específicos de layout de cards, grid, busca -->
   <link rel="stylesheet" href="conteudos.css"/>
 </head>
 <body>
@@ -16,7 +18,7 @@
     </div>
     <nav class="header-nav">
       <a href="upload.html">Início</a>
-      <a href="conteudos.html" class="active">Conteúdos</a>
+      <a href="conteudo.html" class="active">Conteúdos</a>
       <a href="preferencias.html">Preferências</a>
     </nav>
   </header>
@@ -35,20 +37,13 @@
     </div>
 
     <!-- Grid de cards -->
-    <section class="cards-grid">
-      <!-- Card de exemplo -->
-      <div class="card">
-        <div class="card-thumb">
-          <img src="/assets/icon-texto.svg" alt="Texto"/>
-        </div>
-        <h3 class="card-title">Introdução à Neurodiversidade</h3>
-        <p class="card-meta">Tipo: Texto • Carregado em 12/06/2025</p>
-        <button class="card-btn">Ver / Adaptar</button>
-      </div>
-      <!-- Repita cards dinamicamente via JS -->
+    <section class="cards-grid" id="cards-grid">
+      <!-- Cards serão injetados via JavaScript -->
     </section>
   </main>
 
+  <!-- scripts carregados no fim do body para não bloquear renderização -->
+  <script src="js/theme-toggle.js" defer></script>
   <script src="js/conteudos.js"></script>
 </body>
 </html>

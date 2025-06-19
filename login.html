@@ -6,6 +6,8 @@
   <title>Login | MindED</title>
   <!-- Estilos gerais (reset + glass + tema) -->
   <link rel="stylesheet" href="style-glass.css" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
@@ -18,7 +20,7 @@
       <a href="index.html">Início</a>
       <a href="conteudo.html">Conteúdos</a>
       <a href="preferencias.html">Preferências</a>
-      <button id="theme-toggle">🌓 Modo Noturno</button>
+      <button id="theme-toggle"><i class="fas fa-moon"></i></button>
     </nav>
   </header>
 
@@ -42,6 +44,9 @@
 
       <p class="small-text">
         Não tem conta? <a href="#" id="btn-criar">Criar</a>
+        <!-- mostrar o formulário de cadastro -->
+        <a href="#" id="btn-criar" onclick="mostrarCadastro()">Criar</a>
+
       </p>
 
       <form class="cadastro-form" style="display:none;" onsubmit="cadastrar(event)">
@@ -54,8 +59,16 @@
   </main>
 
   
- <script src="js/login.js" defer></script>
+<script src="js/login.js" defer></script>
 <script src="js/theme-toggle.js" defer></script>
+<script>
+// Quando clicar em Criar, o formulário de criação de conta aparece suavemente
+function mostrarCadastro() {
+  document.querySelector('.login-form').style.display = 'none';
+  document.querySelector('.cadastro-form').style.display = 'block';
+}
+
+</script>
 
 </body>
 </html>

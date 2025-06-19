@@ -112,7 +112,9 @@ body {
   align-items: center;
   text-align: center;
   min-height: calc(100vh - 40px);
-  width: calc(100vw - 40px);
+  width: 100%;
+  max-width: auto;
+  margin: 0 auto;
   padding: 60px 40px;
   gap: 50px;
   border-radius: 24px;
@@ -201,6 +203,16 @@ body {
 .upload-container > *:last-child {
   margin-bottom: 0;           /* Remove no último */
 }
+
+/* centraliza o card de enviar conteúdo */
+.upload-main {    
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 100px);
+  padding-top: 120px;
+}
+
 
 /*=============================
   Títulos e textos no Upload
@@ -679,3 +691,5 @@ body {
     width: 100%;
   }
 }
+
+

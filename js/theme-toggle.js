@@ -1,14 +1,28 @@
-// Mantém o toggle de tema (light/dark) globalmente
+// Trocar Sol pela lua Quando clicar
 const toggleBtn = document.getElementById('theme-toggle');
-if (toggleBtn) {
-  // Restaura preferência anterior
-  const saved = localStorage.getItem('mindED-theme') || 'light';
-  document.documentElement.setAttribute('data-theme', saved);
+const icon = toggleBtn.querySelector('i');
 
-  toggleBtn.addEventListener('click', () => {
-    const current = document.documentElement.getAttribute('data-theme');
-    const next = current === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', next);
-    localStorage.setItem('mindED-theme', next);
-  });
+function updateIcon(theme) {
+  if (theme === 'dark') {
+    icon.classList.remove('fa-sun');
+    icon.classList.add('fa-moon');
+  } else {
+    icon.classList.remove('fa-moon');
+    icon.classList.add('fa-sun');
+  }
 }
+
+toggleBtn.addEventListener('click', () => {
+  const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', newTheme);
+  localStorage.setItem('theme', newTheme);
+  updateIcon(newTheme);
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  updateIcon(savedTheme);
+});
+

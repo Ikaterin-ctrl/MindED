@@ -34,19 +34,14 @@
         <img src="/assets/google-icon.svg" alt="" class="google-icon"/> Entrar com Google
       </button>
 
-      <p class="ou">ou</p>
-
       <form class="login-form" onsubmit="loginEmailSenha(event)">
-        <input type="email" placeholder="E-mail" required />
-        <input type="password" placeholder="Senha" required />
-        <button type="submit" class="upload-btn">Entrar</button>
+        <input type="email" placeholder="E-mail" required class="input-login" />
+        <input type="password" placeholder="Senha" required class="input-login" />
+        <button type="submit" class="enter-login-btn">Entrar</button>
       </form>
-
       <p class="small-text">
-        Não tem conta? <a href="#" id="btn-criar">Criar</a>
+        Não tem conta? <a href="#" id="btn-criar" onclick="mostrarCadastro()">Criar</a>
         <!-- mostrar o formulário de cadastro -->
-        <a href="#" id="btn-criar" onclick="mostrarCadastro()">Criar</a>
-
       </p>
 
       <form class="cadastro-form" style="display:none;" onsubmit="cadastrar(event)">
@@ -58,17 +53,18 @@
     </div>
   </main>
 
-  
-<script src="js/login.js" defer></script>
-<script src="js/theme-toggle.js" defer></script>
-<script>
-// Quando clicar em Criar, o formulário de criação de conta aparece suavemente
-function mostrarCadastro() {
-  document.querySelector('.login-form').style.display = 'none';
-  document.querySelector('.cadastro-form').style.display = 'block';
-}
 
-</script>
+  <script src="js/login.js" defer></script>
+  <script src="js/theme-toggle.js" defer></script>
+  <script>
+    // Quando clicar em Criar, o formulário de criação de conta aparece suavemente
+    function mostrarCadastro() {
+      document.querySelector('.login-form').style.display = 'none';
+      document.querySelector('.cadastro-form').style.display = 'block';
+    }
+
+  </script>
 
 </body>
+
 </html>

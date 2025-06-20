@@ -571,7 +571,49 @@ body {
 .card-btn:hover {
   transform: scale(1.05);
 }
-/*=============================
+
+.login-main .login-form {
+  margin: 66px 0 32px 8px;
+}
+
+.input-login {
+  height: 37px;
+  border-radius: 16px;
+  border-color: #7fffd4;
+  padding: 8px;
+  margin: 10px 0;
+}
+
+ .enter-login-btn {
+  background: linear-gradient(135deg, #7fffd4, #6bd1f3); /* Gradiente */
+  padding: 6px 29px;          /* Espaçamento */
+  font-size: 1.1rem;          /* Tamanho */
+  font-weight: bold;          /* Negrito */
+  border-radius: 40px;        /* Bordas */
+  color: #fff;                /* Texto branco */
+  text-decoration: none;      /* Sem sublinhado */
+  border: none;               /* Sem borda extra */
+  box-shadow: 0 8px 25px rgba(0,0,0,0.4); /* Sombra */
+  cursor: pointer;            /* Clique */
+  transition: all 0.3s ease;  /* Transição */
+  max-width: 160px;
+  margin: 0 3px;
+}
+
+.login-form {
+  display: flex;
+  width: 320px;
+}
+
+#btn-criar {
+color: rgb(197 97 197);
+}
+
+.small-text {
+  color: white;
+  margin: 10px 0 20px 10px;
+}
+/*=============================s
   RESPONSIVIDADE
 =============================*/
 @media (max-width: 600px) {
@@ -610,6 +652,10 @@ body {
   #prev-btn, #next-btn {
     width: 100%;                   /* botões cheios */
     text-align: center;
+  }
+
+  .login-form {
+    flex-direction: column;
   }
 }
 

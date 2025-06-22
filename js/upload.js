@@ -1,5 +1,13 @@
 // js/upload.js
 
+// Base da API definido em config.js
+const API_BASE = window.API_BASE_URL;
+
+// Função para exibir erros de forma amigável
+function showErrorMessage(msg) {
+  alert(msg); // você pode trocar por um banner no DOM
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const dropzone     = document.getElementById('dropzone');
   const fileInput    = document.getElementById('fileUpload');
@@ -24,34 +32,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 2) Botão de enviar e adaptar
   uploadBtn.addEventListener('click', async () => {
-    // Verifica se usuário está logado
     const token = localStorage.getItem('authToken');
     if (!token) {
-      // se não logado, manda para login
+      // não está logado → redireciona para login
       return window.location.href = 'login.html';
     }
 
-    // Se logado, verifica se já definiu preferências
-    uploadBtn.disabled   = true;
+    uploadBtn.disabled    = true;
     uploadBtn.textContent = 'Verificando preferências…';
+
+    // Busca preferências do usuário
     let prefs;
     try {
-      const resp = await fetch('/api/user/preferences', {
+      const resp = await fetch(`${API_BASE}/user/preferences`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      if (!resp.ok) throw new Error('Sem preferências');
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       prefs = await resp.json();
-    } catch {
+    } catch (err) {
+      console.error('Erro ao buscar preferências:', err);
       // primeira vez, sem prefs definidas
       return window.location.href = 'preferencias.html';
     }
 
-    // Se chegou aqui, é porque está logado e tem prefs
-    // Agora sim faz o upload e a adaptação
+    // Usuário está logado e tem prefs → prossegue para upload
     const file = fileInput.files[0];
     if (!file) {
-      alert('Selecione um arquivo antes de enviar.');
-      uploadBtn.disabled = false;
+      showErrorMessage('Selecione um arquivo antes de enviar.');
+      uploadBtn.disabled    = false;
       uploadBtn.textContent = 'Enviar e Adaptar com IA';
       return;
     }
@@ -61,25 +69,23 @@ document.addEventListener('DOMContentLoaded', () => {
       const form = new FormData();
       form.append('content', file);
 
-      const res = await fetch('/api/upload-and-adapt', {
+      const res = await fetch(`${API_BASE}/upload-and-adapt`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` },
         body: form
       });
-      if (!res.ok) throw new Error('Falha ao processar');
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
       const adapted = await res.json();
-      // injeta o HTML que a IA retornou
       adaptedPanel.innerHTML = adapted.html;
       adaptedPanel.hidden    = false;
       uploadBtn.textContent = 'Readaptar';
     } catch (err) {
-      console.error(err);
-      alert('Erro ao processar seu conteúdo.');
+      console.error('Erro ao processar conteúdo:', err);
+      showErrorMessage('Erro ao processar seu conteúdo.');
       uploadBtn.textContent = 'Enviar e Adaptar com IA';
     } finally {
       uploadBtn.disabled = false;
     }
   });
 });
-

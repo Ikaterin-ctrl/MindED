@@ -1,3 +1,5 @@
+/* preferencias.css */
+
 .preferences {
   padding: 40px 20px;
   margin: 100px auto;
@@ -28,6 +30,11 @@
   font-size: 0.9rem;
   color: #aeefff;
   text-shadow: 0 0 4px rgba(0,0,0,0.6);
+}
+
+/* Esconde módulos com o atributo hidden */
+.module[hidden] {
+  display: none !important;
 }
 
 .module {
@@ -131,8 +138,8 @@
 #prev-btn,
 #next-btn {
   background: #fff;
-  color: #7fffd4;
-  border: 2px solid #7fffd4;
+  color: #2e2b2b !important;
+  border: 2px solid #2e2b2b !important;
   border-radius: 6px;
   padding: 10px 18px;
   font-size: 0.95rem;

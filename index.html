@@ -34,14 +34,21 @@
   </main>
 
   <!-- Chatbot Flutuante -->
-  <div class="chatbot-fab" onclick="toggleChatbot()">
+  <div
+    class="chatbot-fab"
+    onclick="document.getElementById('chatbotWindow').classList.toggle('hidden')"
+  >
     <i class="fas fa-comment-dots"></i>
   </div>
 
   <div id="chatbotWindow" class="chatbot-window hidden">
     <div class="chatbot-header">
       <span>Assistente MindED</span>
-      <button onclick="toggleChatbot()"><i class="fas fa-times"></i></button>
+      <button
+        onclick="document.getElementById('chatbotWindow').classList.toggle('hidden')"
+      >
+        <i class="fas fa-times"></i>
+      </button>
     </div>
     <div id="chatbotMessages" class="chatbot-messages flex flex-col">
       <div class="message-bubble bot">
@@ -55,6 +62,8 @@
   </div>
 
   <!-- Scripts -->
+  <script src="./config.js"></script>
+  <script src="js/app.js"></script>
   <script src="js/typed-text.js"></script>
   <script src="js/main.js"></script>
   <script src="assistente/js/app.js"></script>

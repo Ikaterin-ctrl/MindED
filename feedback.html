@@ -4,10 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login | MindED</title>
-  <link rel="stylesheet" href="/css/base.css" />
-  <link rel="stylesheet" href="/css/layout.css" />
-  <link rel="stylesheet" href="/css/pages/login.css" />
-  <link rel="stylesheet" href="assistente/static/chatbot.css" />
+  <link rel="stylesheet" href="./css/base.css" />
+  <link rel="stylesheet" href="./css/layout.css" />
+  <link rel="stylesheet" href="./css/pages/login.css" />
+  <link rel="stylesheet" href="./assistente/static/chatbot.css" />
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -16,7 +16,7 @@
 <body>
   <header class="header">
     <div class="header-logo">
-      <img src="/assets/MindED_logo-removebg-preview.png" alt="MindED Logo" />
+      <img src="./assets/MindED_logo-removebg-preview.png" alt="MindED Logo" />
     </div>
     <nav class="header-nav">
       <a href="index.html">Início</a>
@@ -32,7 +32,7 @@
       <p class="small-text">Seu ambiente de aprendizado adaptado</p>
 
       <button class="enter-login-btn" onclick="loginComGoogle()">
-        <img src="/assets/google-icon.svg" alt="Google Icon" class="google-icon" /> Entrar com Google
+        <img src="./assets/google-icon.svg" alt="Google Icon" class="google-icon" /> Entrar com Google
       </button>
 
       <form onsubmit="loginEmailSenha(event)">
@@ -71,8 +71,8 @@
     </div>
   </div>
 
-  <script src="js/login.js" defer></script>
-  <script src="js/theme-toggle.js" defer></script>
+  <script src="./js/login.js" defer></script>
+  <script src="./js/theme-toggle.js" defer></script>
   <script>
     function mostrarCadastro() {
       const loginForm = document.querySelector('.login-form form');

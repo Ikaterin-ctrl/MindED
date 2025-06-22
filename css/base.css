@@ -62,3 +62,52 @@ body {
     backdrop-filter: blur(10px);
   }
 }
+
+body.light-mode {
+  color: #fff;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+body.light-mode h1,
+body.light-mode h2,
+body.light-mode h3,
+body.light-mode p,
+body.light-mode a,
+body.light-mode span,
+body.light-mode label {
+  color: #fff;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+body.light-mode button,
+body.light-mode .btn {
+  color: #fff;
+  text-shadow: 0 0 2px #000;
+}
+
+html[data-theme="light"] body,
+html[data-theme="light"] h1,
+html[data-theme="light"] h2,
+html[data-theme="light"] h3,
+html[data-theme="light"] h4,
+html[data-theme="light"] h5,
+html[data-theme="light"] h6,
+html[data-theme="light"] p,
+html[data-theme="light"] a,
+html[data-theme="light"] span,
+html[data-theme="light"] label,
+html[data-theme="light"] li {
+  color: #fff !important;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+html[data-theme="light"] button,
+html[data-theme="light"] .btn {
+  color: #fff !important;
+  text-shadow: 0px 0px 2px #000;
+}
+
+html[data-theme="light"] .typed-text {
+  color: #fff !important;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+}

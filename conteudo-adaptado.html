@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MindED – Conteúdo Adaptado</title>
+  <title>MindED – Conteúdos</title>
   <link rel="stylesheet" href="./css/base.css" />
   <link rel="stylesheet" href="./css/layout.css" />
   <link rel="stylesheet" href="./css/pages/conteudo.css" />
+  <link rel="stylesheet" href="./css/pages/conteudo-simulado.css" />
   <link rel="stylesheet" href="./assistente/static/chatbot.css" />
   <link
     rel="stylesheet"
@@ -20,23 +21,63 @@
       <img src="./assets/MindED_logo-removebg-preview.png" alt="MindED Logo" />
     </div>
     <nav class="header-nav">
-      <a href="index.html">Início</a>      
-      <a href="conteudo.html">Conteúdos</a>
+      <a href="index.html">Início</a>
+      <a href="conteudo.html" class="active">Conteúdos</a>
       <a href="preferencias.html">Preferências</a>
       <button id="theme-toggle"><i class="fas fa-moon"></i></button>
     </nav>
   </header>
 
-  <!-- Área de Conteúdo Adaptado -->
-  <main class="adapted-main">
-    <div class="adapted-container" id="adapted-content">
-      <p class="loading">Carregando conteúdo adaptado...</p>
+  <!-- Filtro / Busca (opcional) -->
+  <main class="conteudos-main">
+    <div class="search-filter">
+      <input type="text" id="search" placeholder="Buscar por título…" />
+      <select id="filter-type">
+        <option value="">Todos os tipos</option>
+        <option value="texto">Texto</option>
+        <option value="video">Vídeo</option>
+        <option value="audio">Áudio</option>
+      </select>
     </div>
-    <div class="adapted-actions">
-      <button id="refazer-btn" class="upload-btn">Refazer Adaptação</button>
-      <button id="voltar-upload" class="upload-btn">Enviar Novo Conteúdo</button>
-    </div>
+
+    <!-- Grid de cards -->
+    <section class="cards-grid" id="cards-grid">
+      <!-- Card: Biblioteca de Alexandria -->
+      <a href="conteudo-simulado.html" class="card">
+        <div class="card-thumb">
+          <i class="fas fa-landmark fa-2x"></i>
+        </div>
+        <h3 class="card-title">Biblioteca de Alexandria</h3>
+        <p class="card-meta">Texto • História • Antiguidade</p>
+      </a>
+
+      <!-- Card: Origem do Google -->
+      <a href="conteudo-simulado-google.html" class="card">
+        <div class="card-thumb">
+          <i class="fas fa-book fa-2x"></i>
+        </div>
+        <h3 class="card-title">Origem do Google</h3>
+        <p class="card-meta">Texto • Tecnologia • Século XXI</p>
+      </a>
+
+      <!-- Card: Cachorro-Quente -->
+      <a href="conteudo-simulado-cachorro-quente.html" class="card">
+        <div class="card-thumb">
+          <i class="fas fa-hamburger fa-2x"></i>
+        </div>
+        <h3 class="card-title">Cachorro-Quente</h3>
+        <p class="card-meta">Texto • Cultura • Curiosidades</p>
+      </a>
+
+      <!-- Adicione quantos quiser -->
+    </section>
   </main>
+
+  <!-- Botões secundários (caso queira manter) -->
+  <div class="adapted-actions" style="text-align:center; margin: 24px 0;">
+    <button id="refazer-btn" class="upload-btn">Refazer Adaptação</button>
+    <button id="voltar-upload" class="upload-btn">Enviar Novo Conteúdo</button>
+  </div>
 
   <!-- Chatbot Flutuante -->
   <div class="chatbot-fab" onclick="toggleChatbot()">
@@ -48,9 +89,7 @@
       <button onclick="toggleChatbot()"><i class="fas fa-times"></i></button>
     </div>
     <div class="chatbot-messages flex flex-col" id="chatbotMessages">
-      <div class="message-bubble bot">
-        Olá! Como posso te ajudar hoje?
-      </div>
+      <div class="message-bubble bot">Olá! Como posso te ajudar?</div>
     </div>
     <div class="chatbot-input-area">
       <input type="text" id="chatInput" placeholder="Digite sua mensagem..." />
@@ -58,8 +97,17 @@
     </div>
   </div>
 
-  <script src="./js/adapted.js" defer></script>
+  <!-- Scripts -->
   <script src="./js/theme-toggle.js" defer></script>
   <script src="./assistente/js/app.js" defer></script>
+  <!-- TEMP PITCH: forçar conteúdo simulado ao clicar no card -->
+  <script>
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('click', e => {
+        e.preventDefault();
+        window.location.href = card.getAttribute('href');
+      });
+    });
+  </script>
 </body>
 </html>

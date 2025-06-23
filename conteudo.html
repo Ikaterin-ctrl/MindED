@@ -1,21 +1,24 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MindED – Conteúdos</title>
   <link rel="stylesheet" href="./css/base.css" />
   <link rel="stylesheet" href="./css/layout.css" />
   <link rel="stylesheet" href="./css/pages/conteudo.css" />
+  <link rel="stylesheet" href="./css/pages/conteudo-simulado.css" />
   <link rel="stylesheet" href="./assistente/static/chatbot.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
 </head>
 <body>
-
-  <!-- Header comum -->
+  <!-- Cabeçalho -->
   <header class="header">
     <div class="header-logo">
-      <img src="./assets/MindED_logo-removebg-preview.png" alt="MindED Logo"/>
+      <img src="./assets/MindED_logo-removebg-preview.png" alt="MindED Logo" />
     </div>
     <nav class="header-nav">
       <a href="index.html">Início</a>
@@ -25,11 +28,10 @@
     </nav>
   </header>
 
-  <!-- Main do painel de conteúdos -->
+  <!-- Filtro / Busca (opcional) -->
   <main class="conteudos-main">
-    <!-- Filtro / busca -->
     <div class="search-filter">
-      <input type="text" id="search" placeholder="Buscar por título…"/>
+      <input type="text" id="search" placeholder="Buscar por título…" />
       <select id="filter-type">
         <option value="">Todos os tipos</option>
         <option value="texto">Texto</option>
@@ -40,9 +42,42 @@
 
     <!-- Grid de cards -->
     <section class="cards-grid" id="cards-grid">
-      <!-- Cards serão injetados via JavaScript -->
+      <!-- Card: Biblioteca de Alexandria -->
+      <a href="conteudo-simulado.html" class="card">
+        <div class="card-thumb">
+          <i class="fas fa-landmark fa-2x"></i>
+        </div>
+        <h3 class="card-title">Biblioteca de Alexandria</h3>
+        <p class="card-meta">Texto • História • Antiguidade</p>
+      </a>
+
+      <!-- Card: Origem do Google -->
+      <a href="conteudo-simulado-google.html" class="card">
+        <div class="card-thumb">
+          <i class="fas fa-book fa-2x"></i>
+        </div>
+        <h3 class="card-title">Origem do Google</h3>
+        <p class="card-meta">Texto • Tecnologia • Século XXI</p>
+      </a>
+
+      <!-- Card: Cachorro-Quente -->
+      <a href="conteudo-simulado-cachorro-quente.html" class="card">
+        <div class="card-thumb">
+          <i class="fas fa-hamburger fa-2x"></i>
+        </div>
+        <h3 class="card-title">Cachorro-Quente</h3>
+        <p class="card-meta">Texto • Cultura • Curiosidades</p>
+      </a>
+
+      <!-- Adicione quantos quiser -->
     </section>
   </main>
+
+  <!-- Botões secundários (caso queira manter) -->
+  <div class="adapted-actions" style="text-align:center; margin: 24px 0;">
+    <button id="refazer-btn" class="upload-btn">Refazer Adaptação</button>
+    <button id="voltar-upload" class="upload-btn">Enviar Novo Conteúdo</button>
+  </div>
 
   <!-- Chatbot Flutuante -->
   <div class="chatbot-fab" onclick="toggleChatbot()">
@@ -62,8 +97,17 @@
     </div>
   </div>
 
+  <!-- Scripts -->
   <script src="./js/theme-toggle.js" defer></script>
-  <script src="./js/conteudos.js" defer></script>
   <script src="./assistente/js/app.js" defer></script>
+  <!-- TEMP PITCH: forçar conteúdo simulado ao clicar no card -->
+  <script>
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('click', e => {
+        e.preventDefault();
+        window.location.href = card.getAttribute('href');
+      });
+    });
+  </script>
 </body>
 </html>

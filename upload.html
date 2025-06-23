@@ -81,5 +81,39 @@
   <script src="./js/theme-toggle.js" defer></script>
   <script src="./js/conteudos.js" defer></script>
   <script src="./assistente/js/app.js" defer></script>
+  <script>
+  // TEMP PITCH: trata todo mundo como “logado” e pula direto
+  document.addEventListener('DOMContentLoaded', ()=>{
+    const toAdapted = ()=> {
+      window.location.replace('conteudo-adaptado.html?pitch=1');
+    };
+
+    // 1) intercepta o clique “Enviar”
+    const btn = document.getElementById('uploadBtn');
+    btn.addEventListener('click', e=>{
+      e.preventDefault();
+      toAdapted();
+    });
+
+    // 2) intercepta drop de arquivo na dropzone
+    const dz = document.getElementById('dropzone');
+    ['dragover','dragenter'].forEach(ev=> dz.addEventListener(ev, e=> e.preventDefault()));
+    dz.addEventListener('drop', e=>{
+      e.preventDefault();
+      toAdapted();
+    });
+
+    // 3) intercepta paste de texto/arquivo
+    document.addEventListener('paste', e=>{
+      toAdapted();
+    });
+
+    // Se quiser automática sem ação do usuário:
+    if (new URLSearchParams(location.search).get('pitch')==='1') {
+      setTimeout(toAdapted, 800);
+    }
+  });
+</script>
+
 </body>
 </html>

@@ -179,30 +179,5 @@
 
   <!-- Scripts do chatbot -->
   <script src="./assistente/js/app.js" defer></script>
-
-  <script>
-  // TEMP PITCH: salva “cadastro” e manda pra adaptado
-  document.addEventListener('DOMContentLoaded', ()=>{
-    const form = document.querySelector('form');
-    form.addEventListener('submit', e=>{
-      e.preventDefault();
-      // opcional: pega valores e armazena
-      const data = new FormData(form);
-      localStorage.setItem('minded_pitch_user', JSON.stringify({
-        nome: data.get('nome'),
-        email: data.get('email'),
-        // supondo campos de preferência também ...
-      }));
-      // pula confirmação, quiz etc.
-      window.location.replace('conteudo-adaptado.html?pitch=1');
-    });
-
-    // se foi redirecionado pelo index com ?pitch=1, exibe o form imediatamente
-    if (new URLSearchParams(location.search).get('pitch')==='1') {
-      form.style.display = 'block';
-    }
-  });
-</script>
-
 </body>
 </html>

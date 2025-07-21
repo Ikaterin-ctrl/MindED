@@ -22,15 +22,3 @@ setInterval(showPhrase, 3000);
 
 typedText.classList.add("fade-in");
 
-const toggle = document.getElementById('theme-toggle');
-toggle.addEventListener('click', () => {
-  const current = document.documentElement.getAttribute('data-theme');
-  const next = current === 'dark' ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', next);
-  // opcional: salvar no localStorage
-  localStorage.setItem('mindED-theme', next);
-});
-
-// Ao carregar a página, restaurar preferência
-const saved = localStorage.getItem('mindED-theme') || 'light';
-document.documentElement.setAttribute('data-theme', saved);

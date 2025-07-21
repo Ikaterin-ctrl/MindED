@@ -147,12 +147,3 @@ function addMessageToChat(text, sender) {
     chatbotMessages.scrollTop = chatbotMessages.scrollHeight; 
 }
 
-/* Garante que o .hidden oculte mesmo que haja outras regras conflitando */
-#chatbotWindow.hidden {
-  display: none !important;
-}
-
-/* E que, sem o .hidden, ele fique visível */
-#chatbotWindow {
-  display: block;
-}

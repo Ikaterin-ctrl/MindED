@@ -2,11 +2,11 @@
 
 Olá, equipe!
 
-Todos os arquivos de briefing e estrutura do projeto estão organizados na pasta `briefing-minded`. Essa pasta contém os documentos fundamentais para entender a proposta, o funcionamento da plataforma e a estrutura inicial de desenvolvimento e apresentação.
+Todos os arquivos de briefing e estrutura do projeto ficam em nossa pasta de documentos compartilhada. Ela contém os documentos fundamentais para entender a proposta, o funcionamento da plataforma e a estrutura inicial de desenvolvimento e apresentação.
 
 ---
 
-## 📌 O que você encontra na pasta `briefing-minded`:
+## 📌 O que você encontra na documentação compartilhada:
 - Documento oficial com roteiros e apresentações  
 - Estrutura do pitch  
 - Planejamento técnico interno  
@@ -15,7 +15,7 @@ Todos os arquivos de briefing e estrutura do projeto estão organizados na pasta
 ---
 
 ## ⚠️ IMPORTANTE: Leitura obrigatória até **10/06**
-Todos os membros da equipe devem ler os arquivos da pasta `briefing-minded` até o dia **10/06** para alinharmos os próximos passos.
+Todos os membros da equipe devem ler os documentos até o dia **10/06** para alinharmos os próximos passos.
 
 ---
 

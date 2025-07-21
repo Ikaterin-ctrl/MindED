@@ -1,6 +1,11 @@
 // assistente/server/inicializaChat.js
 import dotenv from 'dotenv';
 dotenv.config();
+
+if (!process.env.GEMINI_API_KEY) {
+    console.error('Erro: variável GEMINI_API_KEY não definida. Configure o arquivo .env.');
+    process.exit(1);
+}
 import {GoogleGenerativeAI} from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);

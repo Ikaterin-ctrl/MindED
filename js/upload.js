@@ -24,10 +24,14 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     dropzone.classList.remove('hover');
     fileInput.files = e.dataTransfer.files;
-    dropzone.querySelector('p').textContent = fileInput.files[0].name;
+    if (fileInput.files.length) {
+      dropzone.querySelector('p').textContent = fileInput.files[0].name;
+    }
   });
   fileInput.addEventListener('change', () => {
-    dropzone.querySelector('p').textContent = fileInput.files[0].name;
+    if (fileInput.files.length) {
+      dropzone.querySelector('p').textContent = fileInput.files[0].name;
+    }
   });
 
   // 2) Botão de enviar e adaptar

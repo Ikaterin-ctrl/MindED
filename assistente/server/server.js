@@ -21,9 +21,8 @@ app.use(express.json());
 
 // Configura o CORS para permitir requisições do seu frontend
 app.use(cors({
-  origin: 'null', // Permite requisições de arquivos locais (file://)
-  // Se for hospedar o site em um domínio, mude para:
-  // origin: 'http://seu-dominio.com',
+  // Mudei o 'origin' para a URL do seu site no Vercel
+  origin: 'https://mind-ed.vercel.app', 
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type'],
 }));

@@ -1,8 +1,10 @@
 // assistente/server/inicializaChat.js
-import dotenv from 'dotenv';
-dotenv.config();
-import {GoogleGenerativeAI} from "@google/generative-ai";
+// O pacote 'dotenv' é apenas para o ambiente de desenvolvimento local.
+// No Vercel, as variáveis de ambiente são lidas automaticamente, então não precisamos do dotenv.
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
+// Use a variável de ambiente em vez da chave hardcoded para segurança.
+// A chave será configurada no painel do Vercel.
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash"});

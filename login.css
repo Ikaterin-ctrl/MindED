@@ -1,0 +1,79 @@
+       body {
+            background-color: #f8f9fa; /* Um fundo claro para a página de login */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Garante que o body ocupe a altura total da viewport */
+        }
+        .login-container {
+            flex-grow: 1; /* Permite que o container de login cresça e centralize */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .form-card {
+            max-width: 450px; /* Largura máxima para os cards de formulário */
+            width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden; /* Garante que bordas arredondadas funcionem com bg */
+        }
+        .form-header {
+            background-color: #007bff; /* Cor primária do Bootstrap */
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+        .form-header h2 {
+            margin-bottom: 0;
+            font-size: 1.8rem;
+        }
+        .form-body {
+            padding: 30px;
+        }
+        .form-toggle-buttons {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .form-toggle-buttons .btn {
+            flex-grow: 1;
+            border-radius: 0; /* Remove o arredondamento padrão */
+            border: none;
+            background-color: #e9ecef;
+            color: #495057;
+            font-weight: bold;
+            padding: 15px 0;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .form-toggle-buttons .btn.active {
+            background-color: #007bff;
+            color: white;
+        }
+        .form-toggle-buttons .btn:first-child {
+            border-top-left-radius: 15px;
+        }
+        .form-toggle-buttons .btn:last-child {
+            border-top-right-radius: 15px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .footer-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+        .footer-link a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .footer-link a:hover {
+            text-decoration: underline;
+        }

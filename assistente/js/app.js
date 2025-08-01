@@ -1,7 +1,8 @@
 // assistente/js/app.js (Este arquivo é para o NAVEGADOR - FRONTEND)
 // Ele controla a interface do chatbot flutuante e se comunica com o seu backend Node.js.
 
-const BACKEND_URL = "http://localhost:3000"; 
+// Mudei a URL para uma string vazia para que as requisições usem a mesma URL do site (vercel.app)
+const BACKEND_URL = ""; 
 
 // Referências aos elementos DOM do chatbot flutuante
 const chatbotWindow = document.getElementById('chatbotWindow');

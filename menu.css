@@ -1,0 +1,137 @@
+/* menu.css */
+
+* {
+    font-family: 'Open Sans', sans-serif;
+}
+
+:root {
+    /* Novas cores da paleta, focando nos tons de roxo */
+    --color-dark-purple: #5F4772;   /* Roxo escuro principal */
+    --color-light-purple: #B9A7C7;  /* Roxo claro para fundos/detalhes */
+
+    /* Variáveis existentes mapeadas para a nova paleta roxa */
+    --bg-primary-text-icon: var(--color-dark-purple); /* Usado para textos principais, ícones, botões */
+    --bg-secondary-background: var(--color-light-purple); /* Usado para backgrounds claros, hover de cards */
+    --bg-hover-effect: var(--color-dark-purple); /* Usado para hover de ícones sociais, para um roxo mais forte */
+    --margin-top: 100px;
+}
+
+.logo-text {
+    font-size: 1.8rem;
+    color: var(--bg-primary-text-icon); /* Usando a nova variável */
+    font-weight: 800;
+}
+
+.logo-icon {
+    color: var(--bg-primary-text-icon); /* Usando a nova variável */
+}
+
+.my-mt {
+    margin-top: var(--margin-top);
+}
+
+.nav-item a {
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.my-title {
+    color: var(--bg-primary-text-icon); /* Usando a nova variável */
+    font-weight: 700;
+}
+
+/* Continuação do style.css */
+
+.bg-blue-2 {
+    background-color: var(--bg-secondary-background); /* Usando a nova variável */
+}
+
+.sobre {
+    min-height: 60vh;
+}
+
+.icon { /* Note: a classe .icon aqui pode ter conflito com ícones do Font Awesome se você usá-los com essa classe */
+    font-size: 60px;
+    color: var(--bg-primary-text-icon); /* Usando a nova variável */
+    margin: 24px 0;
+    transition: .5s;
+}
+
+.card {
+    transition: .5s;
+    /* Adicionado: Garante que o card seja um container flexível para seu corpo */
+    display: flex;
+    flex-direction: column;
+}
+
+.card:hover {
+    background-color: var(--bg-secondary-background); /* Usando a nova variável */
+}
+
+.card:hover .icon {
+    transform: scale(1.5);
+}
+
+/* Adicionado: Estilos para igualar a altura dos cards na seção de soluções */
+#solucoes .row {
+    display: flex;
+    flex-wrap: wrap; /* Garante que os itens quebrem para a próxima linha em telas menores */
+    align-items: stretch; /* Faz com que os itens se estiquem para preencher a altura da linha */
+}
+
+#solucoes .row .col-lg-4 {
+    display: flex; /* Transforma a coluna em um container flexível */
+    flex-direction: column; /* Faz com que o conteúdo dentro da coluna se organize em coluna (verticalmente) */
+}
+
+#solucoes .row .col-lg-4 .card {
+    flex-grow: 1; /* Permite que o card cresça para preencher a altura disponível na coluna */
+}
+
+#solucoes .row .col-lg-4 .card .card-body {
+    flex-grow: 1;
+    display: flex; /* Para alinhar o conteúdo verticalmente */
+    flex-direction: column;
+}
+
+#solucoes .row .col-lg-4 .card .card-body p {
+    flex-grow: 1; /* Permite que o parágrafo ocupe o máximo de espaço possível */
+    min-height: 80px; /* Adicionado: Define uma altura mínima para o parágrafo */
+    /* Você pode ajustar este valor (ex: 60px, 100px) para se adequar ao seu conteúdo */
+}
+
+
+/* Estilos para o rodapé */
+.footer {
+    background-color: #5F4772; /* Roxo escuro */
+    color: white;
+    padding: 40px 0;
+    text-align: center;
+}
+
+.footer p {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+}
+
+.icon-social,
+.icon-contato {
+    font-size: 2rem;
+    color: var(--bg-primary-text-icon); /* Usando a nova variável */
+    transition: .5s;
+}
+
+.icon-social:hover {
+    color: var(--bg-hover-effect); /* Usando a nova variável */
+}
+
+textarea {
+    resize: none;
+    height: 130px;
+}
+
+@media (max-width: 959px) {
+    #sobre {
+        text-align: center;
+    }
+}

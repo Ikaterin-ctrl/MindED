@@ -21,8 +21,13 @@ app.use(express.json());
 
 // Configura o CORS para permitir requisições do seu frontend
 app.use(cors({
-  // Mudei o 'origin' para a URL do seu site no Vercel
-  origin: 'https://mind-ed.vercel.app', 
+  // Lista de origens permitidas.
+  // Adicione a URL do seu servidor local (ex: Live Server) se precisar testar o frontend separadamente.
+  origin: [
+    'https://mind-ed.vercel.app', // URL de produção
+    'http://127.0.0.1:5500',      // Exemplo para Live Server no VS Code
+    'http://localhost:5500'       // Outro exemplo para Live Server
+  ],
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type'],
 }));

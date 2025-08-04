@@ -103,6 +103,12 @@ async function sendMessage() {
 
         const respostaDoBackend = await response.json();
 
+        // Remove o "Digitando..." antes de adicionar a resposta final
+        const typingIndicator = document.querySelector('.message-bubble.bot-typing');
+        if (typingIndicator) {
+            typingIndicator.remove();
+        }
+
         if (respostaDoBackend.response) { 
             addMessageToChat(respostaDoBackend.response, 'bot');
         } else if (respostaDoBackend.error) {
@@ -113,14 +119,15 @@ async function sendMessage() {
         }
 
     } catch (error) {
-        addMessageToChat("Ops! Houve um erro de conexão com o servidor. Verifique se o backend está rodando.", 'bot');
-        console.error("Erro de rede ou servidor:", error);
-    } finally {
-        // Este bloco será executado sempre, com sucesso ou erro, garantindo que a UI seja reativada
+        // Em caso de erro de rede, também remove o "Digitando..."
         const typingIndicator = document.querySelector('.message-bubble.bot-typing');
         if (typingIndicator) {
             typingIndicator.remove();
         }
+        addMessageToChat("Ops! Houve um erro de conexão com o servidor. Verifique se o backend está rodando.", 'bot');
+        console.error("Erro de rede ou servidor:", error);
+    } finally {
+        // Este bloco será executado sempre, com sucesso ou erro, garantindo que a UI seja reativada
         // Reabilita o input e o botão
         chatInput.disabled = false;
         sendChatButton.disabled = false;

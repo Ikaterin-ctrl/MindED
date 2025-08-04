@@ -87,6 +87,10 @@ async function sendMessage() {
     addMessageToChat(message, 'user'); // Adiciona a mensagem do usuário ao chat
     chatInput.value = ''; // Limpa o campo de input
 
+    // Desabilita o input e o botão para evitar envios múltiplos
+    chatInput.disabled = true;
+    sendChatButton.disabled = true;
+
     addMessageToChat('Digitando...', 'bot-typing');
 
     try {
@@ -99,12 +103,6 @@ async function sendMessage() {
 
         const respostaDoBackend = await response.json();
 
-        // Remove o typing indicator
-        const typingIndicator = document.querySelector('.message-bubble.bot-typing');
-        if (typingIndicator) {
-            typingIndicator.remove();
-        }
-
         if (respostaDoBackend.response) { 
             addMessageToChat(respostaDoBackend.response, 'bot');
         } else if (respostaDoBackend.error) {
@@ -115,12 +113,18 @@ async function sendMessage() {
         }
 
     } catch (error) {
+        addMessageToChat("Ops! Houve um erro de conexão com o servidor. Verifique se o backend está rodando.", 'bot');
+        console.error("Erro de rede ou servidor:", error);
+    } finally {
+        // Este bloco será executado sempre, com sucesso ou erro, garantindo que a UI seja reativada
         const typingIndicator = document.querySelector('.message-bubble.bot-typing');
         if (typingIndicator) {
             typingIndicator.remove();
         }
-        addMessageToChat("Ops! Houve um erro de conexão com o servidor. Verifique se o backend está rodando.", 'bot');
-        console.error("Erro de rede ou servidor:", error);
+        // Reabilita o input e o botão
+        chatInput.disabled = false;
+        sendChatButton.disabled = false;
+        chatInput.focus(); // Devolve o foco ao campo de input
     }
 
     if (chatbotMessages) {

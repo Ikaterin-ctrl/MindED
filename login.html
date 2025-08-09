@@ -34,9 +34,9 @@
         <img src="/assets/google-icon.svg" alt="" class="google-icon"/> Entrar com Google
       </button>
 
-      <form class="login-form" onsubmit="loginEmailSenha(event)">
-        <input type="email" placeholder="E-mail" required class="input-login" />
-        <input type="password" placeholder="Senha" required class="input-login" />
+      <form class="login-form" action="/login" method="POST">
+        <input type="email" name="email" placeholder="E-mail" required class="input-login" />
+        <input type="password" name="senha" placeholder="Senha" required class="input-login" />
         <button type="submit" class="enter-login-btn">Entrar</button>
       </form>
       <p class="small-text">
@@ -44,10 +44,10 @@
         <!-- mostrar o formulário de cadastro -->
       </p>
 
-      <form class="cadastro-form" style="display:none;" onsubmit="cadastrar(event)">
-        <input type="text" placeholder="Nome completo" required />
-        <input type="email" placeholder="E-mail" required />
-        <input type="password" placeholder="Criar senha" required />
+      <form class="cadastro-form" style="display:none;" action="/cadastrar" method="POST">
+        <input type="text" name="nome" placeholder="Nome completo" required />
+        <input type="email" name="email" placeholder="E-mail" required />
+        <input type="password" name="senha" placeholder="Criar senha" required />
         <button type="submit" class="upload-btn">Cadastrar</button>
       </form>
     </div>

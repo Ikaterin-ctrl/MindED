@@ -10,6 +10,7 @@ import cors from 'cors';
 // IMPORTS CORRETOS DENTRO DA MESMA PASTA 'assistente/server'
 import { executaChat } from './chat.js';
 import { inicializaChat } from './inicializaChat.js';
+import userRoutes from './routes/userRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -63,6 +64,8 @@ app.post('/start-chat', (req, res) => {
     res.status(200).send({ message: 'Chat backend inicializado ou recuperado.' });
 });
 
+// Rotas da API de autenticação
+app.use('/api/users', userRoutes);
 
 // Inicia o servidor
 app.listen(port, () => {

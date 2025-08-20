@@ -1,149 +1,101 @@
-// assistente/js/app.js (Este arquivo é para o NAVEGADOR - FRONTEND)
-// Ele controla a interface do chatbot flutuante e se comunica com o seu backend Node.js.
+window.onload = function() {
+    console.log('Script app.js carregado e em execução.');
 
-// Mudei a URL para uma string vazia para que as requisições usem a mesma URL do site (vercel.app)
-const BACKEND_URL = ""; 
+    const chatbotWindow = document.getElementById('chatbot-window');
+    const toggleChatbotBtn = document.getElementById('toggle-chatbot-btn');
+    const closeChatbotBtn = document.getElementById('close-chatbot-btn');
+    const chatbox = document.getElementById('chatbox');
+    const userInput = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
 
-// Referências aos elementos DOM do chatbot flutuante
-const chatbotWindow = document.getElementById('chatbotWindow');
-const chatbotMessages = document.getElementById('chatbotMessages');
-const chatInput = document.getElementById('chatInput');
-const sendChatButton = document.getElementById('sendChatButton'); 
-
-// Adiciona event listeners assim que o DOM estiver carregado
-document.addEventListener('DOMContentLoaded', () => {
-    if (sendChatButton) {
-        sendChatButton.addEventListener('click', sendMessage);
-    } else {
-        console.error("Erro: Botão de envio do chat (ID 'sendChatButton') não encontrado no HTML. Verifique seu index.html.");
-    }
-    
-    if (chatInput) {
-        chatInput.addEventListener('keyup', function(event) {
-            event.preventDefault();
-            if (event.key === 'Enter') { 
-                sendMessage();
-            }
-        });
-    } else {
-        console.error("Erro: Campo de input do chat (ID 'chatInput') não encontrado no HTML. Verifique seu index.html.");
-    }
-});
-
-
-// Função para alternar a visibilidade da janela do chatbot
-async function toggleChatbot() {
-    if (!chatbotWindow) {
-        console.error("Erro: Elemento 'chatbotWindow' não encontrado no HTML. O chatbot não pode ser exibido/ocultado. Verifique seu index.html.");
-        return;
-    }
-    
-    chatbotWindow.classList.toggle('hidden'); // Alterna a classe 'hidden' para mostrar/esconder
-
-    // Se a janela estiver sendo aberta, tenta iniciar/recuperar o chat no backend
-    if (!chatbotWindow.classList.contains('hidden')) {
-        // Se a janela de mensagens estiver vazia, significa que é a primeira vez que abrimos o chat nesta sessão.
-        if (chatbotMessages && chatbotMessages.children.length === 0) {
-            addMessageToChat('Conectando ao assistente...', 'bot-typing'); 
-            try {
-                // Chama a rota /start-chat do backend para inicializar a instância do Gemini
-                const response = await fetch(`${BACKEND_URL}/start-chat`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                });
-                const result = await response.json();
-                console.log(result.message);
-
-                // Remove o typing indicator
-                const typingIndicator = document.querySelector('.message-bubble.bot-typing');
-                if (typingIndicator) {
-                    typingIndicator.remove();
-                }
-
-                // Adiciona a mensagem inicial do bot. Ela vem do histórico configurado no backend.
-                // Aqui estamos adicionando uma mensagem padrão para iniciar a UI.
-                addMessageToChat("Olá! Estou pronto para ajudar!", 'bot'); 
-
-            } catch (error) {
-                console.error("Erro ao iniciar/recuperar chat no backend:", error);
-                const typingIndicator = document.querySelector('.message-bubble.bot-typing');
-                if (typingIndicator) {
-                    typingIndicator.remove();
-                }
-                addMessageToChat("Não foi possível conectar ao assistente no momento. Verifique se o servidor Node.js está rodando.", 'bot');
-            }
-        }
-        // Foca no input quando o chat é aberto
-        chatInput.focus();
-    }
-}
-
-
-// Função para enviar uma mensagem para o chatbot (via backend)
-async function sendMessage() {
-    const message = chatInput.value.trim();
-    if (message === "") return;
-
-    addMessageToChat(message, 'user'); // Adiciona a mensagem do usuário ao chat
-    chatInput.value = ''; // Limpa o campo de input
-
-    addMessageToChat('Digitando...', 'bot-typing');
-
-    try {
-        // Envia a mensagem para o backend (rota /chat)
-        const response = await fetch(`${BACKEND_URL}/chat`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({'mensagem': message }) 
-        });
-
-        const respostaDoBackend = await response.json();
-
-        // Remove o typing indicator
-        const typingIndicator = document.querySelector('.message-bubble.bot-typing');
-        if (typingIndicator) {
-            typingIndicator.remove();
-        }
-
-        if (respostaDoBackend.response) { 
-            addMessageToChat(respostaDoBackend.response, 'bot');
-        } else if (respostaDoBackend.error) {
-            addMessageToChat(`Erro do assistente: ${respostaDoBackend.error}`, 'bot');
-            console.error("Erro do backend:", respostaDoBackend.error);
-        } else {
-            addMessageToChat("Desculpe, não consegui obter uma resposta válida. Tente novamente.", 'bot');
-        }
-
-    } catch (error) {
-        const typingIndicator = document.querySelector('.message-bubble.bot-typing');
-        if (typingIndicator) {
-            typingIndicator.remove();
-        }
-        addMessageToChat("Ops! Houve um erro de conexão com o servidor. Verifique se o backend está rodando.", 'bot');
-        console.error("Erro de rede ou servidor:", error);
-    }
-
-    if (chatbotMessages) {
-        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-    }
-}
-
-// Função para adicionar uma bolha de mensagem ao chat
-function addMessageToChat(text, sender) {
-    if (!chatbotMessages) {
-        console.error("Erro: Elemento 'chatbotMessages' não encontrado no HTML. Não é possível adicionar a mensagem.");
+    if (!chatbotWindow || !toggleChatbotBtn || !closeChatbotBtn || !chatbox || !userInput || !sendBtn) {
+        console.error('Um ou mais elementos do DOM não foram encontrados. Verifique os IDs no seu arquivo index.html.');
         return;
     }
 
-    const messageBubble = document.createElement('div');
-    messageBubble.classList.add('message-bubble', sender); 
+    let isChatbotVisible = false;
 
-    if (sender === 'bot-typing') {
-        messageBubble.innerHTML = '<i class="fas fa-ellipsis-h animate-pulse"></i>'; 
-    } else {
-        messageBubble.innerText = text;
-    }
-    
-    chatbotMessages.appendChild(messageBubble); 
-    chatbotMessages.scrollTop = chatbotMessages.scrollHeight; 
-}
+    const apiUrl = "/chat"; 
+
+    const toggleChatbot = () => {
+        isChatbotVisible = !isChatbotVisible;
+        chatbotWindow.style.display = isChatbotVisible ? 'flex' : 'none';
+        toggleChatbotBtn.style.display = isChatbotVisible ? 'none' : 'flex';
+    };
+
+    toggleChatbotBtn.addEventListener('click', toggleChatbot);
+    closeChatbotBtn.addEventListener('click', toggleChatbot);
+
+    const addMessage = (sender, message) => {
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message', sender);
+        messageElement.innerHTML = `<div class="message-text">${message}</div>`;
+        chatbox.appendChild(messageElement);
+        chatbox.scrollTop = chatbox.scrollHeight;
+    };
+
+    const showTypingIndicator = () => {
+        const typingIndicator = document.createElement('div');
+        typingIndicator.classList.add('message', 'bot', 'typing-indicator');
+        typingIndicator.innerHTML = `<div class="message-text"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>`;
+        chatbox.appendChild(typingIndicator);
+        chatbox.scrollTop = chatbox.scrollHeight;
+        return typingIndicator;
+    };
+
+    const removeTypingIndicator = (indicator) => {
+        if (indicator) {
+            chatbox.removeChild(indicator);
+        }
+    };
+
+    const sendMessageToGemini = async (message) => {
+        const typingIndicator = showTypingIndicator();
+        addMessage('user', message);
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mensagem: message }) // ✅ payload correto
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error('Erro na resposta da API:', response.status, response.statusText, errorData);
+                throw new Error(`Erro na API: ${response.status} ${response.statusText}`);
+            }
+
+            const result = await response.json();
+            const botResponse = result.response; // ✅ resposta tratada no backend
+
+            removeTypingIndicator(typingIndicator);
+            addMessage('bot', botResponse);
+
+        } catch (error) {
+            console.error('Erro ao chamar a API do Gemini:', error);
+            removeTypingIndicator(typingIndicator);
+            addMessage('bot', "Desculpe, houve um erro ao se comunicar com a IA. Tente novamente mais tarde.");
+        }
+    };
+
+    addMessage('bot', "Olá! Como posso te ajudar hoje com a acessibilidade ou sobre o MindED?");
+
+    sendBtn.addEventListener('click', async () => {
+        const message = userInput.value.trim();
+        if (message) {
+            userInput.value = '';
+            await sendMessageToGemini(message);
+        }
+    });
+
+    userInput.addEventListener('keypress', async (event) => {
+        if (event.key === 'Enter') {
+            const message = userInput.value.trim();
+            if (message) {
+                userInput.value = '';
+                await sendMessageToGemini(message);
+            }
+        }
+    });
+};

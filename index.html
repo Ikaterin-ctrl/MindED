@@ -1,67 +1,63 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MindED – Boas-vindas</title>
-  <link rel="stylesheet" href="style-glass.css" />
-  <link rel="stylesheet" href="assistente/static/chatbot.css" />
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>MindED – Boas-vindas</title>
+    <link rel="stylesheet" href="style-glass.css" />
+    <link rel="stylesheet" href="assistente/static/chatbot.css" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <!-- Cabeçalho -->
- <header class="header">
+    <!-- Cabeçalho -->
+    <header class="header">
         <div class="header-logo">
             <img src="/assets/MindED_logo-removebg-preview.png" alt="MindED Logo" />
-            
         </div>
         <nav class="header-nav">
             <a href="upload.html">Inicio</a>
             <a href="conteudo.html">Conteúdos</a>
             <a href="preferencias.html">Preferências</a>
             <button id="theme-toggle"><i class="fas fa-moon"></i></button>
-
         </nav>
     </header>
 
-    <!-- HTML do Chatbot Flutuante -->
-    <div class="chatbot-fab" onclick="toggleChatbot()">
+    <!-- Botão flutuante para abrir o chatbot -->
+    <!-- O evento onClick será adicionado pelo JavaScript para evitar conflitos -->
+    <button id="toggle-chatbot-btn" class="chatbot-toggle-btn">
         <i class="fas fa-comment-dots"></i>
-    </div>
+    </button>
 
-    <!-- Janela do Chatbot (começa oculta com a classe 'hidden') -->
-    <div id="chatbotWindow" class="chatbot-window hidden">
+    <!-- Janela do chatbot -->
+    <div id="chatbot-window" class="chatbot-window">
         <div class="chatbot-header">
             <span>Assistente MindED</span>
-            <button onclick="toggleChatbot()"><i class="fas fa-times"></i></button>
+            <button id="close-chatbot-btn" class="close-btn">&times;</button>
         </div>
-        <div id="chatbotMessages" class="chatbot-messages flex flex-col">
-            <!-- Mensagem inicial do Chatbot -->
-            <div class="message-bubble bot">Olá! Como posso te ajudar hoje com a acessibilidade ou sobre o MindED?</div>
+        <div id="chatbox" class="chatbox">
+            <!-- Mensagens do chat serão adicionadas aqui -->
         </div>
-        <div id="chatbotMessages" class="chatbot-messages flex flex-col">
-            <!-- As mensagens serão adicionadas dinamicamente via JavaScript -->
-        </div>
-        <div class="chatbot-input-area">
-            <input type="text" id="chatInput" placeholder="Digite sua mensagem...">
-            <button id="sendChatButton"><i class="fas fa-paper-plane"></i></button>
+        <div class="chatbot-footer">
+            <input type="text" id="user-input" placeholder="Digite sua mensagem...">
+            <button id="send-btn" class="send-btn">
+                <i class="fas fa-paper-plane"></i>
+            </button>
         </div>
     </div>
 
-  <!-- Hero Onboarding -->
-  <div class="hero-onboarding">
-    <img src="/assets/MindED_logo-removebg-preview.png" alt="MindED Logo" class="logo-hero"/>
-    <div id="typed-text" class="typed-text">Transforme seu aprendizado.</div>
-    <a href="upload.html" class="btn-start">Começar</a>
-  </div>
+    <!-- Hero Onboarding -->
+    <div class="hero-onboarding">
+        <img src="/assets/MindED_logo-removebg-preview.png" alt="MindED Logo" class="logo-hero"/>
+        <div id="typed-text" class="typed-text">Transforme seu aprendizado.</div>
+        <a href="upload.html" class="btn-start">Começar</a>
+    </div>
 
-  <!-- Scripts -->
-  <script src="js/typed-text.js"></script>
-  <script src="js/main.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <script src="assistente/js/app.js"></script>
+    <!-- Scripts -->
+    <script src="js/typed-text.js"></script>
+    <script src="js/main.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="assistente/js/app.js"></script>
 </body>
 </html>

@@ -1,5 +1,6 @@
 // assistente/server/inicializaChat.js
-// O pacote 'dotenv' é apenas para o ambiente de desenvolvimento local.
+// O pacote 'dotenv' é apenas para o ambiente de desenvolvimento local
+
 // No Vercel, as variáveis de ambiente são lidas automaticamente, então não precisamos do dotenv.
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
@@ -13,7 +14,7 @@ const chat = model.startChat({
     history: [
     {
         role: "user",
-        parts: [{ text: "Você é o Assistente MindED, um chatbot amigável e focado em educação personalizada e acessibilidade. Seu objetivo é ajudar usuários com dúvidas sobre o MindED, suas preferências de aprendizado e perfil cognitivo. Não se identifique como 'Jordi' ou 'Jornada Viagens' e não inicie a conversa pedindo nome e e-mail. Sempre seja útil e acolhedor." }],
+        parts: [{ text: "Você é o Assistente MindED, um chatbot amigável e focado em educação personalizada e acessibilidade. Seu objetivo é ajudar usuários com dúvidas sobre o MindED, suas preferências de aprendizado e perfil cognitivo." }],
     },
     {
         role: "model",
@@ -24,7 +25,6 @@ const chat = model.startChat({
     maxOutputTokens: 1000,
     },
 });
-
 
 function inicializaChat () {
     console.log("Chat Gemini inicializado para MindED.");

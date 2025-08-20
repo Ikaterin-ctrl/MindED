@@ -21,49 +21,45 @@
 
 <body>
 
-<header class="container mt-3">
-        <nav class="navbar navbar-expand-lg">
-            <div class="container">
-                <a class="navbar-brand logo-text" href="#">
-                    <i class="fa-solid fa-brain logo-icon"></i>
-                    MindED
-                </a>
+<header class="minded-header">
+    <nav class="navbar navbar-expand-lg">
+        <div class="container"> <!-- MANTENHA ESTE CONTAINER AQUI -->
+            <a class="navbar-brand logo-text" href="#">
+                <i class="fa-solid fa-brain logo-icon"></i>
+                MindED
+            </a>
             
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                    <i class="fa-solid fa-bars"></i>
-                </button>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fa-solid fa-bars"></i>
+            </button>
 
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link" href="#sobre">Sobre</a>
-                        </li>
-                        <!-- ALTERADO: Link para a nova seção "Quem Somos" -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="#quem-somos">Quem Somos</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#solucoes">Soluções</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#equipe">Equipe</a>
-                        </li>
-                        
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#contato">Contato</a>
-                        </li>
-                        <!-- Link para a página de Login/Cadastro -->
-                        <li class="nav-item">
-                            <a class="nav-link btn btn-primary text-white ms-lg-3" href="login2.html">Entrar / Cadastrar</a>
-                        </li>
-                    </ul>
-                </div>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#sobre">Sobre</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#quem-somos">Quem Somos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#solucoes">Soluções</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#equipe">Equipe</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contato">Contato</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-primary text-white ms-lg-3" href="login2.html">Entrar / Cadastrar</a>
+                    </li>
+                </ul>
             </div>
-        </nav>
-    </header>
+        </div>
+    </nav>
+</header>
 
     <!-- --------------------------------- sobre --------------------------------- -->
     <section class="container mt-5 sobre" id="sobre">
@@ -71,7 +67,6 @@
             <div class="col-lg-6">
                 <h2 class="title display-5 my-4">MindED: Aprendizagem Inclusiva.</h2>
                 <h3 class="mb-4">Nosso objetivo é tornar a aprendizagem mais inclusiva e eficaz para pessoas neurodivergentes, adaptando conteúdos educacionais ao perfil cognitivo de cada usuário.</h3>
-                <p class="mb-4">A plataforma MindED visa promover a autonomia, a permanência e o engajamento através da personalização de experiências educacionais, utilizando inteligência artificial para otimizar seus estudos e pesquisas.</p>
                 <a href="#solucoes" class="btn btn-primary btn-lg">Descubra nossas soluções <i class="fa-solid fa-arrow-right-long ms-1"></i></a>
             </div>
 
@@ -81,6 +76,8 @@
             </div>
         </div>
     </section>
+
+<hr>
 
 <!-- Seção "Quem Somos"  -->
     <section class="container my-5" id="quem-somos">
@@ -100,6 +97,7 @@
         </div>
     </section>
 
+<hr>
     <section class="container my-5" id="solucoes">
     <h4 class="my-title text-center my-mt">Soluções</h4>
     <h3 class="text-center my-title mb-4">Descubra as funcionalidades essenciais do MindED</h3>
@@ -170,208 +168,45 @@
         </div>
     </div> 
 </section>
-<section class="container my-5" id="equipe">
-    <h4 class="my-title text-center my-mt">Equipe</h4>
-    <h3 class="text-center my-title mb-4">Conheça os cérebros por trás do MindED</h3>
-    <div class="row d-flex align-items-stretch justify-content-center">
-        
-        <div class="col-lg-3 my-2">
-            <div class="card text-center">
-                <img src="https://placehold.co/300x300/F0F8FF/5F4772?text=Jess" class="card-img-top" alt="Jess - API de IA e Front-end">
-                <div class="card-body d-flex flex-column">
-                    <h4 class="my-title my-3">Jess</h4>
-                    <p class="card-text mb-4 flex-grow-1">Jess desenvolve o chatbot de conversação e a transformação inteligente de conteúdo. Também contribui para o Front-end.</p>
-                    <div class="my-mt-5 mt-auto">
-                        <a href="#"><i class="fa-brands fa-linkedin icon-social mx-2"></i></a>
-                        <a href="#"><i class="fa-brands fa-github icon-social mx-2"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <div class="col-lg-3 my-2">
-            <div class="card text-center">
-                <img src="https://placehold.co/300x300/F0F8FF/5F4772?text=Catarina" class="card-img-top" alt="Catarina - HTML/CSS e API de IA">
-                <div class="card-body d-flex flex-column">
-                    <h4 class="my-title my-3">Catarina</h4>
-                    <p class="card-text mb-4 flex-grow-1">Fundamental na finalização do HTML e adaptação de CSS para perfis cognitivos (TDAH, autismo). Colabora também na API de IA do chatbot.</p>
-                    <div class="my-mt-5 mt-auto">
-                        <a href="#"><i class="fa-brands fa-linkedin icon-social mx-2"></i></a>
-                        <a href="#"><i class="fa-brands fa-github icon-social mx-2"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <!-- ------------------------------------------------ contato ------------------------------------------------ -->
+<section class="contact-section py-5" id="contato">
+    <div class="container text-center py-5">
+        <h2 class="contact-title mb-3">Fale Conosco</h2>
+        <p class="contact-subtitle mb-5">
+            Estamos prontos para transformar seu aprendizado.
+        </p>
 
-        <div class="col-lg-3 my-2">
-            <div class="card text-center">
-                <img src="https://placehold.co/300x300/F0F8FF/5F4772?text=Diana" class="card-img-top" alt="Diana - CSS e Front-end">
-                <div class="card-body d-flex flex-column">
-                    <h4 class="my-title my-3">Diana</h4>
-                    <p class="card-text mb-4 flex-grow-1">No Front-end, Diana foca na adaptação de CSS para telas de login/cadastro, preferências de cor, modo noturno e fonte para disléxicos.</p>
-                    <div class="my-mt-5 mt-auto">
-                        <a href="#"><i class="fa-brands fa-linkedin icon-social mx-2"></i></a>
-                        <a href="#"><i class="fa-brands fa-github icon-social mx-2"></i></a>
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <div class="contact-card p-5 rounded-lg shadow-lg">
+                    <div class="contact-icon mb-4">
+                        <i class="fas fa-envelope fa-3x"></i>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-3 my-2">
-            <div class="card text-center">
-                <img src="https://placehold.co/300x300/F0F8FF/5F4772?text=Fernando" class="card-img-top" alt="Fernando - Backend">
-                <div class="card-body d-flex flex-column">
-                    <h4 class="my-title my-3">Fernando</h4>
-                    <p class="card-text mb-4 flex-grow-1">No Backend, Fernando é essencial no desenvolvimento do banco de dados e APIs para login, upload e feedback do usuário, utilizando Java e AWS.</p>
-                    <div class="my-mt-5 mt-auto">
-                        <a href="#"><i class="fa-brands fa-linkedin icon-social mx-2"></i></a>
-                        <a href="#"><i class="fa-brands fa-github icon-social mx-2"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-3 my-2">
-            <div class="card text-center">
-                <img src="https://placehold.co/300x300/F0F8FF/5F4772?text=Miguel" class="card-img-top" alt="Miguel - Backend">
-                <div class="card-body d-flex flex-column">
-                    <h4 class="my-title my-3">Miguel</h4>
-                    <p class="card-text mb-4 flex-grow-1">No Backend, Miguel contribui para a modelagem do banco de dados e a criação das APIs que sustentam login, upload e feedback da plataforma (Java + AWS).</p>
-                    <div class="my-mt-5 mt-auto">
-                        <a href="#"><i class="fa-brands fa-linkedin icon-social mx-2"></i></a>
-                        <a href="#"><i class="fa-brands fa-github icon-social mx-2"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-3 my-2">
-            <div class="card text-center">
-                <img src="https://placehold.co/300x300/F0F8FF/5F4772?text=Luiz+Felipe" class="card-img-top" alt="Luiz Felipe - Controle de Qualidade e Backend">
-                <div class="card-body d-flex flex-column">
-                    <h4 class="my-title my-3">Luiz Felipe</h4>
-                    <p class="card-text mb-4 flex-grow-1">Luiz Felipe é responsável pelo Controle de Qualidade, garantindo a robustez do MindED.</p>
-                    <div class="my-mt-5 mt-auto">
-                        <a href="#"><i class="fa-brands fa-linkedin icon-social mx-2"></i></a>
-                        <a href="#"><i class="fa-brands fa-github icon-social mx-2"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-3 my-2">
-            <div class="card text-center">
-                <img src="https://placehold.co/300x300/F0F8FF/5F4772?text=Enzo+C" class="card-img-top" alt="Enzo Cortez - CSS e Front-end">
-                <div class="card-body d-flex flex-column">
-                    <h4 class="my-title my-3">Enzo Cortez</h4>
-                    <p class="card-text mb-4 flex-grow-1">No Front-end, Enzo foca na adaptação de CSS para telas de login/cadastro, preferências de cor, modo noturno e fonte para disléxicos.</p>
-                    <div class="my-mt-5 mt-auto">
-                        <a href="#"><i class="fa-brands fa-linkedin icon-social mx-2"></i></a>
-                        <a href="#"><i class="fa-brands fa-github icon-social mx-2"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-3 my-2">
-            <div class="card text-center">
-                <img src="https://placehold.co/300x300/F0F8FF/5F4772?text=Enzo+D" class="card-img-top" alt="Enzo - Design de Interface">
-                <div class="card-body d-flex flex-column">
-                    <h4 class="my-title my-3">Enzo</h4>
-                    <p class="card-text mb-4 flex-grow-1">Responsável pelo Design de Interface, Enzo garante que a experiência visual do MindED seja intuitiva, acessível e agradável para todos os usuários.</p>
-                    <div class="my-mt-5 mt-auto">
-                        <a href="#"><i class="fa-brands fa-linkedin icon-social mx-2"></i></a>
-                        <a href="#"><i class="fa-brands fa-github icon-social mx-2"></i></a>
+                    <h3 class="contact-heading mb-3">Envie-nos um E-mail</h3>
+                    <p class="contact-text mb-4">
+                        Tem alguma dúvida, sugestão ou quer saber mais sobre o MindED?
+                        Nosso time está pronto para te ajudar!
+                    </p>
+                    <div class="email-addresses">
+                        <p class="email-link">
+                            <a href="mailto:suporte@minded.com.br" class="text-decoration-none">suporte@minded.com.br</a>
+                        </p>
+                        <p class="email-link">
+                            <a href="mailto:contato@minded.com.br" class="text-decoration-none">contato@minded.com.br</a>
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
-
-    <!-- ------------------------------------------------ contato ------------------------------------------------ -->
-    <section class="container-fluid bg-blue-2 mt-5" id="contato">
-        <div class="container py-5">
-            <h4 class="my-title text-center">Contato</h4>
-            <h3 class="my-title text-center mb-4">Fale conosco e comece a transformar seu aprendizado</h3>
-
-            <div class="row mt-5">
-                <div class="col-lg-6">
-                    <div class="row">
-                        <div class="col-lg-6 my-4 text-center">
-                            <p>
-                                <i class="fa-solid fa-location-dot icon-contato"></i>
-                            </p>
-                            <h3>Nosso Escritório</h3>
-                            <p>Rua da Inovação, 123 <br>
-                                São Paulo - SP, Brasil</p>
-                        </div>
-                        <div class="col-lg-6 my-4 text-center">
-                            <p>
-                                <i class="fa-solid fa-phone icon-contato"></i>
-                            </p>
-                            <h3>Telefone</h3>
-                            <p>(11) 99999-9999 <br>
-                                (11) 88888-8888</p>
-                        </div>
-                        <div class="col-lg-6 my-4 text-center">
-                            <p>
-                                <i class="fa-solid fa-envelope icon-contato"></i>
-                            </p>
-                            <h3>Email</h3>
-                            <p>suporte@minded.com.br <br>
-                                contato@minded.com.br</p>
-                        </div>
-                        <div class="col-lg-6 my-4 text-center">
-                            <p>
-                                <i class="fa-solid fa-clock icon-contato"></i>
-                            </p>
-                            <h3>Atendimento</h3>
-                            <p>Segunda - Sexta <br>
-                                09:00 - 18:00 (Horário de Brasília)</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-6">
-                    <form action="">
-                        <div class="row text-start">
-                            <div class="col-lg-6 my-3">
-                                <label for="nome" class="form-label">Seu nome</label>
-                                <input type="text" class="form-control" id="nome" placeholder="Seu nome completo">
-                            </div>
-                            <div class="col-lg-6 my-2">
-                                <label for="email" class="form-label">Seu email</label>
-                                <input type="email" class="form-control" id="email" placeholder="seu.email@exemplo.com">
-                            </div>
-                            <div class="col-lg-6 my-2">
-                                <label for="fone" class="form-label">Seu Telefone (opcional)</label>
-                                <input type="tel" class="form-control" id="fone" placeholder="(xx) xxxxx-xxxx">
-                            </div>
-                            <div class="col-lg-6 my-2">
-                                <label for="assunto" class="form-label">Assunto</label>
-                                <input type="text" class="form-control" id="assunto" placeholder="Assunto da mensagem">
-                            </div>
-                            <div class="col-lg-12 my-2">
-                                <label for="mensagemm" class="form-label">Mensagem</label>
-                                <textarea name="mensagem" id="mensagemm" placeholder="Sua mensagem para a equipe MindED"
-                                    class="form-control"></textarea>
-                            </div>
-                            <div class="col-lg-12 my-2 d-flex justify-content-end">
-                                <button type="submit" class="btn btn-primary">Enviar Mensagem</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
     <!-- ------------------------------------------------ fim contato ------------------------------------------------ -->
 
     <!-- Rodapé -->
     <footer class="footer">
         <div class="container">
-            <p class="text-white">&copy; 2024 MindED. Todos os direitos reservados.</p>
+            <p class="text-white">&copy; 2025 MindED. Todos os direitos reservados.</p>
         </div>
     </footer>
 </body>

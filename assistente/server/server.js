@@ -33,7 +33,7 @@ app.use(cors({
 app.use(express.static(join(__dirname, '..', '..'), { extensions: ['html', 'css', 'svg', 'js', 'png'] }));
 
 // Rota inicial para servir o index.html
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   inicializaChat(); // Chama a função para inicializar o chat Gemini no backend
   res.sendFile(join(__dirname, '..', '..', 'index.html')); // Serve o index.html da raiz
 });
@@ -57,7 +57,7 @@ app.post('/chat', async (req, res) => {
 });
 
 // Rota para o frontend 'iniciar' o chat (só para garantir que a instância do backend esteja pronta)
-app.post('/start-chat', (req, res) => {
+app.post('/start-chat', (_req, res) => {
     inicializaChat(); // Garante que a instância do chat Gemini está pronta
     res.status(200).send({ message: 'Chat backend inicializado ou recuperado.' });
 });

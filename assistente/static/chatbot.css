@@ -1,0 +1,139 @@
+/* Estilos específicos para o chatbot */
+
+/* Estilos do botão flutuante (FAB) do chatbot */
+.chatbot-fab {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-image: linear-gradient(to right, #6A82FB 0%, #FC5C7D 100%);
+    color: white;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    cursor: pointer;
+    z-index: 1000;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.chatbot-fab:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+/* Estilos da janela do chatbot */
+.chatbot-window {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 350px; /* Largura padrão para mobile/tablet */
+    height: 450px;
+    background-color: #FFFFFF; /* Fundo branco para a janela */
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 999;
+    animation: slideUp 0.3s ease-out; /* Animação de entrada */
+}
+.chatbot-header {
+    background-image: linear-gradient(to right, #6A82FB 0%, #FC5C7D 100%); /* Gradiente no cabeçalho */
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    font-weight: 600;
+}
+.chatbot-header button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+.chatbot-messages {
+    flex-grow: 1; /* Permite que a área de mensagens ocupe o espaço restante */
+    padding: 15px;
+    overflow-y: auto; /* Adiciona rolagem se as mensagens excederem a altura */
+    background-color: #F0F2F5; /* Cinza claro para o fundo das mensagens */
+}
+.chatbot-input-area {
+    display: flex;
+    padding: 15px;
+    border-top: 1px solid #E0E0E0; /* Linha divisória acima do input */
+    background-color: #FFFFFF;
+}
+.chatbot-input-area input {
+    flex-grow: 1; /* Campo de input ocupa o máximo de espaço */
+    padding: 10px;
+    border: 1px solid #E0E0E0;
+    border-radius: 10px;
+    margin-right: 10px;
+    font-size: 0.95rem;
+}
+.chatbot-input-area button {
+    background-image: linear-gradient(to right, #6A82FB 0%, #FC5C7D 100%); /* Botão de envio com gradiente */
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+.chatbot-input-area button:hover {
+    opacity: 0.9;
+}
+/* Estilos das bolhas de mensagem */
+.message-bubble {
+    padding: 10px 15px;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    max-width: 80%; /* Limita a largura da bolha */
+    font-size: 0.95rem;
+}
+.message-bubble.user {
+    background-color: #E0E7FF; /* Azul claro para mensagens do usuário */
+    align-self: flex-end; /* Alinha à direita */
+    margin-left: auto; /* Empurra para a direita */
+    color: #343A40;
+}
+.message-bubble.bot {
+    background-color: #FFFFFF;
+    align-self: flex-start; /* Alinha à esquerda */
+    margin-right: auto; /* Empurra para a esquerda */
+    color: #343A40;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Sombra sutil para mensagens do bot */
+}
+.message-bubble.bot-typing {
+    background-color: #FFFFFF;
+    align-self: flex-start;
+    margin-right: auto;
+    color: #6C757D; /* Cor para o indicador de digitação */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* Animação para a janela do chatbot aparecer */
+@keyframes slideUp {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* Media Queries para responsividade do chatbot */
+@media (min-width: 768px) {
+    .chatbot-window {
+        width: 380px; /* Levemente mais largo em tablets */
+    }
+}
+@media (min-width: 1024px) {
+    .chatbot-window {
+        width: 400px; /* Mais largo em desktops */
+        height: 500px; /* Mais alto em desktops */
+    }
+}

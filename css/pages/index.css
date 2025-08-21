@@ -9,8 +9,8 @@
   padding: 60px 40px;
   gap: 50px;
   border-radius: 24px;
-  border: 1px solid rgba(255,255,255,0.2);
-  box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+  border: 1px solid rgba(255,255,255,0.1); /* Softer border */
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1); /* Softer shadow */
   transition: background 0.3s ease;
 }
 
@@ -22,7 +22,7 @@
   font-size: 1.6rem;
   font-weight: 400;
   color: var(--text-secondary);
-  text-shadow: 0 0 10px rgba(255,255,255,0.3);
+  text-shadow: none; /* Remove text shadow for cleaner look */
   height: 50px;
   line-height: 1.4;
 }

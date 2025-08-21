@@ -6,21 +6,22 @@
 }
 
 :root {
-  --bg-main: linear-gradient(135deg, #7fffd4, #b9a6f9, #aeefff);
-  --glass-bg: rgba(255, 255, 255, 0.08);
-  --text-primary: #ffffff;
-  --text-secondary: #cccccc;
-  --accent-start: #7fffd4;
-  --accent-end: #6bd1f3;
+  --bg-main: linear-gradient(135deg, #e0f7fa, #e8eaf6, #f0f4c3); /* Softer, pastel gradient */
+  --glass-bg: rgba(255, 255, 255, 0.05); /* Slightly less opaque */
+  --text-primary: #333333; /* Darker text for better contrast on light backgrounds */
+  --text-secondary: #666666;
+  --accent-start: #4CAF50; /* Green */
+  --accent-end: #2196F3; /* Blue */
+  --lavender-pastel: #E6E6FA;
 }
 
 [data-theme="dark"] {
-  --bg-main: #121419;
-  --glass-bg: rgba(0, 0, 0, 0.25);
+  --bg-main: #1a1a2e; /* Darker, more subtle dark background */
+  --glass-bg: rgba(0, 0, 0, 0.3); /* Slightly more opaque for dark mode */
   --text-primary: #e0e0e0;
-  --text-secondary: #888888;
-  --accent-start: #4bb3f7;
-  --accent-end: #7259e8;
+  --text-secondary: #aaaaaa;
+  --accent-start: #64FFDA; /* Brighter accent for dark mode */
+  --accent-end: #18FFFF;
 }
 
 body {
@@ -42,30 +43,31 @@ body {
 
 @media (prefers-color-scheme: light) {
   body {
-    color: #fff;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+    color: var(--text-primary); /* Use variable for consistency */
+    text-shadow: none; /* Remove text shadow for cleaner look */
   }
 
   h1, h2, h3, h4, h5, h6, p, span, a, label, li {
-    color: #fff;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+    color: var(--text-primary); /* Use variable for consistency */
+    text-shadow: none; /* Remove text shadow for cleaner look */
   }
 
   button, .btn {
-    color: #fff;
-    text-shadow: 0px 0px 2px #000;
+    color: #fff; /* Keep white for buttons on light background */
+    text-shadow: none; /* Remove text shadow */
+    background-color: var(--lavender-pastel);
   }
 
   /* Se tiver containers que ficam muito brancos no modo claro */
   .card, .login-form, .container, .box {
-    background-color: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.1); /* Slightly more visible glass */
+    backdrop-filter: blur(8px); /* Slightly less blur */
   }
 }
 
 body.light-mode {
-  color: #fff;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+  color: var(--text-primary);
+  text-shadow: none;
 }
 
 body.light-mode h1,
@@ -75,14 +77,15 @@ body.light-mode p,
 body.light-mode a,
 body.light-mode span,
 body.light-mode label {
-  color: #fff;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+  color: var(--text-primary);
+  text-shadow: none;
 }
 
 body.light-mode button,
 body.light-mode .btn {
   color: #fff;
-  text-shadow: 0 0 2px #000;
+  text-shadow: none;
+  background-color: var(--lavender-pastel);
 }
 
 html[data-theme="light"] body,
@@ -97,17 +100,23 @@ html[data-theme="light"] a,
 html[data-theme="light"] span,
 html[data-theme="light"] label,
 html[data-theme="light"] li {
-  color: #fff !important;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+  color: var(--text-primary) !important; /* Use variable for consistency */
+  text-shadow: none; /* Remove text shadow */
 }
 
 html[data-theme="light"] button,
 html[data-theme="light"] .btn {
   color: #fff !important;
-  text-shadow: 0px 0px 2px #000;
+  text-shadow: none;
+  background-color: var(--lavender-pastel) !important;
 }
 
 html[data-theme="light"] .typed-text {
-  color: #fff !important;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+  color: var(--text-primary) !important; /* Use variable for consistency */
+  text-shadow: none;
+}
+
+/* New rule for lavender links */
+a {
+  color: var(--lavender-pastel);
 }

@@ -11,10 +11,10 @@
   width: 100%;
   max-width: 900px;
   background: var(--glass-bg);
-  backdrop-filter: blur(15px);
-  border: 1px solid rgba(255,255,255,0.2);
+  backdrop-filter: blur(10px); /* Softer blur */
+  border: 1px solid rgba(255,255,255,0.1); /* Softer border */
   border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1); /* Softer shadow */
   padding: 40px;
   color: var(--text-primary);
   transition: background 0.3s ease;
@@ -71,10 +71,10 @@
   flex: 1;
   padding: 10px;
   border-radius: 8px;
-  border: none;
-  backdrop-filter: blur(10px);
-  background: rgba(255,255,255,0.1);
-  color: #fff;
+  border: 1px solid rgba(255,255,255,0.1); /* Add a subtle border */
+  backdrop-filter: blur(8px); /* Softer blur */
+  background: rgba(255,255,255,0.05); /* Softer background */
+  color: var(--text-primary); /* Use text primary for consistency */
 }
 
 .cards-grid {
@@ -84,11 +84,11 @@
 }
 
 .card {
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(12px);
+  background: var(--glass-bg); /* Use variable for consistency */
+  backdrop-filter: blur(8px); /* Softer blur */
   border-radius: 12px;
   padding: 16px;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* Softer shadow */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -102,19 +102,19 @@
 
 .card-title {
   font-size: 1.1rem;
-  color: #e0f7fa;
+  color: var(--text-primary); /* Use variable for consistency */
   margin-bottom: 8px;
 }
 
 .card-meta {
   font-size: 0.9rem;
-  color: #ccc;
+  color: var(--text-secondary); /* Use variable for consistency */
   margin-bottom: 16px;
 }
 
 .card-btn {
   margin-top: auto;
-  background: linear-gradient(135deg, #7fffd4, #6bd1f3);
+  background: linear-gradient(135deg, var(--accent-start), var(--accent-end)); /* Use variables for consistency */
   border: none;
   border-radius: 8px;
   padding: 10px 16px;

@@ -31,6 +31,7 @@
 
   <!-- Página de Upload -->
   <main class="upload-main">
+    <div id="notificationContainer" class="notification-container hidden"></div>
     <div class="upload-container">
       <h1>Vamos personalizar seu conteúdo</h1>
       <p>Envie o material que você quer estudar e escolha como deseja receber.</p>
@@ -46,9 +47,9 @@
       <button
         class="upload-btn"
         id="uploadBtn"
-        onclick="location.href='preferencias.html'"
       >
-        Enviar
+        <span class="button-text">Enviar</span>
+        <span class="spinner hidden"><i class="fas fa-spinner fa-spin"></i></span>
       </button>
 
       <p class="upload-preview-text">

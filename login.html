@@ -31,26 +31,31 @@
       <h1>Bem-vindo(a) ao <span class="highlight">MindED</span></h1>
       <p class="small-text">Seu ambiente de aprendizado adaptado</p>
 
-      <button  class="enter-login-btn"  onclick="loginComGoogle()">
-        <img id="google-icon" src="/assets/google-icon.png" alt="Google Icon" class="google-icon" /> Entrar com Google
-      </button>
+      <div class="tab-buttons">
+        <button class="tab-button active" data-tab="login">Entrar</button>
+        <button class="tab-button" data-tab="register">Cadastrar</button>
+      </div>
 
-      <form onsubmit="loginEmailSenha(event)">
-        <input type="email" placeholder="E-mail" required class="input-login" />
-        <input type="password" placeholder="Senha" required class="input-login" />
-        <button type="submit" class="enter-login-btn">Entrar</button>
-      </form>
+      <div id="login-tab" class="tab-content active">
+        <button  class="enter-login-btn"  onclick="loginComGoogle()">
+          <img id="google-icon" src="/assets/google-icon.png" alt="Google Icon" class="google-icon" /> Entrar com Google
+        </button>
 
-      <p class="small-text">
-        Não tem conta? <a href="#" id="btn-criar" onclick="mostrarCadastro()">Criar</a>
-      </p>
+        <form onsubmit="loginEmailSenha(event)">
+          <input type="email" placeholder="E-mail" required class="input-login" />
+          <input type="password" placeholder="Senha" required class="input-login" />
+          <button type="submit" class="enter-login-btn">Entrar</button>
+        </form>
+      </div>
 
-      <form class="cadastro-form" style="display:none;" onsubmit="cadastrar(event)">
-        <input type="text" placeholder="Nome completo" required class="input-login" />
-        <input type="email" placeholder="E-mail" required class="input-login" />
-        <input type="password" placeholder="Criar senha" required class="input-login" />
-        <button type="submit" class="enter-login-btn">Cadastrar</button>
-      </form>
+      <div id="register-tab" class="tab-content hidden">
+        <form onsubmit="cadastrar(event)">
+          <input type="text" placeholder="Nome completo" required class="input-login" />
+          <input type="email" placeholder="E-mail" required class="input-login" />
+          <input type="password" placeholder="Criar senha" required class="input-login" />
+          <button type="submit" class="enter-login-btn">Cadastrar</button>
+        </form>
+      </div>
     </div>
   </main>
 
@@ -71,15 +76,8 @@
     </div>
   </div>
 
-  <!-- script de login removido -->
+  <!-- Scripts -->
   <script src="./js/theme-toggle.js" defer></script>
-  <script>
-    function mostrarCadastro() {
-      const loginForm = document.querySelector('.login-form form');
-      const cadastroForm = document.querySelector('.cadastro-form');
-      loginForm.style.display = 'none';
-      cadastroForm.style.display = 'block';
-    }
-  </script>
+  <script src="./js/login.js" defer></script>
 </body>
 </html>

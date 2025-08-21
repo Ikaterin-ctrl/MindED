@@ -4,8 +4,35 @@
 const API_BASE = window.API_BASE_URL;
 
 // Função para exibir erros de forma amigável
-function showErrorMessage(msg) {
-  alert(msg); // você pode trocar por um banner no DOM
+function showErrorMessage(msg, type = 'error') {
+  showNotification(msg, type);
+}
+
+// Função para exibir notificações (sucesso/erro)
+function showNotification(message, type) {
+  const notificationContainer = document.getElementById('notificationContainer');
+  if (!notificationContainer) {
+    console.error('Notification container not found!');
+    alert(message); // Fallback to alert if container not found
+    return;
+  }
+
+  // Clear existing notifications
+  notificationContainer.innerHTML = '';
+  notificationContainer.classList.remove('hidden');
+
+  const notification = document.createElement('div');
+  notification.classList.add('notification', type);
+  notification.textContent = message;
+  notificationContainer.appendChild(notification);
+
+  // Hide after 5 seconds
+  setTimeout(() => {
+    notification.remove();
+    if (notificationContainer.children.length === 0) {
+      notificationContainer.classList.add('hidden');
+    }
+  }, 5000);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -13,6 +40,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const fileInput    = document.getElementById('fileUpload');
   const uploadBtn    = document.getElementById('uploadBtn');
   const adaptedPanel = document.getElementById('adapted-content');
+  const buttonText   = uploadBtn.querySelector('.button-text');
+  const spinner      = uploadBtn.querySelector('.spinner');
+
+  function showLoading(isLoading, text) {
+    uploadBtn.disabled = isLoading;
+    buttonText.textContent = text;
+    if (isLoading) {
+      buttonText.classList.add('hidden');
+      spinner.classList.remove('hidden');
+    } else {
+      buttonText.classList.remove('hidden');
+      spinner.classList.add('hidden');
+    }
+  }
 
   // 1) Configura Dropzone (clique, drag&drop, mostrar nome)
   dropzone.addEventListener('click', () => fileInput.click());
@@ -42,8 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return window.location.href = 'login.html';
     }
 
-    uploadBtn.disabled    = true;
-    uploadBtn.textContent = 'Verificando preferências…';
+    showLoading(true, 'Verificando preferências…');
 
     // Busca preferências do usuário
     let prefs;
@@ -62,13 +102,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Usuário está logado e tem prefs → prossegue para upload
     const file = fileInput.files[0];
     if (!file) {
-      showErrorMessage('Selecione um arquivo antes de enviar.');
-      uploadBtn.disabled    = false;
-      uploadBtn.textContent = 'Enviar e Adaptar com IA';
+      showErrorMessage('Selecione um arquivo antes de enviar.', 'error');
+      showLoading(false, 'Enviar e Adaptar com IA');
       return;
     }
 
-    uploadBtn.textContent = 'Enviando e Adaptando…';
+    showLoading(true, 'Enviando e Adaptando…');
     try {
       const form = new FormData();
       form.append('content', file);
@@ -83,13 +122,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const adapted = await res.json();
       adaptedPanel.innerHTML = adapted.html;
       adaptedPanel.hidden    = false;
-      uploadBtn.textContent = 'Readaptar';
+      showLoading(false, 'Readaptar');
     } catch (err) {
       console.error('Erro ao processar conteúdo:', err);
-      showErrorMessage('Erro ao processar seu conteúdo.');
-      uploadBtn.textContent = 'Enviar e Adaptar com IA';
+      showErrorMessage('Erro ao processar seu conteúdo.', 'error');
+      showLoading(false, 'Enviar e Adaptar com IA');
     } finally {
-      uploadBtn.disabled = false;
+      // The showLoading(false) is already called in success/error paths,
+      // but it's good practice to ensure it's always reset.
+      // However, in this specific case, the button text is set based on the outcome,
+      // so we'll rely on the specific calls.
     }
   });
 });

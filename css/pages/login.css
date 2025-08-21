@@ -160,3 +160,36 @@ body {
 #google-icon{
   width: 1rem;
 }
+
+/* Tab styles */
+.tab-buttons {
+  display: flex;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.tab-button {
+  flex: 1;
+  padding: 10px 15px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: color 0.3s ease, border-bottom 0.3s ease;
+  border-bottom: 2px solid transparent;
+}
+
+.tab-button:hover {
+  color: var(--accent-start);
+}
+
+.tab-button.active {
+  color: var(--accent-end);
+  border-bottom: 2px solid var(--accent-end);
+  font-weight: bold;
+}
+
+.tab-content.hidden {
+  display: none;
+}

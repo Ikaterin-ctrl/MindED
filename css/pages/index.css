@@ -82,3 +82,31 @@
     font-size: 1rem;
   }
 }
+
+.value-proposition {
+  text-align: center;
+  margin-top: 20px;
+  max-width: 600px;
+  padding: 0 20px;
+}
+
+.value-proposition h2 {
+  font-size: 2rem;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+
+.value-proposition p {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+@media (max-width: 600px) {
+  .value-proposition h2 {
+    font-size: 1.5rem;
+  }
+  .value-proposition p {
+    font-size: 1rem;
+  }
+}

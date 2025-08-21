@@ -4,8 +4,35 @@
 const API_BASE = window.API_BASE_URL;
 
 // Função para exibir erros de forma amigável
-function showErrorMessage(msg) {
-  alert(msg);
+function showErrorMessage(msg, type = 'error') {
+  showNotification(msg, type);
+}
+
+// Função para exibir notificações (sucesso/erro)
+function showNotification(message, type) {
+  const notificationContainer = document.getElementById('notificationContainer');
+  if (!notificationContainer) {
+    console.error('Notification container not found!');
+    alert(message); // Fallback to alert if container not found
+    return;
+  }
+
+  // Clear existing notifications
+  notificationContainer.innerHTML = '';
+  notificationContainer.classList.remove('hidden');
+
+  const notification = document.createElement('div');
+  notification.classList.add('notification', type);
+  notification.textContent = message;
+  notificationContainer.appendChild(notification);
+
+  // Hide after 5 seconds
+  setTimeout(() => {
+    notification.remove();
+    if (notificationContainer.children.length === 0) {
+      notificationContainer.classList.add('hidden');
+    }
+  }, 5000);
 }
 
 // Busca preferências salvas do usuário
@@ -45,7 +72,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   const progressText = document.querySelector('.progress-text');
 
   let current = 0;
-  const userId = localStorage.getItem('userId') || prompt('Informe seu userId:');
+  let userId = localStorage.getItem('userId');
+  if (!userId) {
+    userId = 'guest_' + Math.random().toString(36).substr(2, 9); // Generate a simple guest ID
+    localStorage.setItem('userId', userId);
+    showNotification('Você está usando um ID de convidado. Suas preferências serão salvas localmente.', 'info'); // Add an info notification
+  }
   const stored = await getPreferences(userId) || {};
   const selectionMap = stored.preferences || {};
 

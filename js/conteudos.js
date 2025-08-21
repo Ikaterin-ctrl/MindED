@@ -20,9 +20,35 @@ const inputSearch = document.getElementById('search');
 const selectType = document.getElementById('filter-type');
 
 // Função para exibir mensagem de erro ao usuário
-function showErrorMessage(msg) {
-  // Aqui você pode trocar por um banner customizado se preferir
-  alert(msg);
+function showErrorMessage(msg, type = 'error') {
+  showNotification(msg, type);
+}
+
+// Função para exibir notificações (sucesso/erro)
+function showNotification(message, type) {
+  const notificationContainer = document.getElementById('notificationContainer');
+  if (!notificationContainer) {
+    console.error('Notification container not found!');
+    alert(message); // Fallback to alert if container not found
+    return;
+  }
+
+  // Clear existing notifications
+  notificationContainer.innerHTML = '';
+  notificationContainer.classList.remove('hidden');
+
+  const notification = document.createElement('div');
+  notification.classList.add('notification', type);
+  notification.textContent = message;
+  notificationContainer.appendChild(notification);
+
+  // Hide after 5 seconds
+  setTimeout(() => {
+    notification.remove();
+    if (notificationContainer.children.length === 0) {
+      notificationContainer.classList.add('hidden');
+    }
+  }, 5000);
 }
 
 // Renderiza os cards na tela

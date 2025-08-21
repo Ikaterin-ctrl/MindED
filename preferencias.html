@@ -2,37 +2,44 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MindED – Perfil & Preferências</title>
-  <link rel="stylesheet" href="style-glass.css" />
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="./css/base.css" />
+  <link rel="stylesheet" href="./css/layout.css" />
+  <link rel="stylesheet" href="./css/pages/preferencias.css" />
+  <!-- Chatbot CSS -->
+  <link rel="stylesheet" href="./assistente/static/chatbot.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
 </head>
 <body>
   <!-- Header fixo -->
   <header class="header">
     <div class="header-logo">
-      <img src="/assets/MindED_logo-removebg-preview.png" alt="MindED Logo"/>
+      <img src="./assets/MindED_logo-removebg-preview.png" alt="MindED Logo" />
     </div>
     <nav class="header-nav">
-      <a href="upload.html">Início</a>
+      <a href="index.html">Início</a>      
       <a href="conteudo.html">Conteúdos</a>
       <a href="preferencias.html" class="active">Preferências</a>
-      <button id="theme-toggle"><i class="fas fa-moon"></i></button>
-
-
+      <button id="theme-toggle">
+        <i class="fas fa-moon"></i>
+      </button>
     </nav>
   </header>
 
   <!-- Container geral -->
   <main class="preferences">
+    <div id="notificationContainer" class="notification-container hidden"></div>
     <!-- Barra de progresso -->
     <div class="progress-bar">
       <div class="progress" style="width: 20%;"></div>
       <span class="progress-text">Módulo 1 de 5</span>
     </div>
 
-    <!-- Módulo 1: Estilo de Aprendizagem -->
+    <!-- Módulo 1 -->
     <section class="module" data-step="1">
       <h2>1. Como você prefere receber conteúdo?</h2>
       <div class="options">
@@ -54,7 +61,7 @@
       </div>
     </section>
 
-    <!-- Módulo 2: Ambiente de Estudo -->
+    <!-- Módulo 2 -->
     <section class="module" data-step="2" hidden>
       <h2>2. Qual tema te ajuda a focar?</h2>
       <div class="options">
@@ -76,7 +83,7 @@
       </div>
     </section>
 
-    <!-- Módulo 3: Ritmo de Consumo -->
+    <!-- Módulo 3 -->
     <section class="module" data-step="3" hidden>
       <h2>3. Qual seu ritmo de estudo?</h2>
       <div class="options">
@@ -92,27 +99,25 @@
       </div>
       <h3>Quanto tempo, em média, você estuda por sessão?</h3>
       <div class="options">
-        <button class="option-btn" data-value="curta">< 15 minutos</button>
+        <button class="option-btn" data-value="curta">&lt; 15 minutos</button>
         <button class="option-btn" data-value="media">15–30 minutos</button>
-        <button class="option-btn" data-value="longa">> 30 minutos</button>
+        <button class="option-btn" data-value="longa">&gt; 30 minutos</button>
       </div>
     </section>
 
-    <!-- Módulo 4: Perfil Cognitivo -->
-    <section class="module" data-step="4" hidden>
+    <!-- Módulo 4 (checkbox) -->
+    <section class="module checkbox-group" data-step="4" hidden>
       <h2>4. Marque seus perfis cognitivos (pode escolher mais de um)</h2>
-      <div class="options checkbox-group">
-        <label><input type="checkbox" value="tdah"> TDAH</label>
-        <label><input type="checkbox" value="dislexia"> Dislexia</label>
-        <label><input type="checkbox" value="autismo"> Autismo</label>
-        <label><input type="checkbox" value="analitico"> Analítico</label>
-        <label><input type="checkbox" value="criativo"> Criativo</label>
-        <label><input type="checkbox" value="visual"> Visual</label>
-        <label><input type="checkbox" value="auditivo"> Auditivo</label>
-      </div>
+      <label><input type="checkbox" value="tdah"> TDAH</label>
+      <label><input type="checkbox" value="dislexia"> Dislexia</label>
+      <label><input type="checkbox" value="autismo"> Autismo</label>
+      <label><input type="checkbox" value="analitico"> Analítico</label>
+      <label><input type="checkbox" value="criativo"> Criativo</label>
+      <label><input type="checkbox" value="visual"> Visual</label>
+      <label><input type="checkbox" value="auditivo"> Auditivo</label>
     </section>
 
-    <!-- Módulo 5: Mini-Desafio de Estudo -->
+    <!-- Módulo 5 -->
     <section class="module" data-step="5" hidden>
       <h2>5. Mini-Desafio de Estudo</h2>
       <h3>Você se distrai se há muitas cores na página?</h3>
@@ -140,8 +145,40 @@
     </div>
   </main>
 
-  <!-- Scripts externos -->
-  <script src="js/preferences.js" defer></script>
-  <script src="js/theme-toggle.js" defer></script>
+  <!-- Chatbot Flutuante -->
+  <div
+    class="chatbot-fab"
+    onclick="document.getElementById('chatbotWindow').classList.toggle('hidden')"
+  >
+    <i class="fas fa-comment-dots"></i>
+  </div>
+
+  <div id="chatbotWindow" class="chatbot-window hidden">
+    <div class="chatbot-header">
+      <span>Assistente MindED</span>
+      <button
+        onclick="document.getElementById('chatbotWindow').classList.toggle('hidden')"
+      >
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div id="chatbotMessages" class="chatbot-messages flex flex-col">
+      <div class="message-bubble bot">
+        Olá! Como posso te ajudar hoje com a acessibilidade ou sobre o MindED?
+      </div>
+    </div>
+    <div class="chatbot-input-area">
+      <input type="text" id="chatInput" placeholder="Digite sua mensagem..." />
+      <button id="sendChatButton"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+
+  <!-- Scripts gerais da página -->
+  <script src="./config.js"></script>
+  <script src="./js/preferences.js" defer></script>
+  <script src="./js/theme-toggle.js" defer></script>
+
+  <!-- Scripts do chatbot -->
+  <script src="./assistente/js/app.js" defer></script>
 </body>
 </html>

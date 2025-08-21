@@ -1,4 +1,4 @@
-/* Estilos específicos para o chatbot */
+
 
 /* Estilos do botão flutuante (FAB) do chatbot */
 .chatbot-fab {
@@ -136,4 +136,4 @@
         width: 400px; /* Mais largo em desktops */
         height: 500px; /* Mais alto em desktops */
     }
-}
+

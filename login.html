@@ -2,19 +2,21 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login | MindED</title>
-  <!-- Estilos gerais (reset + glass + tema) -->
-  <link rel="stylesheet" href="style-glass.css" />
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="./css/base.css" />
+  <link rel="stylesheet" href="./css/layout.css" />
+  <link rel="stylesheet" href="./css/pages/login.css" />
+  <link rel="stylesheet" href="./assistente/static/chatbot.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
 </head>
 <body>
-
-  <!-- Cabeçalho compartilhado -->
   <header class="header">
     <div class="header-logo">
-      <img src="/assets/MindED_logo-removebg-preview.png" alt="MindED Logo" />
+      <img src="./assets/MindED_logo-removebg-preview.png" alt="MindED Logo" />
     </div>
     <nav class="header-nav">
       <a href="index.html">Início</a>
@@ -24,47 +26,58 @@
     </nav>
   </header>
 
-  <!-- Área de Login -->
   <main class="login-main">
-    <div class="login-container">
+    <div class="login-form">
       <h1>Bem-vindo(a) ao <span class="highlight">MindED</span></h1>
-      <p>Seu ambiente de aprendizado adaptado</p>
+      <p class="small-text">Seu ambiente de aprendizado adaptado</p>
 
-      <button class="btn-google" onclick="loginComGoogle()">
-        <img src="/assets/google-icon.svg" alt="" class="google-icon"/> Entrar com Google
-      </button>
+      <div class="tab-buttons">
+        <button class="tab-button active" data-tab="login">Entrar</button>
+        <button class="tab-button" data-tab="register">Cadastrar</button>
+      </div>
 
-      <form class="login-form" onsubmit="loginEmailSenha(event)">
-        <input type="email" placeholder="E-mail" required class="input-login" />
-        <input type="password" placeholder="Senha" required class="input-login" />
-        <button type="submit" class="enter-login-btn">Entrar</button>
-      </form>
-      <p class="small-text">
-        Não tem conta? <a href="#" id="btn-criar" onclick="mostrarCadastro()">Criar</a>
-        <!-- mostrar o formulário de cadastro -->
-      </p>
+      <div id="login-tab" class="tab-content active">
+        <button  class="enter-login-btn"  onclick="loginComGoogle()">
+          <img id="google-icon" src="/assets/google-icon.png" alt="Google Icon" class="google-icon" /> Entrar com Google
+        </button>
 
-      <form class="cadastro-form" style="display:none;" onsubmit="cadastrar(event)">
-        <input type="text" placeholder="Nome completo" required />
-        <input type="email" placeholder="E-mail" required />
-        <input type="password" placeholder="Criar senha" required />
-        <button type="submit" class="upload-btn">Cadastrar</button>
-      </form>
+        <form onsubmit="loginEmailSenha(event)">
+          <input type="email" placeholder="E-mail" required class="input-login" />
+          <input type="password" placeholder="Senha" required class="input-login" />
+          <button type="submit" class="enter-login-btn">Entrar</button>
+        </form>
+      </div>
+
+      <div id="register-tab" class="tab-content hidden">
+        <form onsubmit="cadastrar(event)">
+          <input type="text" placeholder="Nome completo" required class="input-login" />
+          <input type="email" placeholder="E-mail" required class="input-login" />
+          <input type="password" placeholder="Criar senha" required class="input-login" />
+          <button type="submit" class="enter-login-btn">Cadastrar</button>
+        </form>
+      </div>
     </div>
   </main>
 
+  <div class="chatbot-fab" onclick="toggleChatbot()">
+    <i class="fas fa-comment-dots"></i>
+  </div>
+  <div id="chatbotWindow" class="chatbot-window hidden">
+    <div class="chatbot-header">
+      <span>Assistente MindED</span>
+      <button onclick="toggleChatbot()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="chatbot-messages flex flex-col" id="chatbotMessages">
+      <div class="message-bubble bot">Olá! Como posso te ajudar?</div>
+    </div>
+    <div class="chatbot-input-area">
+      <input type="text" id="chatInput" placeholder="Digite sua mensagem..." />
+      <button id="sendChatButton"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
 
-  <script src="js/login.js" defer></script>
-  <script src="js/theme-toggle.js" defer></script>
-  <script>
-    // Quando clicar em Criar, o formulário de criação de conta aparece suavemente
-    function mostrarCadastro() {
-      document.querySelector('.login-form').style.display = 'none';
-      document.querySelector('.cadastro-form').style.display = 'block';
-    }
-
-  </script>
-
+  <!-- Scripts -->
+  <script src="./js/theme-toggle.js" defer></script>
+  <script src="./js/login.js" defer></script>
 </body>
-
 </html>

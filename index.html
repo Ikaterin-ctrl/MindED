@@ -2,38 +2,76 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MindED – Boas-vindas</title>
-  <link rel="stylesheet" href="style-glass.css" />
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+  <link rel="stylesheet" href="./css/base.css" />
+  <link rel="stylesheet" href="./css/layout.css" />
+  <link rel="stylesheet" href="./css/pages/index.css" />
+  <link rel="stylesheet" href="./assistente/static/chatbot.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
 </head>
 <body>
   <!-- Cabeçalho -->
- <header class="header">
-        <div class="header-logo">
-            <img src="/assets/MindED_logo-removebg-preview.png" alt="MindED Logo" />
-            
-        </div>
-        <nav class="header-nav">
-            <a href="upload.html">Inicio</a>
-            <a href="conteudo.html">Conteúdos</a>
-            <a href="preferencias.html">Preferências</a>
-            <button id="theme-toggle"><i class="fas fa-moon"></i></button>
-
-        </nav>
-    </header>
+  <header class="header">
+    <div class="header-logo">
+      <img src="./assets/MindED_logo-removebg-preview.png" alt="MindED Logo" />
+    </div>
+     <nav class="header-nav">
+      <a href="login.html">Entrar</a>
+      <button id="theme-toggle">
+        <i class="fas fa-moon"></i>
+      </button>
+    </nav>
+  </header>
 
   <!-- Hero Onboarding -->
-  <div class="hero-onboarding">
-    <img src="/assets/MindED_logo-removebg-preview.png" alt="MindED Logo" class="logo-hero"/>
+  <main class="hero-onboarding">
+    <img src="./assets/MindED_logo-removebg-preview.png" alt="MindED Logo" class="logo-hero" />
     <div id="typed-text" class="typed-text">Transforme seu aprendizado.</div>
+    <section class="value-proposition">
+      <h2>Seu aprendizado, do seu jeito.</h2>
+      <p>O MindED adapta conteúdos para você, considerando suas preferências e perfil cognitivo. Estude com mais foco, eficiência e acessibilidade.</p>
+    </section>
     <a href="upload.html" class="btn-start">Começar</a>
+
+    <!-- acomentario pra diana ver -->
+  </main>
+
+  <!-- Chatbot Flutuante -->
+  <div
+    class="chatbot-fab"
+    onclick="document.getElementById('chatbotWindow').classList.toggle('hidden')"
+  >
+    <i class="fas fa-comment-dots"></i>
+  </div>
+
+  <div id="chatbotWindow" class="chatbot-window hidden">
+    <div class="chatbot-header">
+      <span>Assistente MindED</span>
+      <button
+        onclick="document.getElementById('chatbotWindow').classList.toggle('hidden')"
+      >
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div id="chatbotMessages" class="chatbot-messages flex flex-col">
+      <div class="message-bubble bot">
+        Olá! Como posso te ajudar hoje com a acessibilidade ou sobre o MindED?
+      </div>
+    </div>
+    <div class="chatbot-input-area">
+      <input type="text" id="chatInput" placeholder="Digite sua mensagem..." />
+      <button id="sendChatButton"><i class="fas fa-paper-plane"></i></button>
+    </div>
   </div>
 
   <!-- Scripts -->
+  <script src="./config.js"></script>
   <script src="js/typed-text.js"></script>
-  <script src="js/main.js"></script>
+  <script src="js/theme-toggle.js"></script>
+  <script src="assistente/js/app.js"></script>
 </body>
 </html>

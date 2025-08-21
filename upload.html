@@ -1,65 +1,86 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>MindED - Upload de Conteúdo</title>
-    <link rel="stylesheet" href="style-glass.css" />
-    <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MindED – Upload</title>
+  <link rel="stylesheet" href="./css/base.css" />
+  <link rel="stylesheet" href="./css/layout.css" />
+  <link rel="stylesheet" href="./css/pages/upload.css" />
+  <link rel="stylesheet" href="./assistente/static/chatbot.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
 </head>
 <body>
-
-    <header class="header">
-        <div class="header-logo">
-            <img src="/assets/MindED_logo-removebg-preview.png" alt="MindED Logo" />
-            
-        </div>
-        <nav class="header-nav">
-            <a href="upload.html">Inicio</a>
-            <a href="conteudo.html">Conteúdos</a>
-            <a href="preferencias.html">Preferências</a>
-            <button id="theme-toggle"><i class="fas fa-moon"></i></button>
-
-
-        </nav>
-    </header>
-
-
-    <!-- Conteúdo principal -->
-   <main class="upload-main">
-  <div class="upload-container">
-
-    <!-- Mensagem de boas-vindas -->
-    <h1>Vamos personalizar seu conteúdo</h1>
-    <p>Envie o material que você quer estudar e escolha como deseja receber.</p>
-
-    <!-- Área de dropzone -->
-    <div class="dropzone" id="dropzone">
-      <p>Arraste e solte seu arquivo aqui ou <span class="file-select">clique para escolher</span></p>
-      <input type="file" id="fileUpload" hidden />
+  <!-- Cabeçalho -->
+  <header class="header">
+    <div class="header-logo">
+      <img src="./assets/MindED_logo-removebg-preview.png" alt="MindED Logo" />
     </div>
+    <nav class="header-nav">
+      <a href="index.html">Início</a>
+      <a href="conteudo.html">Conteúdos</a>
+      <a href="preferencias.html">Preferências</a>
+      <button id="theme-toggle">
+        <i class="fas fa-moon"></i>
+      </button>
+    </nav>
+  </header>
 
-    <!-- Botão enviar -->
-     <button class="upload-btn" id="uploadBtn">
-      Enviar 
-     </button>
+  <!-- Página de Upload -->
+  <main class="upload-main">
+    <div id="notificationContainer" class="notification-container hidden"></div>
+    <div class="upload-container">
+      <h1>Vamos personalizar seu conteúdo</h1>
+      <p>Envie o material que você quer estudar e escolha como deseja receber.</p>
 
+      <div class="dropzone" id="dropzone">
+        <p>
+          Arraste e solte seu arquivo aqui ou
+          <span class="file-select">clique para escolher</span>
+        </p>
+        <input type="file" id="fileUpload" hidden />
+      </div>
 
-    <!-- Preview -->
-    <p class="upload-preview-text">
-      Seu conteúdo poderá ser apresentado como:<br>
-      ✔ Texto simplificado | ✔ Vídeo com IA | ✔ Áudio adaptado
-    </p>
+      <button
+        class="upload-btn"
+        id="uploadBtn"
+      >
+        <span class="button-text">Enviar</span>
+        <span class="spinner hidden"><i class="fas fa-spinner fa-spin"></i></span>
+      </button>
 
-    <!-- Container para injetar resultado da IA (inicialmente oculto) -->
-    <div id="adapted-content" class="upload-container" hidden></div>
+      <p class="upload-preview-text">
+        Seu conteúdo poderá ser apresentado como:<br />
+        ✔ Texto simplificado | ✔ Vídeo com IA | ✔ Áudio adaptado
+      </p>
+    </div>
+  </main>
 
+  <!-- Chatbot Flutuante -->
+  <div class="chatbot-fab" onclick="toggleChatbot()">
+    <i class="fas fa-comment-dots"></i>
   </div>
-</main>
+  <div id="chatbotWindow" class="chatbot-window hidden">
+    <div class="chatbot-header">
+      <span>Assistente MindED</span>
+      <button onclick="toggleChatbot()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="chatbot-messages flex flex-col" id="chatbotMessages">
+      <div class="message-bubble bot">
+        Olá! Como posso te ajudar hoje?
+      </div>
+    </div>
+    <div class="chatbot-input-area">
+      <input type="text" id="chatInput" placeholder="Digite sua mensagem..." />
+      <button id="sendChatButton"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
 
-
-<script src="js/upload.js" defer></script>
-<script src="js/theme-toggle.js" defer></script> 
+  <script src="./js/theme-toggle.js" defer></script>
+  <script src="./js/conteudos.js" defer></script>
+  <script src="./assistente/js/app.js" defer></script>
 </body>
 </html>

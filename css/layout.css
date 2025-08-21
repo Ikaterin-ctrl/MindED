@@ -1,0 +1,91 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 16px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px); /* Reduced blur */
+  -webkit-backdrop-filter: blur(10px); /* Reduced blur */
+  border-bottom: 1px solid rgba(255,255,255,0.1); /* Softer border */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05); /* Softer shadow */
+  z-index: 1000;
+}
+
+.header-logo img {
+  width: 50px;
+}
+
+.header-nav a,
+.header-nav button {
+  margin-left: 20px;
+  font-size: 1rem;
+  color: var(--text-primary);
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.header-nav a:hover,
+.header-nav button:hover {
+  color: var(--accent-start);
+}
+
+.container,
+.card,
+.module,
+.upload-container,
+.sobre-container,
+.hero-onboarding {
+  background: var(--glass-bg);
+}
+
+@media (max-width: 600px) {
+  .upload-container,
+  .sobre-container {
+    padding: 40px 20px;
+    margin: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .module {
+    padding: 16px;
+  }
+  .options {
+    gap: 8px;
+  }
+  .checkbox-group {
+    grid-template-columns: 1fr;
+  }
+  .module-nav {
+    flex-direction: column;
+    gap: 8px;
+  }
+  #prev-btn,
+  #next-btn {
+    width: 100%;
+    text-align: center;
+  }
+  .login-form {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .module {
+    padding: 12px;
+  }
+  .progress-bar {
+    height: 10px;
+  }
+  .option-btn {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+}

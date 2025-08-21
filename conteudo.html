@@ -4,32 +4,30 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>MindED – Conteúdos</title>
-  <!-- reset + tema + glassmorphism geral -->
-  <link rel="stylesheet" href="style-glass.css"/>
-  <!-- estilos específicos de layout de cards, grid, busca -->
-  <link rel="stylesheet" href="conteudos.css"/>
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="./css/base.css" />
+  <link rel="stylesheet" href="./css/layout.css" />
+  <link rel="stylesheet" href="./css/pages/conteudo.css" />
+  <link rel="stylesheet" href="./assistente/static/chatbot.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
 
   <!-- Header comum -->
   <header class="header">
     <div class="header-logo">
-      <img src="/assets/MindED_logo-removebg-preview.png" alt="MindED Logo"/>
+      <img src="./assets/MindED_logo-removebg-preview.png" alt="MindED Logo"/>
     </div>
     <nav class="header-nav">
-      <a href="upload.html">Início</a>
+      <a href="index.html">Início</a>
       <a href="conteudo.html" class="active">Conteúdos</a>
       <a href="preferencias.html">Preferências</a>
       <button id="theme-toggle"><i class="fas fa-moon"></i></button>
-
-
     </nav>
   </header>
 
   <!-- Main do painel de conteúdos -->
   <main class="conteudos-main">
+    <div id="notificationContainer" class="notification-container hidden"></div>
     <!-- Filtro / busca -->
     <div class="search-filter">
       <input type="text" id="search" placeholder="Buscar por título…"/>
@@ -47,8 +45,26 @@
     </section>
   </main>
 
-  <!-- scripts carregados no fim do body para não bloquear renderização -->
-  <script src="js/theme-toggle.js" defer></script>
-  <script src="js/conteudos.js"></script>
+  <!-- Chatbot Flutuante -->
+  <div class="chatbot-fab" onclick="toggleChatbot()">
+    <i class="fas fa-comment-dots"></i>
+  </div>
+  <div id="chatbotWindow" class="chatbot-window hidden">
+    <div class="chatbot-header">
+      <span>Assistente MindED</span>
+      <button onclick="toggleChatbot()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="chatbot-messages flex flex-col" id="chatbotMessages">
+      <div class="message-bubble bot">Olá! Como posso te ajudar?</div>
+    </div>
+    <div class="chatbot-input-area">
+      <input type="text" id="chatInput" placeholder="Digite sua mensagem..." />
+      <button id="sendChatButton"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+
+  <script src="./js/theme-toggle.js" defer></script>
+  <script src="./js/conteudos.js" defer></script>
+  <script src="./assistente/js/app.js" defer></script>
 </body>
 </html>

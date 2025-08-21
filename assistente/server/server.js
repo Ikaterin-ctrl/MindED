@@ -11,6 +11,7 @@ import cors from 'cors';
 import { executaChat } from './chat.js';
 import { inicializaChat } from './inicializaChat.js';
 
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -64,8 +65,8 @@ app.post('/start-chat', (req, res) => {
 });
 
 
+
 // Inicia o servidor
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`);
   console.log('Pressione CTRL+C para parar.');
-});

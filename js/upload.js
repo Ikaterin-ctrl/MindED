@@ -1,10 +1,59 @@
 // js/upload.js
 
+// Base da API definido em config.js
+const API_BASE = window.API_BASE_URL;
+
+// Função para exibir erros de forma amigável
+function showErrorMessage(msg, type = 'error') {
+  showNotification(msg, type);
+}
+
+// Função para exibir notificações (sucesso/erro)
+function showNotification(message, type) {
+  const notificationContainer = document.getElementById('notificationContainer');
+  if (!notificationContainer) {
+    console.error('Notification container not found!');
+    alert(message); // Fallback to alert if container not found
+    return;
+  }
+
+  // Clear existing notifications
+  notificationContainer.innerHTML = '';
+  notificationContainer.classList.remove('hidden');
+
+  const notification = document.createElement('div');
+  notification.classList.add('notification', type);
+  notification.textContent = message;
+  notificationContainer.appendChild(notification);
+
+  // Hide after 5 seconds
+  setTimeout(() => {
+    notification.remove();
+    if (notificationContainer.children.length === 0) {
+      notificationContainer.classList.add('hidden');
+    }
+  }, 5000);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const dropzone     = document.getElementById('dropzone');
   const fileInput    = document.getElementById('fileUpload');
   const uploadBtn    = document.getElementById('uploadBtn');
   const adaptedPanel = document.getElementById('adapted-content');
+  const buttonText   = uploadBtn.querySelector('.button-text');
+  const spinner      = uploadBtn.querySelector('.spinner');
+
+  function showLoading(isLoading, text) {
+    uploadBtn.disabled = isLoading;
+    buttonText.textContent = text;
+    if (isLoading) {
+      buttonText.classList.add('hidden');
+      spinner.classList.remove('hidden');
+    } else {
+      buttonText.classList.remove('hidden');
+      spinner.classList.add('hidden');
+    }
+  }
 
   // 1) Configura Dropzone (clique, drag&drop, mostrar nome)
   dropzone.addEventListener('click', () => fileInput.click());
@@ -16,70 +65,73 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     dropzone.classList.remove('hover');
     fileInput.files = e.dataTransfer.files;
-    dropzone.querySelector('p').textContent = fileInput.files[0].name;
+    if (fileInput.files.length) {
+      dropzone.querySelector('p').textContent = fileInput.files[0].name;
+    }
   });
   fileInput.addEventListener('change', () => {
-    dropzone.querySelector('p').textContent = fileInput.files[0].name;
+    if (fileInput.files.length) {
+      dropzone.querySelector('p').textContent = fileInput.files[0].name;
+    }
   });
 
   // 2) Botão de enviar e adaptar
   uploadBtn.addEventListener('click', async () => {
-    // Verifica se usuário está logado
     const token = localStorage.getItem('authToken');
     if (!token) {
-      // se não logado, manda para login
+      // não está logado → redireciona para login
       return window.location.href = 'login.html';
     }
 
-    // Se logado, verifica se já definiu preferências
-    uploadBtn.disabled   = true;
-    uploadBtn.textContent = 'Verificando preferências…';
+    showLoading(true, 'Verificando preferências…');
+
+    // Busca preferências do usuário
     let prefs;
     try {
-      const resp = await fetch('/api/user/preferences', {
+      const resp = await fetch(`${API_BASE}/user/preferences`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      if (!resp.ok) throw new Error('Sem preferências');
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       prefs = await resp.json();
-    } catch {
+    } catch (err) {
+      console.error('Erro ao buscar preferências:', err);
       // primeira vez, sem prefs definidas
       return window.location.href = 'preferencias.html';
     }
 
-    // Se chegou aqui, é porque está logado e tem prefs
-    // Agora sim faz o upload e a adaptação
+    // Usuário está logado e tem prefs → prossegue para upload
     const file = fileInput.files[0];
     if (!file) {
-      alert('Selecione um arquivo antes de enviar.');
-      uploadBtn.disabled = false;
-      uploadBtn.textContent = 'Enviar e Adaptar com IA';
+      showErrorMessage('Selecione um arquivo antes de enviar.', 'error');
+      showLoading(false, 'Enviar e Adaptar com IA');
       return;
     }
 
-    uploadBtn.textContent = 'Enviando e Adaptando…';
+    showLoading(true, 'Enviando e Adaptando…');
     try {
       const form = new FormData();
       form.append('content', file);
 
-      const res = await fetch('/api/upload-and-adapt', {
+      const res = await fetch(`${API_BASE}/upload-and-adapt`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` },
         body: form
       });
-      if (!res.ok) throw new Error('Falha ao processar');
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
       const adapted = await res.json();
-      // injeta o HTML que a IA retornou
       adaptedPanel.innerHTML = adapted.html;
       adaptedPanel.hidden    = false;
-      uploadBtn.textContent = 'Readaptar';
+      showLoading(false, 'Readaptar');
     } catch (err) {
-      console.error(err);
-      alert('Erro ao processar seu conteúdo.');
-      uploadBtn.textContent = 'Enviar e Adaptar com IA';
+      console.error('Erro ao processar conteúdo:', err);
+      showErrorMessage('Erro ao processar seu conteúdo.', 'error');
+      showLoading(false, 'Enviar e Adaptar com IA');
     } finally {
-      uploadBtn.disabled = false;
+      // The showLoading(false) is already called in success/error paths,
+      // but it's good practice to ensure it's always reset.
+      // However, in this specific case, the button text is set based on the outcome,
+      // so we'll rely on the specific calls.
     }
   });
 });
-

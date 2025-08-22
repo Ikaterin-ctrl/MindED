@@ -2,7 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Montserrat", sans-serif;
 }
 
 :root {
@@ -106,7 +106,7 @@ html[data-theme="light"] li {
 
 html[data-theme="light"] button,
 html[data-theme="light"] .btn {
-  color: #fff !important;
+  color: #535050 !important;
   text-shadow: none;
   background-color: var(--lavender-pastel) !important;
 }

@@ -99,24 +99,36 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
     <script>
-        // Lógica para alternar entre Login e Cadastro
-        const showLoginBtn = document.getElementById('showLoginBtn');
-        const showRegisterBtn = document.getElementById('showRegisterBtn');
-        const loginForm = document.getElementById('loginForm');
-        const registerForm = document.getElementById('registerForm');
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check for returning visitor
+            if (localStorage.getItem('hasVisited')) {
+                const loginTitle = document.querySelector('#loginForm h3');
+                if (loginTitle) {
+                    loginTitle.textContent = 'Que bom te ver de novo!';
+                }
+            } else {
+                localStorage.setItem('hasVisited', 'true');
+            }
 
-        showLoginBtn.addEventListener('click', () => {
-            loginForm.style.display = 'block';
-            registerForm.style.display = 'none';
-            showLoginBtn.classList.add('active');
-            showRegisterBtn.classList.remove('active');
-        });
+            // Lógica para alternar entre Login e Cadastro
+            const showLoginBtn = document.getElementById('showLoginBtn');
+            const showRegisterBtn = document.getElementById('showRegisterBtn');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
 
-        showRegisterBtn.addEventListener('click', () => {
-            loginForm.style.display = 'none';
-            registerForm.style.display = 'block';
-            showRegisterBtn.classList.add('active');
-            showLoginBtn.classList.remove('active');
+            showLoginBtn.addEventListener('click', () => {
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+                showLoginBtn.classList.add('active');
+                showRegisterBtn.classList.remove('active');
+            });
+
+            showRegisterBtn.addEventListener('click', () => {
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'block';
+                showRegisterBtn.classList.add('active');
+                showLoginBtn.classList.remove('active');
+            });
         });
     </script>
 </body>

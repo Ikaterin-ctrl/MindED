@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="dark">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,26 +8,29 @@
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/pages/menu.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <header class="header">
+    <header class="header">                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
         <div class="header-logo">
             <a href="index.html">
                 <img src="assets/MindED_logo-removebg-preview.png" alt="MindED Logo">
             </a>
         </div>
         <nav class="header-nav" id="header-nav">
+            <div class="nav-close-btn" id="nav-close-btn"><i class="fas fa-times"></i></div>
             <a href="#sobre">Sobre</a>
             <a href="#quem-somos">Quem Somos</a>
             <a href="#solucoes">Soluções</a>
-            <a href="login.html">Login</a>
+            <a href="login.html" class="desktop-login-link">Login</a>
             <button id="theme-toggle">
                 <i class="fas fa-moon"></i>
             </button>
         </nav>
-        <div class="hamburger-menu" id="hamburger-menu">
-            <i class="fas fa-bars"></i>
+        <div class="mobile-header-controls">
+            <a href="login.html" class="mobile-login-btn">Login</a>
+            <div class="hamburger-menu" id="hamburger-menu">
+                <i class="fas fa-bars"></i>
+            </div>
         </div>
     </header>
 
@@ -106,10 +109,21 @@
     <script>
         const hamburgerMenu = document.getElementById('hamburger-menu');
         const headerNav = document.getElementById('header-nav');
+        const closeBtn = document.getElementById('nav-close-btn');
+        const body = document.body;
 
-        hamburgerMenu.addEventListener('click', () => {
-            headerNav.classList.toggle('active');
-        });
+        function openMenu() {
+            headerNav.classList.add('active');
+            body.classList.add('no-scroll');
+        }
+
+        function closeMenu() {
+            headerNav.classList.remove('active');
+            body.classList.remove('no-scroll');
+        }
+
+        hamburgerMenu.addEventListener('click', openMenu);
+        closeBtn.addEventListener('click', closeMenu);
 
         const sections = document.querySelectorAll('.fade-in-section');
 

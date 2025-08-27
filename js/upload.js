@@ -39,7 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const dropzone     = document.getElementById('dropzone');
   const fileInput    = document.getElementById('fileUpload');
   const uploadBtn    = document.getElementById('uploadBtn');
-  const adaptedPanel = document.getElementById('adapted-content');
   const buttonText   = uploadBtn.querySelector('.button-text');
   const spinner      = uploadBtn.querySelector('.spinner');
 
@@ -120,9 +119,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
       const adapted = await res.json();
-      adaptedPanel.innerHTML = adapted.html;
-      adaptedPanel.hidden    = false;
-      showLoading(false, 'Readaptar');
+      sessionStorage.setItem('adaptedContent', adapted.html);
+      window.location.href = 'conteudo-adaptado.html';
     } catch (err) {
       console.error('Erro ao processar conteúdo:', err);
       showErrorMessage('Erro ao processar seu conteúdo.', 'error');

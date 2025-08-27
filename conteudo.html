@@ -18,11 +18,16 @@
       <img src="./assets/MindED_logo-removebg-preview.png" alt="MindED Logo"/>
     </div>
     <nav class="header-nav">
+      <button class="nav-close-btn">&times;</button>
       <a href="index.html">Início</a>
       <a href="conteudo.html" class="active">Conteúdos</a>
       <a href="preferencias.html">Preferências</a>
-      <button id="theme-toggle"><i class="fas fa-moon"></i></button>
+      <a href="login.html" class="desktop-login-link">Login</a>
     </nav>
+    <div class="mobile-header-controls">
+      <a href="login.html" class="mobile-login-btn">Login</a>
+      <button class="hamburger-menu"><i class="fas fa-bars"></i></button>
+    </div>
   </header>
 
   <!-- Main do painel de conteúdos -->
@@ -63,6 +68,7 @@
     </div>
   </div>
 
+  <script src="./config.js"></script>
   <script src="./js/theme-toggle.js" defer></script>
   <script src="./js/conteudos.js" defer></script>
   <script src="./assistente/js/app.js" defer></script>

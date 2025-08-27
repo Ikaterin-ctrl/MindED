@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="dark">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/pages/login.css">
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
 </head>
 <body>
     <header class="header">
@@ -16,9 +20,17 @@
             </a>
         </div>
         <nav class="header-nav">
+            <button class="nav-close-btn">&times;</button>
             <a href="index.html">Home</a>
             <a href="preferencias.html">Preferências</a>
+            <button id="theme-toggle">
+                <i class="fas fa-moon"></i>
+            </button>
         </nav>
+        <div class="mobile-header-controls">
+          <a href="login.html" class="mobile-login-btn">Login</a>
+          <button class="hamburger-menu"><i class="fas fa-bars"></i></button>
+        </div>
     </header>
 
     <main class="login-main">
@@ -82,5 +94,6 @@
             });
         });
     </script>
+    <script src="js/theme-toggle.js"></script>
 </body>
 </html>

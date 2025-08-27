@@ -13,6 +13,7 @@
   --accent-start: #4CAF50; /* Green */
   --accent-end: #2196F3; /* Blue */
   --lavender-pastel: #E6E6FA;
+  --menu-bg: #ffffff;
 }
 
 [data-theme="dark"] {
@@ -22,6 +23,7 @@
   --text-secondary: #aaaaaa;
   --accent-start: #64FFDA; /* Brighter accent for dark mode */
   --accent-end: #18FFFF;
+  --menu-bg: #1a1a2e;
 }
 
 body {

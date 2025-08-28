@@ -50,11 +50,28 @@
       <p>Envie o material que você quer estudar e escolha como deseja receber.</p>
 
       <div class="dropzone" id="dropzone">
-        <p>
-          Arraste e solte seu arquivo aqui ou
-          <span class="file-select">clique para escolher</span>
-        </p>
-        <input type="file" id="fileUpload" hidden />
+        <div class="dropzone-initial-state">
+          <p>
+            Arraste e solte seu arquivo aqui ou
+            <span class="file-select">clique para escolher</span>
+          </p>
+        </div>
+        <div class="dropzone-preview-state hidden">
+          <div class="file-preview">
+            <i class="fas fa-file-alt file-icon"></i>
+            <div class="file-details">
+              <span class="file-name"></span>
+              <span class="file-size"></span>
+            </div>
+            <button class="remove-file-btn"><i class="fas fa-times"></i></button>
+          </div>
+        </div>
+        <input type="file" id="fileUpload" hidden accept=".pdf,.doc,.docx,.txt" />
+      </div>
+      <p class="supported-formats">Formatos suportados: PDF, DOC, DOCX, TXT.</p>
+
+      <div class="progress-container hidden">
+        <div class="progress-bar"></div>
       </div>
 
       <button
@@ -65,10 +82,23 @@
         <span class="spinner hidden"><i class="fas fa-spinner fa-spin"></i></span>
       </button>
 
-      <p class="upload-preview-text">
-        Seu conteúdo poderá ser apresentado como:<br />
-        ✔ Texto simplificado | ✔ Vídeo com IA | ✔ Áudio adaptado
-      </p>
+      <div class="adaptation-preview">
+        <p>Seu conteúdo poderá ser apresentado como:</p>
+        <div class="adaptation-options">
+          <div class="option">
+            <i class="fas fa-file-alt"></i>
+            <span>Texto Simplificado</span>
+          </div>
+          <div class="option">
+            <i class="fas fa-video"></i>
+            <span>Vídeo com IA</span>
+          </div>
+          <div class="option">
+            <i class="fas fa-volume-up"></i>
+            <span>Áudio Adaptado</span>
+          </div>
+        </div>
+      </div>
     </div>
   </main>
 

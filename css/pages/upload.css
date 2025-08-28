@@ -78,11 +78,145 @@
   transition: all 0.3s ease;
 }
 
+
 .upload-btn:hover {
   background: linear-gradient(135deg, #b9a6f9, #7fffd4);
   transform: scale(1.05);
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
+
+.supported-formats {
+  font-size: 0.85rem;
+  color: #ccc;
+  margin-top: -10px; /* Pull it closer to the dropzone */
+  margin-bottom: 20px;
+}
+
+.dropzone.file-selected {
+  border-style: solid;
+  border-color: #7fffd4;
+  padding: 10px;
+}
+
+.dropzone-preview-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.file-preview {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  width: 100%;
+}
+
+.file-icon {
+  font-size: 2.5rem;
+  color: #b9a6f9;
+}
+
+.file-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-grow: 1;
+  overflow: hidden; /* Prevents long file names from breaking layout */
+}
+
+.file-name {
+  font-weight: bold;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.file-size {
+  font-size: 0.8rem;
+  color: #ccc;
+}
+
+.remove-file-btn {
+  background: none;
+  border: none;
+  color: #ff7b7b;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.remove-file-btn:hover {
+  color: #ff4d4d;
+}
+
+.progress-container {
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  width: 0%;
+  height: 12px;
+  background: linear-gradient(135deg, #7fffd4, #6bd1f3);
+  border-radius: 8px;
+  transition: width 0.4s ease-in-out;
+}
+
+.adaptation-preview {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.adaptation-preview p {
+  font-size: 0.9rem;
+  color: #ccc;
+  margin-bottom: 15px;
+}
+
+.adaptation-options {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 10px 15px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.option i {
+  font-size: 1.2rem;
+  color: #b9a6f9;
+}
+
+.option span {
+  font-size: 0.85rem;
+  color: #f0f0f0;
+  font-weight: 500;
+}
+
+/* Helper class from JS */
+.hidden {
+  display: none !important;
+}
+
 
 @media (max-width: 768px) {
   .upload-main {

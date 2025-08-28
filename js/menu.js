@@ -1,24 +1,24 @@
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM Content Loaded');
-    const hamburgerMenu = document.querySelector('.hamburger-menu');
-    const headerNav = document.querySelector('.header-nav');
-    const navCloseBtn = document.querySelector('.nav-close-btn');
+  const hamburgerMenu = document.querySelector('.hamburger-menu');
+  const navLinks = document.querySelector('.nav-links');
+  const header = document.querySelector('.main-header');
 
-    console.log('hamburgerMenu:', hamburgerMenu);
-    console.log('headerNav:', headerNav);
-    console.log('navCloseBtn:', navCloseBtn);
+  // Lógica para o menu hambúrguer
+  if (hamburgerMenu && navLinks) {
+    hamburgerMenu.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+      hamburgerMenu.toggleAttribute('aria-expanded');
+    });
+  }
 
-    if (hamburgerMenu && headerNav && navCloseBtn) {
-        hamburgerMenu.addEventListener('click', () => {
-            console.log('Hamburger menu clicked');
-            headerNav.classList.add('active');
-            document.body.classList.add('no-scroll');
-        });
-
-        navCloseBtn.addEventListener('click', () => {
-            console.log('Close button clicked');
-            headerNav.classList.remove('active');
-            document.body.classList.remove('no-scroll');
-        });
-    }
+  // Lógica para o cabeçalho com rolagem
+  if (header) {
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 10) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
+  }
 });

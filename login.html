@@ -13,25 +13,33 @@
   />
 </head>
 <body>
-    <header class="header">
-        <div class="header-logo">
-            <a href="index.html">
-                <img src="assets/MindED_logo-removebg-preview.png" alt="MindED Logo">
-            </a>
-        </div>
-        <nav class="header-nav">
-            <button class="nav-close-btn">&times;</button>
-            <a href="index.html">Home</a>
-            <a href="preferencias.html">Preferências</a>
-            <button id="theme-toggle">
-                <i class="fas fa-moon"></i>
+    <!-- Cabeçalho -->
+  <header class="main-header">
+    <div class="header-content">
+        <a href="index.html" class="logo">
+            <img src="./assets/MindED_logo-removebg-preview.png" alt="MindED Logo">
+        </a>
+        <nav class="main-nav">
+            <button class="hamburger-menu" aria-label="Abrir menu" aria-expanded="false">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
             </button>
+            <ul class="nav-links">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="conteudo.html">Conteúdos</a></li>
+                <li><a href="preferencias.html">Preferências</a></li>
+                <li><a href="feedback.html">Feedback</a></li>
+                <li><a href="login.html" class="login-button">Login</a></li>
+                <li>
+                  <button id="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                  </button>
+                </li>
+            </ul>
         </nav>
-        <div class="mobile-header-controls">
-          <a href="login.html" class="mobile-login-btn">Login</a>
-          <button class="hamburger-menu"><i class="fas fa-bars"></i></button>
-        </div>
-    </header>
+    </div>
+  </header>
 
     <main class="login-main">
         <div class="login-form">
@@ -72,6 +80,7 @@
         </div>
     </main>
 
+    <script src="js/menu.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const tabButtons = document.querySelectorAll('.tab-button');

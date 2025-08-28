@@ -29,7 +29,7 @@
                 <li><a href="index.html">Início</a></li>
                 <li><a href="conteudo.html">Conteúdos</a></li>
                 <li><a href="preferencias.html">Preferências</a></li>
-                <li><a href="feedback.html">Feedback</a></li>
+                
                 <li><a href="login.html" class="login-button">Login</a></li>
                 <li>
                   <button id="theme-toggle">
@@ -52,14 +52,18 @@
                 <h1>Acesse sua conta</h1>
                 <form>
                     <label for="login-email">Email</label>
-                    <input type="email" id="login-email" class="input-login" placeholder="seu.email@exemplo.com" required>
+                    <input type="email" id="login-email" class="input-login" placeholder="seu.email@exemplo.com" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
 
-                    <label for="login-password">Senha</label>
-                    <input type="password" id="login-password" class="input-login" placeholder="********" required>
+                    <label for="login-password">Senha
+                        <span class="password-toggle" id="toggleLoginPassword">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </label>
+                    <input type="password" id="login-password" class="input-login" placeholder="********" required minlength="6">
 
                     <button type="submit" class="enter-login-btn">Entrar</button>
                 </form>
-                <a href="#" id="btn-criar">Esqueceu sua senha?</a>
+                <a href="forgot-password.html" id="btn-criar">Esqueceu sua senha?</a>
             </div>
 
             <div id="register" class="tab-content hidden">
@@ -69,10 +73,14 @@
                     <input type="text" id="register-name" class="input-login" placeholder="Seu nome completo" required>
 
                     <label for="register-email">Email</label>
-                    <input type="email" id="register-email" class="input-login" placeholder="seu.email@exemplo.com" required>
+                    <input type="email" id="register-email" class="input-login" placeholder="seu.email@exemplo.com" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
 
-                    <label for="register-password">Senha</label>
-                    <input type="password" id="register-password" class="input-login" placeholder="Crie uma senha forte" required>
+                    <label for="register-password">Senha
+                        <span class="password-toggle" id="toggleRegisterPassword">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </label>
+                    <input type="password" id="register-password" class="input-login" placeholder="Crie uma senha forte" required minlength="6">
 
                     <button type="submit" class="enter-login-btn">Cadastrar</button>
                 </form>
@@ -101,6 +109,30 @@
                     });
                 });
             });
+        // Password toggle functionality
+            const toggleLoginPassword = document.getElementById('toggleLoginPassword');
+            const loginPassword = document.getElementById('login-password');
+
+            if (toggleLoginPassword) {
+                toggleLoginPassword.addEventListener('click', function () {
+                    const type = loginPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+                    loginPassword.setAttribute('type', type);
+                    this.querySelector('i').classList.toggle('fa-eye');
+                    this.querySelector('i').classList.toggle('fa-eye-slash');
+                });
+            }
+
+            const toggleRegisterPassword = document.getElementById('toggleRegisterPassword');
+            const registerPassword = document.getElementById('register-password');
+
+            if (toggleRegisterPassword) {
+                toggleRegisterPassword.addEventListener('click', function () {
+                    const type = registerPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+                    registerPassword.setAttribute('type', type);
+                    this.querySelector('i').classList.toggle('fa-eye');
+                    this.querySelector('i').classList.toggle('fa-eye-slash');
+                });
+            }
         });
     </script>
     <script src="js/theme-toggle.js"></script>

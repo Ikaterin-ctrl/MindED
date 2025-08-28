@@ -26,7 +26,7 @@
                 <li><a href="index.html">Início</a></li>
                 <li><a href="conteudo.html">Conteúdos</a></li>
                 <li><a href="preferencias.html">Preferências</a></li>
-                <li><a href="feedback.html">Feedback</a></li>
+                
                 <li><a href="login.html" class="login-button">Login</a></li>
                 <li>
                   <button id="theme-toggle">
@@ -116,40 +116,6 @@
     </footer>
 
     <script src="js/theme-toggle.js"></script>
-    <script>
-        const hamburgerMenu = document.getElementById('hamburger-menu');
-        const headerNav = document.getElementById('header-nav');
-        const closeBtn = document.getElementById('nav-close-btn');
-        const body = document.body;
-
-        function openMenu() {
-            headerNav.classList.add('active');
-            body.classList.add('no-scroll');
-        }
-
-        function closeMenu() {
-            headerNav.classList.remove('active');
-            body.classList.remove('no-scroll');
-        }
-
-        hamburgerMenu.addEventListener('click', openMenu);
-        closeBtn.addEventListener('click', closeMenu);
-
-        const sections = document.querySelectorAll('.fade-in-section');
-
-        const observer = new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('is-visible');
-                }
-            });
-        }, {
-            threshold: 0.1
-        });
-
-        sections.forEach(section => {
-            observer.observe(section);
-        });
-    </script>
+    
 </body>
 </html>

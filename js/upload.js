@@ -52,6 +52,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const progressContainer = document.querySelector('.progress-container');
   const progressBar = document.querySelector('.progress-bar');
 
+  // Novos elementos para feedback de sucesso
+  const uploadSuccessState = document.getElementById('uploadSuccessState');
+  const viewContentBtn = document.getElementById('viewContentBtn');
+
   function showLoading(isLoading, text) {
     uploadBtn.disabled = isLoading;
     buttonText.textContent = text;
@@ -109,6 +113,8 @@ document.addEventListener('DOMContentLoaded', () => {
     uploadBtn.disabled = true; // Desabilita o botão
     progressBar.style.width = '0%';
     progressContainer.classList.add('hidden');
+    uploadSuccessState.classList.add('hidden'); // Esconde o estado de sucesso
+    progressBar.classList.remove('complete'); // Remove a classe de completo
   }
 
   // Configura Dropzone
@@ -172,6 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
     showLoading(true, 'Enviando e Adaptando…');
     progressContainer.classList.remove('hidden');
     progressBar.style.width = '0%';
+    progressBar.classList.remove('complete'); // Garante que a barra não esteja verde no início
 
     const form = new FormData();
     form.append('content', file);
@@ -188,20 +195,31 @@ document.addEventListener('DOMContentLoaded', () => {
             showLoading(true, `Enviando... ${percentComplete.toFixed(0)}%`);
         } else {
             showLoading(true, 'Adaptando conteúdo...');
+            progressBar.classList.add('complete'); // Adiciona a classe de completo quando 100%
         }
       }
     });
 
     xhr.addEventListener('load', () => {
-      progressContainer.classList.add('hidden');
+      showLoading(false, 'Enviar'); // Resetar o botão
+      progressContainer.classList.add('hidden'); // Esconder a barra de progresso
+      
       if (xhr.status >= 200 && xhr.status < 300) {
         const adapted = JSON.parse(xhr.responseText);
         sessionStorage.setItem('adaptedContent', adapted.html);
-        window.location.href = 'conteudo-adaptado.html';
+        
+        // Mostrar mensagem de sucesso e botão
+        uploadSuccessState.classList.remove('hidden');
+        uploadBtn.classList.add('hidden'); // Esconder o botão de upload
+        dropzone.classList.add('hidden'); // Esconder o dropzone
+        
+        viewContentBtn.onclick = () => {
+          window.location.href = 'conteudo-adaptado.html';
+        };
+
       } else {
         console.error('Erro ao processar conteúdo:', xhr.statusText);
         showErrorMessage('Erro ao processar seu conteúdo.', 'error');
-        showLoading(false, 'Enviar');
         resetDropzone();
       }
     });

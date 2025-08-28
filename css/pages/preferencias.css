@@ -243,3 +243,52 @@
   90% { opacity: 1; transform: translateY(0); }
   100% { opacity: 0; transform: translateY(-20px); }
 }
+
+/* Review Section Styles */
+.review-summary {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.review-summary h3 {
+  color: #f5e8c7;
+  font-size: 1.3rem;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.review-module-section {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.review-module-section:last-child {
+  border-bottom: none;
+}
+
+.review-module-section h4 {
+  color: #aeefff;
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+}
+
+.review-module-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.review-module-section li {
+  color: #e0f7fa;
+  margin-bottom: 5px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.review-module-section li strong {
+  color: #7fffd4;
+}

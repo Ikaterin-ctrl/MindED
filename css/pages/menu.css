@@ -42,7 +42,13 @@
 
 .menu-page p {
     color: var(--text-secondary);
-    line-height: 1.6;
+    line-height: 1.8; /* Increased for better readability */
+    margin-bottom: 1em; /* Add spacing between paragraphs */
+}
+
+.menu-page section {
+    padding-top: 80px; /* Consistent top padding for all sections */
+    padding-bottom: 60px; /* Keep existing bottom padding */
 }
 
 .menu-page .btn-start {
@@ -123,9 +129,7 @@
     color: var(--text-secondary);
 }
 
-.menu-page #sobre {
-    margin-top: 100px;
-}
+
 
 .fade-in-section {
     opacity: 0;

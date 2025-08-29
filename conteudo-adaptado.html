@@ -15,16 +15,31 @@
 </head>
 <body>
   <!-- Cabeçalho -->
-  <header class="header">
-    <div class="header-logo">
-      <img src="./assets/MindED_logo-removebg-preview.png" alt="MindED Logo" />
+  <header class="main-header">
+    <div class="header-content">
+        <a href="index.html" class="logo">
+            <img src="./assets/MindED_logo-removebg-preview.png" alt="MindED Logo">
+        </a>
+        <nav class="main-nav">
+            <button class="hamburger-menu" aria-label="Abrir menu" aria-expanded="false">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="conteudo.html">Conteúdos</a></li>
+                <li><a href="preferencias.html">Preferências</a></li>
+                
+                <li><a href="login.html" class="login-button">Login</a></li>
+                <li>
+                  <button id="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                  </button>
+                </li>
+            </ul>
+        </nav>
     </div>
-    <nav class="header-nav">
-      <a href="index.html">Início</a>      
-      <a href="conteudo.html">Conteúdos</a>
-      <a href="preferencias.html">Preferências</a>
-      <button id="theme-toggle"><i class="fas fa-moon"></i></button>
-    </nav>
   </header>
 
   <!-- Área de Conteúdo Adaptado -->
@@ -60,5 +75,22 @@
 
   <script src="./js/theme-toggle.js" defer></script>
   <script src="./assistente/js/app.js" defer></script>
+  <script src="js/menu.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const adaptedContentDiv = document.getElementById('adapted-content');
+      const adaptedContent = sessionStorage.getItem('adaptedContent');
+
+      if (adaptedContent) {
+        adaptedContentDiv.innerHTML = adaptedContent;
+      } else {
+        adaptedContentDiv.innerHTML = '<p class="loading">Nenhum conteúdo adaptado encontrado. Por favor, envie um conteúdo na página de upload.</p>';
+      }
+
+      document.getElementById('voltar-upload').addEventListener('click', () => {
+        window.location.href = 'upload.html';
+      });
+    });
+  </script>
 </body>
 </html>

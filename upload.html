@@ -15,18 +15,31 @@
 </head>
 <body>
   <!-- Cabeçalho -->
-  <header class="header">
-    <div class="header-logo">
-      <img src="./assets/MindED_logo-removebg-preview.png" alt="MindED Logo" />
+  <header class="main-header">
+    <div class="header-content">
+        <a href="index.html" class="logo">
+            <img src="./assets/MindED_logo-removebg-preview.png" alt="MindED Logo">
+        </a>
+        <nav class="main-nav">
+            <button class="hamburger-menu" aria-label="Abrir menu" aria-expanded="false">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="conteudo.html">Conteúdos</a></li>
+                <li><a href="preferencias.html">Preferências</a></li>
+                
+                <li><a href="login.html" class="login-button">Login</a></li>
+                <li>
+                  <button id="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                  </button>
+                </li>
+            </ul>
+        </nav>
     </div>
-    <nav class="header-nav">
-      <a href="index.html">Início</a>
-      <a href="conteudo.html">Conteúdos</a>
-      <a href="preferencias.html">Preferências</a>
-      <button id="theme-toggle">
-        <i class="fas fa-moon"></i>
-      </button>
-    </nav>
   </header>
 
   <!-- Página de Upload -->
@@ -37,11 +50,28 @@
       <p>Envie o material que você quer estudar e escolha como deseja receber.</p>
 
       <div class="dropzone" id="dropzone">
-        <p>
-          Arraste e solte seu arquivo aqui ou
-          <span class="file-select">clique para escolher</span>
-        </p>
-        <input type="file" id="fileUpload" hidden />
+        <div class="dropzone-initial-state">
+          <p>
+            Arraste e solte seu arquivo aqui ou
+            <span class="file-select">clique para escolher</span>
+          </p>
+        </div>
+        <div class="dropzone-preview-state hidden">
+          <div class="file-preview">
+            <i class="fas fa-file-alt file-icon"></i>
+            <div class="file-details">
+              <span class="file-name"></span>
+              <span class="file-size"></span>
+            </div>
+            <button class="remove-file-btn"><i class="fas fa-times"></i></button>
+          </div>
+        </div>
+        <input type="file" id="fileUpload" hidden accept=".pdf,.doc,.docx,.txt" />
+      </div>
+      <p class="supported-formats">Formatos suportados: PDF, DOC, DOCX, TXT.</p>
+
+      <div class="progress-container hidden">
+        <div class="progress-bar"></div>
       </div>
 
       <button
@@ -52,10 +82,29 @@
         <span class="spinner hidden"><i class="fas fa-spinner fa-spin"></i></span>
       </button>
 
-      <p class="upload-preview-text">
-        Seu conteúdo poderá ser apresentado como:<br />
-        ✔ Texto simplificado | ✔ Vídeo com IA | ✔ Áudio adaptado
-      </p>
+      <div class="upload-success-state hidden" id="uploadSuccessState">
+        <i class="fas fa-check-circle success-icon"></i>
+        <p class="success-message">Arquivo enviado com sucesso!</p>
+        <button class="view-content-btn" id="viewContentBtn">Ver conteúdo</button>
+      </div>
+
+      <div class="adaptation-preview">
+        <p>Seu conteúdo poderá ser apresentado como:</p>
+        <div class="adaptation-options">
+          <div class="option">
+            <i class="fas fa-file-alt"></i>
+            <span>Texto Simplificado</span>
+          </div>
+          <div class="option">
+            <i class="fas fa-video"></i>
+            <span>Vídeo com IA</span>
+          </div>
+          <div class="option">
+            <i class="fas fa-volume-up"></i>
+            <span>Áudio Adaptado</span>
+          </div>
+        </div>
+      </div>
     </div>
   </main>
 
@@ -79,8 +128,10 @@
     </div>
   </div>
 
+  <script src="./config.js"></script>
   <script src="./js/theme-toggle.js" defer></script>
-  <script src="./js/conteudos.js" defer></script>
+  <script src="./js/upload.js" defer></script>
   <script src="./assistente/js/app.js" defer></script>
+  <script src="js/menu.js"></script>
 </body>
 </html>

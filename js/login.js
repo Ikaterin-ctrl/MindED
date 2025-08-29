@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Hide all tab contents and show the active one
       tabContents.forEach(content => content.classList.add('hidden'));
-      const targetTabId = button.dataset.tab + '-tab';
+      const targetTabId = button.dataset.tab;
       document.getElementById(targetTabId).classList.remove('hidden');
     });
   });

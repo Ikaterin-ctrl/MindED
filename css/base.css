@@ -2,7 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Montserrat", sans-serif;
 }
 
 :root {
@@ -13,6 +13,7 @@
   --accent-start: #4CAF50; /* Green */
   --accent-end: #2196F3; /* Blue */
   --lavender-pastel: #E6E6FA;
+  --menu-bg: #ffffff;
 }
 
 [data-theme="dark"] {
@@ -22,6 +23,7 @@
   --text-secondary: #aaaaaa;
   --accent-start: #64FFDA; /* Brighter accent for dark mode */
   --accent-end: #18FFFF;
+  --menu-bg: #1a1a2e;
 }
 
 body {
@@ -106,7 +108,7 @@ html[data-theme="light"] li {
 
 html[data-theme="light"] button,
 html[data-theme="light"] .btn {
-  color: #fff !important;
+  color: #535050 !important;
   text-shadow: none;
   background-color: var(--lavender-pastel) !important;
 }

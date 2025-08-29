@@ -1,219 +1,121 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MindED</title>
-
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@800&display=swap" rel="stylesheet">
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" >
-
-    <link rel="stylesheet" href="menu.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/pages/menu.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-
 <body>
-
-<header class="minded-header">
-    <nav class="navbar navbar-expand-lg">
-        <div class="container"> <!-- MANTENHA ESTE CONTAINER AQUI -->
-            <a class="navbar-brand logo-text" href="#">
-                <i class="fa-solid fa-brain logo-icon"></i>
-                MindED
-            </a>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                aria-expanded="false" aria-label="Toggle navigation">
-                <i class="fa-solid fa-bars"></i>
+      <!-- Cabeçalho -->
+  <header class="main-header">
+    <div class="header-content">
+        <a href="index.html" class="logo">
+            <img src="./assets/MindED_logo-removebg-preview.png" alt="MindED Logo">
+        </a>
+        <nav class="main-nav">
+            <button class="hamburger-menu" aria-label="Abrir menu" aria-expanded="false">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
             </button>
-
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#sobre">Sobre</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#quem-somos">Quem Somos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#solucoes">Soluções</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#equipe">Equipe</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#contato">Contato</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link btn btn-primary text-white ms-lg-3" href="login2.html">Entrar / Cadastrar</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-</header>
-
-    <!-- --------------------------------- sobre --------------------------------- -->
-    <section class="container mt-5 sobre" id="sobre">
-        <div class="row d-flex justify-content-center align-items-center">
-            <div class="col-lg-6">
-                <h2 class="title display-5 my-4">MindED: Aprendizagem Inclusiva.</h2>
-                <h3 class="mb-4">Nosso objetivo é tornar a aprendizagem mais inclusiva e eficaz para pessoas neurodivergentes, adaptando conteúdos educacionais ao perfil cognitivo de cada usuário.</h3>
-                <a href="#solucoes" class="btn btn-primary btn-lg">Descubra nossas soluções <i class="fa-solid fa-arrow-right-long ms-1"></i></a>
-            </div>
-
-            <div class="col-lg-6 text-center">
-                <!-- Imagem mais relevante para aprendizado/IA. Use uma imagem real do MindED se tiver. -->
-                <img src="img/data-analysis-1-60.png" alt="MindED - Aprendizado com IA" class="img-fluid">
-            </div>
-        </div>
-    </section>
-
-<hr>
-
-<!-- Seção "Quem Somos"  -->
-    <section class="container my-5" id="quem-somos">
-        <div class="row g-0 d-flex align-items-center justify-content-center">
-
-            <!-- Lado esquerdo: Imagem -->
-            <div class="col-lg-6 text-center m-0 p-0">
-                <img src="img/team-work-2-21 (1).png" alt="Pessoas estudando com tecnologia" class="img-fluid" style="max-height: 400px; object-fit: cover; width: 100%;">
-            </div>
-
-            <!-- Lado direito: Texto "Quem Somos" -->
-            <div class="col-lg-6 m-0 pe-0" style="background-color: white; padding: 30px;">
-                <h4 class="my-1 my-title mt-4">Quem Somos</h4>
-                <h4 class="my-title my-4">O MindED é um ambiente digital inovador que adapta conteúdos educacionais às suas preferências e perfil cognitivo.</h4>
-                <p class="mb-5">Nossa plataforma permite que você insira conteúdos em diversos formatos (texto, vídeo ou áudio) e, com o apoio de inteligência artificial, o material é automaticamente adaptado para otimizar sua experiência de aprendizado. A IA do MindED transcreve e resume vídeos e áudios, converte texto em áudio narrado ou vídeo ilustrado, e reorganiza os dados com base nas suas preferências, como leitura leve, foco visual ou aprendizado passo a passo.</p>
-            </div>
-        </div>
-    </section>
-
-<hr>
-    <section class="container my-5" id="solucoes">
-    <h4 class="my-title text-center my-mt">Soluções</h4>
-    <h3 class="text-center my-title mb-4">Descubra as funcionalidades essenciais do MindED</h3>
-
-    <!-- PRIMEIRA LINHA DE CARDS -->
-    <div class="row d-flex align-items-stretch justify-content-center">
-        <div class="col-lg-4 my-2">
-            <div class="card text-center p-4">
-                <i class="fa-solid fa-user-plus icon"></i> <!-- Ícone para Login/Perfil -->
-                <div class="card-body">
-                    <h5 class="card-title">Login e Perfil Personalizado</h5>
-                    <p class="card-text">Crie seu perfil com dados pessoais e preferências de aprendizagem para uma experiência totalmente adaptada.</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4 my-2">
-            <div class="card text-center p-4">
-                <i class="fa-solid fa-cloud-arrow-up icon"></i> <!-- Ícone de Upload -->
-                <div class="card-body">
-                    <h5 class="card-title">Upload e Inserção de Conteúdo</h5>
-                    <p class="card-text">Carregue seus materiais (texto, vídeo, áudio) ou insira links para que o MindED comece a adaptá-los.</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4 my-2">
-            <div class="card text-center p-4">
-                <i class="fa-solid fa-exchange-alt icon"></i> <!-- Ícone de Troca/Adaptação -->
-                <div class="card-body">
-                    <h5 class="card-title">Adaptação de Formato Preferido</h5>
-                    <p class="card-text">Escolha como prefere consumir o conteúdo: texto adaptado, vídeo ilustrado, ou áudio narrado, conforme seu estilo.</p>
-                </div>
-            </div>
-        </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="conteudo.html">Conteúdos</a></li>
+                <li><a href="preferencias.html">Preferências</a></li>
+                
+                <li><a href="login.html" class="login-button">Login</a></li>
+                <li>
+                  <button id="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                  </button>
+                </li>
+            </ul>
+        </nav>
     </div>
+  </header>
 
-    <!-- SEGUNDA LINHA DE CARDS -->
-    <div class="row d-flex align-items-stretch justify-content-center">
-        <div class="col-lg-4 my-2">
-            <div class="card text-center p-4">
-                <i class="fa-solid fa-brain icon"></i> <!-- Ícone de Cérebro/IA -->
-                <div class="card-body">
-                    <h5 class="card-title">Atividades Interativas com IA</h5>
-                    <p class="card-text">Interaja com atividades propostas pela IA, personalizadas de acordo com seu estilo cognitivo para um aprendizado eficaz.</p>
+    <main class="menu-page">
+        <section id="sobre" class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <h2 class="title">MindED: Aprendizagem Inclusiva.</h2>
+                    <p>Nosso objetivo é tornar a aprendizagem mais inclusiva e eficaz para pessoas neurodivergentes, adaptando conteúdos educacionais ao perfil cognitivo de cada usuário.</p>
+                    <a href="#solucoes" class="btn-start">Descubra nossas soluções</a>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <img src="img/data-analysis-1-60.png" alt="MindED - Aprendizado com IA" class="img-fluid">
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div class="col-lg-4 my-2">
-            <div class="card text-center p-4">
-                <i class="fa-solid fa-comments icon"></i> <!-- Ícone de Feedback -->
-                <div class="card-body">
-                    <h5 class="card-title">Feedback Rápido e Preciso</h5>
-                    <p class="card-text">Receba feedback instantâneo no final de cada módulo ou atividade, ajudando no seu desenvolvimento contínuo.</p>
+        <section id="quem-somos" class="container">
+            <div class="row">
+                <div class="col-lg-6 text-center">
+                    <img src="img/team-work-2-21 (1).png" alt="Pessoas estudando com tecnologia" class="img-fluid">
+                </div>
+                <div class="col-lg-6">
+                    <h2 class="title">Quem Somos</h2>
+                    <p>O MindED é um ambiente digital inovador que adapta conteúdos educacionais às suas preferências e perfil cognitivo. Nossa plataforma permite que você insira conteúdos em diversos formatos (texto, vídeo ou áudio) e, com o apoio de inteligência artificial, o material é automaticamente adaptado para otimizar sua experiência de aprendizado.</p>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div class="col-lg-4 my-2">
-            <div class="card text-center p-4">
-                <i class="fa-solid fa-chart-line icon"></i> <!-- Ícone de Gráfico/Histórico -->
-                <div class="card-body">
-                    <h5 class="card-title">Histórico de Estudos e Recomendações</h5>
-                    <p class="card-text">Acompanhe seu progresso e receba recomendações personalizadas para continuar sua jornada de aprendizado.</p>
-                </div>
-            </div>
-        </div>
-    </div> 
-</section>
-
-    <!-- ------------------------------------------------ contato ------------------------------------------------ -->
-<section class="contact-section py-5" id="contato">
-    <div class="container text-center py-5">
-        <h2 class="contact-title mb-3">Fale Conosco</h2>
-        <p class="contact-subtitle mb-5">
-            Estamos prontos para transformar seu aprendizado.
-        </p>
-
-        <div class="row justify-content-center">
-            <div class="col-lg-8 col-md-10">
-                <div class="contact-card p-5 rounded-lg shadow-lg">
-                    <div class="contact-icon mb-4">
-                        <i class="fas fa-envelope fa-3x"></i>
+        <section id="solucoes" class="container">
+            <h2 class="title text-center">Soluções</h2>
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="card">
+                        <i class="fas fa-user-plus icon"></i>
+                        <h5 class="card-title">Login e Perfil Personalizado</h5>
+                        <p class="card-text">Crie seu perfil com dados pessoais e preferências de aprendizagem para uma experiência totalmente adaptada.</p>
                     </div>
-                    <h3 class="contact-heading mb-3">Envie-nos um E-mail</h3>
-                    <p class="contact-text mb-4">
-                        Tem alguma dúvida, sugestão ou quer saber mais sobre o MindED?
-                        Nosso time está pronto para te ajudar!
-                    </p>
-                    <div class="email-addresses">
-                        <p class="email-link">
-                            <a href="mailto:suporte@minded.com.br" class="text-decoration-none">suporte@minded.com.br</a>
-                        </p>
-                        <p class="email-link">
-                            <a href="mailto:contato@minded.com.br" class="text-decoration-none">contato@minded.com.br</a>
-                        </p>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card">
+                        <i class="fas fa-cloud-arrow-up icon"></i>
+                        <h5 class="card-title">Upload e Inserção de Conteúdo</h5>
+                        <p class="card-text">Carregue seus materiais (texto, vídeo, áudio) ou insira links para que o MindED comece a adaptá-los.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card">
+                        <i class="fas fa-exchange-alt icon"></i>
+                        <h5 class="card-title">Adaptação de Formato Preferido</h5>
+                        <p class="card-text">Escolha como prefere consumir o conteúdo: texto adaptado, vídeo ilustrado, ou áudio narrado, conforme seu estilo.</p>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</section>
-    <!-- ------------------------------------------------ fim contato ------------------------------------------------ -->
+        </section>
 
-    <!-- Rodapé -->
+          <section id="login-call-to-action" class="container text-center">
+            <h2 class="title">Pronto para Começar?</h2>
+            <p>Faça login para acessar seus conteúdos adaptados ou crie uma conta para começar a sua jornada de aprendizagem inclusiva.</p>
+            <a href="login.html" class="btn-start">Login ou Cadastro</a>
+        </section>
+
+        <section id="contato" class="container">
+            <div class="contact-card">
+                <h2 class="title text-center">Fale Conosco</h2>
+                <p class="text-center">Estamos prontos para transformar seu aprendizado.</p>
+                <div class="email-addresses text-center">
+                    <p class="email-link"><a href="mailto:suporte@minded.com.br">suporte@minded.com.br</a></p>
+                    <p class="email-link"><a href="mailto:contato@minded.com.br">contato@minded.com.br</a></p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="overlay" id="overlay"></div>
+
     <footer class="footer">
-        <div class="container">
-            <p class="text-white">&copy; 2025 MindED. Todos os direitos reservados.</p>
-        </div>
+        <p>&copy; 2025 MindED. Todos os direitos reservados.</p>
     </footer>
-</body>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
-</script>
-<!-- Scripts do Chatbot (coloque sempre antes do fechamento do </body>) -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<script src="chatbot-assets/js/chatbot-ui.js"></script>
+    <script src="js/theme-toggle.js"></script>
+    
+</body>
+</html>

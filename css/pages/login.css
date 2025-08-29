@@ -116,20 +116,124 @@ body {
   display: none !important;
 }
 
-/* 10) Ajustes para tema claro */
-@media (prefers-color-scheme: light) {
-  .login-form {
-    background: rgba(255,255,255,0.9);
-    color: #333;
-  }
-  .input-login {
-    background: #fff;
-    border: 1px solid #ccc;
-    color: #333;
-  }
-  .input-login::placeholder {
-    color: #888;
-  }
+.login-main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.login-form {
+    width: 100%;
+    max-width: 400px;
+    padding: 40px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    color: var(--text-primary);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.login-form h1 {
+    margin-bottom: 24px;
+    font-size: 2rem;
+    text-align: center;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.login-form label {
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+}
+
+.input-login {
+    width: 100%;
+    height: 48px;
+    padding: 0 16px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    background: rgba(255,255,255,0.05);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.input-login:focus {
+    outline: none;
+    border-color: var(--accent-start);
+    background-color: rgba(255,255,255,0.1);
+}
+
+.input-login::placeholder {
+    color: var(--text-secondary);
+}
+
+.enter-login-btn {
+    width: 100%;
+    padding: 14px;
+    margin-top: 16px;
+    background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.enter-login-btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+}
+
+#btn-criar {
+    display: block;
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: var(--accent-end);
+    text-align: center;
+    text-decoration: none;
+}
+
+#btn-criar:hover {
+    text-decoration: underline;
+}
+
+.tab-buttons {
+    display: flex;
+    margin-bottom: 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.tab-button {
+    flex: 1;
+    padding: 12px 16px;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: color 0.3s ease, border-bottom 0.3s ease;
+    border-bottom: 2px solid transparent;
+}
+
+.tab-button:hover {
+    color: var(--text-primary);
+}
+
+.tab-button.active {
+    color: var(--accent-start);
+    border-bottom: 2px solid var(--accent-start);
+    font-weight: bold;
+}
+
+.tab-content.hidden {
+    display: none;
 }
 
 /* 11) Responsividade */

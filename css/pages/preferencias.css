@@ -1,7 +1,7 @@
 /* preferencias.css */
 
 .preferences {
-  padding: 40px 20px;
+  padding: 40px 300px;
   margin: 100px auto;
 }
 
@@ -72,7 +72,8 @@
 .module h3 {
   font-size: 1.1rem;
   color: #e0f7fa;
-  margin: 12px 0 8px;
+  margin: 30px 0 8px;
+  margin-bottom: 20px;
 }
 
 .options {
@@ -84,8 +85,8 @@
 
 .option-btn {
   flex: 1 1 calc(50% - 10px);
-  background: rgba(127,253,212,0.3);
-  border: 1px solid rgba(123,186,255,0.5);
+  background: rgba(120, 129, 126, 0.3);
+  border: 1px solid rgba(140, 143, 146, 0.5);
   backdrop-filter: blur(6px);
   border-radius: 8px;
   color: #fff;
@@ -111,9 +112,10 @@
 
 .checkbox-group {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 10px 40px;
   margin-bottom: 16px;
+  padding-left: 50px;
 }
 
 .checkbox-group label {
@@ -240,4 +242,53 @@
   10% { opacity: 1; transform: translateY(0); }
   90% { opacity: 1; transform: translateY(0); }
   100% { opacity: 0; transform: translateY(-20px); }
+}
+
+/* Review Section Styles */
+.review-summary {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.review-summary h3 {
+  color: #f5e8c7;
+  font-size: 1.3rem;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.review-module-section {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.review-module-section:last-child {
+  border-bottom: none;
+}
+
+.review-module-section h4 {
+  color: #aeefff;
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+}
+
+.review-module-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.review-module-section li {
+  color: #e0f7fa;
+  margin-bottom: 5px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.review-module-section li strong {
+  color: #7fffd4;
 }

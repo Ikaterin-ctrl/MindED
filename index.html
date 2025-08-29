@@ -80,20 +80,80 @@
   </div>
 
   <!-- Scripts -->
-  <script>
-    function checkLoginAndRedirect() {
-      const token = localStorage.getItem('authToken');
-      if (token) {
-        window.location.href = 'upload.html';
-      } else {
-        window.location.href = 'menu.html';
-      }
-    }
-  </script>
+  <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
   <script src="./config.js"></script>
   <script src="js/typed-text.js"></script>
   <script src="js/theme-toggle.js"></script>
   <script src="assistente/js/app.js"></script>
   <script src="js/menu.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const hasVisited = localStorage.getItem('hasVisited');
+        const headerLoginButton = document.getElementById('header-login-button');
+        const startButton = document.getElementById('start-button');
+
+        // Initialize Auth0 client
+        let auth0Client = null;
+        try {
+            auth0Client = await auth0.createAuth0Client({
+                domain: 'dev-ga7njuw5als2pp77.us.auth0.com', // Substitua pelo seu domínio Auth0
+                clientId: 'EwYBH3Y6AyTiZ0Cl2SUie3KUWQqYeNmU', // Substitua pelo seu Client ID Auth0
+                authorizationParams: {
+                    redirect_uri: window.location.origin + '/login.html' // Redireciona para login.html após autenticação
+                }
+            });
+        } catch (e) {
+            console.error("Erro ao inicializar Auth0 em index.html:", e);
+            // Fallback if Auth0 fails to initialize
+            if (!hasVisited) {
+                localStorage.setItem('hasVisited', 'true');
+                window.location.href = 'menu.html';
+            } else {
+                window.location.href = 'login.html';
+            }
+            return;
+        }
+
+        const isAuthenticated = await auth0Client.isAuthenticated();
+
+        if (!hasVisited) {
+            // First visit
+            localStorage.setItem('hasVisited', 'true');
+            window.location.href = 'menu.html';
+        } else {
+            // Returning user
+            if (isAuthenticated) {
+                // Authenticated, go to upload page
+                window.location.href = 'upload.html';
+            } else {
+                // Not authenticated, go to login page
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Update header login/logout button (this part will only run if the above redirects don't happen immediately)
+        if (isAuthenticated) {
+            const user = await auth0Client.getUser();
+            console.log('Usuário autenticado:', user);
+            headerLoginButton.textContent = 'Sair';
+            headerLoginButton.href = '#'; // Prevent default navigation
+            headerLoginButton.onclick = async (e) => {
+                e.preventDefault();
+                await auth0Client.logout({
+                    logoutParams: {
+                        returnTo: window.location.origin + '/index.html' // Redirecionar para index.html após o logout
+                    }
+                });
+            };
+        } else {
+            headerLoginButton.textContent = 'Login';
+            headerLoginButton.href = 'login.html';
+        }
+
+        // Remove onclick from start button as redirection is automatic
+        startButton.onclick = null;
+        startButton.href = '#'; // Make it a dead link if not handled by JS
+    });
+  </script>
 </body>
 </html>

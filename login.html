@@ -137,11 +137,11 @@
 
             // Auth0.js Integration
             const webAuth = new auth0.WebAuth({
-                domain: 'YOUR_AUTH0_DOMAIN', // Substitua pelo seu domínio Auth0
-                clientID: 'YOUR_AUTH0_CLIENT_ID', // Substitua pelo seu Client ID Auth0
+                domain: 'dev-ga7njuw5als2pp77.us.auth0.com', // Substitua pelo seu domínio Auth0
+                clientID: 'EwYBH3Y6AyTiZ0Cl2SUie3KUWQqYeNmU', // Substitua pelo seu Client ID Auth0
                 responseType: 'token id_token', // For implicit flow
                 scope: 'openid profile email',
-                redirectUri: 'YOUR_GITHUB_PAGES_CALLBACK_URL' // Ex: https://yourusername.github.io/your-repo/callback.html
+                redirectUri: 'https://ikaterin-ctrl.github.io/MindED/login.html' // Ex: https://yourusername.github.io/your-repo/callback.html
             });
 
             // Handle Login Form Submission

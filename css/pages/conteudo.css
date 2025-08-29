@@ -20,10 +20,63 @@
   transition: background 0.3s ease;
 }
 
+.adapted-title {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 30px;
+  color: var(--text-primary);
+}
+
+#adapted-content {
+  line-height: 1.8;
+  font-size: 1.1rem;
+}
+
 .adapted-container .loading,
 .adapted-container .error {
   font-size: 1.1rem;
   text-align: center;
+}
+
+.feedback-actions {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  text-align: center;
+}
+
+.feedback-actions span {
+  display: block;
+  margin-bottom: 15px;
+  font-size: 1rem;
+  color: var(--text-secondary);
+}
+
+.feedback-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.feedback-btn {
+  background: transparent;
+  border: 1px solid var(--text-secondary);
+  color: var(--text-secondary);
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.feedback-btn:hover {
+  background: var(--accent-start);
+  color: #fff;
+  border-color: var(--accent-start);
+}
+
+.feedback-btn i {
+  margin-right: 8px;
 }
 
 .adapted-actions {
@@ -36,6 +89,21 @@
 
 .adapted-actions .upload-btn {
   min-width: 160px;
+  background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+  border: none;
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.adapted-actions .upload-btn:hover {
+  transform: scale(1.05);
+}
+
+.adapted-actions .upload-btn i {
+  margin-right: 10px;
 }
 
 @media (max-width: 600px) {

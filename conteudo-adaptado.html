@@ -44,12 +44,22 @@
 
   <!-- Área de Conteúdo Adaptado -->
   <main class="adapted-main">
-    <div class="adapted-container" id="adapted-content">
-      <p class="loading">Carregando conteúdo adaptado...</p>
+    <div class="adapted-container">
+      <h1 class="adapted-title">Seu Conteúdo Adaptado</h1>
+      <div id="adapted-content">
+        <p class="loading">Carregando conteúdo adaptado...</p>
+      </div>
+      <div class="feedback-actions">
+        <span>O que você achou da adaptação?</span>
+        <div class="feedback-buttons">
+          <button id="like-btn" class="feedback-btn"><i class="fas fa-thumbs-up"></i> Gostei</button>
+          <button id="dislike-btn" class="feedback-btn"><i class="fas fa-thumbs-down"></i> Não Gostei</button>
+        </div>
+      </div>
     </div>
     <div class="adapted-actions">
-      <button id="refazer-btn" class="upload-btn">Refazer Adaptação</button>
-      <button id="voltar-upload" class="upload-btn">Enviar Novo Conteúdo</button>
+      <button id="refazer-btn" class="upload-btn"><i class="fas fa-redo-alt"></i> Refazer Adaptação</button>
+      <button id="voltar-upload" class="upload-btn"><i class="fas fa-arrow-left"></i> Enviar Novo Conteúdo</button>
     </div>
   </main>
 

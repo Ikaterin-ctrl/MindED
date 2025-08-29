@@ -15,19 +15,32 @@
   />
 </head>
 <body>
-  <!-- Header fixo -->
-  <header class="header">
-    <div class="header-logo">
-      <img src="./assets/MindED_logo-removebg-preview.png" alt="MindED Logo" />
+  <!-- Cabeçalho -->
+  <header class="main-header">
+    <div class="header-content">
+        <a href="index.html" class="logo">
+            <img src="./assets/MindED_logo-removebg-preview.png" alt="MindED Logo">
+        </a>
+        <nav class="main-nav">
+            <button class="hamburger-menu" aria-label="Abrir menu" aria-expanded="false">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="conteudo.html">Conteúdos</a></li>
+                <li><a href="preferencias.html">Preferências</a></li>
+                
+                <li><a href="login.html" class="login-button">Login</a></li>
+                <li>
+                  <button id="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                  </button>
+                </li>
+            </ul>
+        </nav>
     </div>
-    <nav class="header-nav">
-      <a href="index.html">Início</a>      
-      <a href="conteudo.html">Conteúdos</a>
-      <a href="preferencias.html" class="active">Preferências</a>
-      <button id="theme-toggle">
-        <i class="fas fa-moon"></i>
-      </button>
-    </nav>
   </header>
 
   <!-- Container geral -->
@@ -138,6 +151,14 @@
       </div>
     </section>
 
+    <!-- Módulo 6 (Revisão) -->
+    <section class="module" data-step="6" hidden>
+      <h2>6. Revisão das Suas Preferências</h2>
+      <div id="review-summary" class="review-summary">
+        <p>Carregando resumo...</p>
+      </div>
+    </section>
+
     <!-- Navegação entre módulos -->
     <div class="module-nav">
       <button id="prev-btn" disabled>« Anterior</button>
@@ -177,6 +198,7 @@
   <script src="./config.js"></script>
   <script src="./js/preferences.js" defer></script>
   <script src="./js/theme-toggle.js" defer></script>
+  <script src="js/menu.js"></script>
 
   <!-- Scripts do chatbot -->
   <script src="./assistente/js/app.js" defer></script>

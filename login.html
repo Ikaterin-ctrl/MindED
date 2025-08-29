@@ -1,83 +1,140 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login | MindED</title>
-  <link rel="stylesheet" href="./css/base.css" />
-  <link rel="stylesheet" href="./css/layout.css" />
-  <link rel="stylesheet" href="./css/pages/login.css" />
-  <link rel="stylesheet" href="./assistente/static/chatbot.css" />
-  <link
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindED - Login</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/pages/login.css">
+    <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
   />
 </head>
 <body>
-  <header class="header">
-    <div class="header-logo">
-      <img src="./assets/MindED_logo-removebg-preview.png" alt="MindED Logo" />
+    <!-- Cabeçalho -->
+  <header class="main-header">
+    <div class="header-content">
+        <a href="index.html" class="logo">
+            <img src="./assets/MindED_logo-removebg-preview.png" alt="MindED Logo">
+        </a>
+        <nav class="main-nav">
+            <button class="hamburger-menu" aria-label="Abrir menu" aria-expanded="false">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="conteudo.html">Conteúdos</a></li>
+                <li><a href="preferencias.html">Preferências</a></li>
+                
+                <li><a href="login.html" class="login-button">Login</a></li>
+                <li>
+                  <button id="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                  </button>
+                </li>
+            </ul>
+        </nav>
     </div>
-    <nav class="header-nav">
-      <a href="index.html">Início</a>
-      <a href="conteudo.html">Conteúdos</a>
-      <a href="preferencias.html">Preferências</a>
-      <button id="theme-toggle"><i class="fas fa-moon"></i></button>
-    </nav>
   </header>
 
-  <main class="login-main">
-    <div class="login-form">
-      <h1>Bem-vindo(a) ao <span class="highlight">MindED</span></h1>
-      <p class="small-text">Seu ambiente de aprendizado adaptado</p>
+    <main class="login-main">
+        <div class="login-form">
+            <div class="tab-buttons">
+                <button class="tab-button active" data-tab="login">Entrar</button>
+                <button class="tab-button" data-tab="register">Cadastrar</button>
+            </div>
 
-      <div class="tab-buttons">
-        <button class="tab-button active" data-tab="login">Entrar</button>
-        <button class="tab-button" data-tab="register">Cadastrar</button>
-      </div>
+            <div id="login" class="tab-content">
+                <h1>Acesse sua conta</h1>
+                <form>
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" class="input-login" placeholder="seu.email@exemplo.com" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
 
-      <div id="login-tab" class="tab-content active">
-        <button  class="enter-login-btn"  onclick="loginComGoogle()">
-          <img id="google-icon" src="/assets/google-icon.png" alt="Google Icon" class="google-icon" /> Entrar com Google
-        </button>
+                    <label for="login-password">Senha
+                        <span class="password-toggle" id="toggleLoginPassword">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </label>
+                    <input type="password" id="login-password" class="input-login" placeholder="********" required minlength="6">
 
-        <form onsubmit="loginEmailSenha(event)">
-          <input type="email" placeholder="E-mail" required class="input-login" />
-          <input type="password" placeholder="Senha" required class="input-login" />
-          <button type="submit" class="enter-login-btn">Entrar</button>
-        </form>
-      </div>
+                    <button type="submit" class="enter-login-btn">Entrar</button>
+                </form>
+                <a href="forgot-password.html" id="btn-criar">Esqueceu sua senha?</a>
+            </div>
 
-      <div id="register-tab" class="tab-content hidden">
-        <form onsubmit="cadastrar(event)">
-          <input type="text" placeholder="Nome completo" required class="input-login" />
-          <input type="email" placeholder="E-mail" required class="input-login" />
-          <input type="password" placeholder="Criar senha" required class="input-login" />
-          <button type="submit" class="enter-login-btn">Cadastrar</button>
-        </form>
-      </div>
-    </div>
-  </main>
+            <div id="register" class="tab-content hidden">
+                <h1>Crie sua conta</h1>
+                <form>
+                    <label for="register-name">Nome Completo</label>
+                    <input type="text" id="register-name" class="input-login" placeholder="Seu nome completo" required>
 
-  <div class="chatbot-fab" onclick="toggleChatbot()">
-    <i class="fas fa-comment-dots"></i>
-  </div>
-  <div id="chatbotWindow" class="chatbot-window hidden">
-    <div class="chatbot-header">
-      <span>Assistente MindED</span>
-      <button onclick="toggleChatbot()"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="chatbot-messages flex flex-col" id="chatbotMessages">
-      <div class="message-bubble bot">Olá! Como posso te ajudar?</div>
-    </div>
-    <div class="chatbot-input-area">
-      <input type="text" id="chatInput" placeholder="Digite sua mensagem..." />
-      <button id="sendChatButton"><i class="fas fa-paper-plane"></i></button>
-    </div>
-  </div>
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" class="input-login" placeholder="seu.email@exemplo.com" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
 
-  <!-- Scripts -->
-  <script src="./js/theme-toggle.js" defer></script>
-  <script src="./js/login.js" defer></script>
+                    <label for="register-password">Senha
+                        <span class="password-toggle" id="toggleRegisterPassword">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </label>
+                    <input type="password" id="register-password" class="input-login" placeholder="Crie uma senha forte" required minlength="6">
+
+                    <button type="submit" class="enter-login-btn">Cadastrar</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/menu.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+                    const tab = button.dataset.tab;
+                    tabContents.forEach(content => {
+                        if (content.id === tab) {
+                            content.classList.remove('hidden');
+                        } else {
+                            content.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+        // Password toggle functionality
+            const toggleLoginPassword = document.getElementById('toggleLoginPassword');
+            const loginPassword = document.getElementById('login-password');
+
+            if (toggleLoginPassword) {
+                toggleLoginPassword.addEventListener('click', function () {
+                    const type = loginPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+                    loginPassword.setAttribute('type', type);
+                    this.querySelector('i').classList.toggle('fa-eye');
+                    this.querySelector('i').classList.toggle('fa-eye-slash');
+                });
+            }
+
+            const toggleRegisterPassword = document.getElementById('toggleRegisterPassword');
+            const registerPassword = document.getElementById('register-password');
+
+            if (toggleRegisterPassword) {
+                toggleRegisterPassword.addEventListener('click', function () {
+                    const type = registerPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+                    registerPassword.setAttribute('type', type);
+                    this.querySelector('i').classList.toggle('fa-eye');
+                    this.querySelector('i').classList.toggle('fa-eye-slash');
+                });
+            }
+        });
+    </script>
+    <script src="js/theme-toggle.js"></script>
 </body>
 </html>

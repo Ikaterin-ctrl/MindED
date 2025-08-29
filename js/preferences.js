@@ -3,6 +3,9 @@
 // Base da API configurada em config.js
 const API_BASE = window.API_BASE_URL;
 
+// Total de módulos, incluindo o de revisão
+const TOTAL_MODULES = 6;
+
 // Função para exibir erros de forma amigável
 function showErrorMessage(msg, type = 'error') {
   showNotification(msg, type);
@@ -70,6 +73,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const nextBtn = document.getElementById('next-btn');
   const progressBar = document.querySelector('.progress');
   const progressText = document.querySelector('.progress-text');
+  const reviewSummary = document.getElementById('review-summary');
 
   let current = 0;
   let userId = localStorage.getItem('userId');
@@ -83,16 +87,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Se houver progresso anterior, posiciona no módulo
   if (stored.completedModule) {
-    current = Math.min(modules.length - 1, stored.completedModule - 1);
+    current = Math.min(TOTAL_MODULES - 1, stored.completedModule - 1);
   }
 
   function updateModules() {
     modules.forEach((m, i) => m.hidden = (i !== current));
     prevBtn.disabled = (current === 0);
-    nextBtn.textContent = (current === modules.length - 1) ? 'Concluir' : 'Próximo »';
-    const pct = ((current + 1) / modules.length) * 100;
+    nextBtn.textContent = (current === TOTAL_MODULES - 1) ? 'Concluir' : 'Próximo »';
+    const pct = ((current + 1) / TOTAL_MODULES) * 100;
     progressBar.style.width = pct + '%';
-    progressText.textContent = `Módulo ${current + 1} de ${modules.length}`;
+    progressText.textContent = `Módulo ${current + 1} de ${TOTAL_MODULES}`;
+
+    if (current === TOTAL_MODULES - 1) {
+      populateReviewStep();
+    }
   }
 
   // Apply saved selections on load
@@ -107,13 +115,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
       });
     } else {
-      // Multiple question groups in the same module
       mod.querySelectorAll('.options').forEach((optGroup, idx) => {
         const key = `${step}_${idx}`;
         const saved = selectionMap[key];
         if (saved) {
           optGroup.querySelectorAll('.option-btn').forEach(btn => {
-            if (btn.dataset.value === saved) btn.classList.add('selected');
+            if (Array.isArray(saved)) { // Multi-select
+              if (saved.includes(btn.dataset.value)) {
+                btn.classList.add('selected');
+              }
+            } else { // Single-select
+              if (btn.dataset.value === saved) {
+                btn.classList.add('selected');
+              }
+            }
           });
         }
       });
@@ -136,16 +151,117 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
       mod.querySelectorAll('.options').forEach((optGroup, idx) => {
         const key = `${step}_${idx}`;
+        const isMultiSelect = optGroup.children.length > 2; // Heuristic: more than 2 options implies multi-select
+
         optGroup.querySelectorAll('.option-btn').forEach(btn => {
           btn.addEventListener('click', () => {
-            optGroup.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
-            selectionMap[key] = btn.dataset.value;
+            if (isMultiSelect) {
+              btn.classList.toggle('selected');
+              const selectedValues = Array.from(optGroup.querySelectorAll('.option-btn.selected'))
+                .map(b => b.dataset.value);
+              selectionMap[key] = selectedValues;
+            } else {
+              optGroup.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+              btn.classList.add('selected');
+              selectionMap[key] = btn.dataset.value;
+            }
           });
         });
       });
     }
   });
+
+  // Validation function
+  function validateCurrentModule() {
+    const currentModule = modules[current];
+    const step = currentModule.dataset.step;
+
+    if (currentModule.classList.contains('checkbox-group')) {
+      const selectedCheckboxes = Array.from(currentModule.querySelectorAll('input[type=checkbox]:checked'));
+      if (selectedCheckboxes.length === 0) {
+        showErrorMessage('Por favor, selecione pelo menos uma opção neste módulo.');
+        return false;
+      }
+    } else {
+      const optionGroups = currentModule.querySelectorAll('.options');
+      for (const optGroup of optionGroups) {
+        const isMultiSelect = optGroup.children.length > 2;
+        if (isMultiSelect) {
+          const selectedOptions = Array.from(optGroup.querySelectorAll('.option-btn.selected'));
+          if (selectedOptions.length === 0) {
+            showErrorMessage('Por favor, selecione pelo menos uma opção em cada categoria.');
+            return false;
+          }
+        } else {
+          const selectedOption = optGroup.querySelector('.option-btn.selected');
+          if (!selectedOption) {
+            showErrorMessage('Por favor, selecione uma opção em cada categoria.');
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+  }
+
+  // Populate review step
+  function populateReviewStep() {
+    reviewSummary.innerHTML = ''; // Clear previous content
+    let htmlContent = '<h3>Suas Preferências Escolhidas:</h3>';
+
+    // Helper to get readable label for a value
+    const getLabel = (value, groupElement) => {
+      if (groupElement.classList.contains('checkbox-group')) {
+        const labelElement = groupElement.querySelector(`input[value="${value}"]`).parentElement;
+        return labelElement ? labelElement.textContent.trim() : value;
+      } else {
+        const buttonElement = groupElement.querySelector(`button[data-value="${value}"]`);
+        return buttonElement ? buttonElement.textContent.trim() : value;
+      }
+    };
+
+    modules.forEach(mod => {
+      const step = mod.dataset.step;
+      const moduleTitle = mod.querySelector('h2') ? mod.querySelector('h2').textContent : `Módulo ${step}`;
+      htmlContent += `<div class="review-module-section"><h4>${moduleTitle}</h4><ul>`;
+
+      if (mod.classList.contains('checkbox-group')) {
+        const saved = selectionMap[step] || [];
+        if (saved.length > 0) {
+          saved.forEach(val => {
+            htmlContent += `<li>${getLabel(val, mod)}</li>`;
+          });
+        } else {
+          htmlContent += `<li>Nenhuma opção selecionada.</li>`;
+        }
+      } else {
+        mod.querySelectorAll('.options').forEach((optGroup, idx) => {
+          const key = `${step}_${idx}`;
+          const saved = selectionMap[key];
+          const questionTitleElement = optGroup.previousElementSibling; // Assuming h3 is before .options
+          const questionTitle = questionTitleElement && questionTitleElement.tagName === 'H3' ? questionTitleElement.textContent : `Questão ${idx + 1}`;
+
+          htmlContent += `<li><strong>${questionTitle}:</strong> `;
+          if (saved) {
+            if (Array.isArray(saved)) {
+              if (saved.length > 0) {
+                htmlContent += saved.map(val => getLabel(val, optGroup)).join(', ');
+              } else {
+                htmlContent += 'Nenhuma opção selecionada.';
+              }
+            } else {
+              htmlContent += getLabel(saved, optGroup);
+            }
+          } else {
+            htmlContent += 'Nenhuma opção selecionada.';
+          }
+          htmlContent += `</li>`;
+        });
+      }
+      htmlContent += `</ul></div>`;
+    });
+    reviewSummary.innerHTML = htmlContent;
+  }
 
   prevBtn.addEventListener('click', () => {
     if (current > 0) {
@@ -155,13 +271,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   nextBtn.addEventListener('click', async () => {
-    if (current < modules.length - 1) {
+    if (current < TOTAL_MODULES - 1) {
+      if (!validateCurrentModule()) {
+        return; // Stop if validation fails
+      }
       current++;
       updateModules();
     } else {
+      // This is the "Concluir" (Finish) button on the review step
       const payload = { completedModule: current + 1, preferences: selectionMap };
       await savePreferences(userId, payload);
-      window.location.href = 'upload.html';
+      showNotification('Preferências salvas com sucesso!', 'success');
+      // Redirect to index.html after saving
+      window.location.href = 'index.html';
     }
   });
 

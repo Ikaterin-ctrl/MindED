@@ -12,17 +12,32 @@
 </head>
 <body>
 
-  <!-- Header comum -->
-  <header class="header">
-    <div class="header-logo">
-      <img src="./assets/MindED_logo-removebg-preview.png" alt="MindED Logo"/>
+  <!-- Cabeçalho -->
+  <header class="main-header">
+    <div class="header-content">
+        <a href="index.html" class="logo">
+            <img src="./assets/MindED_logo-removebg-preview.png" alt="MindED Logo">
+        </a>
+        <nav class="main-nav">
+            <button class="hamburger-menu" aria-label="Abrir menu" aria-expanded="false">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="conteudo.html">Conteúdos</a></li>
+                <li><a href="preferencias.html">Preferências</a></li>
+                
+                <li><a href="login.html" class="login-button">Login</a></li>
+                <li>
+                  <button id="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                  </button>
+                </li>
+            </ul>
+        </nav>
     </div>
-    <nav class="header-nav">
-      <a href="index.html">Início</a>
-      <a href="conteudo.html" class="active">Conteúdos</a>
-      <a href="preferencias.html">Preferências</a>
-      <button id="theme-toggle"><i class="fas fa-moon"></i></button>
-    </nav>
   </header>
 
   <!-- Main do painel de conteúdos -->
@@ -63,8 +78,10 @@
     </div>
   </div>
 
+  <script src="./config.js"></script>
   <script src="./js/theme-toggle.js" defer></script>
   <script src="./js/conteudos.js" defer></script>
   <script src="./assistente/js/app.js" defer></script>
+  <script src="js/menu.js"></script>
 </body>
 </html>

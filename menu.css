@@ -2,6 +2,10 @@
     font-family: 'Open Sans', sans-serif;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 :root {
     /* Novas cores da paleta, focando nos tons de roxo */
     --color-dark-purple: #5F4772;   /* Roxo escuro principal */

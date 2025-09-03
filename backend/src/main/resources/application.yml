@@ -1,6 +1,18 @@
-
-okta:
-  oauth2:
-    issuer: https://${AUTH0_DOMAIN}/
-    client-id: ${AUTH0_CLIENT_ID}
-    client-secret: ${AUTH0_CLIENT_SECRET}
+# Código corrigido
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          auth0:
+            client-id: EwYBH3Y6AYT1Z@C12SU1e3KUWQqYeNmU
+            client-secret: 4g2ofcnB7yP2Y5ZjhiQ_L93aVfr_dR240e50acKcSDeSY7
+            client-name: MindEd
+            scope:
+              - openid
+              - profile
+              - email
+        provider:
+          auth0:
+            # Corrigido o issuer-uri para usar a sintaxe correta do Auth0
+            issuer-uri: https://dev-ga7njuw5als2pp77.us.auth0.com/

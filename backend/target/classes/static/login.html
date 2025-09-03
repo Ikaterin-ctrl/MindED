@@ -48,7 +48,6 @@
 
     <script src="js/menu.js"></script>
     <script src="js/theme-toggle.js"></script>
-    <script src="https://cdn.auth0.com/js/auth0.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const tabButtons = document.querySelectorAll('.tab-button');
@@ -96,64 +95,8 @@
                 });
             }
 
-            // Auth0.js Integration
-            const webAuth = new auth0.WebAuth({
-                domain: 'dev-ga7njuw5als2pp77.us.auth0.com', // Substitua pelo seu domínio Auth0
-                clientID: 'EwYBH3Y6AyTiZ0Cl2SUie3KUWQqYeNmU', // Substitua pelo seu Client ID Auth0
-                responseType: 'token id_token', // For implicit flow
-                scope: 'openid profile email',
-                redirectUri: 'https://ikaterin-ctrl.github.io/MindED/login.html' // Ex: https://yourusername.github.io/your-repo/callback.html
-            });
-
-            // Handle Login Form Submission
-            loginForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const email = document.getElementById('login-email').value;
-                const password = document.getElementById('login-password').value;
-
-                webAuth.login({
-                    realm: 'Username-Password-Authentication', // Or your connection name
-                    username: email,
-                    password: password,
-                }, (err, authResult) => {
-                    if (err) {
-                        console.error('Login error:', err);
-                        alert('Erro de login: ' + err.description);
-                        return;
-                    }
-                    console.log('Login successful:', authResult);
-                    localStorage.setItem('access_token', authResult.accessToken);
-                    localStorage.setItem('id_token', authResult.idToken);
-                    // Redirect to a protected page
-                    window.location.href = 'index.html'; // Or your desired page
-                });
-            });
-
-            // Handle Registration Form Submission
-            registerForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const name = document.getElementById('register-name').value;
-                const email = document.getElementById('register-email').value;
-                const password = document.getElementById('register-password').value;
-
-                webAuth.signup({
-                    connection: 'Username-Password-Authentication', // Or your connection name
-                    email: email,
-                    password: password,
-                    user_metadata: {
-                        name: name
-                    }
-                }, (err) => {
-                    if (err) {
-                        console.error('Registration error:', err);
-                        alert('Erro de cadastro: ' + err.description);
-                        return;
-                    }
-                    alert('Cadastro realizado com sucesso! Por favor, faça login.');
-                    // Optionally, switch to login tab or redirect to login page
-                    document.querySelector('.tab-button[data-tab="login"]').click();
-                });
-            });
+            // O código de integração com Auth0.js foi removido para evitar conflito
+            // com o fluxo de autenticação do Spring Boot (backend).
         });
     </script>
 

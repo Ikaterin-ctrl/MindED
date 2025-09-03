@@ -19,7 +19,8 @@ public class SecurityConfig {
                 .requestMatchers("/", "/images/**").permitAll() // Allow access to home and images
                 .anyRequest().authenticated() // All other requests require authentication
             )
-            .oauth2Login(withDefaults()); // Enable OAuth2 login
+            .oauth2Login(withDefaults()) // Enable OAuth2 login
+            .logout(withDefaults()); // Enable logout with defaults
         return http.build();
     }
 }

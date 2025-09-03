@@ -31,9 +31,9 @@
         </dependency>
         
         <dependency>
-            <groupId>com.auth0</groupId>
-            <artifactId>auth0-spring-security-mvc-starter</artifactId>
-            <version>2.2.0</version>
+            <groupId>com.okta.spring</groupId>
+            <artifactId>okta-spring-boot-starter</artifactId>
+            <version>3.0.7</version>
         </dependency>
 
         <dependency>

@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 /**
  * Controller for the home page.
  */
+// Código corrigido
 @Controller
 public class HomeController {
-
     @GetMapping("/")
     public String home(Model model, @AuthenticationPrincipal OidcUser principal) {
         if (principal != null) {

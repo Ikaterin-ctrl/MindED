@@ -1,0 +1,17 @@
+server:
+  port: 8081
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          auth0:
+            client-id: EwYBH3Y6AyTiZ0Cl2SUie3KUWQqYeNmU
+            client-secret: ${AUTH0_CLIENT_SECRET}
+            client-name: Auth0
+            scope: openid, profile, email
+            client-authentication-method: client_secret_post
+        provider:
+          auth0:
+            issuer-uri: https://dev-ga7njuw5als2pp77.us.auth0.com/

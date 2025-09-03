@@ -1,0 +1,102 @@
+/* Feedback Page Styles */
+.feedback-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0;
+  text-align: center;
+}
+
+.feedback-page h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2.5rem;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+}
+
+.feedback-page p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+}
+
+.feedback-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  text-align: left;
+}
+
+.feedback-form fieldset {
+  border: none;
+  padding: 0;
+}
+
+.feedback-form legend {
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+
+.feedback-form label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.feedback-form textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.15); /* Softer border */
+  background: rgba(255,255,255,0.05); /* Softer background */
+  color: var(--text-primary);
+  resize: vertical;
+}
+
+.btn-start {
+  background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+  padding: 14px 32px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-radius: 40px;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2); /* Softer shadow */
+  transition: transform 0.3s ease;
+  align-self: center;
+  text-decoration: none;
+}
+
+.btn-start:hover {
+  transform: scale(1.05);
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 24px;
+  color: var(--accent-start);
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: color 0.3s ease;
+}
+
+.back-link:hover {
+  color: var(--accent-end);
+}
+
+@media (max-width: 600px) {
+  .feedback-page {
+    padding: 0 16px;
+  }
+  .feedback-page h1 {
+    font-size: 2rem;
+  }
+  .btn-start {
+    width: 100%;
+  }
+}

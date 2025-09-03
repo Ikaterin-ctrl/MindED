@@ -40,93 +40,9 @@
 
     <main class="login-main">
         <div class="login-form">
-            <div class="tab-buttons">
-                <button class="tab-button active" data-tab="login">Entrar</button>
-                <button class="tab-button" data-tab="register">Cadastrar</button>
-            </div>
-
-            <div id="login" class="tab-content">
-                <h1>Acesse sua conta</h1>
-                <form>
-                    <label for="login-email">Email</label>
-                    <input type="email" id="login-email" class="input-login" placeholder="seu.email@exemplo.com" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
-
-                    <label for="login-password">Senha
-                        <span class="password-toggle" id="toggleLoginPassword">
-                            <i class="fas fa-eye"></i>
-                        </span>
-                    </label>
-                    <input type="password" id="login-password" class="input-login" placeholder="********" required minlength="6">
-
-                    <button type="submit" class="enter-login-btn">Entrar</button>
-                </form>
-                <a href="forgot-password.html" id="btn-criar">Esqueceu sua senha?</a>
-            </div>
-
-            <main class="login-main">
-        <div class="login-form">
             <h1>Acesse ou Crie sua Conta MindED</h1>
-            <p>Clique no botão abaixo para entrar ou se cadastrar usando o Auth0.</p>
-            <button id="auth0-universal-login-btn" class="enter-login-btn" style="margin-top: 20px;">Entrar / Cadastrar com Auth0</button>
-            <p id="auth0-status" style="margin-top: 15px;"></p>
-        </div>
-    </main>
-
-    <script src="js/menu.js"></script>
-    <script src="js/theme-toggle.js"></script>
-    <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            const auth0StatusElement = document.getElementById('auth0-status');
-            let auth0Client = null;
-
-            try {
-                auth0Client = await auth0.createAuth0Client({
-                    domain: 'YOUR_AUTH0_DOMAIN', // Substitua pelo seu domínio Auth0
-                    clientId: 'YOUR_AUTH0_CLIENT_ID', // Substitua pelo seu Client ID Auth0
-                    authorizationParams: {
-                        redirect_uri: window.location.origin + '/login.html' // A URL desta página
-                    }
-                });
-
-                // Handle the callback when Auth0 redirects back to your app
-                if (window.location.search.includes('code=')) {
-                    auth0StatusElement.textContent = 'Processando login...';
-                    await auth0Client.handleRedirectCallback();
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                    auth0StatusElement.textContent = 'Login bem-sucedido! Redirecionando...';
-                    const user = await auth0Client.getUser();
-                    console.log('Usuário logado:', user);
-                    // Redirect to a protected page
-                    window.location.href = 'index.html'; // Or your desired page
-                }
-
-                const isAuthenticated = await auth0Client.isAuthenticated();
-                if (isAuthenticated) {
-                    const user = await auth0Client.getUser();
-                    auth0StatusElement.textContent = `Bem-vindo(a), ${user.name || user.nickname || user.email}!`;
-                    document.getElementById('auth0-universal-login-btn').textContent = 'Sair';
-                    document.getElementById('auth0-universal-login-btn').onclick = async () => {
-                        await auth0Client.logout({
-                            logoutParams: {
-                                returnTo: window.location.origin + '/index.html' // Redirecionar para index.html após o logout
-                            }
-                        });
-                    };
-                } else {
-                    auth0StatusElement.textContent = 'Você não está logado.';
-                    document.getElementById('auth0-universal-login-btn').textContent = 'Entrar / Cadastrar com Auth0';
-                    document.getElementById('auth0-universal-login-btn').onclick = async () => {
-                        await auth0Client.loginWithRedirect();
-                    };
-                }
-
-            } catch (e) {
-                console.error("Erro ao inicializar Auth0:", e);
-                auth0StatusElement.textContent = 'Erro ao carregar Auth0. Verifique suas configurações.';
-            }
-        });
-    </script>
+            <p>Clique no botão abaixo para entrar ou se cadastrar com sua conta.</p>
+            <a href="/oauth2/authorization/auth0" class="enter-login-btn" style="margin-top: 20px; text-align: center; text-decoration: none; display: inline-block; padding: 10px 20px; border-radius: 5px;">Entrar / Cadastrar</a>
         </div>
     </main>
 

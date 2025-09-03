@@ -1,18 +1,13 @@
-# Código corrigido
 spring:
   security:
     oauth2:
       client:
         registration:
           auth0:
-            client-id: EwYBH3Y6AYT1Z@C12SU1e3KUWQqYeNmU
-            client-secret: 4g2ofcnB7yP2Y5ZjhiQ_L93aVfr_dR240e50acKcSDeSY7
-            client-name: MindEd
-            scope:
-              - openid
-              - profile
-              - email
+            client-id: EwYBH3Y6AyTiZ0Cl2SUie3KUWQqYeNmU
+            client-secret: 4g2ofcn87yP2Y5ZjhiQ_L93aVfr_dR24Oe5OacKcSDeSY793MoIrexbytOJdd6v-
+            client-name: Auth0
+            scope: openid, profile, email
         provider:
           auth0:
-            # Corrigido o issuer-uri para usar a sintaxe correta do Auth0
             issuer-uri: https://dev-ga7njuw5als2pp77.us.auth0.com/

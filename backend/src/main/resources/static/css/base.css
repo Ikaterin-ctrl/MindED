@@ -1,0 +1,124 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Montserrat", sans-serif;
+}
+
+:root {
+  --bg-main: linear-gradient(135deg, #e0f7fa, #e8eaf6, #f0f4c3); /* Softer, pastel gradient */
+  --glass-bg: rgba(255, 255, 255, 0.05); /* Slightly less opaque */
+  --text-primary: #333333; /* Darker text for better contrast on light backgrounds */
+  --text-secondary: #666666;
+  --accent-start: #4CAF50; /* Green */
+  --accent-end: #2196F3; /* Blue */
+  --lavender-pastel: #E6E6FA;
+  --menu-bg: #ffffff;
+}
+
+[data-theme="dark"] {
+  --bg-main: #1a1a2e; /* Darker, more subtle dark background */
+  --glass-bg: rgba(0, 0, 0, 0.3); /* Slightly more opaque for dark mode */
+  --text-primary: #e0e0e0;
+  --text-secondary: #aaaaaa;
+  --accent-start: #64FFDA; /* Brighter accent for dark mode */
+  --accent-end: #18FFFF;
+  --menu-bg: #1a1a2e;
+}
+
+body {
+  background: var(--bg-main);
+  color: var(--text-primary);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+@keyframes gradientBG {
+  0%,100% { background-position: 0% 50%; }
+  50%     { background-position: 100% 50%; }
+}
+
+@keyframes fadeIn {
+  0%   { opacity: 0; }
+  50%  { opacity: 1; }
+  100% { opacity: 1; }
+}
+
+@media (prefers-color-scheme: light) {
+  body {
+    color: var(--text-primary); /* Use variable for consistency */
+    text-shadow: none; /* Remove text shadow for cleaner look */
+  }
+
+  h1, h2, h3, h4, h5, h6, p, span, a, label, li {
+    color: var(--text-primary); /* Use variable for consistency */
+    text-shadow: none; /* Remove text shadow for cleaner look */
+  }
+
+  button, .btn {
+    color: #fff; /* Keep white for buttons on light background */
+    text-shadow: none; /* Remove text shadow */
+    background-color: var(--lavender-pastel);
+  }
+
+  /* Se tiver containers que ficam muito brancos no modo claro */
+  .card, .login-form, .container, .box {
+    background-color: rgba(255, 255, 255, 0.1); /* Slightly more visible glass */
+    backdrop-filter: blur(8px); /* Slightly less blur */
+  }
+}
+
+body.light-mode {
+  color: var(--text-primary);
+  text-shadow: none;
+}
+
+body.light-mode h1,
+body.light-mode h2,
+body.light-mode h3,
+body.light-mode p,
+body.light-mode a,
+body.light-mode span,
+body.light-mode label {
+  color: var(--text-primary);
+  text-shadow: none;
+}
+
+body.light-mode button,
+body.light-mode .btn {
+  color: #fff;
+  text-shadow: none;
+  background-color: var(--lavender-pastel);
+}
+
+html[data-theme="light"] body,
+html[data-theme="light"] h1,
+html[data-theme="light"] h2,
+html[data-theme="light"] h3,
+html[data-theme="light"] h4,
+html[data-theme="light"] h5,
+html[data-theme="light"] h6,
+html[data-theme="light"] p,
+html[data-theme="light"] a,
+html[data-theme="light"] span,
+html[data-theme="light"] label,
+html[data-theme="light"] li {
+  color: var(--text-primary) !important; /* Use variable for consistency */
+  text-shadow: none; /* Remove text shadow */
+}
+
+html[data-theme="light"] button,
+html[data-theme="light"] .btn {
+  color: #535050 !important;
+  text-shadow: none;
+  background-color: var(--lavender-pastel) !important;
+}
+
+html[data-theme="light"] .typed-text {
+  color: var(--text-primary) !important; /* Use variable for consistency */
+  text-shadow: none;
+}
+
+/* New rule for lavender links */
+a {
+  color: var(--lavender-pastel);
+}

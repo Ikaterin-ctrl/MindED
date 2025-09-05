@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User Profile</title>
+</head>
+<body>
+    <h1>Perfil do Usuário</h1>
+    <div>
+        <img th:src="${profileImage}" width="100"/>
+        <h2 th:text="${profile.name}"></h2>
+        <p th:text="${profile.email}"></p>
+    </div>
+    <h4>Claims do Usuário:</h4>
+    <pre th:text="${#dump(profile)}"></pre>
+    <a href="/logout">Sair</a>
+</body>
+</html>

@@ -1,5 +1,5 @@
 .menu-page {
-    margin-top: 150px;
+    padding-top: 120px; /* Changed from margin-top for consistency */
 }
 
 .menu-page .container {
@@ -80,6 +80,10 @@
     height: 100%;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     text-align: center;
+    /* Animation for card appearance */
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInSlideUp 0.8s ease-out forwards; /* Reusing animation from login.css */
 }
 
 .menu-page .card:hover {
@@ -152,6 +156,18 @@
     100% {
         transform: scale(1);
     }
+}
+
+/* Reusing fadeInSlideUp from login.css for card animation */
+@keyframes fadeInSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 992px) {

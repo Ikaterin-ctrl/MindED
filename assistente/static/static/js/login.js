@@ -14,4 +14,10 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById(targetTabId).classList.remove('hidden');
     });
   });
+
+  // Script from login.html for fake login form submission
+  document.getElementById('fake-login-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+      window.location.href = 'principal.html';
+  });
 });

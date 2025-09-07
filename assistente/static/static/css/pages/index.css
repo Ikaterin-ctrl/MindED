@@ -12,6 +12,8 @@
   border: 1px solid rgba(255,255,255,0.1); /* Softer border */
   box-shadow: 0 4px 20px rgba(0,0,0,0.1); /* Softer shadow */
   transition: background 0.3s ease;
+  background-size: 400% 400%; /* For gradientBG animation */
+  animation: gradientBG 15s ease infinite; /* Apply background animation */
 }
 
 .logo-hero {
@@ -65,6 +67,11 @@
   animation: fadeIn 1s ease-in-out;
 }
 
+.animate-fade-in {
+  opacity: 0; /* Start invisible */
+  animation: fadeIn 1s ease-out forwards; /* Apply fade-in animation */
+}
+
 @media (max-width: 600px) {
   .hero-onboarding {
     padding: 30px 20px;
@@ -110,3 +117,4 @@
     font-size: 1rem;
   }
 }
+

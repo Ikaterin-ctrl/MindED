@@ -261,3 +261,12 @@ body {
 main {
   padding-top: 15rem;
 }
+
+/* Theme toggle icon animation */
+#theme-toggle i {
+  transition: transform 0.3s ease;
+}
+
+#theme-toggle.active i { /* Assuming 'active' class is added on click */
+  transform: rotate(360deg);
+}

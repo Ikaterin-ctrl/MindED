@@ -7,14 +7,14 @@
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/pages/login.css">
+    <link rel="stylesheet" href="css/custom.css">
     <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
   />
-    <link rel="stylesheet" href="./assistente/static/chatbot.css" />
+    <link rel="stylesheet" href="/assistente/static/chatbot.css" />
 </head>
 <body>
-    <!-- Cabeçalho -->
   <header class="main-header">
     <div class="header-content">
         <a href="index.html" class="logo">
@@ -27,6 +27,9 @@
                 <span class="hamburger-line"></span>
             </button>
             <ul class="nav-links">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="principal.html">Conteúdos</a></li>
+                <li><a href="preferencias.html">Preferências</a></li>
                 <li><a href="login.html" class="login-button">Login</a></li>
                 <li>
                   <button id="theme-toggle">
@@ -40,65 +43,24 @@
 
     <main class="login-main">
         <div class="login-form">
-            <h1>Acesse ou Crie sua Conta MindED</h1>
-            <p>Clique no botão abaixo para entrar ou se cadastrar com sua conta.</p>
-            <a href="/oauth2/authorization/auth0" class="enter-login-btn" style="margin-top: 20px; text-align: center; text-decoration: none; display: inline-block; padding: 10px 20px; border-radius: 5px;">Entrar / Cadastrar</a>
+            <h1>Acesse sua Conta MindED</h1>
+            <form id="fake-login-form" style="margin-top: 20px;">
+                <div class="form-group">
+                    <label for="username" style="display: block; margin-bottom: 5px;">Usuário</label>
+                    <input type="text" id="username" name="username" required style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 4px; border: 1px solid #ccc;">
+                </div>
+                <div class="form-group">
+                    <label for="password" style="display: block; margin-bottom: 5px;">Senha</label>
+                    <input type="password" id="password" name="password" required style="width: 100%; padding: 8px; margin-bottom: 20px; border-radius: 4px; border: 1px solid #ccc;">
+                </div>
+                <button type="submit" class="enter-login-btn" style="text-align: center; text-decoration: none; display: inline-block; padding: 10px 20px; border-radius: 5px; border: none; cursor: pointer;">Entrar</button>
+            </form>
         </div>
     </main>
 
-    <script src="js/menu.js"></script>
-    <script src="js/theme-toggle.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const tabButtons = document.querySelectorAll('.tab-button');
-            const tabContents = document.querySelectorAll('.tab-content');
-            const loginForm = document.querySelector('#login form');
-            const registerForm = document.querySelector('#register form');
-
-            tabButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    tabButtons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-
-                    const tab = button.dataset.tab;
-                    tabContents.forEach(content => {
-                        if (content.id === tab) {
-                            content.classList.remove('hidden');
-                        } else {
-                            content.classList.add('hidden');
-                        }
-                    });
-                });
-            });
-        // Password toggle functionality
-            const toggleLoginPassword = document.getElementById('toggleLoginPassword');
-            const loginPassword = document.getElementById('login-password');
-
-            if (toggleLoginPassword) {
-                toggleLoginPassword.addEventListener('click', function () {
-                    const type = loginPassword.getAttribute('type') === 'password' ? 'text' : 'password';
-                    loginPassword.setAttribute('type', type);
-                    this.querySelector('i').classList.toggle('fa-eye');
-                    this.querySelector('i').classList.toggle('fa-eye-slash');
-                });
-            }
-
-            const toggleRegisterPassword = document.getElementById('toggleRegisterPassword');
-            const registerPassword = document.getElementById('register-password');
-
-            if (toggleRegisterPassword) {
-                toggleRegisterPassword.addEventListener('click', function () {
-                    const type = registerPassword.getAttribute('type') === 'password' ? 'text' : 'password';
-                    registerPassword.setAttribute('type', type);
-                    this.querySelector('i').classList.toggle('fa-eye');
-                    this.querySelector('i').classList.toggle('fa-eye-slash');
-                });
-            }
-
-            // O código de integração com Auth0.js foi removido para evitar conflito
-            // com o fluxo de autenticação do Spring Boot (backend).
-        });
-    </script>
+    <footer class="footer">
+        <p>&copy; 2025 MindED. Todos os direitos reservados.</p>
+    </footer>
 
   <!-- Chatbot Flutuante -->
   <div
@@ -128,6 +90,14 @@
     </div>
   </div>
 
-  <script src="assistente/js/app.js"></script>
+    <script src="js/menu.js"></script>
+    <script src="js/theme-toggle.js"></script>
+    <script>
+        document.getElementById('fake-login-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            window.location.href = 'principal.html';
+        });
+    </script>
+  <script src="/assistente/js/app.js"></script>
 </body>
 </html>

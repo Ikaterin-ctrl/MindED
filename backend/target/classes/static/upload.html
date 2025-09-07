@@ -7,7 +7,8 @@
   <link rel="stylesheet" href="./css/base.css" />
   <link rel="stylesheet" href="./css/layout.css" />
   <link rel="stylesheet" href="./css/pages/upload.css" />
-  <link rel="stylesheet" href="./assistente/static/chatbot.css" />
+  <link rel="stylesheet" href="css/custom.css">
+  <link rel="stylesheet" href="/assistente/static/chatbot.css" />
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -28,7 +29,7 @@
             </button>
             <ul class="nav-links">
                 <li><a href="index.html">Início</a></li>
-                <li><a href="conteudo.html">Conteúdos</a></li>
+                <li><a href="principal.html">Conteúdos</a></li>
                 <li><a href="preferencias.html">Preferências</a></li>
                 
                 <li><a href="login.html" class="login-button">Login</a></li>
@@ -108,6 +109,10 @@
     </div>
   </main>
 
+    <footer class="footer">
+        <p>&copy; 2025 MindED. Todos os direitos reservados.</p>
+    </footer>
+
   <!-- Chatbot Flutuante -->
   <div class="chatbot-fab" onclick="toggleChatbot()">
     <i class="fas fa-comment-dots"></i>
@@ -131,7 +136,7 @@
   <script src="./config.js"></script>
   <script src="./js/theme-toggle.js" defer></script>
   <script src="./js/upload.js" defer></script>
-  <script src="./assistente/js/app.js" defer></script>
+  <script src="/assistente/js/app.js" defer></script>
   <script src="js/menu.js"></script>
 </body>
 </html>

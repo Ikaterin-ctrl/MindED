@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindED - Página Principal</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/custom.css">
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+    <link rel="stylesheet" href="/assistente/static/chatbot.css" />
+    <style>
+        .main-content {
+            text-align: center;
+            padding: 50px 20px;
+        }
+        .main-content h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+        .main-content p {
+            font-size: 1.2em;
+            margin-bottom: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .nav-button {
+            display: inline-block;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            text-decoration: none;
+            color: #fff;
+            background-color: #007bff;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .nav-button:hover {
+            background-color: #0056b3;
+        }
+        /* Styles for the merged upload section */
+        .upload-section {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid #eee;
+        }
+        .upload-section h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        .upload-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 30px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .dropzone {
+            border: 2px dashed #ccc;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+        .dropzone:hover {
+            background-color: #f0f0f0;
+        }
+        .dropzone-initial-state p {
+            margin: 0;
+            font-size: 1.1em;
+            color: #666;
+        }
+        .file-select {
+            color: #007bff;
+            font-weight: bold;
+        }
+        .dropzone-preview-state {
+            display: none;
+        }
+        .upload-btn {
+            margin-top: 20px;
+            padding: 12px 25px;
+            font-size: 1.2em;
+            background-color: #28a745;
+        }
+        .upload-btn:hover {
+            background-color: #218838;
+        }
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            margin-top: 20px;
+            height: 25px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: #4CAF50;
+            text-align: center;
+            color: white;
+            line-height: 25px;
+            transition: width 3s linear;
+        }
+        .notification-container {
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            text-align: center;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+  <header class="main-header">
+    <div class="header-content">
+        <a href="index.html" class="logo">
+            <img src="./assets/MindED_logo-removebg-preview.png" alt="MindED Logo">
+        </a>
+        <nav class="main-nav">
+            <button class="hamburger-menu" aria-label="Abrir menu" aria-expanded="false">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="principal.html">Conteúdos</a></li>
+                <li><a href="preferencias.html">Preferências</a></li>
+                <li><a href="login.html" class="login-button">Login</a></li>
+                <li>
+                  <button id="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                  </button>
+                </li>
+            </ul>
+        </nav>
+    </div>
+  </header>
+
+    <main class="main-content">
+        <h1>Bem-vindo(a) ao MindED</h1>
+        <p>MindED é uma plataforma de educação inclusiva, projetada para adaptar o conteúdo de aprendizagem às necessidades individuais de cada aluno. Explore nossas demonstrações para ver como podemos ajudar.</p>
+        <div class="nav-buttons">
+            <a href="dislexia.html" class="nav-button">Conteúdo para Dislexia</a>
+            <a href="tdah.html" class="nav-button">Conteúdo para TDAH</a>
+            <a href="autismo.html" class="nav-button">Conteúdo para Autismo</a>
+            <a href="gamificado.html" class="nav-button">Conteúdo Gamificado</a>
+            <a href="podcast.html" class="nav-button">Conteúdo em Podcast</a>
+        </div>
+
+        <section class="upload-section">
+            <h2>Fazer Upload de Conteúdo</h2>
+            <div id="notificationContainer" class="notification-container hidden"></div>
+            <div class="upload-container">
+                <h1>Vamos personalizar seu conteúdo</h1>
+                <p>Envie o material que você quer estudar e escolha como deseja receber.</p>
+
+                <div class="dropzone" id="dropzone">
+                    <div class="dropzone-initial-state">
+                        <p>
+                            Arraste e solte seu arquivo aqui ou
+                            <span class="file-select">clique para escolher</span>
+                        </p>
+                    </div>
+                    <div class="dropzone-preview-state hidden">
+                        <div class="file-preview">
+                            <i class="fas fa-file-alt file-icon"></i>
+                            <div class="file-details">
+                                <span class="file-name"></span>
+                                <span class="file-size"></span>
+                            </div>
+                            <button class="remove-file-btn"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>
+                    <input type="file" id="fileUpload" hidden accept=".pdf,.doc,.docx,.txt" />
+                </div>
+                <p class="supported-formats">Formatos suportados: PDF, DOC, DOCX, TXT.</p>
+
+                <div class="progress-container hidden">
+                    <div class="progress-bar"></div>
+                </div>
+
+                <button
+                    class="upload-btn"
+                    id="uploadBtn"
+                >
+                    <span class="button-text">Enviar</span>
+                    <span class="spinner hidden"><i class="fas fa-spinner fa-spin"></i></span>
+                </button>
+
+                <div class="upload-success-state hidden" id="uploadSuccessState">
+                    <i class="fas fa-check-circle success-icon"></i>
+                    <p class="success-message">Arquivo enviado com sucesso!</p>
+                    <button class="view-content-btn" id="viewContentBtn">Ver conteúdo</button>
+                </div>
+
+                <div class="adaptation-preview">
+                    <p>Seu conteúdo poderá ser apresentado como:</p>
+                    <div class="adaptation-options">
+                        <div class="option">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Texto Simplificado</span>
+                        </div>
+                        <div class="option">
+                            <i class="fas fa-video"></i>
+                            <span>Vídeo com IA</span>
+                        </div>
+                        <div class="option">
+                            <i class="fas fa-volume-up"></i>
+                            <span>Áudio Adaptado</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 MindED. Todos os direitos reservados.</p>
+    </footer>
+
+  <!-- Chatbot Flutuante -->
+  <div
+    class="chatbot-fab"
+    onclick="document.getElementById('chatbotWindow').classList.toggle('hidden')"
+  >
+    <i class="fas fa-comment-dots"></i>
+  </div>
+
+  <div id="chatbotWindow" class="chatbot-window hidden">
+    <div class="chatbot-header">
+      <span>Assistente MindED</span>
+      <button
+        onclick="document.getElementById('chatbotWindow').classList.toggle('hidden')"
+      >
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div id="chatbotMessages" class="chatbot-messages flex flex-col">
+      <div class="message-bubble bot">
+        Olá! Como posso te ajudar hoje com a acessibilidade ou sobre o MindED?
+      </div>
+    </div>
+    <div class="chatbot-input-area">
+      <input type="text" id="chatInput" placeholder="Digite sua mensagem..." />
+      <button id="sendChatButton"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+
+    <script src="js/menu.js"></script>
+    <script src="js/theme-toggle.js"></script>
+    <script src="/assistente/js/app.js"></script>
+    <script>
+        // Script from upload.js
+        document.addEventListener('DOMContentLoaded', () => {
+            const uploadBtn = document.getElementById('uploadBtn');
+            const buttonText = uploadBtn.querySelector('.button-text');
+            const spinner = uploadBtn.querySelector('.spinner');
+            const notificationContainer = document.getElementById('notificationContainer');
+            const progressContainer = document.querySelector('.progress-container');
+            const progressBar = document.querySelector('.progress-bar');
+
+            function showNotification(message, type) {
+                if (!notificationContainer) {
+                    console.error('Notification container not found!');
+                    alert(message);
+                    return;
+                }
+
+                notificationContainer.innerHTML = '';
+                notificationContainer.classList.remove('hidden');
+
+                const notification = document.createElement('div');
+                notification.classList.add('notification', type);
+                notification.textContent = message;
+                notificationContainer.appendChild(notification);
+
+                if (type !== 'info') {
+                    setTimeout(() => {
+                        notification.remove();
+                        if (notificationContainer.children.length === 0) {
+                            notificationContainer.classList.add('hidden');
+                        }
+                    }, 3000);
+                }
+            }
+
+            uploadBtn.addEventListener('click', () => {
+                const file = fileInput.files[0];
+                if (!file) {
+                    showNotification('Por favor, selecione um arquivo primeiro.', 'error');
+                    return;
+                }
+
+                showNotification('Processando conteúdo com IA...', 'info');
+
+                uploadBtn.disabled = true;
+                buttonText.textContent = 'Processando...';
+                spinner.classList.remove('hidden');
+
+                progressContainer.classList.remove('hidden');
+                progressBar.style.width = '0%';
+                progressBar.style.transition = 'width 3s linear';
+                setTimeout(() => {
+                    progressBar.style.width = '100%';
+                }, 100);
+
+                setTimeout(() => {
+                    window.location.href = 'principal.html';
+                }, 3000);
+            });
+
+            const dropzone = document.getElementById('dropzone');
+            const fileInput = document.getElementById('fileUpload');
+            const initialState = document.querySelector('.dropzone-initial-state');
+            const previewState = document.querySelector('.dropzone-preview-state');
+            const fileName = document.querySelector('.file-name');
+            const fileSize = document.querySelector('.file-size');
+            const removeFileBtn = document.querySelector('.remove-file-btn');
+
+            function formatBytes(bytes, decimals = 2) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const dm = decimals < 0 ? 0 : decimals;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+            }
+
+            function updatePreview(file) {
+                if (!file) return;
+                initialState.classList.add('hidden');
+                previewState.classList.remove('hidden');
+                dropzone.classList.add('file-selected');
+                fileName.textContent = file.name;
+                fileSize.textContent = formatBytes(file.size);
+                uploadBtn.disabled = false;
+            }
+
+            function resetDropzone() {
+                fileInput.value = '';
+                initialState.classList.remove('hidden');
+                previewState.classList.add('hidden');
+                dropzone.classList.remove('file-selected');
+                uploadBtn.disabled = true;
+                progressContainer.classList.add('hidden');
+                progressBar.style.width = '0%';
+                progressBar.style.transition = 'none';
+            }
+
+            dropzone.addEventListener('click', (e) => {
+                if (e.target.closest('.remove-file-btn')) return;
+                fileInput.click();
+            });
+
+            dropzone.addEventListener('dragover', e => {
+                e.preventDefault();
+                if (!fileInput.files.length) {
+                    dropzone.classList.add('hover');
+                }
+            });
+
+            dropzone.addEventListener('dragleave', () => dropzone.classList.remove('hover'));
+
+            dropzone.addEventListener('drop', e => {
+                e.preventDefault();
+                dropzone.classList.remove('hover');
+                fileInput.files = e.dataTransfer.files;
+                updatePreview(fileInput.files[0]);
+            });
+
+            fileInput.addEventListener('change', () => {
+                updatePreview(fileInput.files[0]);
+            });
+
+            removeFileBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                resetDropzone();
+            });
+
+            resetDropzone();
+        });
+    </script>
+</body>
+</html>

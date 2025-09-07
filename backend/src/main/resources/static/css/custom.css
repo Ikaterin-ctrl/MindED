@@ -1,0 +1,57 @@
+/* General Body Styles */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f4f4f4;
+}
+
+/* Container Styles */
+.container, .content-container, .original-content-container, .gamification-container, .podcast-container, .quiz-container, .login-form, .upload-container, .preferences .module {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    transition: opacity 0.5s ease-in-out;
+}
+
+/* Button Styles */
+.btn, .nav-button, .back-button, .toggle-button, .podcast-button, .quiz-button, .task-button, .enter-login-btn, .upload-btn, .option-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 1em;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.progress-bar {
+    transition: width 3s linear;
+}
+
+.btn:hover, .nav-button:hover, .back-button:hover, .toggle-button:hover, .podcast-button:hover, .quiz-button:hover, .task-button:hover, .enter-login-btn:hover, .upload-btn:hover, .option-btn:hover {
+    background-color: #0056b3;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* Chatbot Styles */
+.chatbot-fab {
+    background-color: #007bff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.chatbot-window {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    border-radius: 10px;
+}
+
+.chatbot-header {
+    background-color: #007bff;
+}

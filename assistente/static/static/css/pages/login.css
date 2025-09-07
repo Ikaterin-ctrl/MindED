@@ -1,0 +1,178 @@
+/* Login Page Styles */
+
+/* Header fixo com espaçamento abaixo */
+.main-header { /* Assuming this is the fixed header */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background: transparent;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  transition: background-color 0.3s ease;
+}
+
+/* Container de login centralizado */
+.login-main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Use 100vh for full viewport height */
+  padding-top: 120px; /* Added from inline style */
+  /* background: var(--bg-secondary); Removed as body handles background */
+}
+
+/* Formulário com vidro fosco */
+.login-form {
+  width: 100%;
+  max-width: 400px;
+  padding: 40px;
+  background: var(--glass-bg); /* Use glassmorphism variable */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  color: var(--text-primary);
+  border: 1px solid rgba(255,255,255,0.1);
+  /* Animation for form appearance */
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInSlideUp 0.8s ease-out forwards;
+}
+
+/* Título */
+.login-form h1 {
+  margin-bottom: 24px;
+  font-size: 2rem;
+  text-align: center;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* Labels e inputs */
+.form-group {
+  margin-bottom: 20px; /* Consistent spacing for form groups */
+}
+
+.login-form label {
+  display: block; /* Ensure label is on its own line */
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+  color: var(--text-secondary);
+}
+
+.input-login { /* Renamed from input[type="text"], input[type="password"] for consistency */
+  width: 100%;
+  height: 48px;
+  padding: 0 16px;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.05);
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-login:focus {
+  outline: none;
+  border-color: var(--accent-start);
+  background-color: rgba(255,255,255,0.1);
+  box-shadow: 0 0 0 3px rgba(var(--accent-start-rgb), 0.3); /* Subtle focus ring */
+}
+
+.input-login::placeholder {
+  color: var(--text-secondary);
+}
+
+/* Botão Entrar */
+.enter-login-btn {
+  width: 100%;
+  padding: 14px;
+  margin-top: 16px;
+  background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.enter-login-btn:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+}
+
+/* Link “Criar conta” */
+#btn-criar {
+  display: block;
+  margin-top: 20px;
+  font-size: 0.9rem;
+  color: var(--accent-end);
+  text-align: center;
+  text-decoration: none;
+}
+
+#btn-criar:hover {
+  text-decoration: underline;
+}
+
+/* Tab styles (if used for login/signup toggle) */
+.tab-buttons {
+  display: flex;
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.tab-button {
+  flex: 1;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: color 0.3s ease, border-bottom 0.3s ease;
+  border-bottom: 2px solid transparent;
+}
+
+.tab-button:hover {
+  color: var(--text-primary);
+}
+
+.tab-button.active {
+  color: var(--accent-start); /* Changed to accent-start for consistency */
+  border-bottom: 2px solid var(--accent-start); /* Changed to accent-start for consistency */
+  font-weight: bold;
+}
+
+.tab-content.hidden {
+  display: none;
+}
+
+/* Responsividade */
+@media (max-width: 480px) {
+  .login-form {
+    padding: 32px 16px;
+  }
+  .enter-login-btn {
+    font-size: 1rem;
+  }
+}
+
+/* Animation for form appearance */
+@keyframes fadeInSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

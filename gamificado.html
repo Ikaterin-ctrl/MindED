@@ -15,9 +15,9 @@
     <link rel="stylesheet" href="assistente/static/static/css/pages/gamificado.css">
 </head>
 <body>
-  <header class="main-header">
+  <header class="main-header animate-fade-in-up" style="animation-delay: 0.1s;">
     <div class="header-content">
-        <a href="index.html" class="logo">
+        <a href="index.html" class="logo hover-grow">
             <img src="assistente/static/static/assets/MindED_logo-removebg-preview.png" alt="MindED Logo">
         </a>
         <nav class="main-nav">
@@ -27,12 +27,12 @@
                 <span class="hamburger-line"></span>
             </button>
             <ul class="nav-links">
-                <li><a href="index.html">Início</a></li>
-                <li><a href="principal.html">Conteúdos</a></li>
-                <li><a href="preferencias.html">Preferências</a></li>
-                <li><a href="login.html" class="login-button">Login</a></li>
+                <li><a href="index.html" class="hover-lift">Início</a></li>
+                <li><a href="principal.html" class="hover-lift">Conteúdos</a></li>
+                <li><a href="preferencias.html" class="hover-lift">Preferências</a></li>
+                <li><a href="login.html" class="login-button hover-lift">Login</a></li>
                 <li>
-                  <button id="theme-toggle">
+                  <button id="theme-toggle" class="hover-grow">
                     <i class="fas fa-moon"></i>
                   </button>
                 </li>
@@ -42,34 +42,34 @@
   </header>
 
     <main class="main-content">
-        <h1>Adaptação Gamificada</h1>
+        <h1 class="animate-fade-in-up" style="animation-delay: 0.3s;">Adaptação Gamificada</h1>
 
-        <button id="toggleBtn" class="toggle-button">Ver Versão Original</button>
+        <button id="toggleBtn" class="toggle-button hover-grow">Ver Versão Original</button>
 
         <div id="adaptedContent" class="adapted-content-container active">
-            <div class="gamification-container">
-                <div class="score-container">
+            <div class="gamification-container animate-fade-in-up" style="animation-delay: 0.4s;">
+                <div class="score-container animate-fade-in-up" style="animation-delay: 0.5s;">
                     Pontuação: <span id="pontuacao">0</span> | Nível: <span id="level">1</span>
                 </div>
-                <div class="progress-bar-container">
+                <div class="progress-bar-container animate-fade-in-up" style="animation-delay: 0.6s;">
                     <div class="progress-bar" id="progressBar">0%</div>
                 </div>
 
-                <div class="task-container">
+                <div class="task-container animate-fade-in-up" style="animation-delay: 0.7s;">
                     <h2>Tarefa 1</h2>
                     <p>Complete a tarefa para ganhar 25 pontos.</p>
-                    <button id="completeTaskBtn" class="task-button">Concluir Tarefa</button>
+                    <button id="completeTaskBtn" class="task-button hover-grow">Concluir Tarefa</button>
                 </div>
 
-                <div class="quiz-container">
+                <div class="quiz-container animate-fade-in-up" style="animation-delay: 0.8s;">
                     <h2>Quiz Rápido</h2>
                     <p>Qual a capital da França?</p>
-                    <button class="quiz-button" onclick="checkAnswer(true)">Paris</button>
-                    <button class="quiz-button" onclick="checkAnswer(false)">Londres</button>
+                    <button class="quiz-button hover-grow" onclick="checkAnswer(true)">Paris</button>
+                    <button class="quiz-button hover-grow" onclick="checkAnswer(false)">Londres</button>
                     <p id="quizMessage" style="margin-top: 10px; font-weight: bold;"></p>
                 </div>
 
-                <div class="badges-container">
+                <div class="badges-container animate-fade-in-up" style="animation-delay: 0.9s;">
                     <h2>Suas Conquistas 🏆</h2>
                     <div class="badge-grid">
                         <div class="badge-item" id="badge1">
@@ -88,7 +88,7 @@
                     </div>
                 </div>
 
-                <div class="daily-tip-container">
+                <div class="daily-tip-container animate-fade-in-up" style="animation-delay: 1.0s;">
                     <h2>Dica do Dia ✨</h2>
                     <p id="dailyTip">Aprender algo novo todos os dias é como subir uma escada: cada degrau te leva mais perto do topo!</p>
                 </div>
@@ -100,16 +100,16 @@
             <p>A gamificação é a aplicação de elementos de design de jogos em contextos não lúdicos. É frequentemente usada para aumentar o engajamento e a motivação. Mecânicas como pontos e barras de progresso incentivam a participação e podem levar a melhores resultados de aprendizagem.</p>
         </div>
 
-        <a href="principal.html" class="back-button">Voltar</a>
+        <a href="principal.html" class="back-button hover-grow">Voltar</a>
     </main>
 
-    <footer class="footer">
+    <footer class="footer animate-fade-in-up" style="animation-delay: 1.1s;">
         <p>&copy; 2025 MindED. Todos os direitos reservados.</p>
     </footer>
 
   <!-- Chatbot Flutuante -->
   <div
-    class="chatbot-fab"
+    class="chatbot-fab hover-grow"
     onclick="toggleChatbot()"
   >
     <i class="fas fa-comment-dots"></i>

@@ -15,9 +15,9 @@
     <link rel="stylesheet" href="/assistente/static/chatbot.css" />
 </head>
 <body>
-  <header class="main-header">
+  <header class="main-header animate-fade-in-up" style="animation-delay: 0.1s;">
     <div class="header-content">
-        <a href="index.html" class="logo">
+        <a href="index.html" class="logo hover-grow">
             <img src="assistente/static/static/assets/MindED_logo-removebg-preview.png" alt="MindED Logo">
         </a>
         <nav class="main-nav">
@@ -27,12 +27,12 @@
                 <span class="hamburger-line"></span>
             </button>
             <ul class="nav-links">
-                <li><a href="index.html">Início</a></li>
-                <li><a href="principal.html">Conteúdos</a></li>
-                <li><a href="preferencias.html">Preferências</a></li>
-                <li><a href="login.html" class="login-button">Login</a></li>
+                <li><a href="index.html" class="hover-lift">Início</a></li>
+                <li><a href="principal.html" class="hover-lift">Conteúdos</a></li>
+                <li><a href="preferencias.html" class="hover-lift">Preferências</a></li>
+                <li><a href="login.html" class="login-button hover-lift">Login</a></li>
                 <li>
-                  <button id="theme-toggle">
+                  <button id="theme-toggle" class="hover-grow">
                     <i class="fas fa-moon"></i>
                   </button>
                 </li>
@@ -42,20 +42,20 @@
   </header>
 
     <main class="main-content">
-        <h1>Bem-vindo(a) ao MindED</h1>
-        <p>MindED é uma plataforma de educação inclusiva, projetada para adaptar o conteúdo de aprendizagem às necessidades individuais de cada aluno. Explore nossas demonstrações para ver como podemos ajudar.</p>
+        <h1 class="animate-fade-in-up" style="animation-delay: 0.3s;">Bem-vindo(a) ao MindED</h1>
+        <p class="animate-fade-in-up" style="animation-delay: 0.4s;">MindED é uma plataforma de educação inclusiva, projetada para adaptar o conteúdo de aprendizagem às necessidades individuais de cada aluno. Explore nossas demonstrações para ver como podemos ajudar.</p>
         <div class="nav-buttons">
-            <a href="dislexia.html" class="nav-button">Conteúdo para Dislexia</a>
-            <a href="tdah.html" class="nav-button">Conteúdo para TDAH</a>
-            <a href="autismo.html" class="nav-button">Conteúdo para Autismo</a>
-            <a href="gamificado.html" class="nav-button">Conteúdo Gamificado</a>
-            <a href="podcast.html" class="nav-button">Conteúdo em Podcast</a>
+            <a href="dislexia.html" class="nav-button hover-lift">Conteúdo para Dislexia</a>
+            <a href="tdah.html" class="nav-button hover-lift">Conteúdo para TDAH</a>
+            <a href="autismo.html" class="nav-button hover-lift">Conteúdo para Autismo</a>
+            <a href="gamificado.html" class="nav-button hover-lift">Conteúdo Gamificado</a>
+            <a href="podcast.html" class="nav-button hover-lift">Conteúdo em Podcast</a>
         </div>
 
         <section class="upload-section">
-            <h2>Fazer Upload de Conteúdo</h2>
+            <h2 class="animate-fade-in-up" style="animation-delay: 0.5s;">Fazer Upload de Conteúdo</h2>
             <div id="notificationContainer" class="notification-container hidden"></div>
-            <div class="upload-container">
+            <div class="upload-container animate-fade-in-up" style="animation-delay: 0.6s;">
                 <h1>Vamos personalizar seu conteúdo</h1>
                 <p>Envie o material que você quer estudar e escolha como deseja receber.</p>
 
@@ -85,7 +85,7 @@
                 </div>
 
                 <button
-                    class="upload-btn"
+                    class="upload-btn hover-grow"
                     id="uploadBtn"
                 >
                     <span class="button-text">Enviar</span>
@@ -119,13 +119,13 @@
         </section>
     </main>
 
-    <footer class="footer">
+    <footer class="footer animate-fade-in-up" style="animation-delay: 1s;">
         <p>&copy; 2025 MindED. Todos os direitos reservados.</p>
     </footer>
 
   <!-- Chatbot Flutuante -->
   <div
-    class="chatbot-fab"
+    class="chatbot-fab hover-grow"
     onclick="document.getElementById('chatbotWindow').classList.toggle('hidden')"
   >
     <i class="fas fa-comment-dots"></i>

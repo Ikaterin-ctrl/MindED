@@ -21,9 +21,9 @@
 </head>
 <body>
   <!-- Cabeçalho -->
-  <header class="main-header">
+  <header class="main-header animate-fade-in-up" style="animation-delay: 0.1s;">
     <div class="header-content">
-        <a href="index.html" class="logo">
+        <a href="index.html" class="logo hover-grow">
             <img src="./assets/MindED_logo-removebg-preview.png" alt="MindED Logo">
         </a>
         <nav class="main-nav">
@@ -33,12 +33,12 @@
                 <span class="hamburger-line"></span>
             </button>
             <ul class="nav-links">
-                <li><a href="index.html">Início</a></li>
-                <li><a href="principal.html">Conteúdos</a></li>
-                <li><a href="preferencias.html">Preferências</a></li>
-                <li><a href="login.html" class="login-button" id="header-login-button">Login</a></li>
+                <li><a href="index.html" class="hover-lift">Início</a></li>
+                <li><a href="principal.html" class="hover-lift">Conteúdos</a></li>
+                <li><a href="preferencias.html" class="hover-lift">Preferências</a></li>
+                <li><a href="login.html" class="login-button hover-lift" id="header-login-button">Login</a></li>
                 <li>
-                  <button id="theme-toggle">
+                  <button id="theme-toggle" class="hover-grow">
                     <i class="fas fa-moon"></i>
                   </button>
                 </li>
@@ -58,13 +58,13 @@
     <a href="#" id="start-button" class="btn-start animate-fade-in" style="animation-delay: 0.8s;">Começar</a>
   </main>
 
-    <footer class="footer">
+    <footer class="footer animate-fade-in-up" style="animation-delay: 1s;">
         <p>&copy; 2025 MindED. Todos os direitos reservados.</p>
     </footer>
 
   <!-- Chatbot Flutuante -->
   <div
-    class="chatbot-fab"
+    class="chatbot-fab hover-grow"
     onclick="toggleChatbot()"
   >
     <i class="fas fa-comment-dots"></i>

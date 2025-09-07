@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MindED - Conteúdo em Podcast</title>
+    <title>MindED - Adaptação Gamificada</title>
     <link rel="stylesheet" href="css/base.css">
-    <link rel="stylesheet" href="css/layout.css">
-    <link rel="stylesheet" href="css/custom.css">
+    <link rel="stylesheet" href="assistente/static/static/css/layout.css">
+    <link rel="stylesheet" href="assistente/static/static/css/custom.css">
     <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -14,13 +14,13 @@
     <link rel="stylesheet" href="/assistente/static/chatbot.css" />
     <style>
         .main-content {
-            padding: 50px 20px;
+            padding: 120px 20px 50px 20px;
             text-align: center;
         }
         h1 {
             margin-bottom: 30px;
         }
-        .podcast-container, .original-content-container {
+        .gamification-container, .original-content-container {
             max-width: 800px;
             margin: 20px auto;
             text-align: left;
@@ -32,9 +32,36 @@
             display: none;
             background-color: #f0f0f0;
         }
-        .video-player {
+        .score-container {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+        .progress-bar-container {
             width: 100%;
-            border-radius: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+        .progress-bar {
+            width: 0%;
+            height: 30px;
+            background-color: #4caf50;
+            border-radius: 5px;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+            transition: width 0.5s ease-in-out;
+        }
+        .task-container, .quiz-container {
+            margin-bottom: 30px;
+        }
+        .task-button, .quiz-button {
+            padding: 10px 15px;
+            font-size: 1em;
+            cursor: pointer;
+            margin-right: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
         }
         .toggle-button {
             display: inline-block;
@@ -61,7 +88,7 @@
   <header class="main-header">
     <div class="header-content">
         <a href="index.html" class="logo">
-            <img src="./assets/MindED_logo-removebg-preview.png" alt="MindED Logo">
+            <img src="assistente/static/static/assets/MindED_logo-removebg-preview.png" alt="MindED Logo">
         </a>
         <nav class="main-nav">
             <button class="hamburger-menu" aria-label="Abrir menu" aria-expanded="false">
@@ -85,22 +112,38 @@
   </header>
 
     <main class="main-content">
-        <h1>Conteúdo em Podcast</h1>
+        <h1>Adaptação Gamificada</h1>
 
         <button id="toggleBtn" class="toggle-button">Ver Versão Original</button>
 
-        <div id="adaptedContent" class="podcast-container">
-            <h2>Podcast sobre Aprendizagem Acessível</h2>
-            <p>Neste episódio, discutimos como o design inclusivo e a tecnologia podem criar experiências de aprendizagem mais eficazes para todos.</p>
-            <video id="videoPlayer" class="video-player" controls>
-                <source src="assets/seu_podcast.mp4" type="video/mp4">
-                Seu navegador não suporta o player de vídeo.
-            </video>
+        <div id="adaptedContent">
+            <div class="gamification-container">
+                <div class="score-container">
+                    Pontuação: <span id="pontuacao">0</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progressBar">0%</div>
+                </div>
+
+                <div class="task-container">
+                    <h2>Tarefa 1</h2>
+                    <p>Complete a tarefa para ganhar 25 pontos.</p>
+                    <button id="completeTaskBtn" class="task-button">Concluir Tarefa</button>
+                </div>
+
+                <div class="quiz-container">
+                    <h2>Quiz Rápido</h2>
+                    <p>Qual a capital da França?</p>
+                    <button class="quiz-button" onclick="checkAnswer(true)">Paris</button>
+                    <button class="quiz-button" onclick="checkAnswer(false)">Londres</button>
+                    <p id="quizMessage" style="margin-top: 10px; font-weight: bold;"></p>
+                </div>
+            </div>
         </div>
 
         <div id="originalContent" class="original-content-container">
             <h2>Conteúdo Original</h2>
-            <p>A modalidade de consumo de conteúdo em áudio, como os podcasts, tem ganhado proeminência como uma ferramenta de aprendizagem flexível. Ela permite que os usuários absorvam informações enquanto realizam outras atividades, otimizando o tempo e se adaptando a diferentes estilos de vida. A produção de conteúdo educacional em formato de áudio pode ser uma estratégia eficaz para alcançar um público mais amplo, incluindo aqueles com dificuldades de leitura.</p>
+            <p>A gamificação é a aplicação de elementos de design de jogos em contextos não lúdicos. É frequentemente usada para aumentar o engajamento e a motivação. Mecânicas como pontos e barras de progresso incentivam a participação e podem levar a melhores resultados de aprendizagem.</p>
         </div>
 
         <a href="principal.html" class="back-button">Voltar</a>
@@ -138,12 +181,20 @@
     </div>
   </div>
 
-    <script src="js/menu.js"></script>
-    <script src="js/theme-toggle.js"></script>
+    <script src="assistente/static/static/js/menu.js"></script>
+    <script src="assistente/static/static/js/theme-toggle.js"></script>
     <script>
         const toggleBtn = document.getElementById('toggleBtn');
         const adaptedContent = document.getElementById('adaptedContent');
         const originalContent = document.getElementById('originalContent');
+
+        const scoreElement = document.getElementById('pontuacao');
+        const progressBar = document.getElementById('progressBar');
+        const completeTaskBtn = document.getElementById('completeTask'); // Changed ID
+        const quizMessage = document.getElementById('quizMessage');
+
+        let score = 0;
+        let progress = 0;
 
         toggleBtn.addEventListener('click', () => {
             if (originalContent.style.opacity === '1') { // Check opacity instead of display
@@ -174,7 +225,39 @@
                 toggleBtn.textContent = 'Ver Versão Adaptada';
             }
         });
-    </script>
+
+        if(completeTaskBtn) { // Check if element exists
+            completeTaskBtn.addEventListener('click', () => {
+                if (!completeTaskBtn.disabled) {
+                    score += 25;
+                    progress += 25;
+                    if (progress > 100) progress = 100;
+                    updateUI();
+                    completeTaskBtn.disabled = true;
+                    completeTaskBtn.style.backgroundColor = '#ccc';
+                }
+            });
+        }
+
+        function checkAnswer(isCorrect) {
+            if (isCorrect) {
+                score += 5;
+                quizMessage.textContent = "Resposta Correta! +5 pontos!";
+                quizMessage.style.color = 'green';
+            } else {
+                quizMessage.textContent = "Resposta Incorreta.";
+                quizMessage.style.color = 'red';
+            }
+            updateUI();
+        }
+
+        function updateUI() {
+            if(scoreElement) {
+                scoreElement.textContent = score;
+                progressBar.style.width = progress + '%';
+                progressBar.textContent = progress + '%';
+            }
+        }
     </script>
   <script src="/assistente/js/app.js"></script>
 </body>

@@ -31,12 +31,12 @@ app.use(cors({
 
 // SERVE OS ARQUIVOS ESTÁTICOS DO FRONTEND.
 // Aponta para a pasta 'static' que agora está dentro de 'assistente'
-app.use(express.static(join(__dirname, '..', 'static'), { extensions: ['html', 'css', 'svg', 'js', 'png'] }));
+app.use(express.static(join(__dirname, '..', 'static', 'static'), { extensions: ['html', 'css', 'svg', 'js', 'png'] }));
 
 // Rota inicial para servir o index.html
 app.get('/', (req, res) => {
   inicializaChat(); // Chama a função para inicializar o chat Gemini no backend
-  res.sendFile(join(__dirname, '..', 'static', 'index.html')); // Serve o index.html da nova pasta static
+  res.sendFile(join(__dirname, '..', 'static', 'static', 'index.html')); // Serve o index.html da nova pasta static
 });
 
 // Rota para o frontend enviar mensagens e receber respostas do chatbot

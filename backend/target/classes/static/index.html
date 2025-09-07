@@ -7,7 +7,8 @@
   <link rel="stylesheet" href="./css/base.css" />
   <link rel="stylesheet" href="./css/layout.css" />
   <link rel="stylesheet" href="./css/pages/index.css" />
-  <link rel="stylesheet" href="./assistente/static/chatbot.css" />
+  <link rel="stylesheet" href="css/custom.css">
+  <link rel="stylesheet" href="/assistente/static/chatbot.css" />
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -27,6 +28,9 @@
                 <span class="hamburger-line"></span>
             </button>
             <ul class="nav-links">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="principal.html">Conteúdos</a></li>
+                <li><a href="preferencias.html">Preferências</a></li>
                 <li><a href="login.html" class="login-button" id="header-login-button">Login</a></li>
                 <li>
                   <button id="theme-toggle">
@@ -50,6 +54,10 @@
 
     <!-- acomentario pra diana ver -->
   </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 MindED. Todos os direitos reservados.</p>
+    </footer>
 
   <!-- Chatbot Flutuante -->
   <div
@@ -84,7 +92,7 @@
   <script src="./config.js"></script>
   <script src="js/typed-text.js"></script>
   <script src="js/theme-toggle.js"></script>
-  <script src="assistente/js/app.js"></script>
+  <script src="/assistente/js/app.js"></script>
   <script src="js/menu.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
@@ -124,7 +132,7 @@
             // Returning user
             if (isAuthenticated) {
                 // Authenticated, go to upload page
-                window.location.href = 'upload.html';
+                window.location.href = 'principal.html';
             } else {
                 // Not authenticated, go to login page
                 window.location.href = 'login.html';

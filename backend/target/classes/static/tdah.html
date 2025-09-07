@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindED - Adaptação para TDAH</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/custom.css">
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+    <link rel="stylesheet" href="/assistente/static/chatbot.css" />
+    <style>
+        .main-content {
+            padding: 50px 20px;
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 30px;
+        }
+        .content-container, .original-content-container, .quiz-container {
+            max-width: 800px;
+            margin: 20px auto;
+            text-align: left;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .content-container {
+            background-color: #f0f8ff; /* AliceBlue, um tom suave */
+        }
+        .original-content-container {
+            display: none;
+            background-color: #f0f0f0;
+        }
+        .quiz-container {
+            border: 1px solid #ccc;
+            margin-top: 40px;
+        }
+        .action-buttons {
+            margin-bottom: 20px;
+        }
+        .podcast-button, .toggle-button, .quiz-button {
+            padding: 10px 15px;
+            font-size: 1em;
+            cursor: pointer;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin: 5px;
+        }
+        .video-player {
+            display: none;
+            max-width: 100%;
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+        .back-button {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 20px;
+            font-size: 1em;
+            text-decoration: none;
+            color: #fff;
+            background-color: #007bff;
+            border-radius: 5px;
+        }
+        #quizMessage {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+  <header class="main-header">
+    <div class="header-content">
+        <a href="index.html" class="logo">
+            <img src="./assets/MindED_logo-removebg-preview.png" alt="MindED Logo">
+        </a>
+        <nav class="main-nav">
+            <button class="hamburger-menu" aria-label="Abrir menu" aria-expanded="false">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="principal.html">Conteúdos</a></li>
+                <li><a href="preferencias.html">Preferências</a></li>
+                <li><a href="login.html" class="login-button">Login</a></li>
+                <li>
+                  <button id="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                  </button>
+                </li>
+            </ul>
+        </nav>
+    </div>
+  </header>
+
+    <main class="main-content">
+        <h1>Adaptação para TDAH</h1>
+
+        <div class="action-buttons">
+            <button id="podcastBtn" class="podcast-button">Ouvir em Podcast</button>
+            <button id="toggleBtn" class="toggle-button">Ver Versão Original</button>
+        </div>
+
+        <div id="adaptedContent" class="content-container">
+            <h2>Conteúdo Focado para TDAH</h2>
+            <p>O Transtorno do Déficit de Atenção com Hiperatividade (TDAH) é um transtorno neurobiológico que pode afetar a atenção e o controle de impulsos. Este conteúdo foi estruturado para ser mais direto e segmentado, ajudando a manter o foco.</p>
+            <h3>Estratégias Aplicadas:</h3>
+            <ul>
+                <li><strong>Textos Curtos e Diretos:</strong> A informação é dividida em blocos pequenos para facilitar a leitura.</li>
+                <li><strong>Listas e Marcadores:</strong> Ajudam a organizar a informação de forma clara e rápida.</li>
+                <li><strong>Destaques Visuais:</strong> Palavras-chave em <strong>negrito</strong> para guiar a atenção aos pontos mais importantes.</li>
+            </ul>
+        </div>
+
+        <div id="originalContent" class="original-content-container">
+            <h2>Conteúdo Original</h2>
+            <p>O Transtorno do Déficit de Atenção com Hiperatividade (TDAH) é uma condição neurobiológica complexa e multifacetada, com origens predominantemente genéticas, que se manifesta na infância e pode persistir ao longo da vida adulta. A sua sintomatologia central engloba um padrão persistente de desatenção, hiperatividade e impulsividade, que interfere significativamente no funcionamento e desenvolvimento do indivíduo em múltiplos contextos.</p>
+        </div>
+
+        <video id="videoPlayer" class="video-player" controls>
+            <source src="assets/seu_podcast.mp4" type="video/mp4">
+            Seu navegador não suporta o player de vídeo.
+        </video>
+
+        <div class="quiz-container">
+            <h2>Teste seus conhecimentos!</h2>
+            <p>Qual das seguintes é uma estratégia de adaptação de conteúdo para TDAH mencionada no texto?</p>
+            <button class="quiz-button" onclick="checkQuizAnswer(false)">Textos longos e detalhados</button>
+            <button class="quiz-button" onclick="checkQuizAnswer(true)">Uso de listas e marcadores</button>
+            <button class="quiz-button" onclick="checkQuizAnswer(false)">Linguagem complexa e figurativa</button>
+            <p id="quizMessage"></p>
+        </div>
+
+        <a href="principal.html" class="back-button">Voltar</a>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 MindED. Todos os direitos reservados.</p>
+    </footer>
+
+  <!-- Chatbot Flutuante -->
+  <div
+    class="chatbot-fab"
+    onclick="document.getElementById('chatbotWindow').classList.toggle('hidden')"
+  >
+    <i class="fas fa-comment-dots"></i>
+  </div>
+
+  <div id="chatbotWindow" class="chatbot-window hidden">
+    <div class="chatbot-header">
+      <span>Assistente MindED</span>
+      <button
+        onclick="document.getElementById('chatbotWindow').classList.toggle('hidden')"
+      >
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div id="chatbotMessages" class="chatbot-messages flex flex-col">
+      <div class="message-bubble bot">
+        Olá! Como posso te ajudar hoje com a acessibilidade ou sobre o MindED?
+      </div>
+    </div>
+    <div class="chatbot-input-area">
+      <input type="text" id="chatInput" placeholder="Digite sua mensagem..." />
+      <button id="sendChatButton"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+
+    <script src="js/menu.js"></script>
+    <script src="js/theme-toggle.js"></script>
+    <script>
+        const podcastBtn = document.getElementById('podcastBtn');
+        const toggleBtn = document.getElementById('toggleBtn');
+        const adaptedContent = document.getElementById('adaptedContent');
+        const originalContent = document.getElementById('originalContent');
+        const videoPlayer = document.getElementById('videoPlayer');
+        const quizMessage = document.getElementById('quizMessage');
+
+        podcastBtn.addEventListener('click', () => {
+            const isPlayerVisible = videoPlayer.style.opacity === '1';
+            
+            if (!isPlayerVisible) {
+                // Show video, hide text contents
+                adaptedContent.style.opacity = '0';
+                adaptedContent.style.pointerEvents = 'none';
+                originalContent.style.opacity = '0';
+                originalContent.style.pointerEvents = 'none';
+
+                setTimeout(() => {
+                    adaptedContent.style.display = 'none';
+                    originalContent.style.display = 'none';
+                    videoPlayer.style.display = 'block';
+                    setTimeout(() => {
+                        videoPlayer.style.opacity = '1';
+                        videoPlayer.play();
+                    }, 50); // Small delay to trigger transition
+                }, 500); // Match CSS transition duration
+                podcastBtn.textContent = 'Ler Conteúdo';
+                toggleBtn.style.display = 'none';
+            } else {
+                // Hide video, show adapted content
+                videoPlayer.style.opacity = '0';
+                videoPlayer.pause();
+                setTimeout(() => {
+                    videoPlayer.style.display = 'none';
+                    adaptedContent.style.display = 'block';
+                    setTimeout(() => {
+                        adaptedContent.style.opacity = '1';
+                        adaptedContent.style.pointerEvents = 'auto';
+                    }, 50); // Small delay to trigger transition
+                }, 500); // Match CSS transition duration
+                podcastBtn.textContent = 'Ouvir em Podcast';
+                toggleBtn.style.display = 'inline-block';
+                toggleBtn.textContent = 'Ver Versão Original';
+            }
+        });
+
+        toggleBtn.addEventListener('click', () => {
+            const isOriginalVisible = originalContent.style.opacity === '1';
+            
+            if (!isOriginalVisible) {
+                // Hide adapted, show original
+                adaptedContent.style.opacity = '0';
+                adaptedContent.style.pointerEvents = 'none';
+                setTimeout(() => {
+                    adaptedContent.style.display = 'none';
+                    originalContent.style.display = 'block';
+                    setTimeout(() => {
+                        originalContent.style.opacity = '1';
+                        originalContent.style.pointerEvents = 'auto';
+                    }, 50); // Small delay to trigger transition
+                }, 500); // Match CSS transition duration
+                toggleBtn.textContent = 'Ver Versão Adaptada';
+            } else {
+                // Hide original, show adapted
+                originalContent.style.opacity = '0';
+                originalContent.style.pointerEvents = 'none';
+                setTimeout(() => {
+                    originalContent.style.display = 'none';
+                    adaptedContent.style.display = 'block';
+                    setTimeout(() => {
+                        adaptedContent.style.opacity = '1';
+                        adaptedContent.style.pointerEvents = 'auto';
+                    }, 50); // Small delay to trigger transition
+                }, 500); // Match CSS transition duration
+                toggleBtn.textContent = 'Ver Versão Original';
+            }
+        });
+
+        function checkQuizAnswer(isCorrect) {
+            if (isCorrect) {
+                quizMessage.textContent = "Resposta correta! Você fixou o conhecimento!";
+                quizMessage.style.color = 'green';
+            } else {
+                quizMessage.textContent = "Resposta incorreta. Tente novamente!";
+                quizMessage.style.color = 'red';
+            }
+        }
+    </script>
+  <script src="/assistente/js/app.js"></script>
+</body>
+</html>

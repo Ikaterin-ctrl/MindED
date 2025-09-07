@@ -369,3 +369,15 @@ main {
   transform: translateY(-5px);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
+
+/* Apply animate-fade-in-up and hover-lift to .card class */
+.card {
+  animation: fade-in-up 0.6s ease-out forwards;
+  opacity: 0; /* Start invisible */
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}

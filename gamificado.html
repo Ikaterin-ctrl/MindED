@@ -27,10 +27,17 @@
             padding: 20px;
             border-radius: 10px;
             border: 1px solid #ccc;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
         }
-        .original-content-container {
-            display: none;
-            background-color: #f0f0f0;
+        .original-content-container, .adapted-content-container {
+            display: none; /* Hidden by default */
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .original-content-container.active, .adapted-content-container.active {
+            display: block; /* Show when active */
+            opacity: 1;
+            transform: translateY(0);
         }
         .score-container {
             font-size: 1.5em;
@@ -62,6 +69,10 @@
             margin-right: 10px;
             border-radius: 5px;
             border: 1px solid #ccc;
+        }
+        .task-button.completed {
+            background-color: #ccc;
+            cursor: not-allowed;
         }
         .toggle-button {
             display: inline-block;
@@ -116,10 +127,10 @@
 
         <button id="toggleBtn" class="toggle-button">Ver Versão Original</button>
 
-        <div id="adaptedContent">
+        <div id="adaptedContent" class="adapted-content-container active">
             <div class="gamification-container">
                 <div class="score-container">
-                    Pontuação: <span id="pontuacao">0</span>
+                    Pontuação: <span id="pontuacao">0</span> | Nível: <span id="level">1</span>
                 </div>
                 <div class="progress-bar-container">
                     <div class="progress-bar" id="progressBar">0%</div>
@@ -137,6 +148,30 @@
                     <button class="quiz-button" onclick="checkAnswer(true)">Paris</button>
                     <button class="quiz-button" onclick="checkAnswer(false)">Londres</button>
                     <p id="quizMessage" style="margin-top: 10px; font-weight: bold;"></p>
+                </div>
+
+                <div class="badges-container">
+                    <h2>Suas Conquistas 🏆</h2>
+                    <div class="badge-grid">
+                        <div class="badge-item" id="badge1">
+                            <i class="fas fa-star"></i>
+                            <p>Primeiro Passo</p>
+                        </div>
+                        <div class="badge-item" id="badge2">
+                            <i class="fas fa-trophy"></i>
+                            <p>Mestre do Quiz</p>
+                        </div>
+                        <div class="badge-item" id="badge3">
+                            <i class="fas fa-book-open"></i>
+                            <p>Leitor Ávido</p>
+                        </div>
+                        <!-- More badges can be added here -->
+                    </div>
+                </div>
+
+                <div class="daily-tip-container">
+                    <h2>Dica do Dia ✨</h2>
+                    <p id="dailyTip">Aprender algo novo todos os dias é como subir uma escada: cada degrau te leva mais perto do topo!</p>
                 </div>
             </div>
         </div>
@@ -183,82 +218,7 @@
 
     <script src="assistente/static/static/js/menu.js"></script>
     <script src="assistente/static/static/js/theme-toggle.js"></script>
-    <script>
-        const toggleBtn = document.getElementById('toggleBtn');
-        const adaptedContent = document.getElementById('adaptedContent');
-        const originalContent = document.getElementById('originalContent');
-
-        const scoreElement = document.getElementById('pontuacao');
-        const progressBar = document.getElementById('progressBar');
-        const completeTaskBtn = document.getElementById('completeTask'); // Changed ID
-        const quizMessage = document.getElementById('quizMessage');
-
-        let score = 0;
-        let progress = 0;
-
-        toggleBtn.addEventListener('click', () => {
-            if (originalContent.style.opacity === '1') { // Check opacity instead of display
-                // Hide original, show adapted
-                originalContent.style.opacity = '0';
-                originalContent.style.pointerEvents = 'none';
-                setTimeout(() => {
-                    originalContent.style.display = 'none';
-                    adaptedContent.style.display = 'block';
-                    setTimeout(() => {
-                        adaptedContent.style.opacity = '1';
-                        adaptedContent.style.pointerEvents = 'auto';
-                    }, 50); // Small delay to trigger transition
-                }, 500); // Match CSS transition duration
-                toggleBtn.textContent = 'Ver Versão Original';
-            } else {
-                // Hide adapted, show original
-                adaptedContent.style.opacity = '0';
-                adaptedContent.style.pointerEvents = 'none';
-                setTimeout(() => {
-                    adaptedContent.style.display = 'none';
-                    originalContent.style.display = 'block';
-                    setTimeout(() => {
-                        originalContent.style.opacity = '1';
-                        originalContent.style.pointerEvents = 'auto';
-                    }, 50); // Small delay to trigger transition
-                }, 500); // Match CSS transition duration
-                toggleBtn.textContent = 'Ver Versão Adaptada';
-            }
-        });
-
-        if(completeTaskBtn) { // Check if element exists
-            completeTaskBtn.addEventListener('click', () => {
-                if (!completeTaskBtn.disabled) {
-                    score += 25;
-                    progress += 25;
-                    if (progress > 100) progress = 100;
-                    updateUI();
-                    completeTaskBtn.disabled = true;
-                    completeTaskBtn.style.backgroundColor = '#ccc';
-                }
-            });
-        }
-
-        function checkAnswer(isCorrect) {
-            if (isCorrect) {
-                score += 5;
-                quizMessage.textContent = "Resposta Correta! +5 pontos!";
-                quizMessage.style.color = 'green';
-            } else {
-                quizMessage.textContent = "Resposta Incorreta.";
-                quizMessage.style.color = 'red';
-            }
-            updateUI();
-        }
-
-        function updateUI() {
-            if(scoreElement) {
-                scoreElement.textContent = score;
-                progressBar.style.width = progress + '%';
-                progressBar.textContent = progress + '%';
-            }
-        }
-    </script>
+    <script src="assistente/static/static/js/gamificado.js"></script>
   <script src="/assistente/js/app.js"></script>
 </body>
 </html>

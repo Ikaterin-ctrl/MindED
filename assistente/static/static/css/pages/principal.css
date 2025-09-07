@@ -1,0 +1,184 @@
+.main-content {
+    text-align: center;
+    padding: 120px 20px 50px 20px;
+}
+.main-content h1 {
+    font-size: 3em;
+    margin-bottom: 20px;
+}
+.main-content p {
+    font-size: 1.2em;
+    margin-bottom: 40px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.nav-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+.nav-button {
+    display: inline-block;
+    padding: 15px 30px;
+    font-size: 1.1em;
+    text-decoration: none;
+    color: #fff;
+    background: linear-gradient(135deg, var(--accent-start), var(--accent-end)); /* Glassmorphism gradient */
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2); /* Add shadow */
+}
+.nav-button:hover {
+    background: linear-gradient(135deg, var(--accent-end), var(--accent-start)); /* Reverse gradient on hover */
+    transform: translateY(-3px); /* Lift effect */
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3); /* More pronounced shadow */
+}
+/* Styles for the merged upload section */
+.upload-section {
+    margin-top: 50px;
+    padding-top: 30px;
+    border-top: 1px solid #eee;
+}
+.upload-section h2 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+.upload-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 30px;
+    border-radius: 8px;
+    background: var(--glass-bg); /* Apply glassmorphism */
+    backdrop-filter: blur(10px); /* Blur effect for glassmorphism */
+    -webkit-backdrop-filter: blur(10px); /* Safari support */
+    border: 1px solid rgba(255, 255, 255, 0.18); /* Lighter border for glass */
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37); /* More pronounced shadow */
+}
+.dropzone {
+    border: 2px dashed var(--text-secondary); /* Use theme variable */
+    padding: 40px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.3s ease; /* Smooth transition for all properties */
+}
+.dropzone:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Subtle background on hover */
+    border-color: var(--accent-start); /* Highlight border on hover */
+}
+.dropzone-initial-state p {
+    margin: 0;
+    font-size: 1.1em;
+    color: var(--text-primary); /* Use theme variable */
+}
+.file-select {
+    color: var(--accent-start); /* Use theme variable */
+    font-weight: bold;
+}
+.dropzone-preview-state {
+    display: none;
+}
+.upload-btn {
+    margin-top: 20px;
+    padding: 12px 25px;
+    font-size: 1.2em;
+    background: linear-gradient(135deg, #28a745, #4CAF50); /* Green gradient */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+.upload-btn:hover {
+    background: linear-gradient(135deg, #4CAF50, #28a745); /* Reverse gradient on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+.progress-container {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.1); /* Glassmorphism background */
+    border-radius: 5px;
+    margin-top: 20px;
+    height: 25px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #4CAF50, #2196F3); /* Gradient for progress */
+    text-align: center;
+    color: white;
+    line-height: 25px;
+    transition: width 0.5s ease-in-out; /* Smoother transition */
+    border-radius: 5px;
+}
+.notification-container {
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: rgba(76, 175, 80, 0.2); /* Subtle green background */
+    color: var(--text-primary);
+    border: 1px solid rgba(76, 175, 80, 0.5);
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.hidden {
+    display: none;
+}
+
+/* Spinner animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+/* Adaptation options styling */
+.adaptation-options {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.adaptation-options .option {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 15px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  flex: 1 1 calc(33% - 40px); /* Adjust for responsiveness */
+  max-width: 180px;
+}
+
+.adaptation-options .option:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+  border-color: var(--accent-start);
+}
+
+.adaptation-options .option i {
+  font-size: 3em;
+  color: var(--accent-start);
+  margin-bottom: 10px;
+}
+
+.adaptation-options .option span {
+  display: block;
+  font-weight: bold;
+  color: var(--text-primary);
+}

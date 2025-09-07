@@ -1,0 +1,120 @@
+.hero-onboarding {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: calc(100vh - 40px);
+  width: 100%;
+  padding: 60px 40px;
+  gap: 50px;
+  border-radius: 24px;
+  border: 1px solid rgba(255,255,255,0.1); /* Softer border */
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1); /* Softer shadow */
+  transition: background 0.3s ease;
+  background-size: 400% 400%; /* For gradientBG animation */
+  animation: gradientBG 15s ease infinite; /* Apply background animation */
+}
+
+.logo-hero {
+  width: 15rem;
+}
+
+.typed-text {
+  font-size: 1.6rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+  text-shadow: none; /* Remove text shadow for cleaner look */
+  height: 50px;
+  line-height: 1.4;
+}
+
+.btn-start {
+  background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+  padding: 16px 40px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-radius: 40px;
+  color: #fff;
+  text-decoration: none;
+  border: none;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+  transition: all 0.3s ease;
+}
+
+.btn-start:hover {
+  background: linear-gradient(135deg, var(--accent-end), var(--accent-start));
+  transform: scale(1.05);
+}
+
+.minded-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-shadow: 0 0 25px rgba(255,255,255,0.4);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+}
+
+.highlight {
+  color: var(--accent-start);
+  font-weight: 800;
+}
+
+.fade-in {
+  animation: fadeIn 1s ease-in-out;
+}
+
+.animate-fade-in {
+  opacity: 0; /* Start invisible */
+  animation: fadeIn 1s ease-out forwards; /* Apply fade-in animation */
+}
+
+@media (max-width: 600px) {
+  .hero-onboarding {
+    padding: 30px 20px;
+    gap: 30px;
+  }
+  .minded-title {
+    font-size: 2.2rem;
+  }
+  .typed-text {
+    font-size: 1.2rem;
+    height: 40px;
+  }
+  .btn-start {
+    padding: 12px 32px;
+    font-size: 1rem;
+  }
+}
+
+.value-proposition {
+  text-align: center;
+  margin-top: 20px;
+  max-width: 600px;
+  padding: 0 20px;
+}
+
+.value-proposition h2 {
+  font-size: 2rem;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+
+.value-proposition p {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+@media (max-width: 600px) {
+  .value-proposition h2 {
+    font-size: 1.5rem;
+  }
+  .value-proposition p {
+    font-size: 1rem;
+  }
+}
+

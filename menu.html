@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindED</title>
+    <link rel="stylesheet" href="assistente/static/static/css/base.css">
+    <link rel="stylesheet" href="assistente/static/static/css/layout.css">
+    <link rel="stylesheet" href="assistente/static/static/css/pages/menu.css">
+    <link rel="stylesheet" href="assistente/static/static/css/custom.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assistente/static/chatbot.css" />
+  
+</head>
+<body>
+      <!-- Cabeçalho -->
+  <header class="main-header">
+    <div class="header-content">
+        <a href="index.html" class="logo">
+            <img src="assistente/static/static/assets/MindED_logo-removebg-preview.png" alt="MindED Logo">
+        </a>
+        <nav class="main-nav">
+            <button class="hamburger-menu" aria-label="Abrir menu" aria-expanded="false">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="principal.html">Conteúdos</a></li>
+                <li><a href="preferencias.html">Preferências</a></li>
+                <li><a href="login.html" class="login-button">Login</a></li>
+                <li>
+                  <button id="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                  </button>
+                </li>
+            </ul>
+        </nav>
+    </div>
+  </header>
+
+    <main class="menu-page">
+        <section id="solucoes" class="container">
+            <h2 class="title text-center">Soluções</h2>
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="card">
+                        <i class="fas fa-user-plus icon"></i>
+                        <h5 class="card-title">Login e Perfil Personalizado</h5>
+                        <p class="card-text">Crie seu perfil com dados pessoais e preferências de aprendizagem para uma experiência totalmente adaptada.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card">
+                        <i class="fas fa-cloud-arrow-up icon"></i>
+                        <h5 class="card-title">Upload e Inserção de Conteúdo</h5>
+                        <p class="card-text">Carregue seus materiais (texto, vídeo, áudio) ou insira links para que o MindED comece a adaptá-los.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card">
+                        <i class="fas fa-exchange-alt icon"></i>
+                        <h5 class="card-title">Adaptação de Formato Preferido</h5>
+                        <p class="card-text">Escolha como prefere consumir o conteúdo: texto adaptado, vídeo ilustrado, ou áudio narrado, conforme seu estilo.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+          <section id="login-call-to-action" class="container text-center">
+            <h2 class="title">Pronto para Começar?</h2>
+            <p>Faça login para acessar seus conteúdos adaptados ou crie uma conta para começar a sua jornada de aprendizagem inclusiva.</p>
+            <a href="login.html" class="btn-start">Login ou Cadastro</a>
+        </section>
+
+        <section id="contato" class="container">
+            <div class="contact-card">
+                <h2 class="title text-center">Fale Conosco</h2>
+                <p class="text-center">Estamos prontos para transformar seu aprendizado.</p>
+                <div class="email-addresses text-center">
+                    <p class="email-link"><a href="mailto:suporte@minded.com.br">suporte@minded.com.br</a></p>
+                    <p class="email-link"><a href="mailto:contato@minded.com.br">contato@minded.com.br</a></p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="overlay" id="overlay"></div>
+
+    <footer class="footer">
+        <p>&copy; 2025 MindED. Todos os direitos reservados.</p>
+    </footer>
+
+    <script src="assistente/static/static/js/theme-toggle.js"></script>
+    
+  <!-- Chatbot Flutuante -->
+  <div
+    class="chatbot-fab"
+    onclick="toggleChatbot()"
+  >
+    <i class="fas fa-comment-dots"></i>
+  </div>
+
+  <div id="chatbotWindow" class="chatbot-window hidden">
+    <div class="chatbot-header">
+      <span>Assistente MindED</span>
+      <button
+        onclick="toggleChatbot()"
+      >
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div id="chatbotMessages" class="chatbot-messages flex flex-col">
+      <div class="message-bubble bot">
+        Olá! Como posso te ajudar hoje com a acessibilidade ou sobre o MindED?
+      </div>
+    </div>
+    <div class="chatbot-input-area">
+      <input type="text" id="chatInput" placeholder="Digite sua mensagem..." />
+      <button id="sendChatButton"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+
+  <script src="/assistente/js/app.js"></script>
+</body>
+</html>

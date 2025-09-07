@@ -30,14 +30,13 @@ app.use(cors({
 }));
 
 // SERVE OS ARQUIVOS ESTÁTICOS DO FRONTEND.
-// 'join(__dirname, '..', '..')' vai dois níveis acima da pasta 'server'
-// para chegar na RAIZ do seu projeto (MindED/), onde estão index.html, css/, js/, assets/.
-app.use(express.static(join(__dirname, '..', '..'), { extensions: ['html', 'css', 'svg', 'js', 'png'] }));
+// Aponta para a pasta 'static' que agora está dentro de 'assistente'
+app.use(express.static(join(__dirname, '..', 'static', 'static'), { extensions: ['html', 'css', 'svg', 'js', 'png'] }));
 
 // Rota inicial para servir o index.html
 app.get('/', (req, res) => {
   inicializaChat(); // Chama a função para inicializar o chat Gemini no backend
-  res.sendFile(join(__dirname, '..', '..', 'index.html')); // Serve o index.html da raiz
+  res.sendFile(join(__dirname, '..', 'static', 'static', 'index.html')); // Serve o index.html da nova pasta static
 });
 
 // Rota para o frontend enviar mensagens e receber respostas do chatbot

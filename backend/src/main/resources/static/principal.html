@@ -325,7 +325,11 @@
                 }, 100);
 
                 setTimeout(() => {
-                    window.location.href = 'principal.html';
+                    progressContainer.classList.add('hidden');
+                    document.getElementById('uploadSuccessState').classList.remove('hidden');
+                    uploadBtn.disabled = false;
+                    buttonText.textContent = 'Enviar';
+                    spinner.classList.add('hidden');
                 }, 3000);
             });
 

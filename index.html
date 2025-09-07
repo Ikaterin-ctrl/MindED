@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MindED – Boas-vindas</title>
-  <link rel="stylesheet" href="./css/base.css" />
+  <link rel="stylesheet" href="assistente/static/static/css/base.css" />
   <link rel="stylesheet" href="assistente/static/static/css/layout.css" />
   <link rel="stylesheet" href="assistente/static/static/css/pages/index.css" />
   <link rel="stylesheet" href="assistente/static/static/css/custom.css">
@@ -49,15 +49,13 @@
 
   <!-- Hero Onboarding -->
   <main class="hero-onboarding">
-    <img src="./assets/MindED_logo-removebg-preview.png" alt="MindED Logo" class="logo-hero" />
-    <div id="typed-text" class="typed-text">Transforme seu aprendizado.</div>
-    <section class="value-proposition">
+    <img src="./assets/MindED_logo-removebg-preview.png" alt="MindED Logo" class="logo-hero animate-fade-in" style="animation-delay: 0.2s;" />
+    <div id="typed-text" class="typed-text animate-fade-in" style="animation-delay: 0.4s;">Transforme seu aprendizado.</div>
+    <section class="value-proposition animate-fade-in" style="animation-delay: 0.6s;">
       <h2>Seu aprendizado, do seu jeito.</h2>
       <p>O MindED adapta conteúdos para você, considerando suas preferências e perfil cognitivo. Estude com mais foco, eficiência e acessibilidade.</p>
     </section>
-    <a href="#" id="start-button" class="btn-start">Começar</a>
-
-    <!-- acomentario pra diana ver -->
+    <a href="#" id="start-button" class="btn-start animate-fade-in" style="animation-delay: 0.8s;">Começar</a>
   </main>
 
     <footer class="footer">
@@ -93,15 +91,8 @@
   </div>
 
   <!-- Scripts -->
-  <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
-  <script src="./config.js"></script>
-  <script src="assistente/static/static/js/typed-text.js"></script>
-  <script src="assistente/static/static/js/theme-toggle.js"></script>
-  <script src="/assistente/js/app.js"></script>
-  <script src="assistente/static/static/js/menu.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
-        const hasVisited = localStorage.getItem('hasVisited');
         const headerLoginButton = document.getElementById('header-login-button');
         const startButton = document.getElementById('start-button');
 
@@ -117,34 +108,16 @@
             });
         } catch (e) {
             console.error("Erro ao inicializar Auth0 em index.html:", e);
-            // Fallback if Auth0 fails to initialize
-            if (!hasVisited) {
-                localStorage.setItem('hasVisited', 'true');
-                window.location.href = 'menu.html';
-            } else {
-                window.location.href = 'login.html';
-            }
+            // If Auth0 fails to initialize, ensure buttons still work
+            headerLoginButton.textContent = 'Login';
+            headerLoginButton.href = 'login.html';
+            startButton.href = 'login.html'; // Direct to login if Auth0 fails
             return;
         }
 
         const isAuthenticated = await auth0Client.isAuthenticated();
 
-        if (!hasVisited) {
-            // First visit
-            localStorage.setItem('hasVisited', 'true');
-            window.location.href = 'menu.html';
-        } else {
-            // Returning user
-            if (isAuthenticated) {
-                // Authenticated, go to upload page
-                window.location.href = 'principal.html';
-            } else {
-                // Not authenticated, go to login page
-                window.location.href = 'login.html';
-            }
-        }
-
-        // Update header login/logout button (this part will only run if the above redirects don't happen immediately)
+        // Update header login/logout button
         if (isAuthenticated) {
             const user = await auth0Client.getUser();
             console.log('Usuário autenticado:', user);
@@ -158,15 +131,15 @@
                     }
                 });
             };
+            // If authenticated, start button goes to principal.html
+            startButton.href = 'principal.html';
         } else {
             headerLoginButton.textContent = 'Login';
             headerLoginButton.href = 'login.html';
+            // If not authenticated, start button goes to login.html
+            startButton.href = 'login.html';
         }
-
-        // Remove onclick from start button as redirection is automatic
-        startButton.onclick = null;
-        startButton.href = '#'; // Make it a dead link if not handled by JS
     });
-  </script>
+</script>
 </body>
 </html>

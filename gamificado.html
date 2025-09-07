@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MindED - Adaptação Gamificada</title>
-    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="assistente/static/static/css/base.css">
     <link rel="stylesheet" href="assistente/static/static/css/layout.css">
     <link rel="stylesheet" href="assistente/static/static/css/custom.css">
     <link
@@ -12,88 +12,7 @@
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
   />
     <link rel="stylesheet" href="/assistente/static/chatbot.css" />
-    <style>
-        .main-content {
-            padding: 120px 20px 50px 20px;
-            text-align: center;
-        }
-        h1 {
-            margin-bottom: 30px;
-        }
-        .gamification-container, .original-content-container {
-            max-width: 800px;
-            margin: 20px auto;
-            text-align: left;
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid #ccc;
-            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
-        }
-        .original-content-container, .adapted-content-container {
-            display: none; /* Hidden by default */
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        .original-content-container.active, .adapted-content-container.active {
-            display: block; /* Show when active */
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .score-container {
-            font-size: 1.5em;
-            margin-bottom: 20px;
-        }
-        .progress-bar-container {
-            width: 100%;
-            background-color: #e0e0e0;
-            border-radius: 5px;
-            margin-bottom: 30px;
-        }
-        .progress-bar {
-            width: 0%;
-            height: 30px;
-            background-color: #4caf50;
-            border-radius: 5px;
-            text-align: center;
-            line-height: 30px;
-            color: white;
-            transition: width 0.5s ease-in-out;
-        }
-        .task-container, .quiz-container {
-            margin-bottom: 30px;
-        }
-        .task-button, .quiz-button {
-            padding: 10px 15px;
-            font-size: 1em;
-            cursor: pointer;
-            margin-right: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-        .task-button.completed {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-        .toggle-button {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 10px 20px;
-            font-size: 1em;
-            cursor: pointer;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-        .back-button {
-            display: inline-block;
-            margin-top: 30px;
-            padding: 10px 20px;
-            font-size: 1em;
-            text-decoration: none;
-            color: #fff;
-            background-color: #007bff;
-            border-radius: 5px;
-        }
-    </style>
+    <link rel="stylesheet" href="assistente/static/static/css/pages/gamificado.css">
 </head>
 <body>
   <header class="main-header">

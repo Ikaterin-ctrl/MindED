@@ -89,12 +89,14 @@ body {
   background: none;
   border: none;
   cursor: pointer;
-  transition: color 0.3s ease;
+  transition: all 0.3s ease; /* Smooth transition for all properties */
 }
 
 .nav-links a:hover,
 .nav-links button:hover {
-  color: var(--accent-start);
+  color: var(--accent-end); /* Change color on hover */
+  transform: translateY(-2px); /* Lift effect */
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Subtle shadow */
 }
 
 #theme-toggle {
@@ -122,6 +124,19 @@ body {
   transition: all 0.3s linear;
   position: relative;
   transform-origin: 1px;
+}
+
+/* Hamburger menu active state animation */
+.hamburger-menu.active .hamburger-line:nth-child(1) {
+  transform: translateY(0.875rem) rotate(45deg);
+}
+
+.hamburger-menu.active .hamburger-line:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-menu.active .hamburger-line:nth-child(3) {
+  transform: translateY(-0.875rem) rotate(-45deg);
 }
 
 /* Responsive Styles */
@@ -167,4 +182,17 @@ body {
   .hamburger-menu {
     display: flex;
   }
+}
+
+.footer {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+  padding: 1.5rem 2rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-top: 50px; /* Add some space from content above */
 }

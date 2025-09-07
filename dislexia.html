@@ -62,9 +62,9 @@
     </style>
 </head>
 <body>
-  <header class="main-header">
+  <header class="main-header animate-fade-in-up" style="animation-delay: 0.1s;">
     <div class="header-content">
-        <a href="index.html" class="logo">
+        <a href="index.html" class="logo hover-grow">
             <img src="assistente/static/static/assets/MindED_logo-removebg-preview.png" alt="MindED Logo">
         </a>
         <nav class="main-nav">
@@ -74,12 +74,12 @@
                 <span class="hamburger-line"></span>
             </button>
             <ul class="nav-links">
-                <li><a href="index.html">Início</a></li>
-                <li><a href="principal.html">Conteúdos</a></li>
-                <li><a href="preferencias.html">Preferências</a></li>
-                <li><a href="login.html" class="login-button">Login</a></li>
+                <li><a href="index.html" class="hover-lift">Início</a></li>
+                <li><a href="principal.html" class="hover-lift">Conteúdos</a></li>
+                <li><a href="preferencias.html" class="hover-lift">Preferências</a></li>
+                <li><a href="login.html" class="login-button hover-lift">Login</a></li>
                 <li>
-                  <button id="theme-toggle">
+                  <button id="theme-toggle" class="hover-grow">
                     <i class="fas fa-moon"></i>
                   </button>
                 </li>
@@ -89,32 +89,32 @@
   </header>
 
     <main class="main-content">
-        <h1>Adaptação para Dislexia</h1>
+        <h1 class="animate-fade-in-up" style="animation-delay: 0.3s;">Adaptação para Dislexia</h1>
 
-        <button id="toggleBtn" class="toggle-button">Ver Versão Original</button>
+        <button id="toggleBtn" class="toggle-button hover-grow">Ver Versão Original</button>
 
-        <div id="adaptedContent" class="content-container">
+        <div id="adaptedContent" class="content-container animate-fade-in-up" style="animation-delay: 0.4s;">
             <p class="dyslexia-text">
                 O projeto Minded oferece soluções inovadoras para neurodivergentes.
             </p>
         </div>
 
-        <div id="originalContent" class="original-content-container">
+        <div id="originalContent" class="original-content-container animate-fade-in-up" style="animation-delay: 0.5s;">
             <h2>Conteúdo Original</h2>
             <p>O projeto Minded, com sua abordagem disruptiva e foco em inclusão, visa a transformação do cenário educacional para indivíduos neurodivergentes. Através da implementação de tecnologias assistivas e personalização do conteúdo, a plataforma busca mitigar as barreiras de aprendizagem, promovendo um ambiente mais equitativo e eficaz.</p>
         </div>
 
-        <a href="principal.html" class="back-button">Voltar</a>
+        <a href="principal.html" class="back-button hover-grow">Voltar</a>
     </main>
 
-    <footer class="footer">
+    <footer class="footer animate-fade-in-up" style="animation-delay: 0.6s;">
         <p>&copy; 2025 MindED. Todos os direitos reservados.</p>
     </footer>
 
   <!-- Chatbot Flutuante -->
   <div
-    class="chatbot-fab"
-    onclick="toggleChatbot()"
+    class="chatbot-fab hover-grow"
+    onclick="document.getElementById('chatbotWindow').classList.toggle('hidden')"
   >
     <i class="fas fa-comment-dots"></i>
   </div>

@@ -51,7 +51,7 @@
   margin-bottom: 15px;
   font-size: 1rem;
   color: var(--text-secondary);
-}
+}
 .feedback-buttons {
   display: flex;
   justify-content: center;
@@ -413,4 +413,93 @@
 
 .back-to-top:hover {
   color: var(--accent-start);
+}
+
+/* Audio Player Styles */
+.audio-player-container {
+  margin-top: 30px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.audio-player {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  outline: none; /* Remove default focus outline */
+}
+
+.audio-player::-webkit-media-controls-panel {
+  background-color: var(--glass-bg);
+  border-radius: 8px;
+}
+
+.audio-player::-webkit-media-controls-play-button,
+.audio-player::-webkit-media-controls-current-time-display,
+.audio-player::-webkit-media-controls-time-remaining-display,
+.audio-player::-webkit-media-controls-timeline,
+.audio-player::-webkit-media-controls-volume-slider {
+  color: var(--text-primary);
+}
+
+.audio-player::-webkit-media-controls-timeline {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+}
+
+.audio-player::-webkit-media-controls-volume-slider {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+}
+
+/* Ensure content section styles are applied correctly within the new container */
+.content-section {
+  padding: 20px; /* Add some padding inside the container */
+}
+
+.content-section h2 {
+  font-size: 2.2rem; /* Slightly larger for main title */
+  margin-bottom: 25px;
+}
+
+.content-section h3 {
+  font-size: 1.7rem; /* Slightly larger for subheadings */
+  margin-top: 35px;
+  margin-bottom: 20px;
+}
+
+.content-section p {
+  font-size: 1.15rem; /* Slightly larger for readability */
+  line-height: 1.9;
+  margin-bottom: 18px;
+}
+
+.content-section ul {
+  margin-left: 25px;
+  margin-bottom: 25px;
+}
+
+.content-section ul li {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 768px) {
+  .content-section h2 {
+    font-size: 1.8rem;
+  }
+  .content-section h3 {
+    font-size: 1.4rem;
+  }
+  .content-section p,
+  .content-section ul li {
+    font-size: 1rem;
+  }
 }

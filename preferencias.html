@@ -19,10 +19,11 @@
 </head>
 <body>
   <!-- Cabeçalho -->
-  <header class="main-header">
+  <header class="main-header animate-fade-in-up" style="animation-delay: 0.1s;">
     <div class="header-content">
         <a href="index.html" class="logo">
             <img src="img/logominded.png" alt="MindED Logo">
+
         </a>
         <nav class="main-nav">
             <button class="hamburger-menu" aria-label="Abrir menu" aria-expanded="false">
@@ -31,13 +32,13 @@
                 <span class="hamburger-line"></span>
             </button>
             <ul class="nav-links">
-                <li><a href="index.html">Início</a></li>
-                <li><a href="principal.html">Conteúdos</a></li>
-                <li><a href="preferencias.html">Preferências</a></li>
+                <li><a href="index.html" class="hover-lift">Início</a></li>
+                <li><a href="upload.html" class="hover-lift">Conteúdos</a></li>
+                <li><a href="preferencias.html" class="hover-lift">Preferências</a></li>
                 
-                <li><a href="login.html" class="login-button">Login</a></li>
+                <li><a href="login.html" class="login-button hover-lift">Login</a></li>
                 <li>
-                  <button id="theme-toggle">
+                  <button id="theme-toggle" class="hover-grow">
                     <i class="fas fa-moon"></i>
                   </button>
                 </li>
@@ -50,13 +51,13 @@
   <main class="preferences">
     <div id="notificationContainer" class="notification-container hidden"></div>
     <!-- Barra de progresso -->
-    <div class="progress-bar">
+    <div class="progress-bar animate-fade-in-up" style="animation-delay: 0.3s;">
       <div class="progress" style="width: 20%;"></div>
       <span class="progress-text">Módulo 1 de 5</span>
     </div>
 
     <!-- Módulo 1 -->
-    <section class="module" data-step="1">
+    <section class="module animate-fade-in-up" data-step="1" style="animation-delay: 0.4s;">
       <h2>1. Como você prefere receber conteúdo?</h2>
       <div class="options">
         <button class="option-btn" data-value="texto">📄 Texto</button>
@@ -78,7 +79,7 @@
     </section>
 
     <!-- Módulo 2 -->
-    <section class="module" data-step="2" hidden>
+    <section class="module animate-fade-in-up" data-step="2" hidden style="animation-delay: 0.5s;">
       <h2>2. Qual tema te ajuda a focar?</h2>
       <div class="options">
         <button class="option-btn" data-value="noite">🌙 Modo Noturno</button>
@@ -100,7 +101,7 @@
     </section>
 
     <!-- Módulo 3 -->
-    <section class="module" data-step="3" hidden>
+    <section class="module animate-fade-in-up" data-step="3" hidden style="animation-delay: 0.6s;">
       <h2>3. Qual seu ritmo de estudo?</h2>
       <div class="options">
         <button class="option-btn" data-value="lento">🐢 Lento (50–75%)</button>
@@ -122,7 +123,7 @@
     </section>
 
     <!-- Módulo 4 (checkbox) -->
-    <section class="module checkbox-group" data-step="4" hidden>
+    <section class="module checkbox-group animate-fade-in-up" data-step="4" hidden style="animation-delay: 0.7s;">
       <h2>4. Marque seus perfis cognitivos (pode escolher mais de um)</h2>
       <label><input type="checkbox" value="tdah"> TDAH</label>
       <label><input type="checkbox" value="dislexia"> Dislexia</label>
@@ -134,7 +135,7 @@
     </section>
 
     <!-- Módulo 5 -->
-    <section class="module" data-step="5" hidden>
+    <section class="module animate-fade-in-up" data-step="5" hidden style="animation-delay: 0.8s;">
       <h2>5. Mini-Desafio de Estudo</h2>
       <h3>Você se distrai se há muitas cores na página?</h3>
       <div class="options">
@@ -155,7 +156,7 @@
     </section>
 
     <!-- Módulo 6 (Revisão) -->
-    <section class="module" data-step="6" hidden>
+    <section class="module animate-fade-in-up" data-step="6" hidden style="animation-delay: 0.9s;">
       <h2>6. Revisão das Suas Preferências</h2>
       <div id="review-summary" class="review-summary">
         <p>Carregando resumo...</p>
@@ -164,18 +165,18 @@
 
     <!-- Navegação entre módulos -->
     <div class="module-nav">
-      <button id="prev-btn" disabled>« Anterior</button>
-      <button id="next-btn">Próximo »</button>
+      <button id="prev-btn" class="hover-grow" disabled><i class="fas fa-arrow-left"></i> Anterior</button>
+      <button id="next-btn" class="hover-grow">Próximo <i class="fas fa-arrow-right"></i></button>
     </div>
   </main>
 
-    <footer class="footer">
+    <footer class="footer animate-fade-in-up" style="animation-delay: 1s;">
         <p>&copy; 2025 MindED. Todos os direitos reservados.</p>
     </footer>
 
   <!-- Chatbot Flutuante -->
   <div
-    class="chatbot-fab"
+    class="chatbot-fab hover-grow"
     onclick="toggleChatbot()"
   >
     <i class="fas fa-comment-dots"></i>

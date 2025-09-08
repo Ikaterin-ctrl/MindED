@@ -21,9 +21,9 @@
 </head>
 <body>
   <!-- Cabeçalho -->
-  <header class="main-header">
+  <header class="main-header animate-fade-in-up" style="animation-delay: 0.1s;">
     <div class="header-content">
-        <a href="index.html" class="logo">
+        <a href="index.html" class="logo hover-grow">
             <img src="assistente/static/static/assets/MindED_logo-removebg-preview.png" alt="MindED Logo">
         </a>
         <nav class="main-nav">
@@ -33,13 +33,13 @@
                 <span class="hamburger-line"></span>
             </button>
             <ul class="nav-links">
-                <li><a href="index.html">Início</a></li>
-                <li><a href="principal.html">Conteúdos</a></li>
-                <li><a href="preferencias.html">Preferências</a></li>
+                <li><a href="index.html" class="hover-lift">Início</a></li>
+                <li><a href="principal.html" class="hover-lift">Conteúdos</a></li>
+                <li><a href="preferencias.html" class="hover-lift">Preferências</a></li>
                 
-                <li><a href="login.html" class="login-button">Login</a></li>
+                <li><a href="login.html" class="login-button hover-lift">Login</a></li>
                 <li>
-                  <button id="theme-toggle">
+                  <button id="theme-toggle" class="hover-grow">
                     <i class="fas fa-moon"></i>
                   </button>
                 </li>
@@ -51,7 +51,7 @@
   <!-- Página de Upload -->
   <main class="upload-main">
     <div id="notificationContainer" class="notification-container hidden"></div>
-    <div class="upload-container">
+    <div class="upload-container animate-fade-in-up" style="animation-delay: 0.3s;">
       <h1>Vamos personalizar seu conteúdo</h1>
       <p>Envie o material que você quer estudar e escolha como deseja receber.</p>
 
@@ -81,7 +81,7 @@
       </div>
 
       <button
-        class="upload-btn"
+        class="upload-btn hover-grow"
         id="uploadBtn"
       >
         <span class="button-text">Enviar</span>
@@ -91,7 +91,7 @@
       <div class="upload-success-state hidden" id="uploadSuccessState">
         <i class="fas fa-check-circle success-icon"></i>
         <p class="success-message">Arquivo enviado com sucesso!</p>
-        <button class="view-content-btn" id="viewContentBtn">Ver conteúdo</button>
+        <button class="view-content-btn hover-grow" id="viewContentBtn">Ver conteúdo</button>
       </div>
 
       <div class="adaptation-preview">
@@ -114,12 +114,12 @@
     </div>
   </main>
 
-    <footer class="footer">
+    <footer class="footer animate-fade-in-up" style="animation-delay: 0.4s;">
         <p>&copy; 2025 MindED. Todos os direitos reservados.</p>
     </footer>
 
   <!-- Chatbot Flutuante -->
-  <div class="chatbot-fab" onclick="toggleChatbot()">
+  <div class="chatbot-fab hover-grow" onclick="toggleChatbot()">
     <i class="fas fa-comment-dots"></i>
   </div>
   <div id="chatbotWindow" class="chatbot-window hidden">

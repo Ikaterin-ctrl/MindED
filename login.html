@@ -42,25 +42,56 @@
     </div>
   </header>
 
-    <main class="login-main">
+<main class="login-main">
         <div class="login-form">
-            <h1>Acesse sua Conta MindED</h1>
-            <form id="fake-login-form" style="margin-top: 20px;">
-                <div class="form-group">
-                    <label for="username" style="display: block; margin-bottom: 5px;">Usuário</label>
-                    <input type="text" id="username" name="username" required style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 4px; border: 1px solid #ccc;">
-                </div>
-                <div class="form-group">
-                    <label for="password" style="display: block; margin-bottom: 5px;">Senha</label>
-                    <input type="password" id="password" name="password" required style="width: 100%; padding: 8px; margin-bottom: 20px; border-radius: 4px; border: 1px solid #ccc;">
-                </div>
-                <button type="submit" class="enter-login-btn" style="text-align: center; text-decoration: none; display: inline-block; padding: 10px 20px; border-radius: 5px; border: none; cursor: pointer;">Entrar</button>
-            </form>
+            <div class="tab-buttons">
+                <button class="tab-button active" data-tab="login">Entrar</button>
+                <button class="tab-button" data-tab="register">Cadastrar</button>
+            </div>
+
+            <div id="login" class="tab-content">
+                <h1>Acesse sua conta</h1>
+                <!-- O form não será enviado, apenas o link será clicado -->
+                <form>
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" class="input-login" placeholder="seu.email@exemplo.com" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+
+                    <label for="login-password">Senha
+                        <span class="password-toggle" id="toggleLoginPassword">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </label>
+                    <input type="password" id="login-password" class="input-login" placeholder="********" required minlength="6">
+                    <a href="principal.html" class="enter-login-btn">Entrar</a>
+                    
+                </form>
+                <a href="forgot-password.html" id="btn-criar">Esqueceu sua senha?</a>
+            </div>
+
+            <div id="register" class="tab-content hidden">
+                <h1>Crie sua conta</h1>
+                <form>
+                    <label for="register-name">Nome Completo</label>
+                    <input type="text" id="register-name" class="input-login" placeholder="Seu nome completo" required>
+
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" class="input-login" placeholder="seu.email@exemplo.com" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+
+                    <label for="register-password">Senha
+                        <span class="password-toggle" id="toggleRegisterPassword">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </label>
+                    <input type="password" id="register-password" class="input-login" placeholder="Crie uma senha forte" required minlength="6">
+
+                    <a href="principal.html" class="enter-login-btn">Cadastrar</a>
+                </form>
+            </div>
         </div>
     </main>
 
     <footer class="footer">
-        <p>&copy; 2025 MindED. Todos os direitos reservados.</p>
+      <p>&copy; 2025 MindED. Todos os direitos reservados.</p>
     </footer>
 
   <!-- Chatbot Flutuante -->
@@ -96,4 +127,4 @@
     <script src="assistente/static/static/js/login.js"></script>
   <script src="/assistente/js/app.js"></script>
 </body>
-</html>
+</html>  

@@ -146,4 +146,3 @@ function addMessageToChat(text, sender) {
     chatbotMessages.appendChild(messageBubble); 
     chatbotMessages.scrollTop = chatbotMessages.scrollHeight; 
 }
-

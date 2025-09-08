@@ -52,16 +52,28 @@
   <main class="adapted-main">
     <div class="adapted-container animate-fade-in-up" style="animation-delay: 0.3s;">
       <h1 class="adapted-title animate-fade-in-up" style="animation-delay: 0.4s;">Seu Conteúdo Adaptado</h1>
-      <div id="adapted-content">
-        <p class="loading">Carregando conteúdo adaptado...</p>
-      </div>
-      <div class="feedback-actions">
-        <span>O que você achou da adaptação?</span>
-        <div class="feedback-buttons">
-          <button id="like-btn" class="feedback-btn hover-grow"><i class="fas fa-thumbs-up"></i> Gostei</button>
-          <button id="dislike-btn" class="feedback-btn hover-grow"><i class="fas fa-thumbs-down"></i> Não Gostei</button>
+      
+      <div class="adapted-content-cards">
+        <div class="content-card" id="astronomia">
+          <a href="astronomia.html" class="card-title-button hover-lift">Astronomia para Iniciantes</a>
+          <div class="card-body">
+            <p class="date">Modificado em: 05 de Setembro de 2025</p>
+          </div>
+        </div>
+        <div class="content-card" id="inteligencia-artificial">
+          <a href="inteligencia-artificial.html" class="card-title-button hover-lift">Inteligência Artificial Descomplicada</a>
+          <div class="card-body">
+            <p class="date">Modificado em: 06 de Setembro de 2025</p>
+          </div>
+        </div>
+        <div class="content-card" id="filosofia">
+          <a href="filosofia.html" class="card-title-button hover-lift">Filosofia Essencial</a>
+          <div class="card-body">
+            <p class="date">Modificado em: 07 de Setembro de 2025</p>
+          </div>
         </div>
       </div>
+      
     </div>
     <div class="adapted-actions">
       <button id="refazer-btn" class="upload-btn hover-grow"><i class="fas fa-redo-alt"></i> Refazer Adaptação</button>
@@ -96,21 +108,6 @@
   <script src="assistente/static/static/js/theme-toggle.js" defer></script>
   <script src="/assistente/js/app.js" defer></script>
   <script src="assistente/static/static/js/menu.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const adaptedContentDiv = document.getElementById('adapted-content');
-      const adaptedContent = sessionStorage.getItem('adaptedContent');
-
-      if (adaptedContent) {
-        adaptedContentDiv.innerHTML = adaptedContent;
-      } else {
-        adaptedContentDiv.innerHTML = '<p class="loading">Nenhum conteúdo adaptado encontrado. Por favor, envie um conteúdo na página de upload.</p>';
-      }
-
-      document.getElementById('voltar-upload').addEventListener('click', () => {
-        window.location.href = 'principal.html';
-      });
-    });
-  </script>
+  
 </body>
 </html>

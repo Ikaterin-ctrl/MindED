@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="assistente/static/static/css/custom.css">
+    <link rel="stylesheet" href="assistente/static/static/css/pages/gamificado.css">
     <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -122,6 +123,53 @@
             <p>O Transtorno do Déficit de Atenção com Hiperatividade (TDAH) é uma condição neurobiológica complexa e multifacetada, com origens predominantemente genéticas, que se manifesta na infância e pode persistir ao longo da vida adulta. A sua sintomatologia central engloba um padrão persistente de desatenção, hiperatividade e impulsividade, que interfere significativamente no funcionamento e desenvolvimento do indivíduo em múltiplos contextos.</p>
         </div>
 
+        <div class="gamification-container animate-fade-in-up" style="animation-delay: 0.4s;">
+            <div class="score-container animate-fade-in-up" style="animation-delay: 0.5s;">
+                Pontuação: <span id="pontuacao">0</span> | Nível: <span id="level">1</span>
+            </div>
+            <div class="progress-bar-container animate-fade-in-up" style="animation-delay: 0.6s;">
+                <div class="progress-bar" id="progressBar">0%</div>
+            </div>
+
+            <div class="task-container animate-fade-in-up" style="animation-delay: 0.7s;">
+                <h2>Tarefa 1</h2>
+                <p>Complete a tarefa para ganhar 25 pontos.</p>
+                <button id="completeTaskBtn" class="task-button hover-grow">Concluir Tarefa</button>
+            </div>
+
+            <div class="quiz-container animate-fade-in-up" style="animation-delay: 0.8s;">
+                <h2>Quiz Rápido</h2>
+                <p>Qual a capital da França?</p>
+                <button class="quiz-button hover-grow" onclick="checkAnswer(true)">Paris</button>
+                <button class="quiz-button hover-grow" onclick="checkAnswer(false)">Londres</button>
+                <p id="quizMessage" style="margin-top: 10px; font-weight: bold;"></p>
+            </div>
+
+            <div class="badges-container animate-fade-in-up" style="animation-delay: 0.9s;">
+                <h2>Suas Conquistas 🏆</h2>
+                <div class="badge-grid">
+                    <div class="badge-item" id="badge1">
+                        <i class="fas fa-star"></i>
+                        <p>Primeiro Passo</p>
+                    </div>
+                    <div class="badge-item" id="badge2">
+                        <i class="fas fa-trophy"></i>
+                        <p>Mestre do Quiz</p>
+                    </div>
+                    <div class="badge-item" id="badge3">
+                        <i class="fas fa-book-open"></i>
+                        <p>Leitor Ávido</p>
+                    </div>
+                    <!-- More badges can be added here -->
+                </div>
+            </div>
+
+            <div class="daily-tip-container animate-fade-in-up" style="animation-delay: 1.0s;">
+                <h2>Dica do Dia ✨</h2>
+                <p id="dailyTip">Aprender algo novo todos os dias é como subir uma escada: cada degrau te leva mais perto do topo!</p>
+            </div>
+        </div>
+
         <video id="videoPlayer" class="video-player animate-fade-in-up" style="animation-delay: 0.6s;" controls>
             <source src="assistente/static/static/assets/seu_podcast.mp4" type="video/mp4">
             Seu navegador não suporta o player de vídeo.
@@ -130,14 +178,205 @@
         <div class="quiz-container animate-fade-in-up" style="animation-delay: 0.7s;">
             <h2>Teste seus conhecimentos!</h2>
             <p>Qual das seguintes é uma estratégia de adaptação de conteúdo para TDAH mencionada no texto?</p>
-            <button class="quiz-button hover-grow" onclick="checkQuizAnswer(false)">Textos longos e detalhados</button>
-            <button class="quiz-button hover-grow" onclick="checkQuizAnswer(true)">Uso de listas e marcadores</button>
-            <button class="quiz-button hover-grow" onclick="checkQuizAnswer(false)">Linguagem complexa e figurativa</button>
+            <button class="quiz-button hover-grow" onclick="checkAnswer(false)">Textos longos e detalhados</button>
+            <button class="quiz-button hover-grow" onclick="checkAnswer(true)">Uso de listas e marcadores</button>
+            <button class="quiz-button hover-grow" onclick="checkAnswer(false)">Linguagem complexa e figurativa</button>
             <p id="quizMessage"></p>
         </div>
 
         <a href="principal.html" class="back-button hover-grow">Voltar</a>
     </main>
+
+    <script src="assistente/static/static/js/menu.js"></script>
+    <script src="assistente/static/static/js/theme-toggle.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleBtn = document.getElementById('toggleBtn');
+            const adaptedContent = document.getElementById('adaptedContent');
+            const originalContent = document.getElementById('originalContent');
+            const videoPlayer = document.getElementById('videoPlayer'); // Added for TDAH
+            const podcastBtn = document.getElementById('podcastBtn'); // Added for TDAH
+
+            const scoreElement = document.getElementById('pontuacao');
+            const progressBar = document.getElementById('progressBar');
+            const completeTaskBtn = document.getElementById('completeTaskBtn');
+            const quizMessage = document.getElementById('quizMessage');
+            const dailyTipElement = document.getElementById('dailyTip');
+
+            let score = 0;
+            let progress = 0;
+            let level = 1;
+            const pointsPerLevel = 100;
+
+            const dailyTips = [
+                "Aprender algo novo todos os dias é como subir uma escada: cada degrau te leva mais perto do topo! 🚀",
+                "O segredo para o sucesso é começar. O segredo para começar é dividir tarefas complexas em pequenas tarefas gerenciáveis. 💡",
+                "Não tenha medo de errar. Errar é a prova de que você está tentando! 😉",
+                "A persistência é o caminho do êxito. Continue firme! 💪",
+                "Sua mente é um jardim. Cultive pensamentos positivos e colha resultados incríveis! 🌻"
+            ];
+
+            function updateUI() {
+                if (scoreElement) {
+                    scoreElement.textContent = score;
+                }
+                if (progressBar) {
+                    progressBar.style.width = progress + '%';
+                    progressBar.textContent = progress + '%';
+                }
+                updateLevel();
+                checkBadges();
+            }
+
+            function updateLevel() {
+                const newLevel = Math.floor(score / pointsPerLevel) + 1;
+                if (newLevel !== level) {
+                    level = newLevel;
+                    const levelElement = document.getElementById('level');
+                    if (levelElement) {
+                        levelElement.textContent = level;
+                        console.log(`Level Up! You are now level ${level}!`);
+                    }
+                }
+            }
+
+            function displayDailyTip() {
+                if (dailyTipElement) {
+                    const randomIndex = Math.floor(Math.random() * dailyTips.length);
+                    dailyTipElement.textContent = dailyTips[randomIndex];
+                }
+            }
+
+            function checkBadges() {
+                if (score > 0) {
+                    unlockBadge('badge1');
+                }
+                if (score >= 10) {
+                    unlockBadge('badge2');
+                }
+                if (level >= 2) {
+                    unlockBadge('badge3');
+                }
+            }
+
+            function unlockBadge(badgeId) {
+                const badgeElement = document.getElementById(badgeId);
+                if (badgeElement && !badgeElement.classList.contains('unlocked')) {
+                    badgeElement.classList.add('unlocked');
+                    console.log(`Badge Unlocked: ${badgeId}!`);
+                }
+            }
+
+            // Toggle button functionality (from gamificado.js, adapted for tdah.html)
+            toggleBtn.addEventListener('click', () => {
+                // Ensure video player is hidden when toggling text content
+                videoPlayer.style.opacity = '0';
+                videoPlayer.pause();
+                videoPlayer.style.display = 'none';
+                podcastBtn.textContent = 'Ouvir em Podcast'; // Reset podcast button text
+
+                if (originalContent.style.opacity === '1') { // Check opacity instead of class
+                    // Hide original, show adapted
+                    originalContent.style.opacity = '0';
+                    originalContent.style.pointerEvents = 'none';
+                    setTimeout(() => {
+                        originalContent.style.display = 'none';
+                        adaptedContent.style.display = 'block';
+                        setTimeout(() => {
+                            adaptedContent.style.opacity = '1';
+                            adaptedContent.style.pointerEvents = 'auto';
+                        }, 50);
+                    }, 500);
+                    toggleBtn.textContent = 'Ver Versão Original';
+                } else {
+                    // Hide adapted, show original
+                    adaptedContent.style.opacity = '0';
+                    adaptedContent.style.pointerEvents = 'none';
+                    setTimeout(() => {
+                        adaptedContent.style.display = 'none';
+                        originalContent.style.display = 'block';
+                        setTimeout(() => {
+                            originalContent.style.opacity = '1';
+                            originalContent.style.pointerEvents = 'auto';
+                        }, 50);
+                    }, 500);
+                    toggleBtn.textContent = 'Ver Versão Adaptada';
+                }
+            });
+
+            // Podcast button functionality (from tdah.html)
+            podcastBtn.addEventListener('click', () => {
+                const isPlayerVisible = videoPlayer.style.opacity === '1';
+                
+                if (!isPlayerVisible) {
+                    // Show video, hide text contents
+                    adaptedContent.style.opacity = '0';
+                    adaptedContent.style.pointerEvents = 'none';
+                    originalContent.style.opacity = '0';
+                    originalContent.style.pointerEvents = 'none';
+
+                    setTimeout(() => {
+                        adaptedContent.style.display = 'none';
+                        originalContent.style.display = 'none';
+                        videoPlayer.style.display = 'block';
+                        setTimeout(() => {
+                            videoPlayer.style.opacity = '1';
+                            videoPlayer.play();
+                        }, 50);
+                    }, 500);
+                    podcastBtn.textContent = 'Ler Conteúdo';
+                    toggleBtn.style.display = 'none';
+                } else {
+                    // Hide video, show adapted content
+                    videoPlayer.style.opacity = '0';
+                    videoPlayer.pause();
+                    setTimeout(() => {
+                        videoPlayer.style.display = 'none';
+                        adaptedContent.style.display = 'block';
+                        setTimeout(() => {
+                            adaptedContent.style.opacity = '1';
+                            adaptedContent.style.pointerEvents = 'auto';
+                        }, 50);
+                    }, 500);
+                    podcastBtn.textContent = 'Ouvir em Podcast';
+                    toggleBtn.style.display = 'inline-block';
+                    toggleBtn.textContent = 'Ver Versão Original';
+                }
+            });
+
+            // Task completion functionality (from gamificado.js)
+            if (completeTaskBtn) {
+                completeTaskBtn.addEventListener('click', () => {
+                    if (!completeTaskBtn.disabled) {
+                        score += 25;
+                        progress += 25;
+                        if (progress > 100) progress = 100;
+                        updateUI();
+                        completeTaskBtn.disabled = true;
+                        completeTaskBtn.classList.add('completed');
+                        completeTaskBtn.textContent = 'Tarefa Concluída! 🎉';
+                    }
+                });
+            }
+
+            // Quiz functionality (merged from gamificado.js and tdah.html)
+            window.checkAnswer = function(isCorrect) { // Using checkAnswer from gamificado.js
+                if (isCorrect) {
+                    score += 5;
+                    quizMessage.textContent = "Resposta Correta! +5 pontos! 🎉";
+                    quizMessage.style.color = 'green';
+                } else {
+                    quizMessage.textContent = "Resposta Incorreta. Tente novamente! 🤔";
+                    quizMessage.style.color = 'red';
+                }
+                updateUI();
+            };
+
+            // Initial setup
+            updateUI();
+            displayDailyTip();
+        });
+    </script>
 
     <footer class="footer animate-fade-in-up" style="animation-delay: 0.8s;">
         <p>&copy; 2025 MindED. Todos os direitos reservados.</p>
@@ -169,97 +408,7 @@
     </div>
   </div>
 
-    <script src="assistente/static/static/js/menu.js"></script>
-    <script src="assistente/static/static/js/theme-toggle.js"></script>
-    <script>
-        const podcastBtn = document.getElementById('podcastBtn');
-        const toggleBtn = document.getElementById('toggleBtn');
-        const adaptedContent = document.getElementById('adaptedContent');
-        const originalContent = document.getElementById('originalContent');
-        const videoPlayer = document.getElementById('videoPlayer');
-        const quizMessage = document.getElementById('quizMessage');
-
-        podcastBtn.addEventListener('click', () => {
-            const isPlayerVisible = videoPlayer.style.opacity === '1';
-            
-            if (!isPlayerVisible) {
-                // Show video, hide text contents
-                adaptedContent.style.opacity = '0';
-                adaptedContent.style.pointerEvents = 'none';
-                originalContent.style.opacity = '0';
-                originalContent.style.pointerEvents = 'none';
-
-                setTimeout(() => {
-                    adaptedContent.style.display = 'none';
-                    originalContent.style.display = 'none';
-                    videoPlayer.style.display = 'block';
-                    setTimeout(() => {
-                        videoPlayer.style.opacity = '1';
-                        videoPlayer.play();
-                    }, 50); // Small delay to trigger transition
-                }, 500); // Match CSS transition duration
-                podcastBtn.textContent = 'Ler Conteúdo';
-                toggleBtn.style.display = 'none';
-            } else {
-                // Hide video, show adapted content
-                videoPlayer.style.opacity = '0';
-                videoPlayer.pause();
-                setTimeout(() => {
-                    videoPlayer.style.display = 'none';
-                    adaptedContent.style.display = 'block';
-                    setTimeout(() => {
-                        adaptedContent.style.opacity = '1';
-                        adaptedContent.style.pointerEvents = 'auto';
-                    }, 50); // Small delay to trigger transition
-                }, 500); // Match CSS transition duration
-                podcastBtn.textContent = 'Ouvir em Podcast';
-                toggleBtn.style.display = 'inline-block';
-                toggleBtn.textContent = 'Ver Versão Original';
-            }
-        });
-
-        toggleBtn.addEventListener('click', () => {
-            const isOriginalVisible = originalContent.style.opacity === '1';
-            
-            if (!isOriginalVisible) {
-                // Hide adapted, show original
-                adaptedContent.style.opacity = '0';
-                adaptedContent.style.pointerEvents = 'none';
-                setTimeout(() => {
-                    adaptedContent.style.display = 'none';
-                    originalContent.style.display = 'block';
-                    setTimeout(() => {
-                        originalContent.style.opacity = '1';
-                        originalContent.style.pointerEvents = 'auto';
-                    }, 50); // Small delay to trigger transition
-                }, 500); // Match CSS transition duration
-                toggleBtn.textContent = 'Ver Versão Adaptada';
-            } else {
-                // Hide original, show adapted
-                originalContent.style.opacity = '0';
-                originalContent.style.pointerEvents = 'none';
-                setTimeout(() => {
-                    originalContent.style.display = 'none';
-                    adaptedContent.style.display = 'block';
-                    setTimeout(() => {
-                        adaptedContent.style.opacity = '1';
-                        adaptedContent.style.pointerEvents = 'auto';
-                    }, 50); // Small delay to trigger transition
-                }, 500); // Match CSS transition duration
-                toggleBtn.textContent = 'Ver Versão Original';
-            }
-        });
-
-        function checkQuizAnswer(isCorrect) {
-            if (isCorrect) {
-                quizMessage.textContent = "Resposta correta! Você fixou o conhecimento!";
-                quizMessage.style.color = 'green';
-            } else {
-                quizMessage.textContent = "Resposta incorreta. Tente novamente!";
-                quizMessage.style.color = 'red';
-            }
-        }
-    </script>
+    
   <script src="/assistente/js/app.js"></script>
 </body>
 </html>

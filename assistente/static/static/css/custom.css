@@ -122,136 +122,6 @@ body {
     background-color: #007bff;
 }
 
-/* General Body Styles */
-body {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
-    color: #333;
-    background-color: #f4f4f4;
-}
-
-/* Container Styles */
-.container, .content-container, .original-content-container, .gamification-container, .podcast-container, .quiz-container, .login-form, .upload-container, .preferences .module {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin-bottom: 20px;
-    transition: opacity 0.5s ease-in-out;
-}
-
-/* Gamification specific styles */
-.gamification-container {
-    background: var(--glass-bg); /* Apply glassmorphism */
-    backdrop-filter: blur(10px); /* Blur effect for glassmorphism */
-    -webkit-backdrop-filter: blur(10px); /* Safari support */
-    border: 1px solid rgba(255, 255, 255, 0.18); /* Lighter border for glass */
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37); /* More pronounced shadow */
-    color: var(--text-primary); /* Ensure text color adapts to theme */
-}
-
-.score-container, .task-container, .quiz-container, .badges-container, .daily-tip-container {
-    background-color: rgba(255, 255, 255, 0.1); /* Slightly transparent background for inner elements */
-    border-radius: 5px;
-    padding: 15px;
-    margin-bottom: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.badges-container h2, .daily-tip-container h2 {
-    text-align: center;
-    margin-bottom: 15px;
-}
-
-.badge-grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 15px;
-}
-
-.badge-item {
-    text-align: center;
-    padding: 10px;
-    border-radius: 8px;
-    background-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    width: 100px; /* Fixed width for badges */
-    transition: transform 0.2s ease-in-out, background-color 0.3s ease;
-}
-
-.badge-item:hover {
-    transform: translateY(-5px);
-}
-
-.badge-item i {
-    font-size: 2.5em;
-    color: var(--accent-start); /* Use accent color for icons */
-    margin-bottom: 5px;
-}
-
-.badge-item p {
-    font-size: 0.8em;
-    color: var(--text-secondary);
-}
-
-.badge-item.unlocked {
-    background-color: rgba(76, 175, 80, 0.5); /* Greenish tint when unlocked */
-    box-shadow: 0 0 15px rgba(76, 175, 80, 0.8); /* Glowing effect */
-    transform: scale(1.05); /* Slightly larger */
-}
-
-.daily-tip-container p {
-    font-style: italic;
-    text-align: center;
-}
-
-/* Button Styles */
-.btn, .nav-button, .back-button, .toggle-button, .podcast-button, .quiz-button, .task-button, .enter-login-btn, .upload-btn, .option-btn {
-    display: inline-block;
-    padding: 10px 20px;
-    font-size: 1em;
-    font-weight: bold;
-    text-align: center;
-    text-decoration: none;
-    color: #fff;
-    background-color: #007bff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.progress-bar {
-    transition: width 3s linear;
-}
-
-.btn:hover, .nav-button:hover, .back-button:hover, .toggle-button:hover, .podcast-button:hover, .quiz-button:hover, .task-button:hover, .enter-login-btn:hover, .upload-btn:hover, .option-btn:hover {
-    background-color: #0056b3;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-}
-
-.task-button.completed {
-    background-color: #4CAF50; /* Green for completed */
-    cursor: not-allowed;
-    opacity: 0.7;
-}
-
-/* Chatbot Styles */
-.chatbot-fab {
-    background-color: #007bff;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
-
-.chatbot-window {
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    border-radius: 10px;
-}
-
-.chatbot-header {
-    background-color: #007bff;
-}
-
 /* Chatbot position override */
 #chatbotWindow {
   top: 120px !important;
@@ -380,4 +250,9 @@ main {
 .card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Utility class to hide elements */
+.hidden {
+    display: none !important;
 }

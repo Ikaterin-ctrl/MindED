@@ -32,33 +32,52 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  uploadBtn.addEventListener('click', () => {
+  uploadBtn.addEventListener('click', async () => {
     const file = fileInput.files[0];
     if (!file) {
         showNotification('Por favor, selecione um arquivo primeiro.', 'error');
         return;
     }
 
-    // Show "Processing" message
     showNotification('Processando conteúdo com IA...', 'info');
-
-    // Disable button and show spinner
     uploadBtn.disabled = true;
     buttonText.textContent = 'Processando...';
     spinner.classList.remove('hidden');
-
-    // Show and animate progress bar
     progressContainer.classList.remove('hidden');
-    progressBar.style.width = '0%'; // Reset width
-    progressBar.style.transition = 'width 3s linear'; // Set transition
+    progressBar.style.width = '0%';
+    progressBar.style.transition = 'width 3s linear';
     setTimeout(() => {
-        progressBar.style.width = '100%'; // Animate to 100%
-    }, 100); // Small delay to ensure transition applies
+        progressBar.style.width = '100%';
+    }, 100);
 
-    // Wait for 3 seconds and then redirect
-    setTimeout(() => {
-      window.location.href = 'principal.html';
-    }, 3000);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+        const response = await fetch('/api/upload-and-adapt', {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText || 'Erro ao adaptar o conteúdo.');
+        }
+
+        const adaptedContent = await response.text();
+        sessionStorage.setItem('adaptedContent', adaptedContent);
+        window.location.href = 'conteudo-adaptado.html';
+
+    } catch (error) {
+        console.error('Erro no upload e adaptação:', error);
+        showNotification(`Erro: ${error.message}`, 'error');
+        uploadBtn.disabled = false;
+        buttonText.textContent = 'Enviar';
+        spinner.classList.add('hidden');
+        progressContainer.classList.add('hidden');
+        progressBar.style.width = '0%';
+        progressBar.style.transition = 'none';
+    }
   });
 
   // Keep the dropzone functionality for visual feedback

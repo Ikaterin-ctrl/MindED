@@ -30,13 +30,13 @@
 .upload-container h1 {
   font-family: 'Montserrat', sans-serif;
   font-size: 2rem;
-  color: #ffffff;
+  color: var(--text-primary);
   margin-bottom: 20px;
 }
 
 .upload-container p {
   font-size: 1rem;
-  color: #f0f0f0;
+  color: var(--text-primary);
   margin-bottom: 30px;
 }
 
@@ -51,13 +51,13 @@
 }
 
 .dropzone p {
-  color: #f0f0f0;
+  color: var(--text-primary);
   margin-bottom: 20px;
 }
 
 .dropzone span {
   font-size: 0.85rem;
-  color: #ccc;
+  color: var(--text-secondary);
 }
 
 .dropzone.hover {
@@ -87,7 +87,7 @@
 
 .supported-formats {
   font-size: 0.85rem;
-  color: #ccc;
+  color: var(--text-secondary);
   margin-top: -10px; /* Pull it closer to the dropzone */
   margin-bottom: 20px;
 }
@@ -131,7 +131,7 @@
 
 .file-name {
   font-weight: bold;
-  color: #fff;
+  color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -180,7 +180,7 @@
 
 .adaptation-preview p {
   font-size: 0.9rem;
-  color: #ccc;
+  color: var(--text-secondary);
   margin-bottom: 15px;
 }
 
@@ -208,7 +208,7 @@
 
 .option span {
   font-size: 0.85rem;
-  color: #f0f0f0;
+  color: var(--text-primary);
   font-weight: 500;
 }
 
@@ -328,7 +328,7 @@
 
 .success-message {
   font-size: 1.2rem;
-  color: #ffffff;
+  color: var(--text-primary);
   font-weight: bold;
 }
 

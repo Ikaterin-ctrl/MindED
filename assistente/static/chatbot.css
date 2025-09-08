@@ -1,24 +1,3 @@
-/* Esconde o chat quando a classe hidden estiver presente */
-.chatbot-window.hidden {
-  display: none !important;
-}
-
-/* Exibe o chat (sempre que NÃO tiver .hidden) */
-.chatbot-window {
-  display: flex !important;
-  flex-direction: column;
-  position: fixed;
-  bottom: 90px;
-  right: 20px;
-  width: 350px;
-  height: 450px;
-  background-color: #FFF;
-  border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-  overflow: hidden;
-  z-index: 1001; /* acima do botão, que está em 1000 */
-}
-
 
 
 /* Estilos do botão flutuante (FAB) do chatbot */
@@ -157,25 +136,4 @@
         width: 400px; /* Mais largo em desktops */
         height: 500px; /* Mais alto em desktops */
     }
-}
-/* ── OVERRIDE COM ESPECIFICIDADE DE ID ─────────────────────────────────────── */
-/* Nesta ordem: regras de ID + !important garantem show/hide corretos */
 
-#chatbotWindow.hidden {
-  display: none !important;
-}
-
-#chatbotWindow:not(.hidden) {
-  display: flex !important;
-  position: fixed !important;
-  bottom: 90px !important;
-  right: 20px !important;
-  width: 350px !important;
-  height: 450px !important;
-  background-color: #FFF !important;
-  border-radius: 15px !important;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2) !important;
-  overflow: hidden !important;
-  z-index: 2000 !important;
-}
-/* ────────────────────────────────────────────────────────────────────────── */

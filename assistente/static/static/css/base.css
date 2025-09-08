@@ -45,53 +45,6 @@ body {
   100% { opacity: 1; }
 }
 
-@media (prefers-color-scheme: light) {
-  body {
-    color: var(--text-primary); /* Use variable for consistency */
-    text-shadow: none; /* Remove text shadow for cleaner look */
-  }
-
-  h1, h2, h3, h4, h5, h6, p, span, a, label, li {
-    color: var(--text-primary); /* Use variable for consistency */
-    text-shadow: none; /* Remove text shadow for cleaner look */
-  }
-
-  button, .btn {
-    color: #fff; /* Keep white for buttons on light background */
-    text-shadow: none; /* Remove text shadow */
-    background-color: var(--lavender-pastel);
-  }
-
-  /* Se tiver containers que ficam muito brancos no modo claro */
-  .card, .login-form, .container, .box {
-    background-color: rgba(255, 255, 255, 0.1); /* Slightly more visible glass */
-    backdrop-filter: blur(8px); /* Slightly less blur */
-  }
-}
-
-body.light-mode {
-  color: var(--text-primary);
-  text-shadow: none;
-}
-
-body.light-mode h1,
-body.light-mode h2,
-body.light-mode h3,
-body.light-mode p,
-body.light-mode a,
-body.light-mode span,
-body.light-mode label {
-  color: var(--text-primary);
-  text-shadow: none;
-}
-
-body.light-mode button,
-body.light-mode .btn {
-  color: #fff;
-  text-shadow: none;
-  background-color: var(--lavender-pastel);
-}
-
 html[data-theme="light"] body,
 html[data-theme="light"] h1,
 html[data-theme="light"] h2,

@@ -34,7 +34,7 @@
             </button>
             <ul class="nav-links">
                 <li><a href="index.html" class="hover-lift">Início</a></li>
-                <li><a href="principal.html" class="hover-lift">Conteúdos</a></li>
+                <li><a href="upload.html" class="hover-lift">Conteúdos</a></li>
                 <li><a href="preferencias.html" class="hover-lift">Preferências</a></li>
                 <li><a href="login.html" class="login-button hover-lift" id="header-login-button">Login</a></li>
                 <li>
@@ -91,6 +91,7 @@
   </div>
 
   <!-- Scripts -->
+  <script src="assistente/static/static/js/theme-toggle.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
         const headerLoginButton = document.getElementById('header-login-button');
@@ -132,7 +133,7 @@
                 });
             };
             // If authenticated, start button goes to principal.html
-            startButton.href = 'principal.html';
+            startButton.href = 'upload.html';
         } else {
             headerLoginButton.textContent = 'Login';
             headerLoginButton.href = 'login.html';

@@ -270,3 +270,114 @@ main {
 #theme-toggle.active i { /* Assuming 'active' class is added on click */
   transform: rotate(360deg);
 }
+
+/* New Animations */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out forwards;
+  opacity: 0; /* Start invisible */
+}
+
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-left {
+  animation: slide-in-left 0.7s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes bounce-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-bounce-in {
+  animation: bounce-in 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+/* Hover Effects */
+.hover-grow {
+  transition: transform 0.2s ease-in-out;
+}
+
+.hover-grow:hover {
+  transform: scale(1.05);
+}
+
+.hover-lift {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Apply hover-lift to .option class */
+.option {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.option:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Apply hover-grow to .option-btn class */
+.option-btn {
+  transition: transform 0.2s ease-in-out;
+}
+
+.option-btn:hover {
+  transform: scale(1.05);
+}
+
+/* Apply hover-lift to .badge-item class */
+.badge-item {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.badge-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Apply animate-fade-in-up and hover-lift to .card class */
+.card {
+  animation: fade-in-up 0.6s ease-out forwards;
+  opacity: 0; /* Start invisible */
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}

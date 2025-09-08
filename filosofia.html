@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindED - Filosofia Essencial</title>
+    <link rel="stylesheet" href="assistente/static/static/css/base.css">
+    <link rel="stylesheet" href="assistente/static/static/css/layout.css">
+    <link rel="stylesheet" href="assistente/static/static/css/custom.css">
+    <link rel="stylesheet" href="assistente/static/static/css/pages/conteudo.css"> <!-- Use conteudo.css for styling -->
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+    <link rel="stylesheet" href="/assistente/static/chatbot.css" />
+</head>
+<body>
+  <header class="main-header animate-fade-in-up" style="animation-delay: 0.1s;">
+    <div class="header-content">
+        <a href="index.html" class="logo hover-grow">
+            <img src="assistente/static/static/assets/MindED_logo-removebg-preview.png" alt="MindED Logo">
+        </a>
+        <nav class="main-nav">
+            <button class="hamburger-menu" aria-label="Abrir menu" aria-expanded="false">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="index.html" class="hover-lift">Início</a></li>
+                <li><a href="upload.html" class="hover-lift">Conteúdos</a></li>
+                <li><a href="preferencias.html" class="hover-lift">Preferências</a></li>
+                <li><a href="login.html" class="login-button hover-lift">Login</a></li>
+                <li>
+                  <button id="theme-toggle" class="hover-grow">
+                    <i class="fas fa-moon"></i>
+                  </button>
+                </li>
+            </ul>
+        </nav>
+    </div>
+  </header>
+
+    <main class="main-content">
+        <section id="filosofia-content" class="content-section">
+          <h2>Filosofia Essencial: Grandes Ideias para a Vida</h2>
+          <p>A filosofia é a busca pelo conhecimento e pela compreensão da existência, da moral, da razão, do conhecimento e dos valores. Ela nos convida a questionar, a refletir e a buscar respostas para as grandes perguntas da vida. Não é apenas um estudo acadêmico, mas uma ferramenta para viver de forma mais consciente.</p>
+          <h3>Conceitos Fundamentais:</h3>
+          <ul>
+            <li>As origens da filosofia e seus principais pensadores.</li>
+            <li>Ética: o que é certo e errado?</li>
+            <li>Metafísica: a natureza da realidade.</li>
+            <li>Epistemologia: como conhecemos o que conhecemos?</li>
+          </ul>
+          <p>Explore as ideias que moldaram o pensamento humano e descubra como a filosofia pode enriquecer sua perspectiva sobre o mundo e sobre si mesmo(a).</p>
+          <a href="conteudo-adaptado.html" class="back-to-top">Voltar para Conteúdos Adaptados</a>
+        </section>
+    </main>
+
+    <footer class="footer animate-fade-in-up" style="animation-delay: 1s;">
+        <p>&copy; 2025 MindED. Todos os direitos reservados.</p>
+    </footer>
+
+  <!-- Chatbot Flutuante -->
+  <div
+    class="chatbot-fab hover-grow"
+    onclick="document.getElementById('chatbotWindow').classList.toggle('hidden')"
+  >
+    <i class="fas fa-comment-dots"></i>
+  </div>
+
+  <div id="chatbotWindow" class="chatbot-window hidden">
+    <div class="chatbot-header">
+      <span>Assistente MindED</span>
+      <button
+        onclick="toggleChatbot()"
+      >
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div id="chatbotMessages" class="chatbot-messages flex flex-col">
+      <div class="message-bubble bot">
+        Olá! Como posso te ajudar hoje com a acessibilidade ou sobre o MindED?
+      </div>
+    </div>
+    <div class="chatbot-input-area">
+      <input type="text" id="chatInput" placeholder="Digite sua mensagem..." />
+      <button id="sendChatButton"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+
+    <script src="assistente/static/static/js/menu.js"></script>
+    <script src="assistente/static/static/js/theme-toggle.js"></script>
+    <script src="/assistente/js/app.js"></script>
+</body>
+</html>

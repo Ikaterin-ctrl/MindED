@@ -21,10 +21,11 @@
 </head>
 <body>
   <!-- Cabeçalho -->
-  <header class="main-header">
+  <header class="main-header animate-fade-in-up" style="animation-delay: 0.1s;">
     <div class="header-content">
         <a href="index.html" class="logo">
             <img src="./img/logominded.png" alt="MindED Logo">
+
         </a>
         <nav class="main-nav">
             <button class="hamburger-menu" aria-label="Abrir menu" aria-expanded="false">
@@ -33,12 +34,12 @@
                 <span class="hamburger-line"></span>
             </button>
             <ul class="nav-links">
-                <li><a href="index.html">Início</a></li>
-                <li><a href="principal.html">Conteúdos</a></li>
-                <li><a href="preferencias.html">Preferências</a></li>
-                <li><a href="login.html" class="login-button" id="header-login-button">Login</a></li>
+                <li><a href="index.html" class="hover-lift">Início</a></li>
+                <li><a href="upload.html" class="hover-lift">Conteúdos</a></li>
+                <li><a href="preferencias.html" class="hover-lift">Preferências</a></li>
+                <li><a href="login.html" class="login-button hover-lift" id="header-login-button">Login</a></li>
                 <li>
-                  <button id="theme-toggle">
+                  <button id="theme-toggle" class="hover-grow">
                     <i class="fas fa-moon"></i>
                   </button>
                 </li>
@@ -58,13 +59,13 @@
     <a href="#" id="start-button" class="btn-start animate-fade-in" style="animation-delay: 0.8s;">Começar</a>
   </main>
 
-    <footer class="footer">
+    <footer class="footer animate-fade-in-up" style="animation-delay: 1s;">
         <p>&copy; 2025 MindED. Todos os direitos reservados.</p>
     </footer>
 
   <!-- Chatbot Flutuante -->
   <div
-    class="chatbot-fab"
+    class="chatbot-fab hover-grow"
     onclick="toggleChatbot()"
   >
     <i class="fas fa-comment-dots"></i>
@@ -91,6 +92,7 @@
   </div>
 
   <!-- Scripts -->
+  <script src="assistente/static/static/js/theme-toggle.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
         const headerLoginButton = document.getElementById('header-login-button');
@@ -132,7 +134,7 @@
                 });
             };
             // If authenticated, start button goes to principal.html
-            startButton.href = 'principal.html';
+            startButton.href = 'upload.html';
         } else {
             headerLoginButton.textContent = 'Login';
             headerLoginButton.href = 'login.html';

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindED - Inteligência Artificial Descomplicada</title>
+    <link rel="stylesheet" href="assistente/static/static/css/base.css">
+    <link rel="stylesheet" href="assistente/static/static/css/layout.css">
+    <link rel="stylesheet" href="assistente/static/static/css/custom.css">
+    <link rel="stylesheet" href="assistente/static/static/css/pages/conteudo.css"> <!-- Use conteudo.css for styling -->
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+    <link rel="stylesheet" href="/assistente/static/chatbot.css" />
+</head>
+<body>
+  <header class="main-header animate-fade-in-up" style="animation-delay: 0.1s;">
+    <div class="header-content">
+        <a href="index.html" class="logo hover-grow">
+            <img src="assistente/static/static/assets/MindED_logo-removebg-preview.png" alt="MindED Logo">
+        </a>
+        <nav class="main-nav">
+            <button class="hamburger-menu" aria-label="Abrir menu" aria-expanded="false">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="index.html" class="hover-lift">Início</a></li>
+                <li><a href="upload.html" class="hover-lift">Conteúdos</a></li>
+                <li><a href="preferencias.html" class="hover-lift">Preferências</a></li>
+                <li><a href="login.html" class="login-button hover-lift">Login</a></li>
+                <li>
+                  <button id="theme-toggle" class="hover-grow">
+                    <i class="fas fa-moon"></i>
+                  </button>
+                </li>
+            </ul>
+        </nav>
+    </div>
+  </header>
+
+    <main class="main-content">
+        <section id="inteligencia-artificial-content" class="content-section">
+          <h2>Inteligência Artificial Descomplicada: Entenda o Futuro</h2>
+          <p>A Inteligência Artificial (IA) está em toda parte, desde os assistentes de voz em seu celular até os sistemas que recomendam filmes. Mas o que é realmente a IA? De forma simples, é a capacidade de máquinas simularem a inteligência humana, aprendendo, raciocinando e resolvendo problemas.</p>
+          <h3>Principais Tópicos:</h3>
+          <ul>
+            <li>O que é IA e como ela funciona.</li>
+            <li>Tipos de IA: de regras a aprendizado de máquina.</li>
+            <li>Aplicações práticas da IA no dia a dia.</li>
+            <li>O futuro da IA e seus impactos.</li>
+          </ul>
+          <p>Este guia simplificado tornará a IA acessível, ajudando você a compreender essa tecnologia transformadora sem complicação.</p>
+          <a href="conteudo-adaptado.html" class="back-to-top">Voltar para Conteúdos Adaptados</a>
+        </section>
+    </main>
+
+    <footer class="footer animate-fade-in-up" style="animation-delay: 1s;">
+        <p>&copy; 2025 MindED. Todos os direitos reservados.</p>
+    </footer>
+
+  <!-- Chatbot Flutuante -->
+  <div
+    class="chatbot-fab hover-grow"
+    onclick="document.getElementById('chatbotWindow').classList.toggle('hidden')"
+  >
+    <i class="fas fa-comment-dots"></i>
+  </div>
+
+  <div id="chatbotWindow" class="chatbot-window hidden">
+    <div class="chatbot-header">
+      <span>Assistente MindED</span>
+      <button
+        onclick="toggleChatbot()"
+      >
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div id="chatbotMessages" class="chatbot-messages flex flex-col">
+      <div class="message-bubble bot">
+        Olá! Como posso te ajudar hoje com a acessibilidade ou sobre o MindED?
+      </div>
+    </div>
+    <div class="chatbot-input-area">
+      <input type="text" id="chatInput" placeholder="Digite sua mensagem..." />
+      <button id="sendChatButton"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+
+    <script src="assistente/static/static/js/menu.js"></script>
+    <script src="assistente/static/static/js/theme-toggle.js"></script>
+    <script src="/assistente/js/app.js"></script>
+</body>
+</html>

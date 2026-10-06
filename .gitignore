@@ -133,3 +133,13 @@ dist
 
 # Ignorar arquivo de configuração do frontend
 config.js
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+api/.env
+api/.venv/
+.venv/
+venv/
+*.pyc

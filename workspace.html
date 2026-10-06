@@ -8,6 +8,34 @@
 
   <link rel="stylesheet" href="src/css/base.css" />
 
+  <!-- Firebase auth guard — redirects to login.html if not signed in -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script>
+    /* Same config as login.html — keep in sync */
+    const _fbConfig = {
+      apiKey:            "REPLACE_WITH_YOUR_API_KEY",
+      authDomain:        "REPLACE_WITH_YOUR_AUTH_DOMAIN",
+      projectId:         "REPLACE_WITH_YOUR_PROJECT_ID",
+      storageBucket:     "REPLACE_WITH_YOUR_STORAGE_BUCKET",
+      messagingSenderId: "REPLACE_WITH_YOUR_MESSAGING_SENDER_ID",
+      appId:             "REPLACE_WITH_YOUR_APP_ID",
+    };
+    if (!firebase.apps.length) firebase.initializeApp(_fbConfig);
+    const _auth = firebase.auth();
+    // Hide body until auth state is known — prevents flash of content
+    document.documentElement.style.visibility = 'hidden';
+    _auth.onAuthStateChanged(user => {
+      if (!user) {
+        window.location.replace('login.html');
+      } else {
+        document.documentElement.style.visibility = '';
+        // Expose user globally for the workspace script
+        window._mindedUser = user;
+      }
+    });
+  </script>
+
   <style>
     /* ══════════════════════════════════════════════════════════
        Workspace layout
@@ -625,6 +653,13 @@
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
           Alto Contraste
         </button>
+        <!-- User avatar + logout -->
+        <div style="display:flex;align-items:center;gap:8px;margin-left:4px">
+          <img id="user-avatar" src="" alt="" width="28" height="28"
+            style="border-radius:50%;display:none;border:1.5px solid rgba(255,255,255,0.20)" />
+          <button id="logout-btn" class="btn btn-ghost btn-sm" style="display:none"
+            aria-label="Sair da conta">Sair</button>
+        </div>
       </nav>
     </div>
   </header>
@@ -774,6 +809,36 @@
       hamburger.classList.toggle('open', open);
       hamburger.setAttribute('aria-expanded', String(open));
     });
+
+    // ── Firebase user UI ──────────────────────────────────────────────────
+    const avatarEl  = document.getElementById('user-avatar');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    // _mindedUser is set by the auth guard script in <head>
+    // Wait for it to be available (it's set synchronously on auth state resolved)
+    function initUserUI() {
+      const user = window._mindedUser;
+      if (!user) return;
+      if (user.photoURL) {
+        avatarEl.src = user.photoURL;
+        avatarEl.alt = user.displayName || 'Utilizador';
+        avatarEl.style.display = 'block';
+      }
+      logoutBtn.style.display = 'inline-flex';
+      logoutBtn.addEventListener('click', async () => {
+        await firebase.auth().signOut();
+        window.location.replace('login.html');
+      });
+    }
+    // Auth guard resolves before DOMContentLoaded in most cases;
+    // if user is already set, run immediately, else wait
+    if (window._mindedUser) {
+      initUserUI();
+    } else {
+      firebase.auth().onAuthStateChanged(user => {
+        if (user) { window._mindedUser = user; initUserUI(); }
+      });
+    }
 
     // ── Pilar 3 — High Clarity Mode toggle ───────────────────────────────
     // Swaps glassmorphism for solid opaque surfaces (WCAG 2.2 SC 1.4.3)

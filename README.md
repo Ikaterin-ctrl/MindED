@@ -1,58 +1,132 @@
-# Minded - Adaptando o Aprendizado para Todos
+# MindED
 
-Minded é uma plataforma inovadora que utiliza inteligência artificial para transformar e adaptar conteúdos de estudo, tornando-os acessíveis e eficazes para pessoas neurodivergentes e para quem busca métodos de aprendizado personalizados.
+**Estação cognitiva para neurodivergentes.** Adapta textos densos em metáforas do cotidiano, microtarefas acionáveis ou resumos semânticos de alto contraste — usando IA generativa (Gemini) e um design glassmorphism acessível.
 
----
-
-## O Problema que Resolvemos
-
-Milhões de pessoas, incluindo indivíduos com TDAH, dislexia e autismo, enfrentam barreiras significativas nos modelos de educação tradicionais, que são, em sua maioria, rígidos e baseados em texto. A falta de flexibilidade no formato do conteúdo pode levar à dificuldade de compreensão, baixa retenção de conhecimento e frustração.
-
-**Minded surge como a solução:** uma ferramenta que capacita o usuário a personalizar seu próprio processo de aprendizado, quebrando as barreiras do ensino convencional e promovendo a inclusão.
+Nasceu como projeto de Iniciação Científica sobre acessibilidade cognitiva. Evoluiu para um produto open-source.
 
 ---
 
-## Para Quem é o Minded?
+## Demonstração visual
 
-O Minded foi projetado para:
-
-* **Estudantes neurodivergentes:** Pessoas com TDAH, dislexia, autismo e outras condições que se beneficiam de métodos de estudo não convencionais.
-* **Aprendizes com estilos diferentes:** Indivíduos que se adaptam melhor a conteúdos visuais, auditivos, ou interativos (gamificados).
-* **Educadores e Instituições de Ensino:** Que desejam oferecer recursos inclusivos e adaptados para seus alunos.
+| Modo Metáfora | Modo Microtarefas |
+|:---:|:---:|
+| ![Workspace — Modo Metáfora](docs/demo-metaphor.svg) | ![Workspace — Modo Microtarefas](docs/demo-checklist.svg) |
 
 ---
 
-## Funcionalidades Principais (Protótipo)
+## O problema
 
-O protótipo do Minded demonstra o potencial da plataforma com as seguintes funcionalidades:
+Pessoas neurodivergentes (TDAH, dislexia, autismo) e estudantes lidando com conteúdos técnicos densos frequentemente encontram:
 
-* **Adaptação de Conteúdo:** Converte textos em diferentes formatos:
-    * **Texto Adaptado:** Para pessoas com dislexia e autismo (ajustes de fonte, espaçamento e cor).
-    * **Versão Gamificada:** Para usuários que precisam de engajamento e recompensas instantâneas (simulação de pontuação, barra de progresso e quiz interativo).
-    * **Versão em Podcast:** Simula a conversão de texto em áudio para aprendizes auditivos.
-* **Fluxo de Upload:** Permite ao usuário simular o upload de conteúdo (PDFs, vídeos, textos) para ser processado pela plataforma.
-* **Quizzes de Fixação:** Cada conteúdo adaptado é seguido por um quiz simples para ajudar na retenção do conhecimento.
-* **Interface Intuitiva:** Um fluxo de usuário simples, do login (simulado) à visualização do conteúdo adaptado, com um chatbot visual em todas as páginas para simular suporte ao usuário.
+- **Sobrecarga de memória de trabalho** — conceitos abstratos sem âncora contextual
+- **Paralisia por excesso de informação** — dificuldade em decompor um assunto em etapas
+- **Fadiga visual** — interfaces poluídas que causam dispersão imediata
 
----
+## A solução
 
-## Tecnologias Utilizadas
+Três lentes de assimilação do mesmo conteúdo:
 
-Este protótipo foi desenvolvido utilizando tecnologias de front-end para simular as funcionalidades completas de uma plataforma web:
-
-* **HTML:** Estrutura da página.
-* **CSS:** Estilização e design.
-* **JavaScript:** Interatividade, simulação do fluxo de upload e das adaptações.
-* **Git & GitHub:** Controle de versão.
-* **Vercel:** Serviço de hospedagem para a demonstração.
+| Modo | O que faz |
+|---|---|
+| 🧠 **Metáfora** | Converte a teoria em analogia do cotidiano com tabela termo → metáfora e alerta de limitações |
+| ✅ **Microtarefas** | Gera checklist sequencial e gamificado com barra de progresso em tempo real |
+| 📋 **Resumo Semântico** | Sintetiza em tópicos com palavras-chave em negrito para leitura dinâmica |
 
 ---
 
-## Como Executar o Projeto
+## Estrutura do projeto
 
-Siga estes passos para rodar o projeto localmente:
+```
+MindED/
+├── index.html          # Landing page
+├── workspace.html      # Workspace principal (two-column layout)
+├── preferencias.html   # Onboarding de perfil cognitivo
+├── src/
+│   └── css/
+│       └── base.css    # Design system completo (tokens, glass, botões, header)
+├── api/
+│   ├── main.py         # FastAPI — endpoint POST /adapt
+│   ├── requirements.txt
+│   ├── .env.example
+│   └── README.md       # Instruções detalhadas do backend
+├── img/
+│   └── logominded.png
+└── docs/
+    ├── demo-metaphor.svg
+    └── demo-checklist.svg
+```
 
-1.  Clone este repositório para a sua máquina:
-    `git clone [insira o link do seu repositório aqui]`
-2.  Abra a pasta do projeto.
-3.  Abra o arquivo `index.html` no seu navegador de preferência.
+---
+
+## Início rápido
+
+### Frontend
+
+Abra qualquer HTML diretamente no navegador ou sirva com um servidor local:
+
+```bash
+# Python
+python3 -m http.server 5500
+
+# Node
+npx serve .
+```
+
+Acesse `http://localhost:5500`.
+
+### Backend (API Python)
+
+```bash
+cd api
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env   # adicione sua GEMINI_API_KEY
+uvicorn main:app --host 127.0.0.1 --port 8000 --reload
+```
+
+A API sobe em `http://127.0.0.1:8000`. Documentação interativa: `/docs`.
+
+> **Obter chave Gemini:** [aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey) — gratuito.
+
+---
+
+## Stack
+
+| Camada | Tecnologia |
+|---|---|
+| Frontend | HTML + CSS (Design System próprio) + Vanilla JS |
+| Backend | Python · FastAPI · Pydantic v2 |
+| IA | Google Gemini 1.5 Flash |
+| Design | Glassmorphism dark · Inter + Outfit · WCAG AA |
+
+---
+
+## API — contrato
+
+`POST /adapt`
+
+```json
+{
+  "texto": "Cole aqui o conteúdo a adaptar (mín. 10 chars)",
+  "modo": "metaphor",
+  "perfil": "TDAH/Iniciante"
+}
+```
+
+`modo` aceita: `metaphor` · `checklist` · `summary`
+
+Resposta completa segue o schema `AdaptationResponse` em [`api/main.py`](api/main.py).
+
+---
+
+## Segurança
+
+- `GEMINI_API_KEY` exclusivamente via variável de ambiente — nunca hardcoded
+- Servidor API vincula apenas `127.0.0.1` — não exposto à rede
+- CORS restrito a origens `localhost`
+
+---
+
+## Licença
+
+MIT — livre para usar, estudar e contribuir.

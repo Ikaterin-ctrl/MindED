@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MindED — Entrar</title>
+  <link rel="stylesheet" href="src/css/base.css" />
+  <link rel="icon" type="image/png" href="img/logominded.png" />
+  <style>
+    .login-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--sp-lg);
+    }
+    .login-card {
+      width: 100%;
+      max-width: 420px;
+      padding: var(--sp-2xl) var(--sp-xl);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--sp-lg);
+      text-align: center;
+    }
+    .login-logo {
+      width: 56px;
+      filter: drop-shadow(0 0 20px rgba(139,92,246,0.5));
+    }
+    .login-card h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+    }
+    .login-card p {
+      font-size: 0.9rem;
+      max-width: 300px;
+      line-height: 1.7;
+    }
+    .btn-google {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--sp-md);
+      padding: 14px var(--sp-lg);
+      background: #fff;
+      border: 1px solid rgba(255,255,255,0.20);
+      border-radius: var(--r-pill);
+      color: #1f2328;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: box-shadow var(--t-base), transform var(--t-base);
+      font-family: var(--font-body);
+    }
+    .btn-google:hover {
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+      transform: translateY(-1px);
+    }
+    .btn-google:focus-visible {
+      outline: 2px solid var(--clr-violet);
+      outline-offset: 3px;
+    }
+    .btn-google svg { flex-shrink: 0; }
+    .login-divider {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: var(--sp-md);
+      color: var(--clr-text-subtle);
+      font-size: 0.78rem;
+    }
+    .login-divider::before,
+    .login-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--clr-border);
+    }
+    .login-error {
+      width: 100%;
+      padding: 12px var(--sp-md);
+      background: rgba(239,68,68,0.10);
+      border: 1px solid rgba(239,68,68,0.25);
+      border-radius: var(--r-md);
+      color: #FCA5A5;
+      font-size: 0.85rem;
+      text-align: left;
+      display: none;
+    }
+    .login-error.visible { display: block; }
+    .login-loading {
+      width: 18px; height: 18px;
+      border: 2px solid rgba(31,35,40,0.2);
+      border-top-color: #1f2328;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      display: none;
+    }
+    .btn-google.loading .login-loading { display: block; }
+    .btn-google.loading .btn-google-label { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .login-footer {
+      font-size: 0.75rem;
+      color: var(--clr-text-subtle);
+      line-height: 1.6;
+    }
+    .login-footer a { color: var(--clr-violet); text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="login-card glass">
+      <img src="img/logominded.png" alt="MindED" class="login-logo" />
+      <h1>Entrar no MindED</h1>
+      <p>Plataforma cognitiva para neurodivergentes.<br/>Faça login para acessar o Workspace.</p>
+
+      <div class="login-error" id="login-error" role="alert"></div>
+
+      <button class="btn-google" id="google-btn" aria-label="Entrar com Google">
+        <span class="btn-google-label" style="display:flex;align-items:center;gap:10px">
+          <!-- Google G logo -->
+          <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+            <path fill="none" d="M0 0h48v48H0z"/>
+          </svg>
+          Continuar com Google
+        </span>
+        <div class="login-loading" role="status" aria-label="Autenticando…"></div>
+      </button>
+
+      <div class="login-divider">acesso seguro via Firebase</div>
+
+      <p class="login-footer">
+        Ao entrar, aceita os <a href="#">Termos de Uso</a> e a
+        <a href="#">Política de Privacidade</a> do MindED.<br/>
+        Projeto open-source de acessibilidade cognitiva.
+      </p>
+    </div>
+  </div>
+
+  <!-- Firebase SDK (compat — works without bundler) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
+  <script>
+    /* ── Firebase config ─────────────────────────────────────────
+       Replace the values below with YOUR project's config object
+       from: Firebase Console → Project Settings → Your apps → SDK setup
+    ──────────────────────────────────────────────────────────── */
+    const firebaseConfig = {
+      apiKey:            "REPLACE_WITH_YOUR_API_KEY",
+      authDomain:        "REPLACE_WITH_YOUR_AUTH_DOMAIN",
+      projectId:         "REPLACE_WITH_YOUR_PROJECT_ID",
+      storageBucket:     "REPLACE_WITH_YOUR_STORAGE_BUCKET",
+      messagingSenderId: "REPLACE_WITH_YOUR_MESSAGING_SENDER_ID",
+      appId:             "REPLACE_WITH_YOUR_APP_ID",
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth     = firebase.auth();
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+
+    const googleBtn  = document.getElementById('google-btn');
+    const errorBox   = document.getElementById('login-error');
+
+    function showError(msg) {
+      errorBox.textContent = msg;
+      errorBox.classList.add('visible');
+    }
+
+    // If already signed in, go straight to workspace
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        window.location.replace('workspace.html');
+      }
+    });
+
+    googleBtn.addEventListener('click', async () => {
+      errorBox.classList.remove('visible');
+      googleBtn.classList.add('loading');
+      googleBtn.disabled = true;
+
+      try {
+        await auth.signInWithPopup(provider);
+        // onAuthStateChanged above will redirect
+      } catch (err) {
+        googleBtn.classList.remove('loading');
+        googleBtn.disabled = false;
+        const messages = {
+          'auth/popup-closed-by-user':      'Popup fechado antes de concluir o login.',
+          'auth/popup-blocked':             'Popup bloqueado pelo navegador. Permita popups para este site.',
+          'auth/cancelled-popup-request':   'Requisição cancelada.',
+          'auth/network-request-failed':    'Erro de rede. Verifique sua conexão.',
+          'auth/internal-error':            'Erro interno. Tente novamente.',
+        };
+        showError(messages[err.code] || `Erro: ${err.message}`);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 800" width="1280" height="800" font-family="'Segoe UI',system-ui,sans-serif">
+  <defs>
+    <radialGradient id="bg1" cx="20%" cy="10%" r="60%"><stop offset="0%" stop-color="#8B5CF6" stop-opacity="0.13"/><stop offset="100%" stop-color="#090D16" stop-opacity="0"/></radialGradient>
+    <radialGradient id="bg2" cx="85%" cy="85%" r="50%"><stop offset="0%" stop-color="#22D3EE" stop-opacity="0.09"/><stop offset="100%" stop-color="#090D16" stop-opacity="0"/></radialGradient>
+    <linearGradient id="btnGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#8B5CF6"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient>
+    <linearGradient id="progressGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#8B5CF6"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <clipPath id="screenClip"><rect width="1280" height="800" rx="0"/></clipPath>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1280" height="800" fill="#090D16"/>
+  <rect width="1280" height="800" fill="url(#bg1)"/>
+  <rect width="1280" height="800" fill="url(#bg2)"/>
+
+  <!-- Header bar -->
+  <rect width="1280" height="64" fill="rgba(9,13,22,0.85)" opacity="0.95"/>
+  <rect width="1280" height="1" y="64" fill="rgba(255,255,255,0.10)"/>
+  <!-- Logo dot -->
+  <circle cx="36" cy="32" r="14" fill="url(#btnGrad)" opacity="0.9" filter="url(#glow)"/>
+  <text x="58" y="38" font-size="16" font-weight="700" fill="#F3F4F6" letter-spacing="-0.3">MindED</text>
+  <!-- Nav links -->
+  <text x="780" y="38" font-size="13" fill="#6B7280">Início</text>
+  <text x="848" y="38" font-size="13" fill="#F3F4F6" font-weight="600">Workspace</text>
+  <rect x="838" y="42" width="76" height="2" rx="1" fill="url(#btnGrad)" opacity="0.7"/>
+  <text x="944" y="38" font-size="13" fill="#6B7280">Preferências</text>
+
+  <!-- ══ LEFT PANEL ══════════════════════════════════════════ -->
+  <rect x="32" y="96" width="580" height="672" rx="20" fill="rgba(255,255,255,0.045)" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+  <!-- backdrop blur hint -->
+  <rect x="32" y="96" width="580" height="672" rx="20" fill="rgba(139,92,246,0.025)"/>
+
+  <!-- Panel label -->
+  <text x="64" y="133" font-size="10" font-weight="600" fill="#6B7280" letter-spacing="1.5">ENTRADA DE CONTEÚDO</text>
+  <line x1="64" y1="140" x2="580" y2="140" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+
+  <!-- Textarea label -->
+  <text x="64" y="166" font-size="12" fill="#9CA3AF" font-weight="500">Cole aqui o texto que deseja adaptar</text>
+  <!-- Textarea box -->
+  <rect x="64" y="176" width="516" height="158" rx="12" fill="rgba(255,255,255,0.04)" stroke="rgba(139,92,246,0.50)" stroke-width="1.5"/>
+  <text x="80" y="200" font-size="12" fill="#6B7280" font-style="italic">Microsserviços são uma abordagem arquitetural para</text>
+  <text x="80" y="218" font-size="12" fill="#6B7280" font-style="italic">desenvolver uma aplicação como um conjunto de</text>
+  <text x="80" y="236" font-size="12" fill="#6B7280" font-style="italic">pequenos serviços independentes, onde cada um</text>
+  <text x="80" y="254" font-size="12" fill="#6B7280" font-style="italic">executa seu próprio processo e se comunica por</text>
+  <text x="80" y="272" font-size="12" fill="#6B7280" font-style="italic">APIs leves. Cada serviço é focado em uma</text>
+  <text x="80" y="290" font-size="12" fill="#6B7280" font-style="italic">capacidade de negócio específica...</text>
+  <!-- char count -->
+  <text x="550" y="325" font-size="10" fill="#6B7280" text-anchor="end">412 / 8000</text>
+
+  <!-- Mode group label -->
+  <text x="64" y="360" font-size="12" fill="#9CA3AF" font-weight="500">Modo Cognitivo</text>
+
+  <!-- Mode option: Metáfora — SELECTED -->
+  <rect x="64" y="372" width="158" height="80" rx="12" fill="rgba(139,92,246,0.12)" stroke="rgba(139,92,246,0.55)" stroke-width="1.5"/>
+  <text x="143" y="402" font-size="22" text-anchor="middle">🧠</text>
+  <text x="143" y="421" font-size="11" font-weight="600" fill="#F3F4F6" text-anchor="middle">Metáfora</text>
+  <text x="143" y="437" font-size="9" fill="#6B7280" text-anchor="middle">Analogias do cotidiano</text>
+  <!-- Mode option: Microtarefas -->
+  <rect x="234" y="372" width="158" height="80" rx="12" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+  <text x="313" y="402" font-size="22" text-anchor="middle">✅</text>
+  <text x="313" y="421" font-size="11" font-weight="600" fill="#9CA3AF" text-anchor="middle">Microtarefas</text>
+  <text x="313" y="437" font-size="9" fill="#6B7280" text-anchor="middle">Checklist gamificado</text>
+  <!-- Mode option: Resumo -->
+  <rect x="404" y="372" width="158" height="80" rx="12" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+  <text x="483" y="402" font-size="22" text-anchor="middle">📋</text>
+  <text x="483" y="421" font-size="11" font-weight="600" fill="#9CA3AF" text-anchor="middle">Resumo</text>
+  <text x="483" y="437" font-size="9" fill="#6B7280" text-anchor="middle">Tópicos essenciais</text>
+
+  <!-- Profile label -->
+  <text x="64" y="482" font-size="12" fill="#9CA3AF" font-weight="500">Perfil / Contexto</text>
+  <rect x="64" y="492" width="516" height="40" rx="10" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+  <text x="82" y="517" font-size="12" fill="#F3F4F6">TDAH — Foco em analogias visuais</text>
+  <polygon points="558,508 566,508 562,516" fill="#6B7280"/>
+
+  <!-- CTA Button -->
+  <rect x="64" y="554" width="516" height="52" rx="999" fill="url(#btnGrad)" filter="url(#glow)"/>
+  <text x="322" y="585" font-size="14" font-weight="600" fill="#FFFFFF" text-anchor="middle">▶  Adaptar com MindED</text>
+
+  <!-- ══ RIGHT PANEL ══════════════════════════════════════════ -->
+  <rect x="636" y="96" width="612" height="672" rx="20" fill="rgba(255,255,255,0.045)" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+
+  <!-- Panel label -->
+  <text x="668" y="133" font-size="10" font-weight="600" fill="#6B7280" letter-spacing="1.5">OUTPUT COGNITIVO</text>
+  <line x1="668" y1="140" x2="1216" y2="140" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+
+  <!-- Output header: title + universe badge -->
+  <text x="668" y="178" font-size="19" font-weight="700" fill="#F3F4F6">Microsserviços como uma</text>
+  <text x="668" y="202" font-size="19" font-weight="700" fill="#F3F4F6">Praça de Alimentação</text>
+  <!-- Universe badge -->
+  <rect x="668" y="216" width="116" height="24" rx="999" fill="rgba(34,211,238,0.10)" stroke="rgba(34,211,238,0.22)" stroke-width="1"/>
+  <text x="726" y="232" font-size="11" font-weight="600" fill="#22D3EE" text-anchor="middle">🌐 Gastronomia</text>
+
+  <!-- Narrative body -->
+  <text x="668" y="264" font-size="12" fill="#9CA3AF">Imagine uma grande praça de alimentação de um shopping.</text>
+  <text x="668" y="282" font-size="12" fill="#9CA3AF">Cada barraca é especializada: uma vende sushi, outra</text>
+  <text x="668" y="300" font-size="12" fill="#9CA3AF">hambúrgueres, outra apenas sobremesas. Cada uma opera</text>
+  <text x="668" y="318" font-size="12" fill="#9CA3AF">de forma independente, tem sua própria cozinha, seu</text>
+  <text x="668" y="336" font-size="12" fill="#9CA3AF">próprio cardápio e pode abrir ou fechar sem derrubar as</text>
+  <text x="668" y="354" font-size="12" fill="#9CA3AF">outras. O cliente (usuário) faz o pedido no balcão central</text>
+  <text x="668" y="372" font-size="12" fill="#9CA3AF">(API Gateway) e cada cozinha entrega sua parte.</text>
+
+  <!-- Divider -->
+  <line x1="668" y1="394" x2="1216" y2="394" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+
+  <!-- Mapping table header -->
+  <text x="668" y="416" font-size="10" font-weight="600" fill="#6B7280" letter-spacing="1.2">MAPEAMENTO TERMO → METÁFORA</text>
+  <!-- Table header row -->
+  <text x="668" y="438" font-size="10" font-weight="600" fill="#6B7280" letter-spacing="0.8">TERMO TÉCNICO</text>
+  <text x="850" y="438" font-size="10" font-weight="600" fill="#6B7280" letter-spacing="0.8">NA METÁFORA</text>
+  <text x="1010" y="438" font-size="10" font-weight="600" fill="#6B7280" letter-spacing="0.8">POR QUÊ FAZ SENTIDO</text>
+  <line x1="668" y1="445" x2="1216" y2="445" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+
+  <!-- Row 1 -->
+  <text x="668" y="465" font-size="12" fill="#8B5CF6" font-weight="600">Microsserviço</text>
+  <text x="850" y="465" font-size="12" fill="#22D3EE">Barraca especializada</text>
+  <text x="1010" y="465" font-size="11" fill="#9CA3AF">Cada um faz uma coisa só</text>
+  <line x1="668" y1="475" x2="1216" y2="475" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+
+  <!-- Row 2 -->
+  <text x="668" y="495" font-size="12" fill="#8B5CF6" font-weight="600">API Gateway</text>
+  <text x="850" y="495" font-size="12" fill="#22D3EE">Balcão central</text>
+  <text x="1010" y="495" font-size="11" fill="#9CA3AF">Ponto único de entrada</text>
+  <line x1="668" y1="505" x2="1216" y2="505" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+
+  <!-- Row 3 -->
+  <text x="668" y="525" font-size="12" fill="#8B5CF6" font-weight="600">Deploy independente</text>
+  <text x="850" y="525" font-size="12" fill="#22D3EE">Barraca fecha p/ reforma</text>
+  <text x="1010" y="525" font-size="11" fill="#9CA3AF">Sem derrubar as outras</text>
+  <line x1="668" y1="535" x2="1216" y2="535" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+
+  <!-- Row 4 -->
+  <text x="668" y="555" font-size="12" fill="#8B5CF6" font-weight="600">Banco de dados próprio</text>
+  <text x="850" y="555" font-size="12" fill="#22D3EE">Estoque próprio</text>
+  <text x="1010" y="555" font-size="11" fill="#9CA3AF">Cada barraca gerencia o seu</text>
+  <line x1="668" y1="565" x2="1216" y2="565" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+
+  <!-- Divider -->
+  <line x1="668" y1="583" x2="1216" y2="583" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+
+  <!-- Attention alert -->
+  <rect x="668" y="595" width="548" height="72" rx="12" fill="rgba(251,191,36,0.07)" stroke="rgba(251,191,36,0.22)" stroke-width="1"/>
+  <text x="690" y="618" font-size="12">⚠️</text>
+  <text x="716" y="616" font-size="11" font-weight="600" fill="#FBBF24">O que a metáfora NÃO cobre:</text>
+  <text x="716" y="634" font-size="11" fill="#9CA3AF">A analogia simplifica a comunicação entre serviços. Na realidade,</text>
+  <text x="716" y="651" font-size="11" fill="#9CA3AF">envolve serialização, latência de rede e consistência eventual.</text>
+
+  <!-- Action buttons -->
+  <rect x="668" y="684" width="98" height="34" rx="999" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+  <text x="717" y="706" font-size="11" fill="#9CA3AF" text-anchor="middle">📋 Copiar</text>
+  <rect x="778" y="684" width="128" height="34" rx="999" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+  <text x="842" y="706" font-size="11" fill="#9CA3AF" text-anchor="middle">⬇ Exportar MD</text>
+
+  <!-- Watermark -->
+  <text x="640" y="790" font-size="10" fill="rgba(255,255,255,0.15)" text-anchor="middle">MindED — Workspace · Modo Metáfora</text>
+</svg>

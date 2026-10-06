@@ -1,147 +1,257 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="light">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MindED – Boas-vindas</title>
-  <link rel="stylesheet" href="assistente/static/static/css/base.css" />
-  <link rel="stylesheet" href="assistente/static/static/css/layout.css" />
-  <link rel="stylesheet" href="assistente/static/static/css/pages/index.css" />
-  <link rel="stylesheet" href="assistente/static/static/css/custom.css">
-  <link rel="stylesheet" href="/assistente/static/chatbot.css" />
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-  />
+  <meta name="description" content="MindED — Estação cognitiva para neurodivergentes. Adapte qualquer texto em metáforas, microtarefas ou resumos semânticos." />
+  <title>MindED — Adapte seu Aprendizado</title>
+
+  <link rel="stylesheet" href="src/css/base.css" />
+
   <style>
-    .hero-onboarding {
-      padding-top: 120px;
+    /* ── Landing-specific ─────────────────────────────────── */
+    .landing {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(100vh - 64px);
+      padding: var(--sp-2xl) var(--sp-xl) var(--sp-xl);
+      text-align: center;
+      gap: var(--sp-xl);
+    }
+
+    /* Logo */
+    .landing__logo {
+      width: 72px;
+      height: 72px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 24px rgba(139,92,246,0.5));
+    }
+
+    /* Badge */
+    .landing__badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sp-sm);
+      padding: 6px 16px;
+      border-radius: var(--r-pill);
+      background: rgba(139, 92, 246, 0.12);
+      border: 1px solid rgba(139, 92, 246, 0.30);
+      color: var(--clr-violet);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .landing__badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--clr-violet);
+      box-shadow: 0 0 8px var(--clr-violet);
+    }
+
+    /* Headline */
+    .landing__headline {
+      max-width: 700px;
+    }
+    .landing__headline h1 {
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      color: var(--clr-text);
+      margin-bottom: var(--sp-md);
+    }
+    .landing__headline h1 span {
+      background: var(--grad-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .landing__headline p {
+      font-size: 1.1rem;
+      color: var(--clr-text-muted);
+      line-height: 1.75;
+      max-width: 560px;
+      margin: 0 auto;
+    }
+
+    /* CTA group */
+    .landing__cta {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-md);
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    /* Feature cards */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--sp-lg);
+      max-width: 900px;
+      width: 100%;
+    }
+
+    .feature-card {
+      padding: var(--sp-lg) var(--sp-md);
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-sm);
+    }
+
+    .feature-card__icon {
+      width: 44px; height: 44px;
+      border-radius: var(--r-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: var(--sp-xs);
+    }
+    .feature-card__icon--violet {
+      background: rgba(139, 92, 246, 0.15);
+      border: 1px solid rgba(139, 92, 246, 0.25);
+      color: var(--clr-violet);
+    }
+    .feature-card__icon--cyan {
+      background: rgba(34, 211, 238, 0.12);
+      border: 1px solid rgba(34, 211, 238, 0.20);
+      color: var(--clr-cyan);
+    }
+    .feature-card__icon--green {
+      background: rgba(52, 211, 153, 0.12);
+      border: 1px solid rgba(52, 211, 153, 0.20);
+      color: var(--clr-green);
+    }
+
+    .feature-card h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--clr-text);
+    }
+    .feature-card p {
+      font-size: 0.85rem;
+      color: var(--clr-text-muted);
+      line-height: 1.65;
+    }
+
+    @media (max-width: 720px) {
+      .features { grid-template-columns: 1fr; max-width: 420px; }
+      .landing { padding: var(--sp-xl) var(--sp-md); }
+    }
+    @media (max-width: 480px) {
+      .landing__cta { flex-direction: column; width: 100%; }
+      .landing__cta .btn { width: 100%; }
     }
   </style>
 </head>
 <body>
-  <!-- Cabeçalho -->
-  <header class="main-header animate-fade-in-up" style="animation-delay: 0.1s;">
-    <div class="header-content">
-        <a href="index.html" class="logo">
-            <img src="./img/logominded.png" alt="MindED Logo">
 
-        </a>
-        <nav class="main-nav">
-            <button class="hamburger-menu" aria-label="Abrir menu" aria-expanded="false">
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-            </button>
-            <ul class="nav-links">
-                <li><a href="index.html" class="hover-lift">Início</a></li>
-                <li><a href="upload.html" class="hover-lift">Conteúdos</a></li>
-                <li><a href="preferencias.html" class="hover-lift">Preferências</a></li>
-                <li><a href="login.html" class="login-button hover-lift" id="header-login-button">Login</a></li>
-                <li>
-                  <button id="theme-toggle" class="hover-grow">
-                    <i class="fas fa-moon"></i>
-                  </button>
-                </li>
-            </ul>
-        </nav>
+  <!-- ── Header ─────────────────────────────────────────────── -->
+  <header class="main-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo-link">
+        <img src="img/logominded.png" alt="" aria-hidden="true" />
+        <span>MindED</span>
+      </a>
+
+      <button class="hamburger" id="hamburger" aria-label="Abrir menu" aria-expanded="false" aria-controls="main-nav">
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav class="main-nav" id="main-nav" role="navigation" aria-label="Principal">
+        <a href="index.html"      class="nav-link active">Início</a>
+        <a href="workspace.html"  class="nav-link">Workspace</a>
+        <a href="preferencias.html" class="nav-link">Preferências</a>
+        <a href="workspace.html"  class="btn btn-primary btn-sm">Começar agora</a>
+      </nav>
     </div>
   </header>
 
-  <!-- Hero Onboarding -->
-  <main class="hero-onboarding">
-    <img src="./img/logominded.png" alt="MindED Logo" class="logo-hero animate-fade-in" style="animation-delay: 0.2s;" />
-    <div id="typed-text" class="typed-text animate-fade-in" style="animation-delay: 0.4s;">Transforme seu aprendizado.</div>
-    <section class="value-proposition animate-fade-in" style="animation-delay: 0.6s;">
-      <h2>Seu aprendizado, do seu jeito.</h2>
-      <p>O MindED adapta conteúdos para você, considerando suas preferências e perfil cognitivo. Estude com mais foco, eficiência e acessibilidade.</p>
+  <!-- ── Landing ────────────────────────────────────────────── -->
+  <main class="page-wrap">
+    <section class="landing" aria-labelledby="landing-headline">
+
+      <span class="landing__badge fade-up" style="animation-delay:0.05s">Acessibilidade Cognitiva</span>
+
+      <img
+        src="img/logominded.png"
+        alt="MindED"
+        class="landing__logo fade-up"
+        style="animation-delay:0.1s"
+      />
+
+      <div class="landing__headline fade-up" style="animation-delay:0.2s">
+        <h1 id="landing-headline">
+          Textos difíceis,<br />
+          <span>adaptados para você.</span>
+        </h1>
+        <p>
+          O MindED transforma qualquer material de estudo em metáforas do cotidiano,
+          microtarefas acionáveis ou resumos de alto contraste — no seu ritmo, no seu perfil.
+        </p>
+      </div>
+
+      <div class="landing__cta fade-up" style="animation-delay:0.35s">
+        <a href="workspace.html" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Adaptar com MindED
+        </a>
+        <a href="#features" class="btn btn-ghost">Ver como funciona</a>
+      </div>
+
+      <div class="features fade-up" id="features" style="animation-delay:0.5s" role="list">
+
+        <article class="feature-card glass" role="listitem">
+          <div class="feature-card__icon feature-card__icon--violet" aria-hidden="true">🧠</div>
+          <h3>Metaphor Engine</h3>
+          <p>Converte teoria abstrata em analogias do cotidiano — mapeamento termo a termo com validação de consistência.</p>
+        </article>
+
+        <article class="feature-card glass" role="listitem">
+          <div class="feature-card__icon feature-card__icon--cyan" aria-hidden="true">✅</div>
+          <h3>Microtarefas</h3>
+          <p>Transforma o conteúdo em um checklist sequencial e gamificado para você marcar o progresso em tempo real.</p>
+        </article>
+
+        <article class="feature-card glass" role="listitem">
+          <div class="feature-card__icon feature-card__icon--green" aria-hidden="true">📋</div>
+          <h3>Resumo Semântico</h3>
+          <p>Tópicos sintetizados com palavras-chave destacadas para leitura dinâmica sem fadiga visual.</p>
+        </article>
+
+      </div>
+
     </section>
-    <a href="#" id="start-button" class="btn-start animate-fade-in" style="animation-delay: 0.8s;">Começar</a>
   </main>
 
-    <footer class="footer animate-fade-in-up" style="animation-delay: 1s;">
-        <p>&copy; 2025 MindED. Todos os direitos reservados.</p>
-    </footer>
+  <!-- ── Footer ─────────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <p>&copy; 2025 MindED. Projeto open-source de Iniciação Científica sobre acessibilidade cognitiva.</p>
+  </footer>
 
-  <!-- Chatbot Flutuante -->
-  <div
-    class="chatbot-fab hover-grow"
-    onclick="toggleChatbot()"
-  >
-    <i class="fas fa-comment-dots"></i>
-  </div>
-
-  <div id="chatbotWindow" class="chatbot-window hidden">
-    <div class="chatbot-header">
-      <span>Assistente MindED</span>
-      <button
-        onclick="toggleChatbot()"
-      >
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    <div id="chatbotMessages" class="chatbot-messages flex flex-col">
-      <div class="message-bubble bot">
-        Olá! Como posso te ajudar hoje com a acessibilidade ou sobre o MindED?
-      </div>
-    </div>
-    <div class="chatbot-input-area">
-      <input type="text" id="chatInput" placeholder="Digite sua mensagem..." />
-      <button id="sendChatButton"><i class="fas fa-paper-plane"></i></button>
-    </div>
-  </div>
-
-  <!-- Scripts -->
-  <script src="assistente/static/static/js/theme-toggle.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', async () => {
-        const headerLoginButton = document.getElementById('header-login-button');
-        const startButton = document.getElementById('start-button');
-
-        // Initialize Auth0 client
-        let auth0Client = null;
-        try {
-            auth0Client = await auth0.createAuth0Client({
-                domain: 'dev-ga7njuw5als2pp77.us.auth0.com', // Substitua pelo seu domínio Auth0
-                clientId: 'EwYBH3Y6AyTiZ0Cl2SUie3KUWQqYeNmU', // Substitua pelo seu Client ID Auth0
-                authorizationParams: {
-                    redirect_uri: window.location.origin + '/login.html' // Redireciona para login.html após autenticação
-                }
-            });
-        } catch (e) {
-            console.error("Erro ao inicializar Auth0 em index.html:", e);
-            // If Auth0 fails to initialize, ensure buttons still work
-            headerLoginButton.textContent = 'Login';
-            headerLoginButton.href = 'login.html';
-            startButton.href = 'login.html'; // Direct to login if Auth0 fails
-            return;
-        }
-
-        const isAuthenticated = await auth0Client.isAuthenticated();
-
-        // Update header login/logout button
-        if (isAuthenticated) {
-            const user = await auth0Client.getUser();
-            console.log('Usuário autenticado:', user);
-            headerLoginButton.textContent = 'Sair';
-            headerLoginButton.href = '#'; // Prevent default navigation
-            headerLoginButton.onclick = async (e) => {
-                e.preventDefault();
-                await auth0Client.logout({
-                    logoutParams: {
-                        returnTo: window.location.origin + '/index.html' // Redirecionar para index.html após o logout
-                    }
-                });
-            };
-            // If authenticated, start button goes to principal.html
-            startButton.href = 'upload.html';
-        } else {
-            headerLoginButton.textContent = 'Login';
-            headerLoginButton.href = 'login.html';
-            // If not authenticated, start button goes to login.html
-            startButton.href = 'login.html';
-        }
+    // Hamburger menu toggle
+    const hamburger = document.getElementById('hamburger');
+    const nav       = document.getElementById('main-nav');
+    hamburger.addEventListener('click', () => {
+      const open = nav.classList.toggle('open');
+      hamburger.classList.toggle('open', open);
+      hamburger.setAttribute('aria-expanded', String(open));
     });
-</script>
+    // Close on nav link click (mobile)
+    nav.querySelectorAll('.nav-link, .btn').forEach(el => {
+      el.addEventListener('click', () => {
+        nav.classList.remove('open');
+        hamburger.classList.remove('open');
+        hamburger.setAttribute('aria-expanded', 'false');
+      });
+    });
+  </script>
 </body>
 </html>

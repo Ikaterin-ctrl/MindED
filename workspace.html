@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="MindED Workspace — cole seu texto, escolha um modo cognitivo e adapte em segundos." />
+  <title>MindED — Workspace</title>
+
+  <link rel="stylesheet" href="src/css/base.css" />
+
+  <style>
+    /* ══════════════════════════════════════════════════════════
+       Workspace layout
+    ══════════════════════════════════════════════════════════ */
+    .workspace {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-lg);
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: calc(64px + var(--sp-xl)) var(--sp-xl) var(--sp-xl);
+      min-height: 100vh;
+      align-items: start;
+    }
+
+    /* ── Panel commons ──────────────────────────────────────── */
+    .panel {
+      padding: var(--sp-xl);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-lg);
+      /* stick to top when scrolling long output */
+      position: sticky;
+      top: calc(64px + var(--sp-lg));
+    }
+
+    .panel__title {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--clr-text-subtle);
+      padding-bottom: var(--sp-sm);
+      border-bottom: 1px solid var(--clr-border);
+    }
+
+    /* ── Input textarea ─────────────────────────────────────── */
+    .input-area {
+      position: relative;
+    }
+
+    .input-area__label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--clr-text-muted);
+      margin-bottom: var(--sp-sm);
+    }
+
+    .input-area__textarea {
+      width: 100%;
+      min-height: 220px;
+      max-height: 400px;
+      resize: vertical;
+      padding: var(--sp-md);
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--r-md);
+      color: var(--clr-text);
+      font-size: 0.9rem;
+      line-height: var(--lh-body);
+      outline: none;
+      transition: border-color var(--t-base), box-shadow var(--t-base);
+    }
+    .input-area__textarea::placeholder { color: var(--clr-text-subtle); }
+    .input-area__textarea:focus {
+      border-color: var(--clr-violet);
+      box-shadow: 0 0 0 3px rgba(139,92,246,0.18);
+    }
+
+    .char-count {
+      position: absolute;
+      bottom: 10px;
+      right: 14px;
+      font-size: 0.72rem;
+      color: var(--clr-text-subtle);
+      pointer-events: none;
+    }
+
+    /* ── Mode selector ──────────────────────────────────────── */
+    .mode-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-sm);
+    }
+
+    .mode-group__label {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--clr-text-muted);
+    }
+
+    .mode-options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--sp-sm);
+    }
+
+    .mode-option {
+      position: relative;
+    }
+    .mode-option input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0; height: 0;
+    }
+    .mode-option label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 14px var(--sp-sm);
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--r-md);
+      cursor: pointer;
+      transition: border-color var(--t-base), background var(--t-base), box-shadow var(--t-base);
+      text-align: center;
+    }
+    .mode-option label:hover {
+      border-color: var(--clr-border-md);
+      background: var(--clr-surface-md);
+    }
+    .mode-option input:checked + label {
+      border-color: var(--clr-violet);
+      background: rgba(139,92,246,0.10);
+      box-shadow: 0 0 0 1px rgba(139,92,246,0.35);
+    }
+    .mode-option input:focus-visible + label {
+      outline: 2px solid var(--clr-violet);
+      outline-offset: 2px;
+    }
+
+    .mode-option__icon {
+      font-size: 1.4rem;
+    }
+    .mode-option__name {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--clr-text);
+    }
+    .mode-option__desc {
+      font-size: 0.70rem;
+      color: var(--clr-text-subtle);
+      line-height: 1.4;
+    }
+
+    /* ── Profile select ─────────────────────────────────────── */
+    .profile-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-sm);
+    }
+
+    .profile-group__label {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--clr-text-muted);
+    }
+
+    .profile-select {
+      width: 100%;
+      padding: 10px var(--sp-md);
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--r-md);
+      color: var(--clr-text);
+      font-size: 0.88rem;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 7L11 1' stroke='%236B7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      cursor: pointer;
+      outline: none;
+      transition: border-color var(--t-base);
+    }
+    .profile-select:focus {
+      border-color: var(--clr-violet);
+      box-shadow: 0 0 0 3px rgba(139,92,246,0.18);
+    }
+    .profile-select option {
+      background: #1a1f2e;
+      color: var(--clr-text);
+    }
+
+    /* ── High Clarity Mode (Pilar 3) ───────────────────────── */
+    /* When active: removes blur, sets solid opaque surfaces,
+       increases border contrast to meet WCAG 2.2 SC 1.4.3     */
+    body.hcm .glass {
+      background: #111827 !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      border-color: rgba(255,255,255,0.35) !important;
+    }
+    body.hcm .main-header {
+      background: #0d1117 !important;
+      backdrop-filter: none !important;
+      border-bottom-color: rgba(255,255,255,0.30) !important;
+    }
+    body.hcm {
+      background: #090D16 !important;
+    }
+
+    /* HCM toggle button — always visible in header */
+    #hcm-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: var(--r-pill);
+      border: 1px solid var(--clr-border-md);
+      background: var(--clr-surface);
+      color: var(--clr-text-muted);
+      cursor: pointer;
+      transition: border-color var(--t-base), color var(--t-base), background var(--t-base);
+      white-space: nowrap;
+    }
+    #hcm-btn:hover { color: var(--clr-text); border-color: var(--clr-violet); }
+    #hcm-btn.active {
+      background: rgba(139,92,246,0.15);
+      border-color: var(--clr-violet);
+      color: var(--clr-text);
+    }
+    #hcm-btn:focus-visible { outline: 2px solid var(--clr-violet); outline-offset: 2px; }
+
+    /* ── CTA button ─────────────────────────────────────────── */
+    #adapt-btn {
+      width: 100%;
+      padding: 15px;
+      font-size: 1rem;
+      gap: var(--sp-sm);
+    }
+    /* Pilar 5 — Skeleton loading state replaces raw spinner */
+    #adapt-btn .btn-spinner { display: none; }
+    #adapt-btn.loading .btn-label { display: none; }
+    #adapt-btn.loading .btn-spinner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+    }
+    #adapt-btn.loading .btn-spinner::before {
+      content: '';
+      width: 15px; height: 15px;
+      border: 2px solid rgba(255,255,255,0.25);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Skeleton screen (Pilar 5) ──────────────────────────── */
+    .skeleton-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-md);
+      padding: var(--sp-sm) 0;
+    }
+    .skeleton-line {
+      height: 13px;
+      background: linear-gradient(90deg,
+        rgba(255,255,255,0.05) 25%,
+        rgba(255,255,255,0.10) 50%,
+        rgba(255,255,255,0.05) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.6s ease infinite;
+      border-radius: 6px;
+    }
+    .skeleton-line--title { height: 22px; width: 60%; }
+    .skeleton-line--short { width: 40%; }
+    .skeleton-line--badge { height: 20px; width: 90px; border-radius: var(--r-pill); }
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .skeleton-status {
+      font-size: 0.80rem;
+      color: var(--clr-text-subtle);
+      text-align: center;
+      padding: var(--sp-sm) 0 var(--sp-xs);
+      min-height: 1.4em;
+      transition: opacity 0.3s ease;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       OUTPUT PANEL
+    ═══════════════════════════════════════════════════════ */
+    .output-panel {
+      position: relative;
+      min-height: 400px;
+    }
+
+    /* Empty / error states */
+    .output-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--sp-md);
+      padding: var(--sp-2xl) var(--sp-lg);
+      text-align: center;
+      color: var(--clr-text-subtle);
+      min-height: 300px;
+    }
+    .output-empty__icon {
+      font-size: 2.5rem;
+      opacity: 0.5;
+    }
+    .output-empty p { font-size: 0.9rem; }
+
+    /* Output header */
+    .output-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--sp-md);
+      flex-wrap: wrap;
+    }
+
+    .output-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--clr-text);
+      line-height: 1.3;
+    }
+
+    .output-universe {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: rgba(34, 211, 238, 0.10);
+      border: 1px solid rgba(34, 211, 238, 0.20);
+      border-radius: var(--r-pill);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--clr-cyan);
+      white-space: nowrap;
+    }
+
+    /* Action bar */
+    .output-actions {
+      display: flex;
+      gap: var(--sp-sm);
+      flex-wrap: wrap;
+    }
+
+    /* Prose — metaphor body text */
+    .output-prose {
+      font-size: 0.92rem;
+      color: var(--clr-text-muted);
+      line-height: 1.8;
+      white-space: pre-wrap;
+    }
+
+    /* ── Bidirectional highlight (Pilar 2a) ─────────────────── */
+    /* Hovering a mapping row highlights the prose source span   */
+    .mapping-table tbody tr { cursor: default; }
+    .mapping-table tbody tr.row-active td { background: rgba(139,92,246,0.08); }
+    span.prose-highlight {
+      background: rgba(139,92,246,0.22);
+      border-radius: 3px;
+      padding: 1px 2px;
+      transition: background var(--t-base);
+    }
+    span.prose-highlight.lit {
+      background: rgba(139,92,246,0.45);
+      outline: 1px solid rgba(139,92,246,0.6);
+    }
+
+    /* ── Mapping grid ───────────────────────────────────────── */
+    .mapping-grid-section h4 {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--clr-text-subtle);
+      margin-bottom: var(--sp-md);
+    }
+
+    .mapping-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .mapping-table th {
+      text-align: left;
+      padding: var(--sp-sm) var(--sp-md);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--clr-text-subtle);
+      border-bottom: 1px solid var(--clr-border);
+    }
+    .mapping-table td {
+      padding: 10px var(--sp-md);
+      vertical-align: top;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      color: var(--clr-text-muted);
+      line-height: 1.55;
+    }
+    .mapping-table tr:last-child td { border-bottom: none; }
+    .mapping-table tbody tr:hover td { background: rgba(255,255,255,0.025); }
+    .mapping-table td:first-child {
+      font-weight: 600;
+      color: var(--clr-violet);
+      white-space: nowrap;
+    }
+    .mapping-table td:nth-child(2) {
+      color: var(--clr-cyan);
+      white-space: nowrap;
+    }
+
+    /* Attention alert */
+    .output-alert {
+      display: flex;
+      gap: var(--sp-md);
+      padding: var(--sp-md);
+      background: rgba(251, 191, 36, 0.08);
+      border: 1px solid rgba(251, 191, 36, 0.22);
+      border-radius: var(--r-md);
+    }
+    .output-alert__icon {
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .output-alert__text {
+      font-size: 0.85rem;
+      color: var(--clr-text-muted);
+      line-height: 1.65;
+    }
+
+    /* Checklist */
+    .checklist-progress {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-md);
+    }
+    .checklist-progress__bar {
+      flex: 1;
+      height: 6px;
+      background: rgba(255,255,255,0.08);
+      border-radius: var(--r-pill);
+      overflow: hidden;
+    }
+    .checklist-progress__fill {
+      height: 100%;
+      background: var(--grad-primary);
+      border-radius: var(--r-pill);
+      transition: width var(--t-slow);
+    }
+    .checklist-progress__label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--clr-text-muted);
+      white-space: nowrap;
+    }
+
+    /* ── Chunking: "show more" for > 5 items (Pilar 2b) ────── */
+    .chunk-more-btn {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-sm);
+      width: 100%;
+      padding: 10px var(--sp-md);
+      background: var(--clr-surface);
+      border: 1px dashed var(--clr-border-md);
+      border-radius: var(--r-md);
+      color: var(--clr-text-muted);
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background var(--t-base), color var(--t-base);
+      justify-content: center;
+    }
+    .chunk-more-btn:hover { background: var(--clr-surface-md); color: var(--clr-text); }
+
+    .checklist-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-sm);
+      counter-reset: step-counter;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--sp-md);
+      padding: 12px var(--sp-md);
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--r-md);
+      cursor: pointer;
+      transition: background var(--t-base), border-color var(--t-base);
+      counter-increment: step-counter;
+    }
+    .checklist-item:hover { background: var(--clr-surface-md); }
+    .checklist-item.done {
+      border-color: rgba(52,211,153,0.30);
+      background: rgba(52,211,153,0.06);
+    }
+
+    .checklist-item__checkbox {
+      width: 20px; height: 20px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      border: 2px solid var(--clr-border-md);
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color var(--t-base), background var(--t-base);
+      margin-top: 1px;
+    }
+    .checklist-item.done .checklist-item__checkbox {
+      border-color: var(--clr-green);
+      background: var(--clr-green);
+    }
+    .checklist-item__check-svg {
+      width: 10px; height: 10px;
+      stroke: #fff;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      opacity: 0;
+      transition: opacity var(--t-fast);
+    }
+    .checklist-item.done .checklist-item__check-svg { opacity: 1; }
+
+    .checklist-item__text {
+      font-size: 0.88rem;
+      color: var(--clr-text-muted);
+      line-height: 1.6;
+      transition: color var(--t-base);
+    }
+    .checklist-item.done .checklist-item__text {
+      color: var(--clr-text-subtle);
+      text-decoration: line-through;
+    }
+
+    /* Summary */
+    .summary-body {
+      font-size: 0.92rem;
+      color: var(--clr-text-muted);
+      line-height: 1.85;
+    }
+    .summary-body strong {
+      color: var(--clr-text);
+      font-weight: 600;
+    }
+
+    /* Divider */
+    .output-divider {
+      border: none;
+      border-top: 1px solid var(--clr-border);
+      margin: 0;
+    }
+
+    /* API error notice */
+    .output-error {
+      display: flex;
+      gap: var(--sp-md);
+      padding: var(--sp-md);
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.25);
+      border-radius: var(--r-md);
+      font-size: 0.88rem;
+      color: #FCA5A5;
+      line-height: 1.6;
+    }
+
+    /* ── Responsive ─────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .workspace {
+        grid-template-columns: 1fr;
+        padding: calc(64px + var(--sp-lg)) var(--sp-md) var(--sp-xl);
+      }
+      .panel { position: static; }
+      .mode-options { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 520px) {
+      .mode-options { grid-template-columns: 1fr; }
+      .mapping-table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Header ─────────────────────────────────────────────── -->
+  <header class="main-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo-link">
+        <img src="img/logominded.png" alt="" aria-hidden="true" />
+        <span>MindED</span>
+      </a>
+
+      <button class="hamburger" id="hamburger" aria-label="Abrir menu" aria-expanded="false" aria-controls="main-nav">
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav class="main-nav" id="main-nav" role="navigation" aria-label="Principal">
+        <a href="index.html"        class="nav-link">Início</a>
+        <a href="workspace.html"    class="nav-link active">Workspace</a>
+        <a href="preferencias.html" class="nav-link">Preferências</a>
+        <!-- Pilar 3 — High Clarity Mode toggle -->
+        <button id="hcm-btn" aria-pressed="false" title="Modo Vidro Sólido — desativa transparências para maior clareza visual">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          Alto Contraste
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ── Workspace ──────────────────────────────────────────── -->
+  <main class="workspace" id="workspace">
+
+    <!-- ═══ LEFT: Input Panel ════════════════════════════════ -->
+    <section class="panel glass" aria-labelledby="input-panel-title">
+      <h2 class="panel__title" id="input-panel-title">Entrada de Conteúdo</h2>
+
+      <!-- Textarea -->
+      <div class="input-area">
+        <label class="input-area__label" for="text-input">
+          Cole aqui o texto que deseja adaptar
+        </label>
+        <textarea
+          id="text-input"
+          class="input-area__textarea"
+          placeholder="Ex.: Microsserviços são uma abordagem arquitetural para desenvolver uma aplicação como um conjunto de pequenos serviços…"
+          maxlength="8000"
+          aria-describedby="char-hint"
+        ></textarea>
+        <span class="char-count" id="char-count" aria-live="polite">0 / 8000</span>
+      </div>
+
+      <!-- Mode selector -->
+      <div class="mode-group" role="group" aria-labelledby="mode-group-label">
+        <span class="mode-group__label" id="mode-group-label">Modo Cognitivo</span>
+        <div class="mode-options" role="radiogroup">
+
+          <div class="mode-option">
+            <input type="radio" name="mode" id="mode-metaphor" value="metaphor" checked />
+            <label for="mode-metaphor">
+              <span class="mode-option__icon" aria-hidden="true">🧠</span>
+              <span class="mode-option__name">Metáfora</span>
+              <span class="mode-option__desc">Analogias didáticas do cotidiano</span>
+            </label>
+          </div>
+
+          <div class="mode-option">
+            <input type="radio" name="mode" id="mode-checklist" value="checklist" />
+            <label for="mode-checklist">
+              <span class="mode-option__icon" aria-hidden="true">✅</span>
+              <span class="mode-option__name">Microtarefas</span>
+              <span class="mode-option__desc">Checklist gamificado e acionável</span>
+            </label>
+          </div>
+
+          <div class="mode-option">
+            <input type="radio" name="mode" id="mode-summary" value="summary" />
+            <label for="mode-summary">
+              <span class="mode-option__icon" aria-hidden="true">📋</span>
+              <span class="mode-option__name">Resumo</span>
+              <span class="mode-option__desc">Tópicos semânticos essenciais</span>
+            </label>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Profile -->
+      <div class="profile-group">
+        <label class="profile-group__label" for="profile-select">Perfil / Contexto</label>
+        <select id="profile-select" class="profile-select">
+          <option value="TDAH/Iniciante">TDAH — Foco em analogias visuais</option>
+          <option value="Dislexia">Dislexia — Texto curto e direto</option>
+          <option value="Autismo">Autismo — Literal e estruturado</option>
+          <option value="Iniciante">Iniciante no assunto</option>
+          <option value="Avançado">Estudante Avançado</option>
+        </select>
+      </div>
+
+      <!-- CTA -->
+      <button
+        id="adapt-btn"
+        class="btn btn-primary"
+        aria-label="Adaptar texto com MindED"
+        disabled
+      >
+        <span class="btn-label">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          Adaptar com MindED
+        </span>
+        <div class="btn-spinner" role="status" aria-label="Processando…"></div>
+      </button>
+
+    </section>
+
+    <!-- ═══ RIGHT: Output Panel ═══════════════════════════════ -->
+    <section class="panel glass output-panel" aria-labelledby="output-panel-title" aria-live="polite" aria-atomic="false">
+      <h2 class="panel__title" id="output-panel-title">Output Cognitivo</h2>
+
+      <!-- Empty state -->
+      <div class="output-empty" id="output-empty" aria-hidden="false">
+        <div class="output-empty__icon" aria-hidden="true">✨</div>
+        <p>Cole um texto e clique em <strong style="color:var(--clr-text)">Adaptar com MindED</strong><br/>para ver o output aqui.</p>
+      </div>
+
+      <!-- Pilar 5 — Skeleton screen shown during API call -->
+      <div id="output-skeleton" class="skeleton-wrap hidden" aria-hidden="true">
+        <p class="skeleton-status" id="skeleton-status" aria-live="polite" aria-atomic="true">Analisando o texto…</p>
+        <div class="skeleton-line skeleton-line--title"></div>
+        <div class="skeleton-line skeleton-line--badge"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line skeleton-line--short"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line skeleton-line--short"></div>
+      </div>
+
+      <!-- Content will be injected here by JS -->
+      <div id="output-content" class="hidden" aria-hidden="true"></div>
+
+    </section>
+
+  </main>
+
+  <!-- ── Footer ─────────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <p>&copy; 2025 MindED. Projeto open-source de acessibilidade cognitiva.</p>
+  </footer>
+
+  <script>
+    /* =====================================================================
+       MindED Workspace — Frontend Logic
+       Implements IHC Pillars 1-5 (COGA / Sweller / Paivio / UDL)
+    ===================================================================== */
+    const API_BASE = 'http://127.0.0.1:8000';
+
+    // ── DOM refs ──────────────────────────────────────────────────────────
+    const textarea        = document.getElementById('text-input');
+    const charCount       = document.getElementById('char-count');
+    const adaptBtn        = document.getElementById('adapt-btn');
+    const profileSelect   = document.getElementById('profile-select');
+    const outputEmpty     = document.getElementById('output-empty');
+    const outputContent   = document.getElementById('output-content');
+    const outputSkeleton  = document.getElementById('output-skeleton');
+    const skeletonStatus  = document.getElementById('skeleton-status');
+    const hamburger       = document.getElementById('hamburger');
+    const nav             = document.getElementById('main-nav');
+    const hcmBtn          = document.getElementById('hcm-btn');
+
+    // ── Hamburger ─────────────────────────────────────────────────────────
+    hamburger.addEventListener('click', () => {
+      const open = nav.classList.toggle('open');
+      hamburger.classList.toggle('open', open);
+      hamburger.setAttribute('aria-expanded', String(open));
+    });
+
+    // ── Pilar 3 — High Clarity Mode toggle ───────────────────────────────
+    // Swaps glassmorphism for solid opaque surfaces (WCAG 2.2 SC 1.4.3)
+    hcmBtn.addEventListener('click', () => {
+      const active = document.body.classList.toggle('hcm');
+      hcmBtn.classList.toggle('active', active);
+      hcmBtn.setAttribute('aria-pressed', String(active));
+    });
+
+    // ── Char counter & button enabler ─────────────────────────────────────
+    textarea.addEventListener('input', () => {
+      const len = textarea.value.length;
+      charCount.textContent = `${len} / 8000`;
+      adaptBtn.disabled = len < 10;
+    });
+
+    // ── Mode helper ───────────────────────────────────────────────────────
+    function getMode() {
+      return document.querySelector('input[name="mode"]:checked').value;
+    }
+
+    // ── Escape HTML helper ────────────────────────────────────────────────
+    function esc(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // ── Markdown → HTML (bold + bullets, for summary) ─────────────────────
+    function mdToHtml(text) {
+      return esc(text)
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/^[-•] /gm, '<br/>• ')
+        .replace(/\n/g, '<br/>');
+    }
+
+    // ── Pilar 5 — Named skeleton phases ───────────────────────────────────
+    const SKELETON_PHASES = [
+      'Analisando o texto…',
+      'Identificando conceitos-chave…',
+      'Construindo analogias…',
+      'Verificando consistência…',
+      'Finalizando…',
+    ];
+    let _skeletonTimer = null;
+    function startSkeleton() {
+      outputEmpty.classList.add('hidden');
+      outputEmpty.setAttribute('aria-hidden', 'true');
+      outputContent.classList.add('hidden');
+      outputContent.setAttribute('aria-hidden', 'true');
+      outputSkeleton.classList.remove('hidden');
+      outputSkeleton.setAttribute('aria-hidden', 'false');
+      let i = 0;
+      skeletonStatus.textContent = SKELETON_PHASES[0];
+      _skeletonTimer = setInterval(() => {
+        i = Math.min(i + 1, SKELETON_PHASES.length - 1);
+        skeletonStatus.textContent = SKELETON_PHASES[i];
+      }, 1800);
+    }
+    function stopSkeleton() {
+      clearInterval(_skeletonTimer);
+      outputSkeleton.classList.add('hidden');
+      outputSkeleton.setAttribute('aria-hidden', 'true');
+    }
+
+    // ── Pilar 4a — Concept-category icon map ──────────────────────────────
+    // Dual-coding: consistent semantic icons per concept category
+    const CONCEPT_ICONS = {
+      // Storage / data
+      banco: '🗄️', dados: '🗄️', database: '🗄️', armazenamento: '📦',
+      // Logic / rules
+      regra: '⚖️', logica: '⚙️', validacao: '✅',
+      // Network / communication
+      api: '🔌', rede: '🌐', comunicacao: '📡', protocolo: '📡',
+      // Processing
+      servico: '⚙️', servicos: '⚙️', processamento: '⚙️', microsservico: '⚙️',
+      // Security
+      autenticacao: '🔒', seguranca: '🔐', token: '🔑',
+      // Scale
+      escalabilidade: '📈', performance: '⚡',
+    };
+    function iconForTerm(term) {
+      const lower = term.toLowerCase().replace(/[^a-záéíóúâêîôûãõç]/g, '');
+      for (const [key, icon] of Object.entries(CONCEPT_ICONS)) {
+        if (lower.includes(key)) return icon;
+      }
+      return '•';
+    }
+
+    // ── Pilar 2a — Highlight prose spans that match a mapping term ────────
+    // Wraps occurrences of each termo_tecnico in the prose with <span data-term>
+    function highlightProseTerms(proseEl, mappings) {
+      if (!mappings || !mappings.length) return;
+      let html = proseEl.innerHTML;
+      mappings.forEach((m, idx) => {
+        const safe = m.termo_tecnico.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const re = new RegExp(`(${safe})`, 'gi');
+        html = html.replace(re, `<span class="prose-highlight" data-term="${idx}">$1</span>`);
+      });
+      proseEl.innerHTML = html;
+    }
+
+    // ── Render: Metaphor mode ─────────────────────────────────────────────
+    function renderMetaphor(data) {
+      const maps = (data.mapeamentos || []).map((m, idx) => `
+        <tr data-term="${idx}">
+          <td><span class="term-icon" aria-hidden="true">${iconForTerm(m.termo_tecnico)}</span> ${esc(m.termo_tecnico)}</td>
+          <td>${esc(m.equivalente_metafora)}</td>
+          <td>${esc(m.explicacao_conexao)}</td>
+        </tr>`).join('');
+
+      const mappingSection = maps ? `
+        <hr class="output-divider"/>
+        <div class="mapping-grid-section">
+          <h4>Mapeamento Termo ➔ Metáfora</h4>
+          <table class="mapping-table" role="table">
+            <thead>
+              <tr>
+                <th scope="col">Termo Técnico</th>
+                <th scope="col">Na Metáfora</th>
+                <th scope="col">Por quê faz sentido</th>
+              </tr>
+            </thead>
+            <tbody>${maps}</tbody>
+          </table>
+        </div>` : '';
+
+      const alertSection = data.pontos_de_atencao ? `
+        <hr class="output-divider"/>
+        <div class="output-alert" role="note" aria-label="Limitação da metáfora">
+          <span class="output-alert__icon" aria-hidden="true">⚠️</span>
+          <p class="output-alert__text"><strong style="color:var(--clr-amber)">O que a metáfora NÃO cobre:</strong><br/>${esc(data.pontos_de_atencao)}</p>
+        </div>` : '';
+
+      return `
+        <div class="output-header">
+          <h3 class="output-title">${esc(data.titulo)}</h3>
+          ${data.universo_analogia ? `<span class="output-universe">🌐 ${esc(data.universo_analogia)}</span>` : ''}
+        </div>
+        <p class="output-prose" id="output-prose-text">${esc(data.conteudo_principal)}</p>
+        ${mappingSection}
+        ${alertSection}
+        <hr class="output-divider"/>
+        ${actionBar(data)}
+      `;
+    }
+
+    // ── Render: Checklist mode ────────────────────────────────────────────
+    let checklistState = [];
+
+    function renderChecklist(data) {
+      const steps = data.passos_acao || [];
+      checklistState = steps.map(() => false);
+
+      // Pilar 2b — Chunking: show first 5, rest behind "show more"
+      const CHUNK = 5;
+      const visible = steps.slice(0, CHUNK);
+      const hidden  = steps.slice(CHUNK);
+
+      const makeItem = (step, i) => `
+        <div class="checklist-item" role="checkbox" aria-checked="false" tabindex="0" data-idx="${i}">
+          <div class="checklist-item__checkbox" aria-hidden="true">
+            <svg class="checklist-item__check-svg" viewBox="0 0 12 10">
+              <polyline points="1.5 5.5 4.5 8.5 10.5 1.5"/>
+            </svg>
+          </div>
+          <span class="checklist-item__text">${esc(step)}</span>
+        </div>`;
+
+      const visibleHtml = visible.map((s, i) => makeItem(s, i)).join('');
+      const hiddenHtml  = hidden.map((s, i) => makeItem(s, i + CHUNK)).join('');
+
+      const showMoreBtn = hidden.length ? `
+        <button class="chunk-more-btn" id="chunk-more-btn" aria-expanded="false" aria-controls="chunk-hidden">
+          ＋ Ver mais ${hidden.length} ${hidden.length === 1 ? 'tarefa' : 'tarefas'}
+        </button>
+        <div id="chunk-hidden" class="checklist-list hidden" role="group" aria-label="Tarefas adicionais">${hiddenHtml}</div>
+      ` : '';
+
+      return `
+        <div class="output-header">
+          <h3 class="output-title">${esc(data.titulo)}</h3>
+        </div>
+        ${data.conteudo_principal ? `<p class="output-prose">${esc(data.conteudo_principal)}</p>` : ''}
+        <div class="checklist-progress" role="progressbar" aria-valuemin="0" aria-valuemax="${steps.length}" aria-valuenow="0" id="progress-bar-wrap">
+          <div class="checklist-progress__bar">
+            <div class="checklist-progress__fill" id="progress-fill" style="width:0%"></div>
+          </div>
+          <span class="checklist-progress__label" id="progress-label">0 / ${steps.length}</span>
+        </div>
+        <div class="checklist-list" id="checklist-list" role="group" aria-label="Lista de tarefas">${visibleHtml}</div>
+        ${showMoreBtn}
+        <hr class="output-divider"/>
+        ${actionBar(data)}
+      `;
+    }
+
+    // ── Render: Summary mode ──────────────────────────────────────────────
+    function renderSummary(data) {
+      return `
+        <div class="output-header">
+          <h3 class="output-title">${esc(data.titulo)}</h3>
+        </div>
+        <div class="summary-body">${mdToHtml(data.conteudo_principal)}</div>
+        <hr class="output-divider"/>
+        ${actionBar(data)}
+      `;
+    }
+
+    // ── Action bar (Pilar 4b: TTS button added) ───────────────────────────
+    function actionBar(data) {
+      const ttsSupported = 'speechSynthesis' in window;
+      const ttsBtn = ttsSupported ? `
+        <button class="btn btn-ghost btn-sm" id="tts-btn" aria-label="Ouvir conteúdo via síntese de voz">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+          Ouvir
+        </button>` : '';
+      return `
+        <div class="output-actions">
+          <button class="btn btn-ghost btn-sm" id="copy-btn" aria-label="Copiar texto adaptado">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Copiar
+          </button>
+          <button class="btn btn-ghost btn-sm" id="md-btn" aria-label="Exportar em Markdown">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Exportar MD
+          </button>
+          ${ttsBtn}
+        </div>
+      `;
+    }
+
+    // ── Show output (with all post-render interactions) ───────────────────
+    function showOutput(html, responseData) {
+      stopSkeleton();
+      outputContent.innerHTML = html;
+      outputContent.classList.remove('hidden');
+      outputContent.setAttribute('aria-hidden', 'false');
+      outputContent.classList.add('fade-up');
+
+      // Pilar 2a — Bidirectional highlight after metaphor render
+      const proseEl = outputContent.querySelector('#output-prose-text');
+      if (proseEl && responseData && responseData.mapeamentos) {
+        highlightProseTerms(proseEl, responseData.mapeamentos);
+        // Wire table rows <-> prose spans
+        outputContent.querySelectorAll('.mapping-table tbody tr').forEach(row => {
+          const termIdx = row.dataset.term;
+          row.addEventListener('mouseenter', () => {
+            row.classList.add('row-active');
+            outputContent.querySelectorAll(`.prose-highlight[data-term="${termIdx}"]`)
+              .forEach(s => s.classList.add('lit'));
+          });
+          row.addEventListener('mouseleave', () => {
+            row.classList.remove('row-active');
+            outputContent.querySelectorAll(`.prose-highlight[data-term="${termIdx}"]`)
+              .forEach(s => s.classList.remove('lit'));
+          });
+        });
+      }
+
+      // Checklist interactions
+      function wireChecklist(container) {
+        container.querySelectorAll('.checklist-item').forEach(item => {
+          function toggle() {
+            const idx  = parseInt(item.dataset.idx, 10);
+            checklistState[idx] = !checklistState[idx];
+            item.classList.toggle('done', checklistState[idx]);
+            item.setAttribute('aria-checked', String(checklistState[idx]));
+            const done  = checklistState.filter(Boolean).length;
+            const total = checklistState.length;
+            const pct   = total ? Math.round(done / total * 100) : 0;
+            const fill  = document.getElementById('progress-fill');
+            const label = document.getElementById('progress-label');
+            const wrap  = document.getElementById('progress-bar-wrap');
+            if (fill)  fill.style.width  = pct + '%';
+            if (label) label.textContent = `${done} / ${total}`;
+            if (wrap)  wrap.setAttribute('aria-valuenow', String(done));
+          }
+          item.addEventListener('click', toggle);
+          item.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggle(); } });
+        });
+      }
+      wireChecklist(outputContent);
+
+      // Pilar 2b — "Show more" expand button
+      const chunkBtn = document.getElementById('chunk-more-btn');
+      if (chunkBtn) {
+        chunkBtn.addEventListener('click', () => {
+          const hidden = document.getElementById('chunk-hidden');
+          const expanded = hidden.classList.toggle('hidden');
+          chunkBtn.setAttribute('aria-expanded', String(!expanded));
+          chunkBtn.textContent = expanded
+            ? `＋ Ver mais ${checklistState.length - 5} ${checklistState.length - 5 === 1 ? 'tarefa' : 'tarefas'}`
+            : '− Mostrar menos';
+          if (!expanded) wireChecklist(hidden);
+        });
+      }
+
+      // Copy
+      const copyBtn = document.getElementById('copy-btn');
+      if (copyBtn) {
+        copyBtn.addEventListener('click', () => {
+          navigator.clipboard.writeText(outputContent.innerText).then(() => {
+            copyBtn.textContent = '✓ Copiado';
+            setTimeout(() => { copyBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copiar'; }, 2000);
+          });
+        });
+      }
+
+      // Markdown export
+      const mdBtn = document.getElementById('md-btn');
+      if (mdBtn) {
+        mdBtn.addEventListener('click', () => {
+          const blob = new Blob([outputContent.innerText], { type: 'text/markdown' });
+          const url  = URL.createObjectURL(blob);
+          const a    = document.createElement('a');
+          a.href = url; a.download = 'minded-output.md'; a.click();
+          URL.revokeObjectURL(url);
+        });
+      }
+
+      // Pilar 4b — Text-to-Speech via Web Speech API
+      const ttsBtn = document.getElementById('tts-btn');
+      if (ttsBtn && window.speechSynthesis) {
+        let speaking = false;
+        ttsBtn.addEventListener('click', () => {
+          if (speaking) {
+            window.speechSynthesis.cancel();
+            speaking = false;
+            ttsBtn.innerHTML = ttsBtn.innerHTML.replace('⏹ Parar', 'Ouvir');
+            return;
+          }
+          const utterance = new SpeechSynthesisUtterance(outputContent.innerText);
+          utterance.lang = 'pt-BR';
+          utterance.rate = 0.92;
+          utterance.onend = () => { speaking = false; ttsBtn.innerHTML = ttsBtn.innerHTML.replace('⏹ Parar', 'Ouvir'); };
+          utterance.onerror = () => { speaking = false; };
+          window.speechSynthesis.speak(utterance);
+          speaking = true;
+          ttsBtn.innerHTML = ttsBtn.innerHTML.replace('Ouvir', '⏹ Parar');
+        });
+      }
+    }
+
+    function showError(msg) {
+      stopSkeleton();
+      outputContent.innerHTML = `
+        <div class="output-error" role="alert">
+          <span aria-hidden="true">❌</span>
+          <span><strong>Erro:</strong> ${esc(msg)}</span>
+        </div>`;
+      outputContent.classList.remove('hidden');
+      outputContent.setAttribute('aria-hidden', 'false');
+    }
+
+    // ── Adapt button click ────────────────────────────────────────────────
+    adaptBtn.addEventListener('click', async () => {
+      const text    = textarea.value.trim();
+      const mode    = getMode();
+      const profile = profileSelect.value;
+
+      if (text.length < 10) return;
+
+      // Pilar 5 — start skeleton immediately, update btn
+      startSkeleton();
+      adaptBtn.classList.add('loading');
+      adaptBtn.disabled = true;
+      // Update skeleton label per mode
+      const modeLabels = { metaphor: 'Construindo analogias…', checklist: 'Criando microtarefas…', summary: 'Sintetizando conceitos…' };
+      setTimeout(() => { if (skeletonStatus) skeletonStatus.textContent = modeLabels[mode] || SKELETON_PHASES[2]; }, 900);
+
+      try {
+        const response = await fetch(`${API_BASE}/adapt`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ texto: text, modo: mode, perfil: profile }),
+        });
+
+        if (!response.ok) {
+          const err = await response.json().catch(() => ({ detail: response.statusText }));
+          throw new Error(err.detail || `HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        let html = '';
+        if (data.modo === 'metaphor')       html = renderMetaphor(data);
+        else if (data.modo === 'checklist') html = renderChecklist(data);
+        else                            html = renderSummary(data);
+
+        showOutput(html, data);
+
+      } catch (err) {
+        showError(err.message);
+      } finally {
+        adaptBtn.classList.remove('loading');
+        adaptBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

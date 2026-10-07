@@ -6,6 +6,8 @@
   <meta name="description" content="MindED — Configure seu perfil cognitivo para receber adaptações personalizadas." />
   <title>MindED — Preferências</title>
 
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="src/css/base.css" />
   <link rel="icon" type="image/png" href="img/logominded.png" />
 
@@ -551,6 +553,25 @@
     try {
       const saved = JSON.parse(localStorage.getItem('minded_prefs') || '{}');
       Object.assign(prefs, saved);
+
+      // Restore opt-btn selections visually
+      document.querySelectorAll('.options').forEach(group => {
+        const key = group.dataset.group;
+        if (!saved[key]) return;
+        group.querySelectorAll('.opt-btn').forEach(btn => {
+          const isSelected = btn.dataset.value === saved[key];
+          btn.classList.toggle('selected', isSelected);
+          btn.setAttribute('aria-pressed', String(isSelected));
+        });
+      });
+
+      // Restore checkbox selections visually
+      if (saved.perfil_cognitivo) {
+        const vals = saved.perfil_cognitivo.split(', ');
+        document.querySelectorAll('.check-group input[type="checkbox"]').forEach(cb => {
+          cb.checked = vals.includes(cb.value);
+        });
+      }
     } catch (_) {}
   </script>
 </body>

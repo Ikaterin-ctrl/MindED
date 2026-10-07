@@ -54,9 +54,9 @@ class MetaphorMapping(BaseModel):
 
 
 class AdaptationRequest(BaseModel):
-    texto: str = Field(..., min_length=10, description="Texto original a ser adaptado")
+    texto: str = Field(..., min_length=10, max_length=8000, description="Texto original a ser adaptado")
     modo: Literal["metaphor", "checklist", "summary"] = "metaphor"
-    perfil: Optional[str] = "TDAH/Iniciante"
+    perfil: Optional[str] = Field(default="TDAH/Iniciante", max_length=100)
 
 
 class AdaptationResponse(BaseModel):
@@ -152,7 +152,7 @@ async def adapt(req: AdaptationRequest) -> AdaptationResponse:
 
     try:
         result = client.models.generate_content(
-            model="gemini-3.5-flash-lite",
+            model="gemini-1.5-flash",
             contents=prompt,
             config=types.GenerateContentConfig(
                 temperature=0.7,

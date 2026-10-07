@@ -6,7 +6,10 @@
   <meta name="description" content="MindED Workspace — cole seu texto, escolha um modo cognitivo e adapte em segundos." />
   <title>MindED — Workspace</title>
 
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="src/css/base.css" />
+  <link rel="icon" type="image/png" href="img/logominded.png" />
 
   <!-- Firebase auth guard — redirects to login.html if not signed in -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -113,7 +116,10 @@
       font-size: 0.72rem;
       color: var(--clr-text-subtle);
       pointer-events: none;
+      transition: color var(--t-base);
     }
+    .char-count--warn   { color: var(--clr-amber) !important; }
+    .char-count--danger { color: #f87171 !important; font-weight: 600; }
 
     /* ── Mode selector ──────────────────────────────────────── */
     .mode-group {
@@ -392,7 +398,7 @@
       font-size: 0.92rem;
       color: var(--clr-text-muted);
       line-height: 1.8;
-      white-space: pre-wrap;
+      white-space: pre-line;   /* preserves \n as line breaks, collapses extra spaces */
     }
 
     /* ── Bidirectional highlight (Pilar 2a) ─────────────────── */
@@ -848,12 +854,36 @@
       hcmBtn.setAttribute('aria-pressed', String(active));
     });
 
+    // ── Load saved profile from Preferências ─────────────────────────────
+    try {
+      const savedPrefs = JSON.parse(localStorage.getItem('minded_prefs') || '{}');
+      // Map perfil_cognitivo checkboxes to the closest profile-select option
+      const cogMap = {
+        tdah:     'TDAH/Iniciante',
+        dislexia: 'Dislexia',
+        autismo:  'Autismo',
+        analitico:'Avançado',
+        criativo: 'TDAH/Iniciante',
+        visual:   'TDAH/Iniciante',
+        auditivo: 'TDAH/Iniciante',
+      };
+      if (savedPrefs.perfil_cognitivo) {
+        const firstTag = savedPrefs.perfil_cognitivo.split(', ')[0];
+        const mapped = cogMap[firstTag];
+        if (mapped) profileSelect.value = mapped;
+      }
+    } catch (_) {}
+
     // ── Char counter & button enabler ─────────────────────────────────────
-    textarea.addEventListener('input', () => {
+    function updateCharCount() {
       const len = textarea.value.length;
+      const pct = len / 8000;
       charCount.textContent = `${len} / 8000`;
+      charCount.classList.toggle('char-count--warn',  pct >= 0.80 && pct < 0.95);
+      charCount.classList.toggle('char-count--danger', pct >= 0.95);
       adaptBtn.disabled = len < 10;
-    });
+    }
+    textarea.addEventListener('input', updateCharCount);
 
     // ── Mode helper ───────────────────────────────────────────────────────
     function getMode() {
@@ -870,9 +900,12 @@
     }
 
     // ── Markdown → HTML (bold + bullets, for summary) ─────────────────────
+    // NOTE: esc() must happen BEFORE bold replacement but on the inner text only,
+    // otherwise "**word**" becomes "&ast;&ast;word&ast;&ast;" and the regex never matches.
     function mdToHtml(text) {
-      return esc(text)
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      return text
+        .replace(/\*\*(.*?)\*\*/g, (_, inner) => `<strong>${esc(inner)}</strong>`)
+        .replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' })[c])
         .replace(/^[-•] /gm, '<br/>• ')
         .replace(/\n/g, '<br/>');
     }
@@ -1056,7 +1089,7 @@
       const ttsBtn = ttsSupported ? `
         <button class="btn btn-ghost btn-sm" id="tts-btn" aria-label="Ouvir conteúdo via síntese de voz">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
-          Ouvir
+          <span class="tts-label">Ouvir</span>
         </button>` : '';
       return `
         <div class="output-actions">
@@ -1129,13 +1162,16 @@
       const chunkBtn = document.getElementById('chunk-more-btn');
       if (chunkBtn) {
         chunkBtn.addEventListener('click', () => {
-          const hidden = document.getElementById('chunk-hidden');
-          const expanded = hidden.classList.toggle('hidden');
-          chunkBtn.setAttribute('aria-expanded', String(!expanded));
-          chunkBtn.textContent = expanded
-            ? `＋ Ver mais ${checklistState.length - 5} ${checklistState.length - 5 === 1 ? 'tarefa' : 'tarefas'}`
+          const hiddenGroup = document.getElementById('chunk-hidden');
+          const isNowHidden = hiddenGroup.classList.toggle('hidden');
+          // isNowHidden === true  → acabou de ser ocultado (collapsed)
+          // isNowHidden === false → acabou de ser mostrado (expanded)
+          chunkBtn.setAttribute('aria-expanded', String(!isNowHidden));
+          const remaining = checklistState.length - 5;
+          chunkBtn.textContent = isNowHidden
+            ? `＋ Ver mais ${remaining} ${remaining === 1 ? 'tarefa' : 'tarefas'}`
             : '− Mostrar menos';
-          if (!expanded) wireChecklist(hidden);
+          if (!isNowHidden) wireChecklist(hiddenGroup);
         });
       }
 
@@ -1165,32 +1201,45 @@
       // Pilar 4b — Text-to-Speech via Web Speech API
       const ttsBtn = document.getElementById('tts-btn');
       if (ttsBtn && window.speechSynthesis) {
+        const ttsLabel = ttsBtn.querySelector('.tts-label');
         let speaking = false;
+
+        function setTtsStopped() {
+          speaking = false;
+          if (ttsLabel) ttsLabel.textContent = 'Ouvir';
+          ttsBtn.setAttribute('aria-label', 'Ouvir conteúdo via síntese de voz');
+        }
+
         ttsBtn.addEventListener('click', () => {
           if (speaking) {
             window.speechSynthesis.cancel();
-            speaking = false;
-            ttsBtn.innerHTML = ttsBtn.innerHTML.replace('⏹ Parar', 'Ouvir');
+            setTtsStopped();
             return;
           }
           const utterance = new SpeechSynthesisUtterance(outputContent.innerText);
           utterance.lang = 'pt-BR';
           utterance.rate = 0.92;
-          utterance.onend = () => { speaking = false; ttsBtn.innerHTML = ttsBtn.innerHTML.replace('⏹ Parar', 'Ouvir'); };
-          utterance.onerror = () => { speaking = false; };
+          utterance.onend  = setTtsStopped;
+          utterance.onerror = setTtsStopped;
           window.speechSynthesis.speak(utterance);
           speaking = true;
-          ttsBtn.innerHTML = ttsBtn.innerHTML.replace('Ouvir', '⏹ Parar');
+          if (ttsLabel) ttsLabel.textContent = '⏹ Parar';
+          ttsBtn.setAttribute('aria-label', 'Parar síntese de voz');
         });
       }
     }
 
     function showError(msg) {
       stopSkeleton();
+      // Detect offline / API unreachable and show actionable guidance
+      const isOffline = msg.includes('Failed to fetch') || msg.includes('NetworkError') || msg.includes('fetch');
+      const friendlyMsg = isOffline
+        ? 'Não foi possível conectar à API. Verifique se o servidor está rodando:<br/><code style="font-size:0.8rem;opacity:0.8">cd api &amp;&amp; uvicorn main:app --host 127.0.0.1 --port 8000</code>'
+        : esc(msg);
       outputContent.innerHTML = `
         <div class="output-error" role="alert">
           <span aria-hidden="true">❌</span>
-          <span><strong>Erro:</strong> ${esc(msg)}</span>
+          <span><strong>${isOffline ? 'API offline' : 'Erro'}:</strong> ${friendlyMsg}</span>
         </div>`;
       outputContent.classList.remove('hidden');
       outputContent.setAttribute('aria-hidden', 'false');

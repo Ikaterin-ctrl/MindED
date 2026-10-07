@@ -6,7 +6,10 @@
   <meta name="description" content="MindED — Estação cognitiva para neurodivergentes. Adapte qualquer texto em metáforas, microtarefas ou resumos semânticos." />
   <title>MindED — Adapte seu Aprendizado</title>
 
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="src/css/base.css" />
+  <link rel="icon" type="image/png" href="img/logominded.png" />
 
   <style>
     /* ── Landing-specific ─────────────────────────────────── */
@@ -148,6 +151,9 @@
       .landing__cta { flex-direction: column; width: 100%; }
       .landing__cta .btn { width: 100%; }
     }
+
+    /* Offset fixed header so anchor targets aren't hidden beneath it */
+    #features { scroll-margin-top: 80px; }
   </style>
 </head>
 <body>

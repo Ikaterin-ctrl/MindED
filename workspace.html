@@ -62,11 +62,10 @@
     }
 
     .panel__title {
-      font-size: 0.70rem;
-      font-weight: 600;
-      letter-spacing: 0.09em;
-      text-transform: uppercase;
-      color: var(--clr-text-subtle);
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0;
+      color: var(--clr-text-muted);
       padding-bottom: var(--sp-sm);
       border-bottom: 1px solid var(--clr-border);
     }
@@ -372,11 +371,9 @@
 
     /* ── Mapping grid ───────────────────────────────────────── */
     .mapping-grid-section h4 {
-      font-size: 0.78rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--clr-text-subtle);
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--clr-text-muted);
       margin-bottom: var(--sp-md);
     }
     .mapping-table {
@@ -389,8 +386,6 @@
       padding: var(--sp-sm) var(--sp-md);
       font-size: 0.75rem;
       font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
       color: var(--clr-text-subtle);
       border-bottom: 1px solid var(--clr-border);
     }
@@ -563,7 +558,7 @@
       padding: 7px 16px;
       font-size: 0.82rem;
       font-weight: 600;
-      border-radius: var(--r-pill);
+      border-radius: var(--r-sm);
       border: 1px solid rgba(239,68,68,0.40);
       background: rgba(239,68,68,0.12);
       color: #FCA5A5;
@@ -594,8 +589,8 @@
       font-size: 0.78rem;
       font-weight: 500;
       background: var(--clr-surface);
-      border: 1px solid var(--clr-border);
-      border-radius: var(--r-pill);
+      border: 1px solid var(--clr-border-md);
+      border-radius: var(--r-sm);
       color: var(--clr-text-muted);
       cursor: pointer;
       transition: border-color var(--t-base), background var(--t-base), color var(--t-base);
@@ -603,7 +598,7 @@
     }
     .example-btn:hover {
       border-color: var(--clr-violet);
-      background: rgba(139,92,246,0.08);
+      background: rgba(124,92,237,0.07);
       color: var(--clr-text);
     }
     .example-btn:focus-visible { outline: 2px solid var(--clr-violet); outline-offset: 2px; }
@@ -616,16 +611,16 @@
       padding: 7px 14px;
       font-size: 0.80rem;
       font-weight: 600;
-      background: rgba(34,211,238,0.08);
-      border: 1px solid rgba(34,211,238,0.22);
-      border-radius: var(--r-pill);
-      color: var(--clr-cyan);
+      background: transparent;
+      border: 1px solid var(--clr-border-md);
+      border-radius: var(--r-sm);
+      color: var(--clr-text-muted);
       cursor: pointer;
-      transition: background var(--t-base), border-color var(--t-base);
+      transition: background var(--t-base), border-color var(--t-base), color var(--t-base);
       font-family: var(--font-body);
     }
-    .simplify-btn:hover { background: rgba(34,211,238,0.15); border-color: rgba(34,211,238,0.40); }
-    .simplify-btn:focus-visible { outline: 2px solid var(--clr-cyan); outline-offset: 2px; }
+    .simplify-btn:hover { background: var(--clr-surface-md); border-color: var(--clr-border-md); color: var(--clr-text); }
+    .simplify-btn:focus-visible { outline: 2px solid var(--clr-violet); outline-offset: 2px; }
 
     /* ── Botão exportar PDF ──────────────────────────────────── */
     .pdf-btn {
@@ -635,16 +630,16 @@
       padding: 7px 14px;
       font-size: 0.80rem;
       font-weight: 600;
-      background: rgba(52,211,153,0.08);
-      border: 1px solid rgba(52,211,153,0.22);
-      border-radius: var(--r-pill);
-      color: var(--clr-green);
+      background: transparent;
+      border: 1px solid var(--clr-border-md);
+      border-radius: var(--r-sm);
+      color: var(--clr-text-muted);
       cursor: pointer;
-      transition: background var(--t-base), border-color var(--t-base);
+      transition: background var(--t-base), border-color var(--t-base), color var(--t-base);
       font-family: var(--font-body);
     }
-    .pdf-btn:hover { background: rgba(52,211,153,0.15); border-color: rgba(52,211,153,0.40); }
-    .pdf-btn:focus-visible { outline: 2px solid var(--clr-green); outline-offset: 2px; }
+    .pdf-btn:hover { background: var(--clr-surface-md); border-color: var(--clr-border-md); color: var(--clr-text); }
+    .pdf-btn:focus-visible { outline: 2px solid var(--clr-violet); outline-offset: 2px; }
 
     /* ── Flashcards ──────────────────────────────────────────── */
     .flashcard-section {
@@ -653,11 +648,9 @@
       gap: var(--sp-md);
     }
     .flashcard-section__title {
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--clr-text-subtle);
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--clr-text-muted);
     }
     .flashcard-nav {
       display: flex;

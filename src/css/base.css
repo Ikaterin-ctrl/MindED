@@ -379,6 +379,71 @@ body.theme-clean .glass {
   background: rgba(255,255,255,0.07) !important;
 }
 
+/* ── Light theme ─────────────────────────────────────────── */
+body.theme-light {
+  --clr-bg:          #F5F5F7;
+  --clr-bg-alt:      #FFFFFF;
+  --clr-surface:     rgba(0,0,0,0.04);
+  --clr-surface-md:  rgba(0,0,0,0.06);
+  --clr-surface-hi:  rgba(0,0,0,0.08);
+  --clr-border:      rgba(0,0,0,0.10);
+  --clr-border-md:   rgba(0,0,0,0.16);
+  --clr-text:        #1A1A1A;
+  --clr-text-muted:  #555555;
+  --clr-text-subtle: #888888;
+  --clr-violet:      #6D3DE0;
+  --clr-cyan:        #0891B2;
+  --clr-green:       #059669;
+  --clr-amber:       #B45309;
+  --grad-primary:    linear-gradient(135deg, #6D3DE0 0%, #0891B2 100%);
+  --shadow-card:     0 4px 20px rgba(0,0,0,0.10);
+  background: linear-gradient(135deg, rgba(109,61,224,0.05) 0%, transparent 60%),
+              #F5F5F7 !important;
+  background-attachment: fixed;
+}
+body.theme-light .glass {
+  background: rgba(255,255,255,0.88) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border-color: rgba(0,0,0,0.09) !important;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.07) !important;
+}
+body.theme-light .main-header {
+  background: rgba(245,245,247,0.90) !important;
+  border-bottom-color: rgba(0,0,0,0.09) !important;
+}
+body.theme-light .profile-select,
+body.theme-light .input-area__textarea {
+  background: #fff !important;
+  color: #1A1A1A !important;
+  border-color: rgba(0,0,0,0.13) !important;
+}
+body.theme-light .input-area__textarea::placeholder { color: #aaa !important; }
+body.theme-light .profile-select option { background: #fff; color: #1A1A1A; }
+body.theme-light .btn-ghost {
+  background: rgba(0,0,0,0.04) !important;
+  color: #555 !important;
+  border-color: rgba(0,0,0,0.11) !important;
+}
+body.theme-light .btn-ghost:hover {
+  background: rgba(0,0,0,0.08) !important;
+  color: #1A1A1A !important;
+}
+body.theme-light .a11y-trigger,
+body.theme-light .a11y-panel {
+  background: rgba(255,255,255,0.96) !important;
+  border-color: rgba(0,0,0,0.11) !important;
+}
+body.theme-light .a11y-toggle { color: #555 !important; }
+body.theme-light .a11y-toggle:hover { color: #1A1A1A !important; background: rgba(0,0,0,0.05) !important; }
+body.theme-light .history-panel {
+  background: rgba(245,245,247,0.98) !important;
+  border-color: rgba(0,0,0,0.09) !important;
+}
+body.theme-light .question-card { background: rgba(0,0,0,0.03) !important; }
+body.theme-light .flashcard__front { background: #fff !important; border-color: rgba(0,0,0,0.10) !important; }
+body.theme-light .flashcard__back { background: rgba(109,61,224,0.08) !important; }
+
 /* ── Focus Mode — hides nav, footer, reduces chrome ──────── */
 body.focus-mode .main-header .main-nav { opacity: 0; pointer-events: none; }
 body.focus-mode .main-header .logo-link span { display: none; }
@@ -512,9 +577,9 @@ body.fontsize-lg  { --font-size-base: 19px; }
 
 /* Section divider label inside panel */
 .a11y-panel__label {
-  font-size: 0.68rem;
+  font-size: 0.70rem;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--clr-text-subtle);
   padding-bottom: 4px;
@@ -640,23 +705,24 @@ body.fontsize-lg  { --font-size-base: 19px; }
   filter: drop-shadow(0 0 16px rgba(139,92,246,0.5));
 }
 .onboard-modal__head h2 {
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--clr-text);
 }
 .onboard-modal__head p {
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   color: var(--clr-text-muted);
   margin: 0;
+  line-height: 1.6;
 }
 
 /* Question block */
 .onboard-q { display: flex; flex-direction: column; gap: var(--sp-sm); }
 .onboard-q__label {
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: var(--clr-text);
-  line-height: 1.4;
+  line-height: 1.5;
 }
 .onboard-opt-label {
   font-weight: 400;

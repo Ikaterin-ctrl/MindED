@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="MindED — Estação cognitiva para neurodivergentes. Adapte qualquer texto em metáforas, microtarefas ou resumos semânticos." />
-  <title>MindED — Adapte seu Aprendizado</title>
+  <meta name="description" content="MindED — Transforma textos difíceis em linguagem que faz sentido para você. Para quem tem TDAH, dislexia, autismo ou simplesmente prefere aprender de outra forma." />
+  <title>MindED — Aprenda do seu jeito</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -12,7 +12,7 @@
   <link rel="icon" type="image/png" href="img/logominded.png" />
 
   <style>
-    /* ── Landing-specific ─────────────────────────────────── */
+    /* ── Landing ─────────────────────────────────────────────── */
     .landing {
       display: flex;
       flex-direction: column;
@@ -24,64 +24,63 @@
       gap: var(--sp-xl);
     }
 
-    /* Logo */
     .landing__logo {
-      width: 72px;
-      height: 72px;
+      width: 64px;
+      height: 64px;
       object-fit: contain;
-      filter: drop-shadow(0 0 24px rgba(139,92,246,0.5));
+      filter: drop-shadow(0 0 20px rgba(139,92,246,0.45));
     }
 
-    /* Badge */
-    .landing__badge {
+    /* Tag pequena de contexto */
+    .landing__tag {
       display: inline-flex;
       align-items: center;
-      gap: var(--sp-sm);
-      padding: 6px 16px;
+      gap: 7px;
+      padding: 5px 14px;
       border-radius: var(--r-pill);
-      background: rgba(139, 92, 246, 0.12);
-      border: 1px solid rgba(139, 92, 246, 0.30);
+      background: rgba(139, 92, 246, 0.10);
+      border: 1px solid rgba(139, 92, 246, 0.25);
       color: var(--clr-violet);
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       font-weight: 600;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
     }
-    .landing__badge::before {
+    .landing__tag::before {
       content: '';
       width: 6px; height: 6px;
       border-radius: 50%;
       background: var(--clr-violet);
-      box-shadow: 0 0 8px var(--clr-violet);
     }
 
     /* Headline */
     .landing__headline {
-      max-width: 700px;
+      max-width: 660px;
     }
     .landing__headline h1 {
-      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      font-size: clamp(2.2rem, 4.8vw, 3.6rem);
       font-weight: 700;
       line-height: 1.1;
       letter-spacing: -0.03em;
       color: var(--clr-text);
       margin-bottom: var(--sp-md);
     }
-    .landing__headline h1 span {
+    .landing__headline h1 em {
+      font-style: normal;
       background: var(--grad-primary);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
     .landing__headline p {
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       color: var(--clr-text-muted);
-      line-height: 1.75;
-      max-width: 560px;
+      line-height: 1.8;
+      max-width: 520px;
       margin: 0 auto;
     }
 
-    /* CTA group */
+    /* CTAs */
     .landing__cta {
       display: flex;
       align-items: center;
@@ -90,12 +89,12 @@
       justify-content: center;
     }
 
-    /* Feature cards */
+    /* Cards de funcionalidades */
     .features {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: var(--sp-lg);
-      max-width: 900px;
+      max-width: 860px;
       width: 100%;
     }
 
@@ -108,52 +107,106 @@
     }
 
     .feature-card__icon {
-      width: 44px; height: 44px;
+      width: 40px; height: 40px;
       border-radius: var(--r-md);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.3rem;
-      margin-bottom: var(--sp-xs);
+      margin-bottom: 2px;
+    }
+    /* SVG icons sem emoji */
+    .feature-card__icon svg {
+      width: 20px; height: 20px;
+      flex-shrink: 0;
     }
     .feature-card__icon--violet {
-      background: rgba(139, 92, 246, 0.15);
-      border: 1px solid rgba(139, 92, 246, 0.25);
+      background: rgba(139, 92, 246, 0.12);
+      border: 1px solid rgba(139, 92, 246, 0.22);
       color: var(--clr-violet);
     }
     .feature-card__icon--cyan {
-      background: rgba(34, 211, 238, 0.12);
-      border: 1px solid rgba(34, 211, 238, 0.20);
+      background: rgba(34, 211, 238, 0.10);
+      border: 1px solid rgba(34, 211, 238, 0.18);
       color: var(--clr-cyan);
     }
     .feature-card__icon--green {
-      background: rgba(52, 211, 153, 0.12);
-      border: 1px solid rgba(52, 211, 153, 0.20);
+      background: rgba(52, 211, 153, 0.10);
+      border: 1px solid rgba(52, 211, 153, 0.18);
       color: var(--clr-green);
     }
 
     .feature-card h3 {
-      font-size: 0.95rem;
+      font-size: 0.93rem;
       font-weight: 600;
       color: var(--clr-text);
     }
     .feature-card p {
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       color: var(--clr-text-muted);
-      line-height: 1.65;
+      line-height: 1.7;
     }
 
+    /* Secção "como funciona" */
+    .how-section {
+      max-width: 860px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-md);
+      text-align: left;
+    }
+    .how-section__title {
+      font-size: 0.76rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--clr-text-subtle);
+      text-align: center;
+      margin-bottom: var(--sp-sm);
+    }
+    .how-steps {
+      display: flex;
+      gap: var(--sp-lg);
+      align-items: flex-start;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .how-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--sp-sm);
+      text-align: center;
+      max-width: 200px;
+    }
+    .how-step__num {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--clr-surface-md);
+      border: 1px solid var(--clr-border-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--clr-violet);
+    }
+    .how-step p {
+      font-size: 0.82rem;
+      line-height: 1.6;
+      color: var(--clr-text-muted);
+    }
+
+    #como-funciona { scroll-margin-top: 80px; }
+
     @media (max-width: 720px) {
-      .features { grid-template-columns: 1fr; max-width: 420px; }
+      .features { grid-template-columns: 1fr; max-width: 400px; }
       .landing { padding: var(--sp-xl) var(--sp-md); }
     }
     @media (max-width: 480px) {
       .landing__cta { flex-direction: column; width: 100%; }
       .landing__cta .btn { width: 100%; }
     }
-
-    /* Offset fixed header so anchor targets aren't hidden beneath it */
-    #features { scroll-margin-top: 80px; }
   </style>
 </head>
 <body>
@@ -171,10 +224,10 @@
       </button>
 
       <nav class="main-nav" id="main-nav" role="navigation" aria-label="Principal">
-        <a href="index.html"      class="nav-link active">Início</a>
-        <a href="workspace.html"  class="nav-link">Workspace</a>
+        <a href="index.html"        class="nav-link active">Início</a>
+        <a href="workspace.html"    class="nav-link">Workspace</a>
         <a href="preferencias.html" class="nav-link">Preferências</a>
-        <a href="login.html"      class="btn btn-primary btn-sm">Começar agora</a>
+        <a href="login.html"        class="btn btn-primary btn-sm">Começar</a>
       </nav>
     </div>
   </header>
@@ -183,7 +236,7 @@
   <main class="page-wrap">
     <section class="landing" aria-labelledby="landing-headline">
 
-      <span class="landing__badge fade-up" style="animation-delay:0.05s">Acessibilidade Cognitiva</span>
+      <span class="landing__tag fade-up" style="animation-delay:0.05s">Para mentes que aprendem diferente</span>
 
       <img
         src="img/logominded.png"
@@ -194,43 +247,70 @@
 
       <div class="landing__headline fade-up" style="animation-delay:0.2s">
         <h1 id="landing-headline">
-          Textos difíceis,<br />
-          <span>adaptados para você.</span>
+          Qualquer texto.<br />
+          <em>Do seu jeito.</em>
         </h1>
         <p>
-          O MindED transforma qualquer material de estudo em metáforas do cotidiano,
-          microtarefas acionáveis ou resumos de alto contraste — no seu ritmo, no seu perfil.
+          Cole qualquer coisa difícil de ler — artigo, manual, enunciado —
+          e o MindED transforma numa linguagem que funciona para você.
+          Sem jargão, sem frustração.
         </p>
       </div>
 
       <div class="landing__cta fade-up" style="animation-delay:0.35s">
         <a href="login.html" class="btn btn-primary">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          Adaptar com MindED
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Experimentar agora
         </a>
-        <a href="#features" class="btn btn-ghost">Ver como funciona</a>
+        <a href="#como-funciona" class="btn btn-ghost">Como funciona</a>
       </div>
 
-      <div class="features fade-up" id="features" style="animation-delay:0.5s" role="list">
+      <!-- Feature cards -->
+      <div class="features fade-up" style="animation-delay:0.5s" role="list">
 
         <article class="feature-card glass" role="listitem">
-          <div class="feature-card__icon feature-card__icon--violet" aria-hidden="true">🧠</div>
-          <h3>Metaphor Engine</h3>
-          <p>Converte teoria abstrata em analogias do cotidiano — mapeamento termo a termo com validação de consistência.</p>
+          <div class="feature-card__icon feature-card__icon--violet" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          </div>
+          <h3>Metáforas do quotidiano</h3>
+          <p>Conceitos abstractos viram analogias concretas com coisas que você já conhece.</p>
         </article>
 
         <article class="feature-card glass" role="listitem">
-          <div class="feature-card__icon feature-card__icon--cyan" aria-hidden="true">✅</div>
-          <h3>Microtarefas</h3>
-          <p>Transforma o conteúdo em um checklist sequencial e gamificado para você marcar o progresso em tempo real.</p>
+          <div class="feature-card__icon feature-card__icon--cyan" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          </div>
+          <h3>Passos pequenos</h3>
+          <p>O conteúdo divide-se em tarefas que cabem numa única acção. Sem sobrecarga.</p>
         </article>
 
         <article class="feature-card glass" role="listitem">
-          <div class="feature-card__icon feature-card__icon--green" aria-hidden="true">📋</div>
-          <h3>Resumo Semântico</h3>
-          <p>Tópicos sintetizados com palavras-chave destacadas para leitura dinâmica sem fadiga visual.</p>
+          <div class="feature-card__icon feature-card__icon--green" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          </div>
+          <h3>Resumo sem excesso</h3>
+          <p>Só o que importa, destacado. Leitura rápida sem perder o essencial.</p>
         </article>
 
+      </div>
+
+      <!-- Como funciona -->
+      <div class="how-section fade-up" id="como-funciona" style="animation-delay:0.6s">
+        <p class="how-section__title">Como funciona</p>
+        <div class="how-steps">
+          <div class="how-step">
+            <div class="how-step__num">1</div>
+            <p>Cole o texto que quer entender</p>
+          </div>
+          <div class="how-step">
+            <div class="how-step__num">2</div>
+            <p>Escolha como quer receber: metáfora, passos ou resumo</p>
+          </div>
+          <div class="how-step">
+            <div class="how-step__num">3</div>
+            <p>Leia, ouça ou guarde no histórico</p>
+          </div>
+        </div>
       </div>
 
     </section>
@@ -238,11 +318,10 @@
 
   <!-- ── Footer ─────────────────────────────────────────────── -->
   <footer class="site-footer">
-    <p>&copy; 2025 MindED. Projeto open-source de Iniciação Científica sobre acessibilidade cognitiva.</p>
+    <p>&copy; 2025 MindED &mdash; Projecto open-source de acessibilidade cognitiva.</p>
   </footer>
 
   <script>
-    // Hamburger menu toggle
     const hamburger = document.getElementById('hamburger');
     const nav       = document.getElementById('main-nav');
     hamburger.addEventListener('click', () => {
@@ -250,7 +329,6 @@
       hamburger.classList.toggle('open', open);
       hamburger.setAttribute('aria-expanded', String(open));
     });
-    // Close on nav link click (mobile)
     nav.querySelectorAll('.nav-link, .btn').forEach(el => {
       el.addEventListener('click', () => {
         nav.classList.remove('open');

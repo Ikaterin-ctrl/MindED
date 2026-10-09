@@ -53,20 +53,27 @@ class MetaphorMapping(BaseModel):
     explicacao_conexao: str = Field(description="Por que essa correspondência é precisa")
 
 
+class Question(BaseModel):
+    pergunta: str = Field(description="A pergunta de compreensão")
+    dica: str = Field(description="Uma dica curta para ajudar a responder")
+    resposta: str = Field(description="A resposta completa")
+
+
 class AdaptationRequest(BaseModel):
     texto: str = Field(..., min_length=10, max_length=8000, description="Texto original a ser adaptado")
-    modo: Literal["metaphor", "checklist", "summary"] = "metaphor"
+    modo: Literal["metaphor", "checklist", "summary", "questions"] = "metaphor"
     perfil: Optional[str] = Field(default="TDAH/Iniciante", max_length=100)
 
 
 class AdaptationResponse(BaseModel):
-    modo: Literal["metaphor", "checklist", "summary"]
+    modo: Literal["metaphor", "checklist", "summary", "questions"]
     titulo: str
     universo_analogia: Optional[str] = None
     conteudo_principal: str
     mapeamentos: Optional[List[MetaphorMapping]] = None
     passos_acao: Optional[List[str]] = None
     pontos_de_atencao: Optional[str] = None
+    perguntas: Optional[List[Question]] = None
 
 
 # ---------------------------------------------------------------------------
@@ -116,8 +123,8 @@ Responda EXCLUSIVAMENTE em JSON válido com este schema exato:
   ]
 }}"""
 
-    # summary
-    return f"""Você é um especialista em síntese cognitiva e clareza textual.
+    if req.modo == "summary":
+        return f"""Você é um especialista em síntese cognitiva e clareza textual.
 Perfil do estudante: {perfil}
 
 Texto a adaptar:
@@ -130,6 +137,33 @@ Responda EXCLUSIVAMENTE em JSON válido com este schema exato:
   "titulo": "título claro e direto do resumo",
   "conteudo_principal": "resumo em tópicos usando markdown — bullets com **palavra-chave** em negrito no início de cada ponto"
 }}"""
+
+    # questions
+    return f"""Você é um educador especialista em avaliação formativa e acessibilidade cognitiva.
+Perfil do estudante: {perfil}
+
+Texto original:
+\"\"\"
+{req.texto}
+\"\"\"
+
+Gere perguntas de compreensão que ajudem o estudante a consolidar o que leu.
+As perguntas devem ser concretas, sem ambiguidade, adequadas ao perfil indicado.
+
+Responda EXCLUSIVAMENTE em JSON válido com este schema exato:
+{{
+  "titulo": "título motivador para o conjunto de perguntas",
+  "conteudo_principal": "breve instrução sobre como usar as perguntas (1 frase)",
+  "perguntas": [
+    {{
+      "pergunta": "pergunta de compreensão clara e direta",
+      "dica": "uma dica curta que ajuda sem dar a resposta",
+      "resposta": "resposta completa e acessível"
+    }}
+  ]
+}}
+
+Gere entre 4 e 6 perguntas. Varie entre factuais, de interpretação e de aplicação."""
 
 
 # ---------------------------------------------------------------------------

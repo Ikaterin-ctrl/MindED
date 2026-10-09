@@ -24,47 +24,52 @@
       gap: var(--sp-xl);
     }
 
-    .landing__logo {
-      width: 64px;
-      height: 64px;
-      object-fit: contain;
+    /* Doodle illustration above headline */
+    .landing__doodle {
+      opacity: 0.85;
     }
 
-    /* Tag pequena de contexto */
+    /* Tag */
     .landing__tag {
       display: inline-block;
-      padding: 0;
       color: var(--clr-text-subtle);
-      font-size: 0.80rem;
-      font-weight: 400;
-      letter-spacing: 0;
+      font-size: 0.85rem;
       font-style: italic;
+      font-family: var(--font-body);
     }
 
     /* Headline */
     .landing__headline {
-      max-width: 660px;
+      max-width: 680px;
     }
     .landing__headline h1 {
-      font-size: clamp(2.2rem, 4.8vw, 3.6rem);
+      font-size: clamp(2.6rem, 5.5vw, 4.2rem);
       font-weight: 700;
-      line-height: 1.1;
-      letter-spacing: -0.03em;
+      line-height: 1.05;
       color: var(--clr-text);
       margin-bottom: var(--sp-md);
     }
+    /* Wavy underline on the highlighted word — pure CSS, no JS */
     .landing__headline h1 em {
       font-style: normal;
-      background: var(--grad-primary);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: var(--clr-accent);
+      position: relative;
+      white-space: nowrap;
+    }
+    .landing__headline h1 em::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0;
+      bottom: -4px;
+      height: 3px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='6'%3E%3Cpath d='M0 3 Q5 0 10 3 Q15 6 20 3' fill='none' stroke='%232A9D7C' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x center;
+      background-size: 20px 6px;
     }
     .landing__headline p {
-      font-size: 1.05rem;
+      font-size: 1rem;
       color: var(--clr-text-muted);
-      line-height: 1.8;
-      max-width: 520px;
+      line-height: 1.85;
+      max-width: 500px;
       margin: 0 auto;
     }
 
@@ -77,7 +82,7 @@
       justify-content: center;
     }
 
-    /* Cards de funcionalidades */
+    /* ── Feature cards ───────────────────────────────────────── */
     .features {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -92,67 +97,46 @@
       display: flex;
       flex-direction: column;
       gap: var(--sp-sm);
+      /* slightly organic border-radius */
+      border-radius: 14px 18px 14px 16px !important;
     }
 
-    .feature-card__icon {
-      width: 40px; height: 40px;
-      border-radius: var(--r-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 2px;
-    }
-    /* SVG icons sem emoji */
-    .feature-card__icon svg {
-      width: 20px; height: 20px;
-      flex-shrink: 0;
-    }
-    .feature-card__icon--violet {
-      background: rgba(139, 92, 246, 0.12);
-      border: 1px solid rgba(139, 92, 246, 0.22);
-      color: var(--clr-violet);
-    }
-    .feature-card__icon--cyan {
-      background: rgba(34, 211, 238, 0.10);
-      border: 1px solid rgba(34, 211, 238, 0.18);
-      color: var(--clr-cyan);
-    }
-    .feature-card__icon--green {
-      background: rgba(52, 211, 153, 0.10);
-      border: 1px solid rgba(52, 211, 153, 0.18);
-      color: var(--clr-green);
+    .feature-card__doodle {
+      width: 44px; height: 44px;
+      margin-bottom: var(--sp-xs);
+      color: var(--clr-accent);
+      opacity: 0.9;
     }
 
     .feature-card h3 {
-      font-size: 0.93rem;
-      font-weight: 600;
+      font-size: 1.15rem;
+      font-weight: 700;
       color: var(--clr-text);
     }
     .feature-card p {
-      font-size: 0.84rem;
+      font-size: 0.86rem;
       color: var(--clr-text-muted);
       line-height: 1.7;
     }
 
-    /* Secção "como funciona" */
+    /* ── How it works ────────────────────────────────────────── */
     .how-section {
-      max-width: 860px;
+      max-width: 760px;
       width: 100%;
       display: flex;
       flex-direction: column;
-      gap: var(--sp-md);
-      text-align: left;
+      gap: var(--sp-lg);
     }
     .how-section__title {
-      font-size: 0.82rem;
-      font-weight: 500;
-      color: var(--clr-text-subtle);
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--clr-text);
       text-align: center;
-      margin-bottom: var(--sp-sm);
     }
     .how-steps {
       display: flex;
-      gap: var(--sp-lg);
+      gap: var(--sp-xl);
       align-items: flex-start;
       justify-content: center;
       flex-wrap: wrap;
@@ -163,24 +147,26 @@
       align-items: center;
       gap: var(--sp-sm);
       text-align: center;
-      max-width: 200px;
+      max-width: 180px;
     }
     .how-step__num {
-      width: 32px; height: 32px;
-      border-radius: 50%;
-      background: var(--clr-surface-md);
-      border: 1px solid var(--clr-border-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.8rem;
+      font-family: var(--font-display);
+      font-size: 2rem;
       font-weight: 700;
-      color: var(--clr-violet);
+      color: var(--clr-accent);
+      line-height: 1;
     }
     .how-step p {
-      font-size: 0.82rem;
-      line-height: 1.6;
+      font-size: 0.84rem;
+      line-height: 1.65;
       color: var(--clr-text-muted);
+    }
+
+    /* ── Divider squiggle ────────────────────────────────────── */
+    .squiggle-divider {
+      width: 80px;
+      height: 8px;
+      opacity: 0.35;
     }
 
     #como-funciona { scroll-margin-top: 80px; }
@@ -222,14 +208,23 @@
   <main class="page-wrap">
     <section class="landing" aria-labelledby="landing-headline">
 
-      <span class="landing__tag fade-up" style="animation-delay:0.05s">Para mentes que aprendem diferente</span>
+      <!-- Hand-drawn brain doodle -->
+      <svg class="landing__doodle fade-up" style="animation-delay:0.05s" width="80" height="80" viewBox="0 0 80 80" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+        <!-- brain outline, sketch style -->
+        <path d="M40 18 C28 14 16 20 15 32 C14 38 18 43 16 49 C14 56 20 65 30 66 C35 67 38 63 40 63 C42 63 45 67 50 66 C60 65 66 56 64 49 C62 43 66 38 65 32 C64 20 52 14 40 18Z" stroke="#2A9D7C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- centre line -->
+        <path d="M40 18 C40 30 40 50 40 63" stroke="#2A9D7C" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="3 4"/>
+        <!-- left lobe wrinkles -->
+        <path d="M22 34 C25 30 30 32 28 38" stroke="#2A9D7C" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M19 45 C23 42 28 44 26 50" stroke="#2A9D7C" stroke-width="1.5" stroke-linecap="round"/>
+        <!-- right lobe wrinkles -->
+        <path d="M58 34 C55 30 50 32 52 38" stroke="#2A9D7C" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M61 45 C57 42 52 44 54 50" stroke="#2A9D7C" stroke-width="1.5" stroke-linecap="round"/>
+        <!-- little sparkle top -->
+        <path d="M40 10 L40 6 M36 12 L33 9 M44 12 L47 9" stroke="#2A9D7C" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
 
-      <img
-        src="img/logominded.png"
-        alt="MindED"
-        class="landing__logo fade-up"
-        style="animation-delay:0.1s"
-      />
+      <span class="landing__tag fade-up" style="animation-delay:0.1s">para mentes que aprendem diferente</span>
 
       <div class="landing__headline fade-up" style="animation-delay:0.2s">
         <h1 id="landing-headline">
@@ -237,64 +232,80 @@
           <em>Do seu jeito.</em>
         </h1>
         <p>
-          Cole qualquer coisa difícil de ler — artigo, manual, enunciado —
-          e o MindED transforma numa linguagem que funciona para você.
+          Cola um artigo, manual ou enunciado difícil —
+          o MindED transforma numa linguagem que funciona para você.
           Sem jargão, sem frustração.
         </p>
       </div>
 
-      <div class="landing__cta fade-up" style="animation-delay:0.35s">
+      <div class="landing__cta fade-up" style="animation-delay:0.32s">
         <a href="login.html" class="btn btn-primary">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          Experimentar agora
+          Experimentar agora →
         </a>
         <a href="#como-funciona" class="btn btn-ghost">Como funciona</a>
       </div>
 
       <!-- Feature cards -->
-      <div class="features fade-up" style="animation-delay:0.5s" role="list">
+      <div class="features fade-up" style="animation-delay:0.48s" role="list">
 
         <article class="feature-card glass" role="listitem">
-          <div class="feature-card__icon feature-card__icon--violet" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-          </div>
-          <h3>Metáforas do quotidiano</h3>
+          <!-- hand-drawn pencil doodle -->
+          <svg class="feature-card__doodle" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M8 36 L14 22 L32 6 C34 4 38 4 40 6 C42 8 42 12 40 14 L22 32 L8 36Z" stroke-width="2.2"/>
+            <path d="M28 10 L34 16" stroke-width="2"/>
+            <path d="M8 36 L12 32" stroke-width="2"/>
+          </svg>
+          <h3>Metáforas do dia a dia</h3>
           <p>Conceitos abstractos viram analogias concretas com coisas que você já conhece.</p>
         </article>
 
         <article class="feature-card glass" role="listitem">
-          <div class="feature-card__icon feature-card__icon--cyan" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
-          </div>
+          <!-- hand-drawn checklist doodle -->
+          <svg class="feature-card__doodle" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="6" y="6" width="32" height="32" rx="4" stroke-width="2.2"/>
+            <path d="M13 16 L18 21 L26 12" stroke-width="2.2"/>
+            <path d="M13 26 L31 26" stroke-width="2"/>
+            <path d="M13 32 L24 32" stroke-width="2"/>
+          </svg>
           <h3>Passos pequenos</h3>
           <p>O conteúdo divide-se em tarefas que cabem numa única acção. Sem sobrecarga.</p>
         </article>
 
         <article class="feature-card glass" role="listitem">
-          <div class="feature-card__icon feature-card__icon--green" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-          </div>
+          <!-- hand-drawn summary / lines doodle -->
+          <svg class="feature-card__doodle" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M8 12 Q22 9 36 12" stroke-width="2.2"/>
+            <path d="M8 20 Q22 17 36 20" stroke-width="2.2"/>
+            <path d="M8 28 Q18 25 26 28" stroke-width="2.2"/>
+            <circle cx="34" cy="32" r="6" stroke-width="2"/>
+            <path d="M31 32 L33 34 L37 30" stroke-width="2"/>
+          </svg>
           <h3>Resumo sem excesso</h3>
           <p>Só o que importa, destacado. Leitura rápida sem perder o essencial.</p>
         </article>
 
       </div>
 
+      <!-- Squiggle divider -->
+      <svg class="squiggle-divider fade-up" style="animation-delay:0.55s" viewBox="0 0 80 8" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M0 4 Q10 0 20 4 Q30 8 40 4 Q50 0 60 4 Q70 8 80 4" stroke="#2A9D7C" stroke-width="2" stroke-linecap="round" fill="none"/>
+      </svg>
+
       <!-- Como funciona -->
       <div class="how-section fade-up" id="como-funciona" style="animation-delay:0.6s">
         <p class="how-section__title">Como funciona</p>
         <div class="how-steps">
           <div class="how-step">
-            <div class="how-step__num">1</div>
-            <p>Cole o texto que quer entender</p>
+            <span class="how-step__num">1</span>
+            <p>Cola o texto que quer entender — ou carrega um PDF, ou cola um link</p>
           </div>
           <div class="how-step">
-            <div class="how-step__num">2</div>
+            <span class="how-step__num">2</span>
             <p>Escolha como quer receber: metáfora, passos ou resumo</p>
           </div>
           <div class="how-step">
-            <div class="how-step__num">3</div>
-            <p>Leia, ouça ou guarde no histórico</p>
+            <span class="how-step__num">3</span>
+            <p>Leia, ouça ou guarde no histórico para voltar depois</p>
           </div>
         </div>
       </div>

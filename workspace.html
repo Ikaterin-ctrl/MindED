@@ -73,13 +73,39 @@
     /* ── Input textarea ─────────────────────────────────────── */
     .input-area { position: relative; }
 
+    .input-area__top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sp-sm);
+      margin-bottom: var(--sp-sm);
+    }
+
     .input-area__label {
       display: block;
       font-size: 0.82rem;
       font-weight: 500;
       color: var(--clr-text-muted);
-      margin-bottom: var(--sp-sm);
     }
+
+    .pdf-upload-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 10px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--clr-text-muted);
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border-md);
+      border-radius: var(--r-sm);
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background var(--t-base), border-color var(--t-base), color var(--t-base);
+    }
+    .pdf-upload-btn:hover { background: var(--clr-surface-md); color: var(--clr-text); }
+    .pdf-upload-btn.loading { opacity: 0.6; pointer-events: none; }
 
     .input-area__textarea {
       width: 100%;
@@ -908,17 +934,23 @@
 
       <!-- Textarea -->
       <div class="input-area">
-        <label class="input-area__label" for="text-input">
-          Cole aqui o texto que quer entender melhor
-        </label>
+        <div class="input-area__top">
+          <label class="input-area__label" for="text-input">
+            Cole aqui o texto que quer entender melhor
+          </label>
+          <label class="pdf-upload-btn" for="pdf-upload" title="Carregar PDF">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span id="pdf-btn-label">PDF</span>
+            <input type="file" id="pdf-upload" accept=".pdf" class="sr-only" aria-label="Carregar ficheiro PDF" />
+          </label>
+        </div>
         <textarea
           id="text-input"
           class="input-area__textarea"
           placeholder="Cole aqui o texto difícil — artigo, manual, enunciado…"
-          maxlength="8000"
           aria-describedby="char-hint"
         ></textarea>
-        <span class="char-count" id="char-count" aria-live="polite">0 / 8000</span>
+        <span class="char-count" id="char-count" aria-live="polite"></span>
       </div>
 
       <!-- Mode selector -->
@@ -1675,13 +1707,63 @@
     // ── Char counter & button enabler ─────────────────────────────────────
     function updateCharCount() {
       const len = textarea.value.length;
-      const pct = len / 8000;
-      charCount.textContent = `${len} / 8000`;
-      charCount.classList.toggle('char-count--warn',  pct >= 0.80 && pct < 0.95);
-      charCount.classList.toggle('char-count--danger', pct >= 0.95);
+      charCount.textContent = len > 0 ? `${len.toLocaleString('pt')} caracteres` : '';
       adaptBtn.disabled = len < 10;
     }
     textarea.addEventListener('input', updateCharCount);
+
+    // ── PDF upload — extract text via pdf.js ──────────────────────────────
+    const pdfUpload   = document.getElementById('pdf-upload');
+    const pdfLabel    = document.querySelector('.pdf-upload-btn');
+    const pdfBtnLabel = document.getElementById('pdf-btn-label');
+
+    pdfUpload.addEventListener('change', async e => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      pdfLabel.classList.add('loading');
+      pdfBtnLabel.textContent = 'A ler…';
+
+      try {
+        // Load pdf.js legacy build (works in non-module scripts)
+        if (!window.pdfjsLib) {
+          await new Promise((res, rej) => {
+            const s = document.createElement('script');
+            s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+            s.onload = res; s.onerror = rej;
+            document.head.appendChild(s);
+          });
+          window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+            'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+
+        let fullText = '';
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const content = await page.getTextContent();
+          fullText += content.items.map(item => item.str).join(' ') + '\n\n';
+        }
+
+        fullText = fullText.trim();
+        if (fullText.length < 10) {
+          throw new Error('O PDF não tem texto extraível (pode ser uma imagem digitalizada).');
+        }
+
+        textarea.value = fullText;
+        updateCharCount();
+        textarea.focus();
+
+      } catch (err) {
+        alert('Não foi possível ler o PDF: ' + (err.message || err));
+      } finally {
+        pdfLabel.classList.remove('loading');
+        pdfBtnLabel.textContent = 'PDF';
+        pdfUpload.value = ''; // permite re-upload do mesmo ficheiro
+      }
+    });
 
     // ── Keyboard shortcut: Cmd/Ctrl + Enter ───────────────────────────────
     textarea.addEventListener('keydown', e => {

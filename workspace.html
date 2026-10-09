@@ -1063,17 +1063,18 @@
 
         <!-- Pane: PDF drop zone -->
         <div class="input-pane input-pane--pdf" id="pane-pdf" role="tabpanel" aria-labelledby="tab-pdf">
-          <div class="pdf-drop-zone" id="pdf-drop-zone">
+          <!-- The entire drop zone is a <label> so clicking anywhere opens the file picker natively -->
+          <label class="pdf-drop-zone" id="pdf-drop-zone" for="pdf-upload">
             <svg class="pdf-drop-zone__icon" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
             <span class="pdf-drop-zone__title">Arraste o PDF aqui</span>
             <span class="pdf-drop-zone__hint">ou clique para escolher um ficheiro</span>
-            <label class="pdf-upload-label" for="pdf-upload">
+            <span class="pdf-upload-label">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
               Escolher ficheiro
-            </label>
+            </span>
             <span class="pdf-drop-zone__status" id="pdf-status" aria-live="polite"></span>
             <input type="file" id="pdf-upload" accept=".pdf" class="sr-only" aria-label="Carregar ficheiro PDF" />
-          </div>
+          </label>
         </div>
 
         <!-- Pane: link -->
@@ -1865,8 +1866,11 @@
         t.classList.toggle('active', active);
         t.setAttribute('aria-selected', String(active));
       });
+      // Find which paneId this tab controls via aria-controls
+      const activeTab = document.getElementById(tabId);
+      const targetPaneId = activeTab ? activeTab.getAttribute('aria-controls') : null;
       panes.forEach(p => {
-        p.classList.toggle('active', p.getAttribute('aria-labelledby') === tabId);
+        p.classList.toggle('active', p.id === targetPaneId);
       });
     }
     tabs.forEach(t => t.addEventListener('click', () => switchTab(t.id)));
@@ -1928,13 +1932,6 @@
     }
 
     pdfUpload.addEventListener('change', e => handlePdfFile(e.target.files[0]));
-
-    // PDF: click anywhere on the drop zone (except the label itself) opens file picker
-    dropZone.addEventListener('click', e => {
-      if (!e.target.closest('label') && !e.target.closest('input')) {
-        pdfUpload.click();
-      }
-    });
 
     // PDF: drag and drop on drop zone
     dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });

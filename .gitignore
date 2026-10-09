@@ -143,3 +143,6 @@ api/.venv/
 .venv/
 venv/
 *.pyc
+
+# Firebase
+.firebase/

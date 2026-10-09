@@ -1929,6 +1929,13 @@
 
     pdfUpload.addEventListener('change', e => handlePdfFile(e.target.files[0]));
 
+    // PDF: click anywhere on the drop zone (except the label itself) opens file picker
+    dropZone.addEventListener('click', e => {
+      if (!e.target.closest('label') && !e.target.closest('input')) {
+        pdfUpload.click();
+      }
+    });
+
     // PDF: drag and drop on drop zone
     dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
     dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
@@ -1974,15 +1981,33 @@
       linkStatus.textContent = 'A buscar página…';
 
       try {
-        // Use allorigins proxy to bypass CORS
-        const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-        const res   = await fetch(proxy);
-        if (!res.ok) throw new Error(`Erro HTTP ${res.status}`);
-        const json  = await res.json();
+        // Try two CORS proxies in sequence
+        let html = null;
+        const proxies = [
+          `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
+          `https://corsproxy.io/?${encodeURIComponent(url)}`,
+        ];
+        let lastErr = null;
+        for (const proxy of proxies) {
+          try {
+            const res = await fetch(proxy, { signal: AbortSignal.timeout(10000) });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            // allorigins returns JSON {contents}, corsproxy returns raw HTML
+            const ct = res.headers.get('content-type') || '';
+            if (ct.includes('application/json')) {
+              const json = await res.json();
+              html = json.contents || '';
+            } else {
+              html = await res.text();
+            }
+            if (html && html.length > 100) break;
+          } catch (e) { lastErr = e; html = null; }
+        }
+        if (!html) throw lastErr || new Error('Ambos os proxies falharam.');
 
         // Strip HTML tags, collapse whitespace
         const tmp = document.createElement('div');
-        tmp.innerHTML = json.contents;
+        tmp.innerHTML = html;
         // Remove scripts, styles, nav, footer
         tmp.querySelectorAll('script,style,nav,footer,header,[role="navigation"]').forEach(el => el.remove());
         let text = (tmp.innerText || tmp.textContent || '').replace(/\s+/g, ' ').trim();

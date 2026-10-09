@@ -57,6 +57,71 @@
       margin: 0 auto;
     }
 
+    /* ── Mode picker (quick vs. full) ───────────────────────── */
+    .mode-picker {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-md);
+    }
+    @media (max-width: 480px) { .mode-picker { grid-template-columns: 1fr; } }
+
+    .mode-card {
+      padding: var(--sp-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-sm);
+      cursor: pointer;
+      border: 1px solid var(--clr-border-md);
+      border-radius: var(--r-lg);
+      background: var(--clr-surface);
+      transition: border-color var(--t-base), background var(--t-base);
+      text-align: left;
+    }
+    .mode-card:hover {
+      border-color: var(--clr-violet);
+      background: var(--clr-surface-md);
+    }
+    .mode-card:focus-visible { outline: 2px solid var(--clr-violet); outline-offset: 2px; }
+    .mode-card--quick { border-color: rgba(124,92,237,0.30); }
+
+    .mode-card__eyebrow {
+      font-size: 0.70rem;
+      font-weight: 600;
+      color: var(--clr-violet);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .mode-card--full .mode-card__eyebrow { color: var(--clr-text-subtle); }
+
+    .mode-card__title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--clr-text);
+      line-height: 1.3;
+    }
+    .mode-card__desc {
+      font-size: 0.82rem;
+      color: var(--clr-text-muted);
+      line-height: 1.6;
+    }
+    .mode-card__time {
+      font-size: 0.75rem;
+      color: var(--clr-text-subtle);
+      margin-top: auto;
+      padding-top: var(--sp-sm);
+    }
+
+    /* ── "Podes alterar depois" notice ──────────────────────── */
+    .prefs-notice {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.78rem;
+      color: var(--clr-text-subtle);
+      line-height: 1.55;
+    }
+    .prefs-notice svg { flex-shrink: 0; margin-top: 1px; }
+
     /* Progress bar */
     .prefs-progress {
       display: flex;
@@ -267,11 +332,29 @@
 
       <div class="prefs-hero">
         <h1>Como você aprende?</h1>
-        <p>Cinco perguntas rápidas para o MindED adaptar o conteúdo ao seu jeito.</p>
+        <p>Configure o seu perfil para que o MindED adapte o conteúdo ao seu jeito.</p>
       </div>
 
-      <!-- Progress -->
-      <div class="prefs-progress" role="progressbar" aria-valuemin="1" aria-valuemax="5" aria-valuenow="1" id="progress-wrap">
+      <!-- ── Mode picker — shown first, hides when a mode is chosen ── -->
+      <div id="mode-picker-screen">
+        <div class="mode-picker">
+          <button class="mode-card mode-card--quick" id="pick-quick" type="button">
+            <span class="mode-card__eyebrow">Recomendado</span>
+            <span class="mode-card__title">Configuração rápida</span>
+            <span class="mode-card__desc">Só o essencial — diz-nos como o seu cérebro funciona e começamos já.</span>
+            <span class="mode-card__time">≈ 30 segundos · pode completar o resto depois</span>
+          </button>
+          <button class="mode-card mode-card--full" id="pick-full" type="button">
+            <span class="mode-card__eyebrow">Completo</span>
+            <span class="mode-card__title">Configuração detalhada</span>
+            <span class="mode-card__desc">5 passos para personalizar ritmo, ambiente, formato e perfil cognitivo.</span>
+            <span class="mode-card__time">≈ 3 minutos</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Progress (hidden until full-mode starts) -->
+      <div class="prefs-progress" role="progressbar" aria-valuemin="1" aria-valuemax="5" aria-valuenow="1" id="progress-wrap" style="display:none">
         <div class="prefs-progress__bar">
           <div class="prefs-progress__fill" id="progress-fill" style="width:20%"></div>
         </div>
@@ -279,7 +362,7 @@
       </div>
 
       <!-- ── Step 1 ─────────────────────────────────────────── -->
-      <div class="step-card glass active" id="step-1" role="group" aria-labelledby="s1-title">
+      <div class="step-card glass" id="step-1" role="group" aria-labelledby="s1-title">
         <h2 id="s1-title">1. Como você prefere absorver informação?</h2>
         <p id="step-hint-1" class="step-hint" role="alert">Escolha pelo menos uma opção para continuar.</p>
 
@@ -314,6 +397,10 @@
           <span></span>
           <button class="btn btn-primary" id="next-1">Próximo →</button>
         </div>
+        <p class="prefs-notice">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Pode alterar estas preferências a qualquer momento em Preferências.
+        </p>
       </div>
 
       <!-- ── Step 2 ─────────────────────────────────────────── -->
@@ -352,6 +439,10 @@
           <button class="btn btn-ghost" id="prev-2">← Anterior</button>
           <button class="btn btn-primary" id="next-2">Próximo →</button>
         </div>
+        <p class="prefs-notice">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Pode alterar estas preferências a qualquer momento em Preferências.
+        </p>
       </div>
 
       <!-- ── Step 3 ─────────────────────────────────────────── -->
@@ -390,6 +481,10 @@
           <button class="btn btn-ghost" id="prev-3">← Anterior</button>
           <button class="btn btn-primary" id="next-3">Próximo →</button>
         </div>
+        <p class="prefs-notice">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Pode alterar estas preferências a qualquer momento em Preferências.
+        </p>
       </div>
 
       <!-- ── Step 4 ────────────────────────────────────────────── -->
@@ -463,6 +558,10 @@
           <button class="btn btn-ghost" id="prev-4">← Anterior</button>
           <button class="btn btn-primary" id="next-4">Próximo →</button>
         </div>
+        <p class="prefs-notice">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Pode seleccionar mais do que uma opção — e alterar o perfil sempre que precisar.
+        </p>
       </div>
 
       <!-- ── Modo preferido (salvo para pre-select no workspace) ── -->
@@ -487,6 +586,10 @@
       <div class="glass save-banner hidden" id="save-banner" role="alert">
         <h2>Preferências guardadas</h2>
         <p>O MindED vai usar o seu perfil para personalizar as adaptações no Workspace.</p>
+        <p class="prefs-notice" style="margin-top:-8px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Pode voltar a esta página e alterar tudo quando quiser.
+        </p>
         <a href="workspace.html" class="btn btn-primary">Ir para o Workspace →</a>
       </div>
 
@@ -506,6 +609,38 @@
       const open = nav.classList.toggle('open');
       hamburger.classList.toggle('open', open);
       hamburger.setAttribute('aria-expanded', String(open));
+    });
+
+    /* ── Mode picker ────────────────────────────────────────── */
+    const pickerScreen = document.getElementById('mode-picker-screen');
+    const progressWrap = document.getElementById('progress-wrap');
+    let quickMode = false;
+
+    function showPicker() {
+      document.querySelectorAll('.step-card.active').forEach(c => c.classList.remove('active'));
+      pickerScreen.style.display = '';
+      progressWrap.style.display = 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.getElementById('pick-quick').addEventListener('click', () => {
+      quickMode = true;
+      pickerScreen.style.display = 'none';
+      currentStep = 4;
+      document.getElementById('step-4').classList.add('active');
+      // Change button label to make it clear it saves
+      document.getElementById('next-4').textContent = 'Guardar →';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    document.getElementById('pick-full').addEventListener('click', () => {
+      quickMode = false;
+      pickerScreen.style.display = 'none';
+      progressWrap.style.display = '';
+      currentStep = 1;
+      document.getElementById('step-1').classList.add('active');
+      updateProgress(1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
     /* ── State ──────────────────────────────────────────────── */
@@ -578,10 +713,22 @@
       if (!stepHasSelection('step-3')) { showHint(3); return; }
       goTo(4);
     });
-    document.getElementById('prev-4').addEventListener('click', () => goTo(3));
+    document.getElementById('prev-4').addEventListener('click', () => {
+      if (quickMode) { showPicker(); } else { goTo(3); }
+    });
     document.getElementById('next-4').addEventListener('click', () => {
-      buildReview();
-      goTo(5);
+      if (quickMode) {
+        // quick mode: collect checkboxes and save directly
+        const checks = [...document.querySelectorAll('.check-group input:checked')].map(i => i.value);
+        if (checks.length) prefs.perfil_cognitivo = checks.join(', ');
+        try { localStorage.setItem('minded_prefs', JSON.stringify(prefs)); } catch (_) {}
+        document.getElementById('step-4').classList.remove('active');
+        document.getElementById('save-banner').classList.remove('hidden');
+        document.querySelector('.prefs-hero').scrollIntoView({ behavior: 'smooth' });
+      } else {
+        buildReview();
+        goTo(5);
+      }
     });
     document.getElementById('prev-5').addEventListener('click', () => goTo(4));
 

@@ -403,14 +403,17 @@ body.theme-light .main-header {
   background: rgba(245,245,247,0.90) !important;
   border-bottom-color: rgba(0,0,0,0.09) !important;
 }
-body.theme-light .profile-select,
 body.theme-light .input-area__textarea {
   background: #fff !important;
   color: #1A1A1A !important;
   border-color: rgba(0,0,0,0.13) !important;
 }
 body.theme-light .input-area__textarea::placeholder { color: #aaa !important; }
-body.theme-light .profile-select option { background: #fff; color: #1A1A1A; }
+body.theme-light .profile-tag {
+  background: rgba(0,0,0,0.06) !important;
+  border-color: rgba(0,0,0,0.12) !important;
+  color: #18191E !important;
+}
 body.theme-light .btn-ghost {
   background: rgba(0,0,0,0.04) !important;
   color: #555 !important;

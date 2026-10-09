@@ -171,39 +171,69 @@
     .mode-option__name { font-size: 0.78rem; font-weight: 600; color: var(--clr-text); }
     .mode-option__desc { font-size: 0.70rem; color: var(--clr-text-subtle); line-height: 1.4; }
 
-    /* ── Profile select ─────────────────────────────────────── */
+    /* ── Profile display ────────────────────────────────────── */
     .profile-group {
       display: flex;
       flex-direction: column;
       gap: var(--sp-sm);
     }
-    .profile-group__label {
-      font-size: 0.82rem;
+
+    /* State A — prefs saved */
+    .profile-status {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .profile-status__label {
+      font-size: 0.78rem;
       font-weight: 500;
       color: var(--clr-text-muted);
     }
-    .profile-select {
-      width: 100%;
-      padding: 10px var(--sp-md);
-      background: var(--clr-surface);
-      border: 1px solid var(--clr-border);
-      border-radius: var(--r-md);
+    .profile-status__tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .profile-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      background: var(--clr-surface-md);
+      border: 1px solid var(--clr-border-md);
+      border-radius: var(--r-sm);
+      font-size: 0.78rem;
+      font-weight: 600;
       color: var(--clr-text);
-      font-size: 0.88rem;
-      appearance: none;
-      -webkit-appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 7L11 1' stroke='%236B7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 14px center;
-      cursor: pointer;
-      outline: none;
-      transition: border-color var(--t-base);
     }
-    .profile-select:focus {
-      border-color: var(--clr-violet);
-      box-shadow: 0 0 0 3px rgba(139,92,246,0.18);
+    .profile-status__edit {
+      font-size: 0.75rem;
+      color: var(--clr-text-subtle);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      align-self: flex-start;
+      transition: color var(--t-base);
     }
-    .profile-select option { background: #1a1f2e; color: var(--clr-text); }
+    .profile-status__edit:hover { color: var(--clr-text-muted); }
+
+    /* State B — no prefs */
+    .profile-empty {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .profile-empty__text {
+      font-size: 0.82rem;
+      color: var(--clr-text-subtle);
+    }
+    .profile-empty__link {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--clr-violet);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      transition: color var(--t-base);
+    }
+    .profile-empty__link:hover { color: var(--clr-text); }
 
     /* ── CTA button ─────────────────────────────────────────── */
     #adapt-btn {
@@ -953,16 +983,19 @@
         </div>
       </div>
 
-      <!-- Profile -->
-      <div class="profile-group">
-        <label class="profile-group__label" for="profile-select">Adaptar para</label>
-        <select id="profile-select" class="profile-select">
-          <option value="TDAH/Iniciante">TDAH — exemplos visuais e rápidos</option>
-          <option value="Dislexia">Dislexia — texto curto e direto</option>
-          <option value="Autismo">Autismo — linguagem literal e clara</option>
-          <option value="Iniciante">Iniciante no assunto</option>
-          <option value="Avançado">Estudante avançado</option>
-        </select>
+      <!-- Profile — populated from saved prefs; shows link if no prefs set -->
+      <div class="profile-group" id="profile-group">
+        <!-- State A: prefs exist -->
+        <div class="profile-status" id="profile-status" style="display:none">
+          <span class="profile-status__label">Adaptar para</span>
+          <div class="profile-status__tags" id="profile-status-tags" aria-live="polite"></div>
+          <a href="preferencias.html" class="profile-status__edit" aria-label="Editar preferências">Editar</a>
+        </div>
+        <!-- State B: no prefs -->
+        <div class="profile-empty" id="profile-empty">
+          <span class="profile-empty__text">Nenhum perfil configurado.</span>
+          <a href="preferencias.html" class="profile-empty__link">Configurar preferências →</a>
+        </div>
       </div>
 
       <!-- CTA -->
@@ -1143,7 +1176,9 @@
     const textarea       = document.getElementById('text-input');
     const charCount      = document.getElementById('char-count');
     const adaptBtn       = document.getElementById('adapt-btn');
-    const profileSelect  = document.getElementById('profile-select');
+    const profileStatus  = document.getElementById('profile-status');
+    const profileEmpty   = document.getElementById('profile-empty');
+    const profileTags    = document.getElementById('profile-status-tags');
     const outputEmpty    = document.getElementById('output-empty');
     const outputContent  = document.getElementById('output-content');
     const outputSkeleton = document.getElementById('output-skeleton');
@@ -1352,26 +1387,28 @@
     });
 
     // ═══════════════════════════════════════════════════════════════════════
-    // BRIDGE: localStorage preferences → UI pre-fill + a11y state
+    // BRIDGE: localStorage preferences → UI + a11y state
     // ═══════════════════════════════════════════════════════════════════════
     function applyPreferences() {
       try {
         const prefs = JSON.parse(localStorage.getItem('minded_prefs') || '{}');
 
-        // Map cognitive profile to select option
-        const cogMap = {
-          tdah:     'TDAH/Iniciante',
-          dislexia: 'Dislexia',
-          autismo:  'Autismo',
-          analitico:'Avançado',
-          criativo: 'TDAH/Iniciante',
-          visual:   'TDAH/Iniciante',
-          auditivo: 'TDAH/Iniciante',
-        };
         if (prefs.perfil_cognitivo) {
           const tags = prefs.perfil_cognitivo.split(', ');
-          const firstMapped = tags.map(t => cogMap[t]).find(Boolean);
-          if (firstMapped) profileSelect.value = firstMapped;
+
+          // Render profile tags in the panel
+          const labelMap = {
+            tdah: 'TDAH', autismo: 'Autismo', dislexia: 'Dislexia',
+            analitico: 'Analítico', criativo: 'Criativo',
+            visual: 'Visual', auditivo: 'Auditivo',
+          };
+          if (profileTags) {
+            profileTags.innerHTML = tags.map(t =>
+              `<span class="profile-tag">${labelMap[t] || t}</span>`
+            ).join('');
+          }
+          if (profileStatus) profileStatus.style.display = '';
+          if (profileEmpty)  profileEmpty.style.display  = 'none';
 
           // Auto-enable HCM for dislexia or visual profiles
           if (tags.includes('dislexia') || tags.includes('visual')) {
@@ -1753,9 +1790,9 @@
         if (prefs.formato)  parts.push(`formato:${prefs.formato}`);
         if (prefs.sessao)   parts.push(`sessao:${prefs.sessao}`);
         if (prefs.layout)   parts.push(`layout:${prefs.layout}`);
-        return parts.length ? parts.join('; ') : profileSelect.value;
+        return parts.length ? parts.join('; ') : 'geral';
       } catch (_) {
-        return profileSelect.value;
+        return 'geral';
       }
     }
 

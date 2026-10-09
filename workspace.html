@@ -71,74 +71,173 @@
     }
 
     /* ── Input textarea ─────────────────────────────────────── */
-    .input-area { position: relative; }
+    /* ── Input area ─────────────────────────────────────────── */
+    .input-area { display: flex; flex-direction: column; gap: 0; }
 
-    .input-area__top {
+    /* Tab switcher */
+    .input-tabs {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--sp-sm);
-      margin-bottom: var(--sp-sm);
+      gap: 2px;
+      margin-bottom: -1px; /* overlap border below */
+      position: relative;
+      z-index: 1;
     }
-
-    .input-area__label {
-      display: block;
-      font-size: 0.82rem;
-      font-weight: 500;
-      color: var(--clr-text-muted);
-    }
-
-    .pdf-upload-btn {
+    .input-tab {
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      padding: 5px 10px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--clr-text-muted);
-      background: var(--clr-surface);
-      border: 1px solid var(--clr-border-md);
-      border-radius: var(--r-sm);
+      padding: 7px 14px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--clr-text-subtle);
+      background: transparent;
+      border: 1px solid transparent;
+      border-bottom: none;
+      border-radius: var(--r-sm) var(--r-sm) 0 0;
       cursor: pointer;
-      white-space: nowrap;
-      flex-shrink: 0;
-      transition: background var(--t-base), border-color var(--t-base), color var(--t-base);
+      transition: color var(--t-base), background var(--t-base), border-color var(--t-base);
+      font-family: var(--font-body);
     }
-    .pdf-upload-btn:hover { background: var(--clr-surface-md); color: var(--clr-text); }
-    .pdf-upload-btn.loading { opacity: 0.6; pointer-events: none; }
+    .input-tab:hover { color: var(--clr-text-muted); }
+    .input-tab.active {
+      color: var(--clr-text);
+      background: var(--clr-surface);
+      border-color: var(--clr-border);
+    }
 
+    /* Tab panels */
+    .input-pane {
+      display: none;
+      border: 1px solid var(--clr-border);
+      border-radius: 0 var(--r-md) var(--r-md) var(--r-md);
+      background: var(--clr-surface);
+      position: relative;
+    }
+    .input-pane.active { display: block; }
+
+    /* Pane: text */
     .input-area__textarea {
       width: 100%;
       min-height: 220px;
       max-height: 400px;
       resize: vertical;
       padding: var(--sp-md);
-      background: var(--clr-surface);
-      border: 1px solid var(--clr-border);
-      border-radius: var(--r-md);
+      padding-bottom: 28px; /* room for char count */
+      background: transparent;
+      border: none;
+      border-radius: 0 var(--r-md) var(--r-md) var(--r-md);
       color: var(--clr-text);
       font-size: 0.9rem;
       line-height: var(--lh-body);
       outline: none;
-      transition: border-color var(--t-base), box-shadow var(--t-base);
     }
     .input-area__textarea::placeholder { color: var(--clr-text-subtle); }
-    .input-area__textarea:focus {
-      border-color: var(--clr-violet);
-      box-shadow: 0 0 0 3px rgba(139,92,246,0.18);
-    }
+    .input-pane--text.drag-over { border-color: var(--clr-violet); background: rgba(124,92,237,0.05); }
 
     .char-count {
       position: absolute;
-      bottom: 10px;
-      right: 14px;
-      font-size: 0.72rem;
+      bottom: 8px;
+      right: 12px;
+      font-size: 0.70rem;
       color: var(--clr-text-subtle);
       pointer-events: none;
-      transition: color var(--t-base);
     }
-    .char-count--warn   { color: var(--clr-amber) !important; }
-    .char-count--danger { color: #f87171 !important; font-weight: 600; }
+
+    /* Pane: PDF drop zone */
+    .pdf-drop-zone {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--sp-md);
+      padding: var(--sp-2xl) var(--sp-lg);
+      min-height: 220px;
+      text-align: center;
+      cursor: pointer;
+      border-radius: 0 var(--r-md) var(--r-md) var(--r-md);
+      transition: background var(--t-base), border-color var(--t-base);
+    }
+    .pdf-drop-zone.drag-over { background: rgba(124,92,237,0.07); border-color: var(--clr-violet); }
+    .pdf-drop-zone__icon { color: var(--clr-text-subtle); opacity: 0.6; }
+    .pdf-drop-zone__title {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--clr-text);
+    }
+    .pdf-drop-zone__hint {
+      font-size: 0.78rem;
+      color: var(--clr-text-subtle);
+      line-height: 1.5;
+    }
+    .pdf-drop-zone__status {
+      font-size: 0.80rem;
+      color: var(--clr-violet);
+      min-height: 1.2em;
+    }
+    .pdf-upload-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 16px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--clr-text-muted);
+      background: var(--clr-surface-md);
+      border: 1px solid var(--clr-border-md);
+      border-radius: var(--r-sm);
+      cursor: pointer;
+      transition: background var(--t-base), color var(--t-base);
+    }
+    .pdf-upload-label:hover { background: var(--clr-surface-hi); color: var(--clr-text); }
+
+    /* Pane: link */
+    .link-pane-inner {
+      padding: var(--sp-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-md);
+      min-height: 220px;
+    }
+    .link-input-row {
+      display: flex;
+      gap: var(--sp-sm);
+    }
+    .link-input {
+      flex: 1;
+      padding: 9px var(--sp-md);
+      background: var(--clr-surface-md);
+      border: 1px solid var(--clr-border-md);
+      border-radius: var(--r-sm);
+      color: var(--clr-text);
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color var(--t-base);
+      font-family: var(--font-body);
+    }
+    .link-input::placeholder { color: var(--clr-text-subtle); }
+    .link-input:focus { border-color: var(--clr-violet); }
+    .link-fetch-btn {
+      padding: 9px 16px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      background: var(--grad-primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--r-sm);
+      cursor: pointer;
+      white-space: nowrap;
+      font-family: var(--font-body);
+      transition: background var(--t-base);
+    }
+    .link-fetch-btn:hover { background: var(--grad-primary-r); }
+    .link-fetch-btn:disabled { opacity: 0.5; pointer-events: none; }
+    .link-status {
+      font-size: 0.80rem;
+      color: var(--clr-text-subtle);
+      line-height: 1.55;
+      min-height: 1.2em;
+    }
+    .link-status.error { color: #FCA5A5; }
 
     /* ── Mode selector ──────────────────────────────────────── */
     .mode-group {
@@ -932,25 +1031,69 @@
     <section class="panel glass" aria-labelledby="input-panel-title">
       <h2 class="panel__title" id="input-panel-title">O seu texto</h2>
 
-      <!-- Textarea -->
+      <!-- Input: tabs + panes -->
       <div class="input-area">
-        <div class="input-area__top">
-          <label class="input-area__label" for="text-input">
-            Cole aqui o texto que quer entender melhor
-          </label>
-          <label class="pdf-upload-btn" for="pdf-upload" title="Carregar PDF">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            <span id="pdf-btn-label">PDF</span>
-            <input type="file" id="pdf-upload" accept=".pdf" class="sr-only" aria-label="Carregar ficheiro PDF" />
-          </label>
+
+        <!-- Tab switcher -->
+        <div class="input-tabs" role="tablist" aria-label="Tipo de entrada">
+          <button class="input-tab active" id="tab-text" role="tab" aria-selected="true"  aria-controls="pane-text">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+            Texto
+          </button>
+          <button class="input-tab" id="tab-pdf" role="tab" aria-selected="false" aria-controls="pane-pdf">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            PDF
+          </button>
+          <button class="input-tab" id="tab-link" role="tab" aria-selected="false" aria-controls="pane-link">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+            Link
+          </button>
         </div>
-        <textarea
-          id="text-input"
-          class="input-area__textarea"
-          placeholder="Cole aqui o texto difícil — artigo, manual, enunciado…"
-          aria-describedby="char-hint"
-        ></textarea>
-        <span class="char-count" id="char-count" aria-live="polite"></span>
+
+        <!-- Pane: texto / arrastar PDF -->
+        <div class="input-pane input-pane--text active" id="pane-text" role="tabpanel" aria-labelledby="tab-text">
+          <textarea
+            id="text-input"
+            class="input-area__textarea"
+            placeholder="Cole ou escreva aqui o texto… ou arraste um PDF para cima"
+            aria-describedby="char-hint"
+          ></textarea>
+          <span class="char-count" id="char-count" aria-live="polite"></span>
+        </div>
+
+        <!-- Pane: PDF drop zone -->
+        <div class="input-pane input-pane--pdf" id="pane-pdf" role="tabpanel" aria-labelledby="tab-pdf">
+          <div class="pdf-drop-zone" id="pdf-drop-zone">
+            <svg class="pdf-drop-zone__icon" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+            <span class="pdf-drop-zone__title">Arraste o PDF aqui</span>
+            <span class="pdf-drop-zone__hint">ou clique para escolher um ficheiro</span>
+            <label class="pdf-upload-label" for="pdf-upload">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Escolher ficheiro
+            </label>
+            <span class="pdf-drop-zone__status" id="pdf-status" aria-live="polite"></span>
+            <input type="file" id="pdf-upload" accept=".pdf" class="sr-only" aria-label="Carregar ficheiro PDF" />
+          </div>
+        </div>
+
+        <!-- Pane: link -->
+        <div class="input-pane input-pane--link" id="pane-link" role="tabpanel" aria-labelledby="tab-link">
+          <div class="link-pane-inner">
+            <div class="link-input-row">
+              <input
+                type="url"
+                id="link-input"
+                class="link-input"
+                placeholder="https://artigo.com/texto-que-quero-entender"
+                autocomplete="off"
+                spellcheck="false"
+              />
+              <button class="link-fetch-btn" id="link-fetch-btn" type="button" disabled>Buscar</button>
+            </div>
+            <p class="link-status" id="link-status">Cola um link e clica em Buscar — o texto da página é extraído automaticamente.</p>
+          </div>
+        </div>
+
       </div>
 
       <!-- Mode selector -->
@@ -1707,62 +1850,159 @@
     // ── Char counter & button enabler ─────────────────────────────────────
     function updateCharCount() {
       const len = textarea.value.length;
-      charCount.textContent = len > 0 ? `${len.toLocaleString('pt')} caracteres` : '';
+      charCount.textContent = len > 0 ? `${len.toLocaleString('pt')} car.` : '';
       adaptBtn.disabled = len < 10;
     }
     textarea.addEventListener('input', updateCharCount);
 
-    // ── PDF upload — extract text via pdf.js ──────────────────────────────
-    const pdfUpload   = document.getElementById('pdf-upload');
-    const pdfLabel    = document.querySelector('.pdf-upload-btn');
-    const pdfBtnLabel = document.getElementById('pdf-btn-label');
+    // ── Tab switcher ──────────────────────────────────────────────────────
+    const tabs  = document.querySelectorAll('.input-tab');
+    const panes = document.querySelectorAll('.input-pane');
 
-    pdfUpload.addEventListener('change', async e => {
-      const file = e.target.files[0];
-      if (!file) return;
+    function switchTab(tabId) {
+      tabs.forEach(t => {
+        const active = t.id === tabId;
+        t.classList.toggle('active', active);
+        t.setAttribute('aria-selected', String(active));
+      });
+      panes.forEach(p => {
+        p.classList.toggle('active', p.getAttribute('aria-labelledby') === tabId);
+      });
+    }
+    tabs.forEach(t => t.addEventListener('click', () => switchTab(t.id)));
 
-      pdfLabel.classList.add('loading');
-      pdfBtnLabel.textContent = 'A ler…';
+    // ── PDF: load pdf.js ──────────────────────────────────────────────────
+    async function loadPdfJs() {
+      if (window.pdfjsLib) return;
+      await new Promise((res, rej) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+        s.onload = res; s.onerror = rej;
+        document.head.appendChild(s);
+      });
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+
+    async function extractPdf(file) {
+      await loadPdfJs();
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      let fullText = '';
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page    = await pdf.getPage(i);
+        const content = await page.getTextContent();
+        fullText += content.items.map(item => item.str).join(' ') + '\n\n';
+      }
+      fullText = fullText.trim();
+      if (fullText.length < 10) throw new Error('O PDF não tem texto extraível (pode ser uma imagem digitalizada).');
+      return fullText;
+    }
+
+    function pdfToTextThenSwitch(text) {
+      textarea.value = text;
+      updateCharCount();
+      switchTab('tab-text');
+      textarea.focus();
+    }
+
+    // PDF: file input
+    const pdfUpload  = document.getElementById('pdf-upload');
+    const pdfStatus  = document.getElementById('pdf-status');
+    const dropZone   = document.getElementById('pdf-drop-zone');
+
+    async function handlePdfFile(file) {
+      if (!file || file.type !== 'application/pdf') {
+        pdfStatus.textContent = 'Ficheiro inválido. Usa um PDF.';
+        return;
+      }
+      pdfStatus.textContent = 'A extrair texto…';
+      try {
+        const text = await extractPdf(file);
+        pdfToTextThenSwitch(text);
+      } catch (err) {
+        pdfStatus.textContent = 'Erro: ' + (err.message || err);
+      } finally {
+        pdfUpload.value = '';
+      }
+    }
+
+    pdfUpload.addEventListener('change', e => handlePdfFile(e.target.files[0]));
+
+    // PDF: drag and drop on drop zone
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.classList.remove('drag-over');
+      handlePdfFile(e.dataTransfer.files[0]);
+    });
+
+    // PDF: drag onto the text pane also works
+    const textPane = document.getElementById('pane-text');
+    textPane.addEventListener('dragover', e => {
+      if ([...e.dataTransfer.types].includes('Files')) {
+        e.preventDefault();
+        textPane.classList.add('drag-over');
+      }
+    });
+    textPane.addEventListener('dragleave', () => textPane.classList.remove('drag-over'));
+    textPane.addEventListener('drop', e => {
+      const file = e.dataTransfer.files[0];
+      if (file && file.type === 'application/pdf') {
+        e.preventDefault();
+        textPane.classList.remove('drag-over');
+        switchTab('tab-pdf');
+        handlePdfFile(file);
+      }
+    });
+
+    // ── Link fetch ────────────────────────────────────────────────────────
+    const linkInput    = document.getElementById('link-input');
+    const linkFetchBtn = document.getElementById('link-fetch-btn');
+    const linkStatus   = document.getElementById('link-status');
+
+    linkInput.addEventListener('input', () => {
+      linkFetchBtn.disabled = linkInput.value.trim().length < 10;
+    });
+
+    linkFetchBtn.addEventListener('click', async () => {
+      const url = linkInput.value.trim();
+      if (!url) return;
+      linkFetchBtn.disabled = true;
+      linkStatus.className = 'link-status';
+      linkStatus.textContent = 'A buscar página…';
 
       try {
-        // Load pdf.js legacy build (works in non-module scripts)
-        if (!window.pdfjsLib) {
-          await new Promise((res, rej) => {
-            const s = document.createElement('script');
-            s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
-            s.onload = res; s.onerror = rej;
-            document.head.appendChild(s);
-          });
-          window.pdfjsLib.GlobalWorkerOptions.workerSrc =
-            'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-        }
+        // Use allorigins proxy to bypass CORS
+        const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+        const res   = await fetch(proxy);
+        if (!res.ok) throw new Error(`Erro HTTP ${res.status}`);
+        const json  = await res.json();
 
-        const arrayBuffer = await file.arrayBuffer();
-        const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        // Strip HTML tags, collapse whitespace
+        const tmp = document.createElement('div');
+        tmp.innerHTML = json.contents;
+        // Remove scripts, styles, nav, footer
+        tmp.querySelectorAll('script,style,nav,footer,header,[role="navigation"]').forEach(el => el.remove());
+        let text = (tmp.innerText || tmp.textContent || '').replace(/\s+/g, ' ').trim();
 
-        let fullText = '';
-        for (let i = 1; i <= pdf.numPages; i++) {
-          const page = await pdf.getPage(i);
-          const content = await page.getTextContent();
-          fullText += content.items.map(item => item.str).join(' ') + '\n\n';
-        }
+        if (text.length < 50) throw new Error('Não foi possível extrair texto útil desta página.');
 
-        fullText = fullText.trim();
-        if (fullText.length < 10) {
-          throw new Error('O PDF não tem texto extraível (pode ser uma imagem digitalizada).');
-        }
-
-        textarea.value = fullText;
+        textarea.value = text;
         updateCharCount();
+        switchTab('tab-text');
         textarea.focus();
 
       } catch (err) {
-        alert('Não foi possível ler o PDF: ' + (err.message || err));
-      } finally {
-        pdfLabel.classList.remove('loading');
-        pdfBtnLabel.textContent = 'PDF';
-        pdfUpload.value = ''; // permite re-upload do mesmo ficheiro
+        linkStatus.className = 'link-status error';
+        linkStatus.textContent = 'Não foi possível buscar a página: ' + (err.message || err);
+        linkFetchBtn.disabled = false;
       }
+    });
+
+    linkInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !linkFetchBtn.disabled) linkFetchBtn.click();
     });
 
     // ── Keyboard shortcut: Cmd/Ctrl + Enter ───────────────────────────────

@@ -62,9 +62,9 @@
     }
 
     .panel__title {
-      font-size: 0.72rem;
+      font-size: 0.70rem;
       font-weight: 600;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.09em;
       text-transform: uppercase;
       color: var(--clr-text-subtle);
       padding-bottom: var(--sp-sm);
@@ -128,7 +128,7 @@
     }
     .mode-options {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: var(--sp-sm);
     }
     .mode-option { position: relative; }
@@ -163,7 +163,12 @@
       outline: 2px solid var(--clr-violet);
       outline-offset: 2px;
     }
-    .mode-option__icon { font-size: 1.4rem; }
+    .mode-option__icon {
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      color: inherit;
+    }
+    .mode-option__icon svg { width: 18px; height: 18px; }
     .mode-option__name { font-size: 0.78rem; font-weight: 600; color: var(--clr-text); }
     .mode-option__desc { font-size: 0.70rem; color: var(--clr-text-subtle); line-height: 1.4; }
 
@@ -568,6 +573,261 @@
     .retry-btn:hover { background: rgba(239,68,68,0.20); border-color: rgba(239,68,68,0.60); }
     .retry-btn:focus-visible { outline: 2px solid #f87171; outline-offset: 2px; }
 
+    /* ── Exemplos rápidos ───────────────────────────────────── */
+    .examples-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-sm);
+    }
+    .examples-group__label {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--clr-text-subtle);
+    }
+    .examples-btns {
+      display: flex;
+      gap: var(--sp-sm);
+      flex-wrap: wrap;
+    }
+    .example-btn {
+      padding: 6px 14px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--r-pill);
+      color: var(--clr-text-muted);
+      cursor: pointer;
+      transition: border-color var(--t-base), background var(--t-base), color var(--t-base);
+      font-family: var(--font-body);
+    }
+    .example-btn:hover {
+      border-color: var(--clr-violet);
+      background: rgba(139,92,246,0.08);
+      color: var(--clr-text);
+    }
+    .example-btn:focus-visible { outline: 2px solid var(--clr-violet); outline-offset: 2px; }
+
+    /* ── Botão "Simplificar mais" ───────────────────────────── */
+    .simplify-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      font-size: 0.80rem;
+      font-weight: 600;
+      background: rgba(34,211,238,0.08);
+      border: 1px solid rgba(34,211,238,0.22);
+      border-radius: var(--r-pill);
+      color: var(--clr-cyan);
+      cursor: pointer;
+      transition: background var(--t-base), border-color var(--t-base);
+      font-family: var(--font-body);
+    }
+    .simplify-btn:hover { background: rgba(34,211,238,0.15); border-color: rgba(34,211,238,0.40); }
+    .simplify-btn:focus-visible { outline: 2px solid var(--clr-cyan); outline-offset: 2px; }
+
+    /* ── Botão exportar PDF ──────────────────────────────────── */
+    .pdf-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      font-size: 0.80rem;
+      font-weight: 600;
+      background: rgba(52,211,153,0.08);
+      border: 1px solid rgba(52,211,153,0.22);
+      border-radius: var(--r-pill);
+      color: var(--clr-green);
+      cursor: pointer;
+      transition: background var(--t-base), border-color var(--t-base);
+      font-family: var(--font-body);
+    }
+    .pdf-btn:hover { background: rgba(52,211,153,0.15); border-color: rgba(52,211,153,0.40); }
+    .pdf-btn:focus-visible { outline: 2px solid var(--clr-green); outline-offset: 2px; }
+
+    /* ── Flashcards ──────────────────────────────────────────── */
+    .flashcard-section {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-md);
+    }
+    .flashcard-section__title {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--clr-text-subtle);
+    }
+    .flashcard-nav {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-md);
+      justify-content: center;
+    }
+    .flashcard-counter {
+      font-size: 0.80rem;
+      color: var(--clr-text-subtle);
+      min-width: 48px;
+      text-align: center;
+    }
+    .flashcard {
+      perspective: 900px;
+      height: 160px;
+      cursor: pointer;
+    }
+    .flashcard__inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.45s cubic-bezier(0.4,0,0.2,1);
+    }
+    .flashcard.flipped .flashcard__inner { transform: rotateY(180deg); }
+    .flashcard__front,
+    .flashcard__back {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--sp-sm);
+      padding: var(--sp-lg);
+      background: var(--clr-surface-md);
+      border: 1px solid var(--clr-border-md);
+      border-radius: var(--r-lg);
+      text-align: center;
+    }
+    .flashcard__back {
+      transform: rotateY(180deg);
+      background: rgba(139,92,246,0.10);
+      border-color: rgba(139,92,246,0.28);
+    }
+    .flashcard__term {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--clr-text);
+    }
+    .flashcard__hint {
+      font-size: 0.78rem;
+      color: var(--clr-text-subtle);
+    }
+    .flashcard__answer {
+      font-size: 0.85rem;
+      color: var(--clr-text-muted);
+      line-height: 1.65;
+    }
+    .flashcard__tap {
+      font-size: 0.70rem;
+      color: var(--clr-text-subtle);
+      margin-top: auto;
+    }
+    .flashcard-progress {
+      height: 3px;
+      background: var(--clr-border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .flashcard-progress__fill {
+      height: 100%;
+      background: var(--grad-primary);
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+
+    /* ── Perguntas (modo questions) ──────────────────────────── */
+    .questions-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-md);
+    }
+    .question-card {
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--r-md);
+      overflow: hidden;
+      transition: border-color var(--t-base);
+    }
+    .question-card:has(.question-answer.visible) {
+      border-color: rgba(139,92,246,0.35);
+    }
+    .question-card__q {
+      padding: var(--sp-md);
+      font-size: 0.90rem;
+      font-weight: 600;
+      color: var(--clr-text);
+      line-height: 1.5;
+      cursor: default;
+    }
+    .question-card__actions {
+      display: flex;
+      gap: var(--sp-sm);
+      padding: 0 var(--sp-md) var(--sp-md);
+    }
+    .question-hint-btn,
+    .question-reveal-btn {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: var(--r-pill);
+      border: 1px solid var(--clr-border);
+      cursor: pointer;
+      transition: background var(--t-base), border-color var(--t-base), color var(--t-base);
+      font-family: var(--font-body);
+    }
+    .question-hint-btn {
+      background: rgba(251,191,36,0.08);
+      border-color: rgba(251,191,36,0.22);
+      color: var(--clr-amber);
+    }
+    .question-hint-btn:hover { background: rgba(251,191,36,0.16); }
+    .question-reveal-btn {
+      background: rgba(139,92,246,0.08);
+      border-color: rgba(139,92,246,0.22);
+      color: var(--clr-violet);
+    }
+    .question-reveal-btn:hover { background: rgba(139,92,246,0.16); }
+    .question-hint,
+    .question-answer {
+      display: none;
+      padding: var(--sp-sm) var(--sp-md) var(--sp-md);
+      font-size: 0.84rem;
+      line-height: 1.65;
+      border-top: 1px solid var(--clr-border);
+    }
+    .question-hint.visible,
+    .question-answer.visible { display: block; }
+    .question-hint { color: var(--clr-amber); background: rgba(251,191,36,0.05); }
+    .question-answer { color: var(--clr-text-muted); }
+    .question-answer strong { color: var(--clr-violet); }
+
+    /* ── Print / PDF ─────────────────────────────────────────── */
+    @media print {
+      .main-header, .site-footer, .a11y-bar,
+      .onboard-backdrop, .onboard-modal,
+      .history-panel, .history-overlay,
+      .output-actions, .panel:first-of-type,
+      .shortcut-hint, .char-count { display: none !important; }
+      body { background: #fff !important; color: #111 !important; }
+      .workspace { display: block; padding: 0; }
+      .output-panel {
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        backdrop-filter: none !important;
+      }
+      .output-prose, .summary-body, .checklist-item__text,
+      .question-card__q, .flashcard__term {
+        color: #111 !important;
+      }
+      .output-title { font-size: 1.4rem; color: #111 !important; }
+      .mapping-table { page-break-inside: avoid; }
+      .checklist-item.done .checklist-item__text { text-decoration: line-through; color: #888 !important; }
+    }
+
     /* ── Responsive ─────────────────────────────────────────── */
     @media (max-width: 900px) {
       .workspace {
@@ -575,10 +835,10 @@
         padding: calc(64px + var(--sp-lg)) var(--sp-md) var(--sp-xl);
       }
       .panel { position: static; }
-      .mode-options { grid-template-columns: repeat(3, 1fr); }
+      .mode-options { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 520px) {
-      .mode-options { grid-template-columns: 1fr; }
+      .mode-options { grid-template-columns: repeat(2, 1fr); }
       .mapping-table { display: block; overflow-x: auto; }
     }
   </style>
@@ -621,17 +881,17 @@
 
     <!-- ═══ LEFT: Input Panel ════════════════════════════════ -->
     <section class="panel glass" aria-labelledby="input-panel-title">
-      <h2 class="panel__title" id="input-panel-title">Entrada de Conteúdo</h2>
+      <h2 class="panel__title" id="input-panel-title">O seu texto</h2>
 
       <!-- Textarea -->
       <div class="input-area">
         <label class="input-area__label" for="text-input">
-          Cole aqui o texto que deseja adaptar
+          Cole aqui o texto que quer entender melhor
         </label>
         <textarea
           id="text-input"
           class="input-area__textarea"
-          placeholder="Cole aqui qualquer texto difícil de entender…"
+          placeholder="Cole aqui o texto difícil — artigo, manual, enunciado…"
           maxlength="8000"
           aria-describedby="char-hint"
         ></textarea>
@@ -640,48 +900,75 @@
 
       <!-- Mode selector -->
       <div class="mode-group" role="group" aria-labelledby="mode-group-label">
-        <span class="mode-group__label" id="mode-group-label">Modo Cognitivo</span>
+        <span class="mode-group__label" id="mode-group-label">Como quer receber?</span>
         <div class="mode-options" role="radiogroup">
 
           <div class="mode-option">
             <input type="radio" name="mode" id="mode-metaphor" value="metaphor" checked />
             <label for="mode-metaphor">
-              <span class="mode-option__icon" aria-hidden="true">🧠</span>
+              <span class="mode-option__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              </span>
               <span class="mode-option__name">Metáfora</span>
-              <span class="mode-option__desc">Explica com exemplos do dia a dia</span>
+              <span class="mode-option__desc">Com exemplos do dia a dia</span>
             </label>
           </div>
 
           <div class="mode-option">
             <input type="radio" name="mode" id="mode-checklist" value="checklist" />
             <label for="mode-checklist">
-              <span class="mode-option__icon" aria-hidden="true">✅</span>
+              <span class="mode-option__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+              </span>
               <span class="mode-option__name">Passo a passo</span>
-              <span class="mode-option__desc">Divide em tarefas pequenas para fazer agora</span>
+              <span class="mode-option__desc">Tarefas pequenas e sequenciais</span>
             </label>
           </div>
 
           <div class="mode-option">
             <input type="radio" name="mode" id="mode-summary" value="summary" />
             <label for="mode-summary">
-              <span class="mode-option__icon" aria-hidden="true">📋</span>
+              <span class="mode-option__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+              </span>
               <span class="mode-option__name">Resumo</span>
-              <span class="mode-option__desc">Pega o essencial, sem o resto</span>
+              <span class="mode-option__desc">Só o essencial, sem rodeios</span>
+            </label>
+          </div>
+
+          <div class="mode-option">
+            <input type="radio" name="mode" id="mode-questions" value="questions" />
+            <label for="mode-questions">
+              <span class="mode-option__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              </span>
+              <span class="mode-option__name">Perguntas</span>
+              <span class="mode-option__desc">Testa se entendeu o conteúdo</span>
             </label>
           </div>
 
         </div>
       </div>
 
+      <!-- Exemplos rápidos -->
+      <div class="examples-group" id="examples-group">
+        <span class="examples-group__label">Experimentar com exemplo:</span>
+        <div class="examples-btns">
+          <button class="example-btn" data-example="ciencias" type="button">Ciências</button>
+          <button class="example-btn" data-example="historia" type="button">História</button>
+          <button class="example-btn" data-example="matematica" type="button">Matemática</button>
+        </div>
+      </div>
+
       <!-- Profile -->
       <div class="profile-group">
-        <label class="profile-group__label" for="profile-select">Perfil / Contexto</label>
+        <label class="profile-group__label" for="profile-select">Adaptar para</label>
         <select id="profile-select" class="profile-select">
-          <option value="TDAH/Iniciante">TDAH — Foco em analogias visuais</option>
-          <option value="Dislexia">Dislexia — Texto curto e direto</option>
-          <option value="Autismo">Autismo — Literal e estruturado</option>
+          <option value="TDAH/Iniciante">TDAH — exemplos visuais e rápidos</option>
+          <option value="Dislexia">Dislexia — texto curto e direto</option>
+          <option value="Autismo">Autismo — linguagem literal e clara</option>
           <option value="Iniciante">Iniciante no assunto</option>
-          <option value="Avançado">Estudante Avançado</option>
+          <option value="Avançado">Estudante avançado</option>
         </select>
       </div>
 
@@ -693,10 +980,10 @@
         disabled
       >
         <span class="btn-label">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-          Adaptar com MindED
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Adaptar
         </span>
-        <div class="btn-spinner" role="status" aria-label="Processando…"></div>
+        <div class="btn-spinner" role="status" aria-label="A processar…"></div>
       </button>
       <p class="shortcut-hint" aria-hidden="true">
         <kbd>⌘</kbd><kbd>↵</kbd> ou <kbd>Ctrl</kbd><kbd>↵</kbd> para adaptar
@@ -708,12 +995,14 @@
     <!-- aria-atomic="true" so screen readers announce the complete new output,
          not each injected HTML fragment individually -->
     <section class="panel glass output-panel" aria-labelledby="output-panel-title" aria-live="polite" aria-atomic="true">
-      <h2 class="panel__title" id="output-panel-title">Output Cognitivo</h2>
+      <h2 class="panel__title" id="output-panel-title">Resultado</h2>
 
       <!-- Empty state -->
       <div class="output-empty" id="output-empty" aria-hidden="false">
-        <div class="output-empty__icon" aria-hidden="true">✨</div>
-        <p>Cole um texto e clique em <strong style="color:var(--clr-text)">Adaptar com MindED</strong><br/>para ver o output aqui.</p>
+        <div class="output-empty__icon" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.35"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <p>Cole um texto ao lado e clique em <strong style="color:var(--clr-text)">Adaptar</strong><br/>para ver o resultado aqui.</p>
       </div>
 
       <!-- Skeleton screen shown during API call -->
@@ -737,7 +1026,7 @@
 
   <!-- ── Footer ─────────────────────────────────────────────── -->
   <footer class="site-footer">
-    <p>&copy; 2025 MindED. Projeto open-source de acessibilidade cognitiva.</p>
+    <p>&copy; 2025 MindED &mdash; Projecto open-source de acessibilidade cognitiva.</p>
   </footer>
 
   <!-- ── History side-panel ─────────────────────────────────── -->
@@ -747,46 +1036,41 @@
        aria-modal="true" aria-labelledby="onboard-title" aria-hidden="true">
     <div class="onboard-modal__head">
       <img src="img/logominded.png" alt="" aria-hidden="true" width="32" height="32" />
-      <h2 id="onboard-title">Bem-vindo ao MindED</h2>
-      <p>Três perguntas rápidas para personalizar sua experiência.</p>
+      <h2 id="onboard-title">Olá! Como prefere aprender?</h2>
+      <p>Três perguntas rápidas para adaptar a experiência ao seu jeito.</p>
     </div>
 
-    <!-- Q1: Como você aprende? -->
     <div class="onboard-q">
-      <p class="onboard-q__label">Como você prefere aprender?</p>
+      <p class="onboard-q__label">O que funciona melhor para você?</p>
       <div class="onboard-options" data-ob-group="perfil_cognitivo" data-multi="true">
-        <button class="onboard-opt" data-value="tdah">⚡ Exemplos rápidos e visuais</button>
-        <button class="onboard-opt" data-value="dislexia">📖 Texto curto e espaçado</button>
-        <button class="onboard-opt" data-value="autismo">🔲 Estrutura clara e literal</button>
-        <button class="onboard-opt" data-value="criativo">🎨 Metáforas e histórias</button>
-        <button class="onboard-opt" data-value="auditivo">🎧 Prefiro ouvir</button>
+        <button class="onboard-opt" data-value="tdah">Exemplos rápidos e visuais</button>
+        <button class="onboard-opt" data-value="dislexia">Texto curto e bem espaçado</button>
+        <button class="onboard-opt" data-value="autismo">Estrutura clara e direta</button>
+        <button class="onboard-opt" data-value="criativo">Metáforas e histórias</button>
+        <button class="onboard-opt" data-value="auditivo">Prefiro ouvir</button>
       </div>
     </div>
 
-    <!-- Q2: Qual modo prefere? -->
     <div class="onboard-q">
-      <p class="onboard-q__label">Como quer receber o conteúdo adaptado?</p>
+      <p class="onboard-q__label">Como quer receber o resultado?</p>
       <div class="onboard-options" data-ob-group="modo_preferido" data-multi="false">
-        <button class="onboard-opt" data-value="metaphor">🧠 Explicar com exemplos</button>
-        <button class="onboard-opt" data-value="checklist">✅ Dividir em passos</button>
-        <button class="onboard-opt" data-value="summary">📋 Resumo direto</button>
+        <button class="onboard-opt" data-value="metaphor">Com exemplos do dia a dia</button>
+        <button class="onboard-opt" data-value="checklist">Em passos pequenos</button>
+        <button class="onboard-opt" data-value="summary">Resumo direto</button>
       </div>
     </div>
 
-    <!-- Q3: Algo incomoda na leitura? -->
     <div class="onboard-q">
       <p class="onboard-q__label">Algo que incomoda ao ler? <span class="onboard-opt-label">(opcional)</span></p>
       <div class="onboard-options" data-ob-group="ajuste_visual" data-multi="true">
-        <button class="onboard-opt" data-value="hcm">🌑 Fundo translúcido confunde</button>
-        <button class="onboard-opt" data-value="dyslexic">Aa Letra difícil de ler</button>
-        <button class="onboard-opt" data-value="spacing">↕ Linhas muito próximas</button>
+        <button class="onboard-opt" data-value="hcm">Fundos translúcidos confundem</button>
+        <button class="onboard-opt" data-value="dyslexic">A fonte é difícil de ler</button>
+        <button class="onboard-opt" data-value="spacing">As linhas estão muito próximas</button>
       </div>
     </div>
 
-    <button class="onboard-cta" id="onboard-save">
-      Começar →
-    </button>
-    <button class="onboard-skip" id="onboard-skip">Pular por agora</button>
+    <button class="onboard-cta" id="onboard-save">Continuar →</button>
+    <button class="onboard-skip" id="onboard-skip">Saltar por agora</button>
   </div>
 
   <div class="history-overlay" id="history-overlay" aria-hidden="true"></div>
@@ -818,6 +1102,11 @@
       <button class="a11y-toggle" id="focus-btn" aria-pressed="false">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
         Modo foco
+      </button>
+
+      <button class="a11y-toggle" id="light-btn" aria-pressed="false">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        Tema claro
       </button>
 
       <span class="a11y-panel__label">Leitura</span>
@@ -935,6 +1224,7 @@
       hcm:        false,
       focusMode:  false,
       dyslexic:   false,
+      lightMode:  false,
       spacingIdx: 0,
       fontIdx:    0,
       theme:      '',   // 'noite' | 'clean' | 'foco' from prefs
@@ -976,13 +1266,22 @@
       if (fs.cls) b.classList.add(fs.cls);
       fontLabel.textContent = fs.label;
 
-      // Theme from prefs
+      // Light mode toggle (manual)
+      b.classList.toggle('theme-light', a11yState.lightMode);
+      const lightBtn = document.getElementById('light-btn');
+      if (lightBtn) {
+        lightBtn.classList.toggle('active', a11yState.lightMode);
+        lightBtn.setAttribute('aria-pressed', String(a11yState.lightMode));
+      }
+
+      // Theme from prefs (overrides light only if not manually set)
       b.classList.remove('theme-clean');
-      if (a11yState.theme === 'clean') b.classList.add('theme-clean');
+      if (!a11yState.lightMode && a11yState.theme === 'clean') b.classList.add('theme-clean');
 
       // Trigger dot — shows when any accessibility option is active
       if (a11yTriggerBtn) {
         const anyActive = a11yState.hcm || a11yState.focusMode || a11yState.dyslexic
+                        || a11yState.lightMode
                         || a11yState.spacingIdx > 0 || a11yState.fontIdx > 0;
         a11yTriggerBtn.classList.toggle('has-active', anyActive);
       }
@@ -1030,6 +1329,12 @@
     // ── Focus mode toggle ──────────────────────────────────────────────────
     focusBtn.addEventListener('click', () => {
       a11yState.focusMode = !a11yState.focusMode;
+      applyA11y(); saveA11y();
+    });
+
+    // ── Light mode toggle ─────────────────────────────────────────────────
+    document.getElementById('light-btn').addEventListener('click', () => {
+      a11yState.lightMode = !a11yState.lightMode;
       applyA11y(); saveA11y();
     });
 
@@ -1094,6 +1399,17 @@
         // Apply tema from prefs (step 2)
         if (prefs.tema === 'clean') a11yState.theme = 'clean';
         if (prefs.tema === 'foco')  { a11yState.theme = ''; a11yState.focusMode = true; }
+        if (prefs.tema === 'noite') { a11yState.theme = ''; a11yState.lightMode = false; }
+
+        // Aplicar font size a partir de prefs (se ainda não guardado via a11y manual)
+        if (prefs.fontIdx !== undefined && a11yState.fontIdx === 0) {
+          a11yState.fontIdx = Math.min(parseInt(prefs.fontIdx, 10) || 0, FONT_SIZES.length - 1);
+        }
+
+        // Aplicar espaçamento a partir de prefs (se não ajustado manualmente)
+        if (prefs.spacingIdx !== undefined && a11yState.spacingIdx === 0) {
+          a11yState.spacingIdx = Math.min(parseInt(prefs.spacingIdx, 10) || 0, SPACING_CYCLE.length - 1);
+        }
 
         // Pre-select mode from prefs if stored
         if (prefs.modo) {
@@ -1274,7 +1590,7 @@
     }
     function renderHistory() {
       const hist = loadHistory();
-      const modeLabels = { metaphor: 'Metáfora', checklist: 'Microtarefas', summary: 'Resumo' };
+      const modeLabels = { metaphor: 'Metáfora', checklist: 'Passo a passo', summary: 'Resumo', questions: 'Perguntas' };
       if (!hist.length) {
         historyList.innerHTML = '<p class="history-empty">Nenhuma adaptação ainda.<br/>Adapte um texto para criar o histórico.</p>';
         return;
@@ -1294,8 +1610,9 @@
           const id = parseInt(el.dataset.id, 10);
           const entry = loadHistory().find(h => h.id === id);
           if (!entry) return;
-          const html = entry.mode === 'metaphor'  ? renderMetaphor(entry.data)
-                     : entry.mode === 'checklist' ? renderChecklist(entry.data)
+          const html = entry.mode === 'metaphor'   ? renderMetaphor(entry.data)
+                     : entry.mode === 'checklist'  ? renderChecklist(entry.data)
+                     : entry.mode === 'questions'  ? renderQuestions(entry.data)
                      : renderSummary(entry.data);
           showOutput(html, entry.data);
           closeHistory();
@@ -1481,14 +1798,17 @@
           <p class="output-alert__text"><strong style="color:var(--clr-amber)">O que a metáfora NÃO cobre:</strong><br/>${esc(data.pontos_de_atencao)}</p>
         </div>` : '';
 
+      const flashcardSection = buildFlashcards(data.mapeamentos);
+
       return `
         <div class="output-header">
           <h3 class="output-title">${esc(data.titulo)}</h3>
-          ${data.universo_analogia ? `<span class="output-universe">🌐 ${esc(data.universo_analogia)}</span>` : ''}
+          ${data.universo_analogia ? `<span class="output-universe">${esc(data.universo_analogia)}</span>` : ''}
         </div>
         <p class="output-prose" id="output-prose-text">${esc(data.conteudo_principal)}</p>
         ${mappingSection}
         ${alertSection}
+        ${flashcardSection}
         <hr class="output-divider"/>
         ${actionBar(data)}
       `;
@@ -1555,6 +1875,70 @@
       `;
     }
 
+    // ── Render: Questions mode ────────────────────────────────────────────
+    function renderQuestions(data) {
+      const qs = (data.perguntas || []);
+      const cards = qs.map((q, i) => `
+        <div class="question-card" data-qi="${i}">
+          <div class="question-card__q">${esc(q.pergunta)}</div>
+          <div class="question-card__actions">
+            <button class="question-hint-btn" data-qi="${i}" aria-expanded="false">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              Dica
+            </button>
+            <button class="question-reveal-btn" data-qi="${i}" aria-expanded="false">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              Ver resposta
+            </button>
+          </div>
+          <div class="question-hint" data-qi="${i}">${esc(q.dica)}</div>
+          <div class="question-answer" data-qi="${i}"><strong>Resposta:</strong> ${esc(q.resposta)}</div>
+        </div>`).join('');
+
+      return `
+        <div class="output-header">
+          <h3 class="output-title">${esc(data.titulo)}</h3>
+        </div>
+        ${data.conteudo_principal ? `<p class="output-prose">${esc(data.conteudo_principal)}</p>` : ''}
+        <div class="questions-list">${cards}</div>
+        <hr class="output-divider"/>
+        ${actionBar(data)}
+      `;
+    }
+
+    // ── Render: Flashcards (dos mapeamentos, modo Metáfora) ───────────────
+    function buildFlashcards(mappings) {
+      if (!mappings || !mappings.length) return '';
+      const total = mappings.length;
+      return `
+        <hr class="output-divider"/>
+        <div class="flashcard-section" id="flashcard-section">
+          <span class="flashcard-section__title">Flashcards — ${total} ${total === 1 ? 'conceito' : 'conceitos'}</span>
+          <div class="flashcard-progress" role="progressbar" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="1">
+            <div class="flashcard-progress__fill" id="fc-progress" style="width:${Math.round(1/total*100)}%"></div>
+          </div>
+          <div class="flashcard" id="flashcard" tabindex="0" aria-label="Clique para revelar a metáfora" role="button">
+            <div class="flashcard__inner">
+              <div class="flashcard__front">
+                <div class="flashcard__term" id="fc-term">${esc(mappings[0].termo_tecnico)}</div>
+                <div class="flashcard__hint" id="fc-hint">Qual é a metáfora?</div>
+                <span class="flashcard__tap">Clique para revelar</span>
+              </div>
+              <div class="flashcard__back">
+                <div class="flashcard__term" id="fc-answer" style="font-size:0.95rem">${esc(mappings[0].equivalente_metafora)}</div>
+                <div class="flashcard__answer" id="fc-explain">${esc(mappings[0].explicacao_conexao)}</div>
+                <span class="flashcard__tap">Clique para virar</span>
+              </div>
+            </div>
+          </div>
+          <div class="flashcard-nav">
+            <button class="btn btn-ghost btn-sm" id="fc-prev" aria-label="Anterior" ${total < 2 ? 'disabled' : ''}>←</button>
+            <span class="flashcard-counter" id="fc-counter" aria-live="polite">1 / ${total}</span>
+            <button class="btn btn-ghost btn-sm" id="fc-next" aria-label="Próximo" ${total < 2 ? 'disabled' : ''}>→</button>
+          </div>
+        </div>`;
+    }
+
     // ── Action bar ────────────────────────────────────────────────────────
     function actionBar(data) {
       const ttsSupported = 'speechSynthesis' in window;
@@ -1572,6 +1956,14 @@
           <button class="btn btn-ghost btn-sm" id="md-btn" aria-label="Exportar em Markdown">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Exportar MD
+          </button>
+          <button class="pdf-btn" id="pdf-btn" aria-label="Exportar como PDF">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            PDF
+          </button>
+          <button class="simplify-btn" id="simplify-btn" aria-label="Simplificar ainda mais">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            Simplificar mais
           </button>
           ${ttsBtn}
         </div>
@@ -1756,6 +2148,90 @@
         });
       }
 
+      // PDF export
+      const pdfBtn = document.getElementById('pdf-btn');
+      if (pdfBtn) {
+        pdfBtn.addEventListener('click', () => window.print());
+      }
+
+      // Simplificar mais — re-envia o output como novo input com instrução de simplificação
+      const simplifyBtn = document.getElementById('simplify-btn');
+      if (simplifyBtn) {
+        simplifyBtn.addEventListener('click', async () => {
+          const currentText = outputContent.innerText.trim();
+          if (!currentText) return;
+          const simplifiedInput = `Simplifica este texto para linguagem ainda mais simples, como se estivesses a explicar a uma criança de 10 anos:\n\n${currentText.substring(0, 4000)}`;
+          textarea.value = simplifiedInput;
+          updateCharCount();
+          // scroll ao topo do painel de input em mobile
+          if (window.innerWidth <= 900) {
+            document.querySelector('.panel').scrollIntoView({ behavior: 'smooth' });
+            await new Promise(r => setTimeout(r, 400));
+          }
+          adaptBtn.click();
+        });
+      }
+
+      // Flashcard interactivity
+      const fcEl = document.getElementById('flashcard');
+      if (fcEl) {
+        const mappings = responseData && responseData.mapeamentos ? responseData.mapeamentos : [];
+        let fcIdx = 0;
+
+        function updateFlashcard() {
+          const m = mappings[fcIdx];
+          if (!m) return;
+          const term    = document.getElementById('fc-term');
+          const answer  = document.getElementById('fc-answer');
+          const explain = document.getElementById('fc-explain');
+          const counter = document.getElementById('fc-counter');
+          const progress= document.getElementById('fc-progress');
+          if (term)    term.textContent    = m.termo_tecnico;
+          if (answer)  answer.textContent  = m.equivalente_metafora;
+          if (explain) explain.textContent = m.explicacao_conexao;
+          if (counter) counter.textContent = `${fcIdx + 1} / ${mappings.length}`;
+          if (progress) progress.style.width = `${Math.round((fcIdx + 1) / mappings.length * 100)}%`;
+          fcEl.classList.remove('flipped');
+          fcEl.setAttribute('aria-label', 'Clique para revelar a metáfora');
+          const wrap = fcEl.closest('[role="progressbar"]');
+          if (wrap) wrap.setAttribute('aria-valuenow', String(fcIdx + 1));
+        }
+
+        fcEl.addEventListener('click', () => {
+          fcEl.classList.toggle('flipped');
+          fcEl.setAttribute('aria-label', fcEl.classList.contains('flipped') ? 'Clique para virar' : 'Clique para revelar a metáfora');
+        });
+        fcEl.addEventListener('keydown', e => {
+          if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); fcEl.click(); }
+        });
+
+        const prevBtn = document.getElementById('fc-prev');
+        const nextBtn = document.getElementById('fc-next');
+        if (prevBtn) prevBtn.addEventListener('click', () => { if (fcIdx > 0) { fcIdx--; updateFlashcard(); } });
+        if (nextBtn) nextBtn.addEventListener('click', () => { if (fcIdx < mappings.length - 1) { fcIdx++; updateFlashcard(); } });
+      }
+
+      // Questions interactivity
+      outputContent.querySelectorAll('.question-hint-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const qi = btn.dataset.qi;
+          const hint = outputContent.querySelector(`.question-hint[data-qi="${qi}"]`);
+          if (!hint) return;
+          const isOpen = hint.classList.toggle('visible');
+          btn.setAttribute('aria-expanded', String(isOpen));
+        });
+      });
+      outputContent.querySelectorAll('.question-reveal-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const qi = btn.dataset.qi;
+          const ans = outputContent.querySelector(`.question-answer[data-qi="${qi}"]`);
+          if (!ans) return;
+          const isOpen = ans.classList.toggle('visible');
+          btn.setAttribute('aria-expanded', String(isOpen));
+          btn.textContent = isOpen ? 'Esconder' : 'Ver resposta';
+        });
+      });
+
       // TTS with word highlight
       wireTts(outputContent);
     }
@@ -1797,7 +2273,7 @@
       adaptBtn.classList.add('loading');
       adaptBtn.disabled = true;
 
-      const modeLabels = { metaphor: 'Construindo analogias…', checklist: 'Criando microtarefas…', summary: 'Sintetizando conceitos…' };
+      const modeLabels = { metaphor: 'Construindo analogias…', checklist: 'Dividindo em passos…', summary: 'Sintetizando…', questions: 'Criando perguntas…' };
       setTimeout(() => { if (skeletonStatus) skeletonStatus.textContent = modeLabels[mode] || SKELETON_PHASES[2]; }, 900);
 
       try {
@@ -1814,9 +2290,10 @@
 
         const data = await response.json();
         let html = '';
-        if (data.modo === 'metaphor')       html = renderMetaphor(data);
-        else if (data.modo === 'checklist') html = renderChecklist(data);
-        else                                html = renderSummary(data);
+        if (data.modo === 'metaphor')        html = renderMetaphor(data);
+        else if (data.modo === 'checklist')  html = renderChecklist(data);
+        else if (data.modo === 'questions')  html = renderQuestions(data);
+        else                                 html = renderSummary(data);
 
         showOutput(html, data);
         addToHistory(data, mode, profile);
@@ -1830,6 +2307,30 @@
     }
 
     adaptBtn.addEventListener('click', doAdapt);
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // TEXTOS DE EXEMPLO
+    // ═══════════════════════════════════════════════════════════════════════
+    const EXAMPLES = {
+      ciencias: `A mitose é um processo de divisão celular em que uma célula-mãe se divide em duas células-filhas geneticamente idênticas. Ocorre em quatro fases principais: prófase, metáfase, anáfase e telófase. Durante a prófase, a cromatina se condensa em cromossomas visíveis e o fuso mitótico começa a formar-se. Na metáfase, os cromossomas alinham-se no plano equatorial da célula. Na anáfase, as cromátides-irmãs separam-se e migram para polos opostos da célula. Por fim, na telófase, forma-se uma nova membrana nuclear em torno de cada conjunto de cromossomas, e ocorre a citocinese, dividindo o citoplasma em duas células distintas.`,
+
+      historia: `A Revolução Industrial, iniciada na Grã-Bretanha por volta de 1760, foi uma transformação profunda nos processos de produção, com a substituição do trabalho manual por máquinas movidas a vapor. As fábricas substituíram os ateliês artesanais, e enormes contingentes populacionais migraram do campo para as cidades em busca de emprego. Este processo trouxe tanto avanços tecnológicos como sérias consequências sociais: jornadas de trabalho exaustivas, trabalho infantil, condições insalubres nas fábricas e o crescimento de bairros operários sem saneamento básico. A concentração de riqueza nas mãos dos industriais e a pauperização dos trabalhadores criaram as condições para o surgimento dos movimentos operários e das primeiras reivindicações por direitos laborais.`,
+
+      matematica: `Uma função quadrática é uma função polinomial de segundo grau definida pela equação f(x) = ax² + bx + c, onde a ≠ 0. O gráfico de uma função quadrática é uma parábola: quando a > 0, a parábola abre para cima e tem um mínimo; quando a < 0, abre para baixo e tem um máximo. O vértice da parábola, ponto de máximo ou mínimo, pode ser calculado pela fórmula xv = -b/(2a) e yv = -Δ/(4a), onde Δ = b² - 4ac é o discriminante. As raízes da equação quadrática — os valores de x para os quais f(x) = 0 — são obtidas pela fórmula de Bhaskara: x = (-b ± √Δ) / (2a). O discriminante determina o número de raízes reais: Δ > 0 indica duas raízes distintas, Δ = 0 uma raiz dupla, e Δ < 0 nenhuma raiz real.`,
+    };
+
+    document.querySelectorAll('.example-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const key = btn.dataset.example;
+        if (!EXAMPLES[key]) return;
+        textarea.value = EXAMPLES[key];
+        updateCharCount();
+        textarea.focus();
+        // Scroll textarea ao topo se estiver longo
+        textarea.scrollTop = 0;
+      });
+    });
+
   </script>
 </body>
 </html>

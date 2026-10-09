@@ -186,8 +186,9 @@
 
     firebase.initializeApp(firebaseConfig);
     const auth     = firebase.auth();
+    // Firebase persists the session in IndexedDB by default (LOCAL persistence).
+    // Do NOT override with prompt:'select_account' — that forces re-auth every time.
     const provider = new firebase.auth.GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: 'select_account' });
 
     const googleBtn  = document.getElementById('google-btn');
     const errorBox   = document.getElementById('login-error');
@@ -197,10 +198,13 @@
       errorBox.classList.add('visible');
     }
 
-    // If already signed in, go straight to workspace
+    // Hide page while auth resolves, redirect immediately if already signed in
+    document.body.style.visibility = 'hidden';
     auth.onAuthStateChanged(user => {
       if (user) {
         window.location.replace('workspace.html');
+      } else {
+        document.body.style.visibility = '';
       }
     });
 

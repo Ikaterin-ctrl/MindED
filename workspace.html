@@ -1857,23 +1857,32 @@
     textarea.addEventListener('input', updateCharCount);
 
     // ── Tab switcher ──────────────────────────────────────────────────────
-    const tabs  = document.querySelectorAll('.input-tab');
-    const panes = document.querySelectorAll('.input-pane');
+    const tabs  = Array.from(document.querySelectorAll('.input-tab'));
+    const panes = Array.from(document.querySelectorAll('.input-pane'));
 
-    function switchTab(tabId) {
+    function switchTab(tabEl) {
+      // Deactivate all tabs + panes
       tabs.forEach(t => {
-        const active = t.id === tabId;
-        t.classList.toggle('active', active);
-        t.setAttribute('aria-selected', String(active));
+        t.classList.remove('active');
+        t.setAttribute('aria-selected', 'false');
       });
-      // Find which paneId this tab controls via aria-controls
-      const activeTab = document.getElementById(tabId);
-      const targetPaneId = activeTab ? activeTab.getAttribute('aria-controls') : null;
-      panes.forEach(p => {
-        p.classList.toggle('active', p.id === targetPaneId);
-      });
+      panes.forEach(p => p.classList.remove('active'));
+
+      // Activate the clicked tab
+      tabEl.classList.add('active');
+      tabEl.setAttribute('aria-selected', 'true');
+
+      // Activate the pane it controls
+      const paneId = tabEl.getAttribute('aria-controls');
+      const pane   = document.getElementById(paneId);
+      if (pane) pane.classList.add('active');
     }
-    tabs.forEach(t => t.addEventListener('click', () => switchTab(t.id)));
+
+    tabs.forEach(t => t.addEventListener('click', () => switchTab(t)));
+
+    // Initialise: activate the tab that already has .active in HTML
+    const initialTab = tabs.find(t => t.classList.contains('active')) || tabs[0];
+    if (initialTab) switchTab(initialTab);
 
     // ── PDF: load pdf.js ──────────────────────────────────────────────────
     async function loadPdfJs() {
@@ -1906,7 +1915,7 @@
     function pdfToTextThenSwitch(text) {
       textarea.value = text;
       updateCharCount();
-      switchTab('tab-text');
+      switchTab(tabs.find(t => t.id === 'tab-text'));
       textarea.focus();
     }
 
@@ -1956,7 +1965,7 @@
       if (file && file.type === 'application/pdf') {
         e.preventDefault();
         textPane.classList.remove('drag-over');
-        switchTab('tab-pdf');
+        switchTab(tabs.find(t => t.id === 'tab-pdf'));
         handlePdfFile(file);
       }
     });
@@ -2013,7 +2022,7 @@
 
         textarea.value = text;
         updateCharCount();
-        switchTab('tab-text');
+        switchTab(tabs.find(t => t.id === 'tab-text'));
         textarea.focus();
 
       } catch (err) {

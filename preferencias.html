@@ -144,19 +144,18 @@
     /* Checkbox group */
     .check-group {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: var(--sp-sm);
     }
     .check-label {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: var(--sp-sm);
-      padding: 10px 14px;
+      padding: 12px 14px;
       background: var(--clr-surface);
       border: 1px solid var(--clr-border);
       border-radius: var(--r-md);
       cursor: pointer;
-      font-size: 0.88rem;
       color: var(--clr-text-muted);
       transition: border-color var(--t-base), background var(--t-base), color var(--t-base);
     }
@@ -168,6 +167,27 @@
     .check-label input {
       accent-color: var(--clr-violet);
       width: 16px; height: 16px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    /* Two-line label: name + description always visible */
+    .check-label__content {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .check-label__name {
+      font-size: 0.88rem;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+    .check-label__desc {
+      font-size: 0.75rem;
+      color: var(--clr-text-subtle);
+      line-height: 1.45;
+    }
+    .check-label:has(input:checked) .check-label__desc {
+      color: var(--clr-text-muted);
     }
 
     /* Review summary */
@@ -201,6 +221,7 @@
       justify-content: space-between;
       gap: var(--sp-md);
       padding-top: var(--sp-sm);
+      align-items: center;
     }
 
     /* Save banner */
@@ -260,6 +281,7 @@
       <!-- ── Step 1 ─────────────────────────────────────────── -->
       <div class="step-card glass active" id="step-1" role="group" aria-labelledby="s1-title">
         <h2 id="s1-title">1. Como você prefere receber conteúdo?</h2>
+        <p id="step-hint-1" class="step-hint" role="alert">Selecione pelo menos uma opção para continuar.</p>
 
         <div class="step-section">
           <h3>Formato preferido</h3>
@@ -297,6 +319,7 @@
       <!-- ── Step 2 ─────────────────────────────────────────── -->
       <div class="step-card glass" id="step-2" role="group" aria-labelledby="s2-title">
         <h2 id="s2-title">2. Ambiente de estudo</h2>
+        <p id="step-hint-2" class="step-hint" role="alert">Selecione pelo menos uma opção para continuar.</p>
 
         <div class="step-section">
           <h3>Tema de interface preferido</h3>
@@ -334,6 +357,7 @@
       <!-- ── Step 3 ─────────────────────────────────────────── -->
       <div class="step-card glass" id="step-3" role="group" aria-labelledby="s3-title">
         <h2 id="s3-title">3. Seu ritmo de estudo</h2>
+        <p id="step-hint-3" class="step-hint" role="alert">Selecione pelo menos uma opção para continuar.</p>
 
         <div class="step-section">
           <h3>Ritmo geral</h3>
@@ -368,7 +392,7 @@
         </div>
       </div>
 
-      <!-- ── Step 4 — Ajustes Cognitivos Modulares (COGA / UDL Pilar 1) ── -->
+      <!-- ── Step 4 — Ajustes Cognitivos Modulares ──────────── -->
       <div class="step-card glass" id="step-4" role="group" aria-labelledby="s4-title">
         <h2 id="s4-title">4. Ajustes Cognitivos Modulares</h2>
         <p style="font-size:0.84rem;color:var(--clr-text-subtle);margin-top:-8px;line-height:1.6">
@@ -377,34 +401,63 @@
         </p>
 
         <div class="check-group" role="group" aria-label="Ajustes cognitivos modulares">
-          <label class="check-label" title="Aumenta variação, analogias lúdicas e síntese rápida — combate o underarousal dopaminérgico">
+
+          <label class="check-label">
             <input type="checkbox" value="tdah" />
-            ⚡ TDAH — Novidade &amp; Estímulo
+            <span class="check-label__content">
+              <span class="check-label__name">⚡ TDAH</span>
+              <span class="check-label__desc">Mais variedade, exemplos visuais e resumos rápidos</span>
+            </span>
           </label>
-          <label class="check-label" title="Reduz ambiguidade, mantém linguagem literal e estrutura rígida e previsível">
+
+          <label class="check-label">
             <input type="checkbox" value="autismo" />
-            🔲 Autismo — Literalidade &amp; Previsibilidade
+            <span class="check-label__content">
+              <span class="check-label__name">🔲 Autismo</span>
+              <span class="check-label__desc">Linguagem literal, estrutura clara e previsível</span>
+            </span>
           </label>
-          <label class="check-label" title="Frases curtas, espaçamento amplo, sem visual crowding — para dislexia e fadiga visual">
+
+          <label class="check-label">
             <input type="checkbox" value="dislexia" />
-            📖 Dislexia — Simplificação Sintática
+            <span class="check-label__content">
+              <span class="check-label__name">📖 Dislexia</span>
+              <span class="check-label__desc">Frases curtas, espaçamento amplo, sem crowding visual</span>
+            </span>
           </label>
-          <label class="check-label" title="Mantém vocabulário técnico preciso e detalhes de implementação">
+
+          <label class="check-label">
             <input type="checkbox" value="analitico" />
-            ⚙️ Analítico — Detalhe Técnico
+            <span class="check-label__content">
+              <span class="check-label__name">⚙️ Analítico</span>
+              <span class="check-label__desc">Mantém detalhes técnicos e vocabulário preciso</span>
+            </span>
           </label>
-          <label class="check-label" title="Narrativas expandidas, metáforas ricas e conexões interdisciplinares">
+
+          <label class="check-label">
             <input type="checkbox" value="criativo" />
-            🎨 Criativo — Narrativas Expandidas
+            <span class="check-label__content">
+              <span class="check-label__name">🎨 Criativo</span>
+              <span class="check-label__desc">Metáforas ricas e conexões entre assuntos</span>
+            </span>
           </label>
-          <label class="check-label" title="Prioriza ícones semânticos, mapeamentos visuais e estrutura espacial">
+
+          <label class="check-label">
             <input type="checkbox" value="visual" />
-            👁 Visual — Ícones &amp; Estrutura Espacial
+            <span class="check-label__content">
+              <span class="check-label__name">👁 Visual</span>
+              <span class="check-label__desc">Prioriza ícones e estrutura espacial no output</span>
+            </span>
           </label>
-          <label class="check-label" title="Activa Text-to-Speech automaticamente ao receber o output">
+
+          <label class="check-label">
             <input type="checkbox" value="auditivo" />
-            🎧 Auditivo — Voz por Padrão
+            <span class="check-label__content">
+              <span class="check-label__name">🎧 Auditivo</span>
+              <span class="check-label__desc">Ativa leitura em voz alta automaticamente</span>
+            </span>
           </label>
+
         </div>
 
         <div class="step-nav">
@@ -412,6 +465,10 @@
           <button class="btn btn-primary" id="next-4">Próximo →</button>
         </div>
       </div>
+
+      <!-- ── Modo preferido (salvo para pre-select no workspace) ── -->
+      <!-- Adicionado invisível ao step 4 — salvo junto com prefs -->
+      <div class="step-card glass hidden" id="step-4b" aria-hidden="true" style="display:none"></div>
 
       <!-- ── Step 5 — Review ────────────────────────────────── -->
       <div class="step-card glass" id="step-5" role="group" aria-labelledby="s5-title">
@@ -492,11 +549,36 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    document.getElementById('next-1').addEventListener('click', () => goTo(2));
+    /* ── Step validation ────────────────────────────────────── */
+    // Returns true if at least one opt-btn is selected in the step
+    function stepHasSelection(stepId) {
+      const card = document.getElementById(stepId);
+      return card.querySelectorAll('.opt-btn.selected').length > 0;
+    }
+
+    function showHint(stepNum) {
+      const hint = document.getElementById(`step-hint-${stepNum}`);
+      if (hint) {
+        hint.classList.add('visible');
+        hint.focus && hint.focus();
+        setTimeout(() => hint.classList.remove('visible'), 3500);
+      }
+    }
+
+    document.getElementById('next-1').addEventListener('click', () => {
+      if (!stepHasSelection('step-1')) { showHint(1); return; }
+      goTo(2);
+    });
     document.getElementById('prev-2').addEventListener('click', () => goTo(1));
-    document.getElementById('next-2').addEventListener('click', () => goTo(3));
+    document.getElementById('next-2').addEventListener('click', () => {
+      if (!stepHasSelection('step-2')) { showHint(2); return; }
+      goTo(3);
+    });
     document.getElementById('prev-3').addEventListener('click', () => goTo(2));
-    document.getElementById('next-3').addEventListener('click', () => goTo(4));
+    document.getElementById('next-3').addEventListener('click', () => {
+      if (!stepHasSelection('step-3')) { showHint(3); return; }
+      goTo(4);
+    });
     document.getElementById('prev-4').addEventListener('click', () => goTo(3));
     document.getElementById('next-4').addEventListener('click', () => {
       buildReview();
@@ -542,6 +624,10 @@
 
     /* ── Save ───────────────────────────────────────────────── */
     document.getElementById('save-btn').addEventListener('click', () => {
+      // Also persist checkboxes from step 4 into prefs
+      const checks = [...document.querySelectorAll('.check-group input:checked')].map(i => i.value);
+      if (checks.length) prefs.perfil_cognitivo = checks.join(', ');
+
       try { localStorage.setItem('minded_prefs', JSON.stringify(prefs)); } catch (_) {}
       document.getElementById('step-5').classList.remove('active');
       document.getElementById('save-banner').classList.remove('hidden');

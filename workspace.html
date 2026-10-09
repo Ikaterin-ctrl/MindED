@@ -15,7 +15,6 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script>
-    /* Same config as login.html — keep in sync */
     const _fbConfig = {
       apiKey:            "AIzaSyAOV3zKA6QtrLtGToO-dsfbONhKyw7S80Q",
       authDomain:        "minded-3d49a.firebaseapp.com",
@@ -26,14 +25,12 @@
     };
     if (!firebase.apps.length) firebase.initializeApp(_fbConfig);
     const _auth = firebase.auth();
-    // Hide body until auth state is known — prevents flash of content
     document.documentElement.style.visibility = 'hidden';
     _auth.onAuthStateChanged(user => {
       if (!user) {
         window.location.replace('login.html');
       } else {
         document.documentElement.style.visibility = '';
-        // Expose user globally for the workspace script
         window._mindedUser = user;
       }
     });
@@ -60,7 +57,6 @@
       display: flex;
       flex-direction: column;
       gap: var(--sp-lg);
-      /* stick to top when scrolling long output */
       position: sticky;
       top: calc(64px + var(--sp-lg));
     }
@@ -76,9 +72,7 @@
     }
 
     /* ── Input textarea ─────────────────────────────────────── */
-    .input-area {
-      position: relative;
-    }
+    .input-area { position: relative; }
 
     .input-area__label {
       display: block;
@@ -127,22 +121,17 @@
       flex-direction: column;
       gap: var(--sp-sm);
     }
-
     .mode-group__label {
       font-size: 0.82rem;
       font-weight: 500;
       color: var(--clr-text-muted);
     }
-
     .mode-options {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: var(--sp-sm);
     }
-
-    .mode-option {
-      position: relative;
-    }
+    .mode-option { position: relative; }
     .mode-option input[type="radio"] {
       position: absolute;
       opacity: 0;
@@ -174,20 +163,9 @@
       outline: 2px solid var(--clr-violet);
       outline-offset: 2px;
     }
-
-    .mode-option__icon {
-      font-size: 1.4rem;
-    }
-    .mode-option__name {
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: var(--clr-text);
-    }
-    .mode-option__desc {
-      font-size: 0.70rem;
-      color: var(--clr-text-subtle);
-      line-height: 1.4;
-    }
+    .mode-option__icon { font-size: 1.4rem; }
+    .mode-option__name { font-size: 0.78rem; font-weight: 600; color: var(--clr-text); }
+    .mode-option__desc { font-size: 0.70rem; color: var(--clr-text-subtle); line-height: 1.4; }
 
     /* ── Profile select ─────────────────────────────────────── */
     .profile-group {
@@ -195,13 +173,11 @@
       flex-direction: column;
       gap: var(--sp-sm);
     }
-
     .profile-group__label {
       font-size: 0.82rem;
       font-weight: 500;
       color: var(--clr-text-muted);
     }
-
     .profile-select {
       width: 100%;
       padding: 10px var(--sp-md);
@@ -223,52 +199,7 @@
       border-color: var(--clr-violet);
       box-shadow: 0 0 0 3px rgba(139,92,246,0.18);
     }
-    .profile-select option {
-      background: #1a1f2e;
-      color: var(--clr-text);
-    }
-
-    /* ── High Clarity Mode (Pilar 3) ───────────────────────── */
-    /* When active: removes blur, sets solid opaque surfaces,
-       increases border contrast to meet WCAG 2.2 SC 1.4.3     */
-    body.hcm .glass {
-      background: #111827 !important;
-      backdrop-filter: none !important;
-      -webkit-backdrop-filter: none !important;
-      border-color: rgba(255,255,255,0.35) !important;
-    }
-    body.hcm .main-header {
-      background: #0d1117 !important;
-      backdrop-filter: none !important;
-      border-bottom-color: rgba(255,255,255,0.30) !important;
-    }
-    body.hcm {
-      background: #090D16 !important;
-    }
-
-    /* HCM toggle button — always visible in header */
-    #hcm-btn {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      padding: 6px 12px;
-      border-radius: var(--r-pill);
-      border: 1px solid var(--clr-border-md);
-      background: var(--clr-surface);
-      color: var(--clr-text-muted);
-      cursor: pointer;
-      transition: border-color var(--t-base), color var(--t-base), background var(--t-base);
-      white-space: nowrap;
-    }
-    #hcm-btn:hover { color: var(--clr-text); border-color: var(--clr-violet); }
-    #hcm-btn.active {
-      background: rgba(139,92,246,0.15);
-      border-color: var(--clr-violet);
-      color: var(--clr-text);
-    }
-    #hcm-btn:focus-visible { outline: 2px solid var(--clr-violet); outline-offset: 2px; }
+    .profile-select option { background: #1a1f2e; color: var(--clr-text); }
 
     /* ── CTA button ─────────────────────────────────────────── */
     #adapt-btn {
@@ -277,7 +208,6 @@
       font-size: 1rem;
       gap: var(--sp-sm);
     }
-    /* Pilar 5 — Skeleton loading state replaces raw spinner */
     #adapt-btn .btn-spinner { display: none; }
     #adapt-btn.loading .btn-label { display: none; }
     #adapt-btn.loading .btn-spinner {
@@ -297,7 +227,24 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── Skeleton screen (Pilar 5) ──────────────────────────── */
+    /* Keyboard hint below CTA */
+    .shortcut-hint {
+      font-size: 0.72rem;
+      color: var(--clr-text-subtle);
+      text-align: center;
+      margin-top: -8px;
+    }
+    .shortcut-hint kbd {
+      display: inline-block;
+      padding: 1px 5px;
+      border: 1px solid var(--clr-border-md);
+      border-radius: 4px;
+      font-size: 0.68rem;
+      font-family: var(--font-body);
+      background: var(--clr-surface);
+    }
+
+    /* ── Skeleton screen ────────────────────────────────────── */
     .skeleton-wrap {
       display: flex;
       flex-direction: column;
@@ -330,15 +277,14 @@
       transition: opacity 0.3s ease;
     }
 
-    /* ═══════════════════════════════════════════════════════
+    /* ══════════════════════════════════════════════════════════
        OUTPUT PANEL
-    ═══════════════════════════════════════════════════════ */
+    ══════════════════════════════════════════════════════════ */
     .output-panel {
       position: relative;
       min-height: 400px;
     }
 
-    /* Empty / error states */
     .output-empty {
       display: flex;
       flex-direction: column;
@@ -350,13 +296,9 @@
       color: var(--clr-text-subtle);
       min-height: 300px;
     }
-    .output-empty__icon {
-      font-size: 2.5rem;
-      opacity: 0.5;
-    }
+    .output-empty__icon { font-size: 2.5rem; opacity: 0.5; }
     .output-empty p { font-size: 0.9rem; }
 
-    /* Output header */
     .output-header {
       display: flex;
       align-items: flex-start;
@@ -364,21 +306,19 @@
       gap: var(--sp-md);
       flex-wrap: wrap;
     }
-
     .output-title {
       font-size: 1.3rem;
       font-weight: 700;
       color: var(--clr-text);
       line-height: 1.3;
     }
-
     .output-universe {
       display: inline-flex;
       align-items: center;
       gap: 6px;
       padding: 4px 12px;
-      background: rgba(34, 211, 238, 0.10);
-      border: 1px solid rgba(34, 211, 238, 0.20);
+      background: rgba(34,211,238,0.10);
+      border: 1px solid rgba(34,211,238,0.20);
       border-radius: var(--r-pill);
       font-size: 0.75rem;
       font-weight: 600;
@@ -393,16 +333,15 @@
       flex-wrap: wrap;
     }
 
-    /* Prose — metaphor body text */
+    /* Prose */
     .output-prose {
       font-size: 0.92rem;
       color: var(--clr-text-muted);
-      line-height: 1.8;
-      white-space: pre-line;   /* preserves \n as line breaks, collapses extra spaces */
+      line-height: var(--lh-body);
+      white-space: pre-line;
     }
 
-    /* ── Bidirectional highlight (Pilar 2a) ─────────────────── */
-    /* Hovering a mapping row highlights the prose source span   */
+    /* ── Bidirectional highlight ─────────────────────────────── */
     .mapping-table tbody tr { cursor: default; }
     .mapping-table tbody tr.row-active td { background: rgba(139,92,246,0.08); }
     span.prose-highlight {
@@ -416,6 +355,16 @@
       outline: 1px solid rgba(139,92,246,0.6);
     }
 
+    /* ── TTS word-highlight ──────────────────────────────────── */
+    .tts-word {
+      border-radius: 2px;
+      transition: background var(--t-fast);
+    }
+    .tts-word.tts-active {
+      background: rgba(251,191,36,0.35);
+      outline: 1px solid rgba(251,191,36,0.5);
+    }
+
     /* ── Mapping grid ───────────────────────────────────────── */
     .mapping-grid-section h4 {
       font-size: 0.78rem;
@@ -425,7 +374,6 @@
       color: var(--clr-text-subtle);
       margin-bottom: var(--sp-md);
     }
-
     .mapping-table {
       width: 100%;
       border-collapse: collapse;
@@ -450,35 +398,20 @@
     }
     .mapping-table tr:last-child td { border-bottom: none; }
     .mapping-table tbody tr:hover td { background: rgba(255,255,255,0.025); }
-    .mapping-table td:first-child {
-      font-weight: 600;
-      color: var(--clr-violet);
-      white-space: nowrap;
-    }
-    .mapping-table td:nth-child(2) {
-      color: var(--clr-cyan);
-      white-space: nowrap;
-    }
+    .mapping-table td:first-child { font-weight: 600; color: var(--clr-violet); white-space: nowrap; }
+    .mapping-table td:nth-child(2) { color: var(--clr-cyan); white-space: nowrap; }
 
     /* Attention alert */
     .output-alert {
       display: flex;
       gap: var(--sp-md);
       padding: var(--sp-md);
-      background: rgba(251, 191, 36, 0.08);
-      border: 1px solid rgba(251, 191, 36, 0.22);
+      background: rgba(251,191,36,0.08);
+      border: 1px solid rgba(251,191,36,0.22);
       border-radius: var(--r-md);
     }
-    .output-alert__icon {
-      font-size: 1.1rem;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-    .output-alert__text {
-      font-size: 0.85rem;
-      color: var(--clr-text-muted);
-      line-height: 1.65;
-    }
+    .output-alert__icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 2px; }
+    .output-alert__text { font-size: 0.85rem; color: var(--clr-text-muted); line-height: 1.65; }
 
     /* Checklist */
     .checklist-progress {
@@ -506,7 +439,7 @@
       white-space: nowrap;
     }
 
-    /* ── Chunking: "show more" for > 5 items (Pilar 2b) ────── */
+    /* Chunking — show more */
     .chunk-more-btn {
       display: flex;
       align-items: center;
@@ -531,7 +464,6 @@
       gap: var(--sp-sm);
       counter-reset: step-counter;
     }
-
     .checklist-item {
       display: flex;
       align-items: flex-start;
@@ -549,7 +481,6 @@
       border-color: rgba(52,211,153,0.30);
       background: rgba(52,211,153,0.06);
     }
-
     .checklist-item__checkbox {
       width: 20px; height: 20px;
       flex-shrink: 0;
@@ -577,7 +508,6 @@
       transition: opacity var(--t-fast);
     }
     .checklist-item.done .checklist-item__check-svg { opacity: 1; }
-
     .checklist-item__text {
       font-size: 0.88rem;
       color: var(--clr-text-muted);
@@ -593,12 +523,9 @@
     .summary-body {
       font-size: 0.92rem;
       color: var(--clr-text-muted);
-      line-height: 1.85;
+      line-height: var(--lh-body);
     }
-    .summary-body strong {
-      color: var(--clr-text);
-      font-weight: 600;
-    }
+    .summary-body strong { color: var(--clr-text); font-weight: 600; }
 
     /* Divider */
     .output-divider {
@@ -607,7 +534,7 @@
       margin: 0;
     }
 
-    /* API error notice */
+    /* API error with retry */
     .output-error {
       display: flex;
       gap: var(--sp-md);
@@ -618,7 +545,28 @@
       font-size: 0.88rem;
       color: #FCA5A5;
       line-height: 1.6;
+      flex-direction: column;
     }
+    .output-error__body {
+      display: flex;
+      gap: var(--sp-md);
+      align-items: flex-start;
+    }
+    .retry-btn {
+      align-self: flex-start;
+      margin-left: calc(var(--sp-md) + 1.1rem + var(--sp-md));
+      padding: 7px 16px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      border-radius: var(--r-pill);
+      border: 1px solid rgba(239,68,68,0.40);
+      background: rgba(239,68,68,0.12);
+      color: #FCA5A5;
+      cursor: pointer;
+      transition: background var(--t-base), border-color var(--t-base);
+    }
+    .retry-btn:hover { background: rgba(239,68,68,0.20); border-color: rgba(239,68,68,0.60); }
+    .retry-btn:focus-visible { outline: 2px solid #f87171; outline-offset: 2px; }
 
     /* ── Responsive ─────────────────────────────────────────── */
     @media (max-width: 900px) {
@@ -629,7 +577,6 @@
       .panel { position: static; }
       .mode-options { grid-template-columns: repeat(3, 1fr); }
     }
-
     @media (max-width: 520px) {
       .mode-options { grid-template-columns: 1fr; }
       .mapping-table { display: block; overflow-x: auto; }
@@ -646,6 +593,10 @@
         <span>MindED</span>
       </a>
 
+      <!-- Active profile pill — populated by JS from localStorage -->
+      <a href="preferencias.html" class="profile-pill" id="profile-pill"
+         data-empty="true" aria-label="Perfil ativo — clique para editar preferências"></a>
+
       <button class="hamburger" id="hamburger" aria-label="Abrir menu" aria-expanded="false" aria-controls="main-nav">
         <span></span><span></span><span></span>
       </button>
@@ -654,11 +605,6 @@
         <a href="index.html"        class="nav-link">Início</a>
         <a href="workspace.html"    class="nav-link active">Workspace</a>
         <a href="preferencias.html" class="nav-link">Preferências</a>
-        <!-- Pilar 3 — High Clarity Mode toggle -->
-        <button id="hcm-btn" aria-pressed="false" title="Modo Vidro Sólido — desativa transparências para maior clareza visual">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-          Alto Contraste
-        </button>
         <!-- User avatar + logout -->
         <div style="display:flex;align-items:center;gap:8px;margin-left:4px">
           <img id="user-avatar" src="" alt="" width="28" height="28"
@@ -685,7 +631,7 @@
         <textarea
           id="text-input"
           class="input-area__textarea"
-          placeholder="Ex.: Microsserviços são uma abordagem arquitetural para desenvolver uma aplicação como um conjunto de pequenos serviços…"
+          placeholder="Cole aqui qualquer texto difícil de entender…"
           maxlength="8000"
           aria-describedby="char-hint"
         ></textarea>
@@ -702,7 +648,7 @@
             <label for="mode-metaphor">
               <span class="mode-option__icon" aria-hidden="true">🧠</span>
               <span class="mode-option__name">Metáfora</span>
-              <span class="mode-option__desc">Analogias didáticas do cotidiano</span>
+              <span class="mode-option__desc">Explica com exemplos do dia a dia</span>
             </label>
           </div>
 
@@ -710,8 +656,8 @@
             <input type="radio" name="mode" id="mode-checklist" value="checklist" />
             <label for="mode-checklist">
               <span class="mode-option__icon" aria-hidden="true">✅</span>
-              <span class="mode-option__name">Microtarefas</span>
-              <span class="mode-option__desc">Checklist gamificado e acionável</span>
+              <span class="mode-option__name">Passo a passo</span>
+              <span class="mode-option__desc">Divide em tarefas pequenas para fazer agora</span>
             </label>
           </div>
 
@@ -720,7 +666,7 @@
             <label for="mode-summary">
               <span class="mode-option__icon" aria-hidden="true">📋</span>
               <span class="mode-option__name">Resumo</span>
-              <span class="mode-option__desc">Tópicos semânticos essenciais</span>
+              <span class="mode-option__desc">Pega o essencial, sem o resto</span>
             </label>
           </div>
 
@@ -752,11 +698,16 @@
         </span>
         <div class="btn-spinner" role="status" aria-label="Processando…"></div>
       </button>
+      <p class="shortcut-hint" aria-hidden="true">
+        <kbd>⌘</kbd><kbd>↵</kbd> ou <kbd>Ctrl</kbd><kbd>↵</kbd> para adaptar
+      </p>
 
     </section>
 
     <!-- ═══ RIGHT: Output Panel ═══════════════════════════════ -->
-    <section class="panel glass output-panel" aria-labelledby="output-panel-title" aria-live="polite" aria-atomic="false">
+    <!-- aria-atomic="true" so screen readers announce the complete new output,
+         not each injected HTML fragment individually -->
+    <section class="panel glass output-panel" aria-labelledby="output-panel-title" aria-live="polite" aria-atomic="true">
       <h2 class="panel__title" id="output-panel-title">Output Cognitivo</h2>
 
       <!-- Empty state -->
@@ -765,7 +716,7 @@
         <p>Cole um texto e clique em <strong style="color:var(--clr-text)">Adaptar com MindED</strong><br/>para ver o output aqui.</p>
       </div>
 
-      <!-- Pilar 5 — Skeleton screen shown during API call -->
+      <!-- Skeleton screen shown during API call -->
       <div id="output-skeleton" class="skeleton-wrap hidden" aria-hidden="true">
         <p class="skeleton-status" id="skeleton-status" aria-live="polite" aria-atomic="true">Analisando o texto…</p>
         <div class="skeleton-line skeleton-line--title"></div>
@@ -777,7 +728,7 @@
         <div class="skeleton-line skeleton-line--short"></div>
       </div>
 
-      <!-- Content will be injected here by JS -->
+      <!-- Content injected by JS -->
       <div id="output-content" class="hidden" aria-hidden="true"></div>
 
     </section>
@@ -789,25 +740,148 @@
     <p>&copy; 2025 MindED. Projeto open-source de acessibilidade cognitiva.</p>
   </footer>
 
+  <!-- ── History side-panel ─────────────────────────────────── -->
+  <!-- ── First-visit onboarding modal ──────────────────────── -->
+  <div class="onboard-backdrop" id="onboard-backdrop" aria-hidden="true"></div>
+  <div class="onboard-modal" id="onboard-modal" role="dialog"
+       aria-modal="true" aria-labelledby="onboard-title" aria-hidden="true">
+    <div class="onboard-modal__head">
+      <img src="img/logominded.png" alt="" aria-hidden="true" width="32" height="32" />
+      <h2 id="onboard-title">Bem-vindo ao MindED</h2>
+      <p>Três perguntas rápidas para personalizar sua experiência.</p>
+    </div>
+
+    <!-- Q1: Como você aprende? -->
+    <div class="onboard-q">
+      <p class="onboard-q__label">Como você prefere aprender?</p>
+      <div class="onboard-options" data-ob-group="perfil_cognitivo" data-multi="true">
+        <button class="onboard-opt" data-value="tdah">⚡ Exemplos rápidos e visuais</button>
+        <button class="onboard-opt" data-value="dislexia">📖 Texto curto e espaçado</button>
+        <button class="onboard-opt" data-value="autismo">🔲 Estrutura clara e literal</button>
+        <button class="onboard-opt" data-value="criativo">🎨 Metáforas e histórias</button>
+        <button class="onboard-opt" data-value="auditivo">🎧 Prefiro ouvir</button>
+      </div>
+    </div>
+
+    <!-- Q2: Qual modo prefere? -->
+    <div class="onboard-q">
+      <p class="onboard-q__label">Como quer receber o conteúdo adaptado?</p>
+      <div class="onboard-options" data-ob-group="modo_preferido" data-multi="false">
+        <button class="onboard-opt" data-value="metaphor">🧠 Explicar com exemplos</button>
+        <button class="onboard-opt" data-value="checklist">✅ Dividir em passos</button>
+        <button class="onboard-opt" data-value="summary">📋 Resumo direto</button>
+      </div>
+    </div>
+
+    <!-- Q3: Algo incomoda na leitura? -->
+    <div class="onboard-q">
+      <p class="onboard-q__label">Algo que incomoda ao ler? <span class="onboard-opt-label">(opcional)</span></p>
+      <div class="onboard-options" data-ob-group="ajuste_visual" data-multi="true">
+        <button class="onboard-opt" data-value="hcm">🌑 Fundo translúcido confunde</button>
+        <button class="onboard-opt" data-value="dyslexic">Aa Letra difícil de ler</button>
+        <button class="onboard-opt" data-value="spacing">↕ Linhas muito próximas</button>
+      </div>
+    </div>
+
+    <button class="onboard-cta" id="onboard-save">
+      Começar →
+    </button>
+    <button class="onboard-skip" id="onboard-skip">Pular por agora</button>
+  </div>
+
+  <div class="history-overlay" id="history-overlay" aria-hidden="true"></div>
+  <aside class="history-panel" id="history-panel" aria-label="Histórico de adaptações">
+    <div class="history-panel__head">
+      <h3>Histórico</h3>
+      <button class="history-panel__close" id="history-close" aria-label="Fechar histórico">✕</button>
+    </div>
+    <div class="history-panel__list" id="history-list" role="list"></div>
+  </aside>
+
+  <!-- ── Accessibility toolbar — collapsible, bottom-right ─── -->
+  <div class="a11y-bar">
+
+    <!-- Expandable panel (above the trigger) -->
+    <div class="a11y-panel" id="a11y-panel" role="region" aria-label="Opções de acessibilidade">
+
+      <span class="a11y-panel__label">Histórico</span>
+      <button class="a11y-toggle" id="history-btn" aria-expanded="false" aria-controls="history-panel">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Ver histórico
+      </button>
+
+      <span class="a11y-panel__label">Visualização</span>
+      <button class="a11y-toggle" id="hcm-btn" aria-pressed="false">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        Alto contraste
+      </button>
+      <button class="a11y-toggle" id="focus-btn" aria-pressed="false">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        Modo foco
+      </button>
+
+      <span class="a11y-panel__label">Leitura</span>
+      <button class="a11y-toggle" id="dyslexic-btn" aria-pressed="false">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+        Fonte OpenDyslexic
+      </button>
+      <button class="a11y-toggle" id="spacing-btn" aria-label="Espaçamento: normal">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        Espaçamento de linha
+      </button>
+      <div class="a11y-stepper" role="group" aria-label="Tamanho de fonte">
+        <button id="font-dec" aria-label="Reduzir fonte">−</button>
+        <span id="font-label" aria-live="polite">A</span>
+        <button id="font-inc" aria-label="Aumentar fonte">+</button>
+      </div>
+
+    </div>
+
+    <!-- Single trigger button — always visible -->
+    <button class="a11y-trigger" id="a11y-trigger-btn"
+            aria-expanded="false" aria-controls="a11y-panel"
+            aria-label="Opções de acessibilidade">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+      Acessibilidade
+      <span class="a11y-trigger__dot" aria-hidden="true"></span>
+    </button>
+
+  </div>
+
   <script>
     /* =====================================================================
-       MindED Workspace — Frontend Logic
-       Implements IHC Pillars 1-5 (COGA / Sweller / Paivio / UDL)
+       MindED Workspace — v2
+       Fixes: mdToHtml XSS, aria-atomic, HCM persistence, prefs bridge,
+              Cmd+Enter, retry on error, TTS word-highlight, history,
+              focus mode, OpenDyslexic, font size, line spacing.
     ===================================================================== */
     const API_BASE = 'http://127.0.0.1:8000';
 
     // ── DOM refs ──────────────────────────────────────────────────────────
-    const textarea        = document.getElementById('text-input');
-    const charCount       = document.getElementById('char-count');
-    const adaptBtn        = document.getElementById('adapt-btn');
-    const profileSelect   = document.getElementById('profile-select');
-    const outputEmpty     = document.getElementById('output-empty');
-    const outputContent   = document.getElementById('output-content');
-    const outputSkeleton  = document.getElementById('output-skeleton');
-    const skeletonStatus  = document.getElementById('skeleton-status');
-    const hamburger       = document.getElementById('hamburger');
-    const nav             = document.getElementById('main-nav');
-    const hcmBtn          = document.getElementById('hcm-btn');
+    const textarea       = document.getElementById('text-input');
+    const charCount      = document.getElementById('char-count');
+    const adaptBtn       = document.getElementById('adapt-btn');
+    const profileSelect  = document.getElementById('profile-select');
+    const outputEmpty    = document.getElementById('output-empty');
+    const outputContent  = document.getElementById('output-content');
+    const outputSkeleton = document.getElementById('output-skeleton');
+    const skeletonStatus = document.getElementById('skeleton-status');
+    const hamburger      = document.getElementById('hamburger');
+    const nav            = document.getElementById('main-nav');
+    const hcmBtn         = document.getElementById('hcm-btn');
+    const focusBtn       = document.getElementById('focus-btn');
+    const dyslexicBtn    = document.getElementById('dyslexic-btn');
+    const spacingBtn     = document.getElementById('spacing-btn');
+    const fontDecBtn     = document.getElementById('font-dec');
+    const fontIncBtn     = document.getElementById('font-inc');
+    const fontLabel      = document.getElementById('font-label');
+    const historyBtn     = document.getElementById('history-btn');
+    const historyPanel   = document.getElementById('history-panel');
+    const historyClose   = document.getElementById('history-close');
+    const historyOverlay = document.getElementById('history-overlay');
+    const historyList    = document.getElementById('history-list');
+    const a11yTriggerBtn = document.getElementById('a11y-trigger-btn');
+    const a11yPanel      = document.getElementById('a11y-panel');
 
     // ── Hamburger ─────────────────────────────────────────────────────────
     hamburger.addEventListener('click', () => {
@@ -820,8 +894,6 @@
     const avatarEl  = document.getElementById('user-avatar');
     const logoutBtn = document.getElementById('logout-btn');
 
-    // _mindedUser is set by the auth guard script in <head>
-    // Wait for it to be available (it's set synchronously on auth state resolved)
     function initUserUI() {
       const user = window._mindedUser;
       if (!user) return;
@@ -836,8 +908,6 @@
         window.location.replace('login.html');
       });
     }
-    // Auth guard resolves before DOMContentLoaded in most cases;
-    // if user is already set, run immediately, else wait
     if (window._mindedUser) {
       initUserUI();
     } else {
@@ -846,33 +916,414 @@
       });
     }
 
-    // ── Pilar 3 — High Clarity Mode toggle ───────────────────────────────
-    // Swaps glassmorphism for solid opaque surfaces (WCAG 2.2 SC 1.4.3)
+    // ═══════════════════════════════════════════════════════════════════════
+    // ACCESSIBILITY STATE — persisted in localStorage key 'minded_a11y'
+    // ═══════════════════════════════════════════════════════════════════════
+    const A11Y_KEY = 'minded_a11y';
+    const SPACING_CYCLE = [
+      { cls: '',                    label: 'Espaçamento: normal',       btnLabel: 'Espaçamento' },
+      { cls: 'spacing-comfortable', label: 'Espaçamento: confortável',  btnLabel: 'Espaç. ×1' },
+      { cls: 'spacing-relaxed',     label: 'Espaçamento: relaxado',     btnLabel: 'Espaç. ×2' },
+    ];
+    const FONT_SIZES = [
+      { cls: '',            label: 'A',  size: '15px' },
+      { cls: 'fontsize-md', label: 'A+', size: '17px' },
+      { cls: 'fontsize-lg', label: 'A++',size: '19px' },
+    ];
+
+    let a11yState = {
+      hcm:        false,
+      focusMode:  false,
+      dyslexic:   false,
+      spacingIdx: 0,
+      fontIdx:    0,
+      theme:      '',   // 'noite' | 'clean' | 'foco' from prefs
+    };
+
+    function saveA11y() {
+      try { localStorage.setItem(A11Y_KEY, JSON.stringify(a11yState)); } catch (_) {}
+    }
+
+    function applyA11y() {
+      const b = document.body;
+
+      // HCM
+      b.classList.toggle('hcm', a11yState.hcm);
+      hcmBtn.classList.toggle('active', a11yState.hcm);
+      hcmBtn.setAttribute('aria-pressed', String(a11yState.hcm));
+
+      // Focus mode
+      b.classList.toggle('focus-mode', a11yState.focusMode);
+      focusBtn.classList.toggle('active', a11yState.focusMode);
+      focusBtn.setAttribute('aria-pressed', String(a11yState.focusMode));
+
+      // OpenDyslexic
+      b.classList.toggle('font-dyslexic', a11yState.dyslexic);
+      dyslexicBtn.classList.toggle('active', a11yState.dyslexic);
+      dyslexicBtn.setAttribute('aria-pressed', String(a11yState.dyslexic));
+
+      // Line spacing
+      SPACING_CYCLE.forEach(s => b.classList.remove(s.cls));
+      const sp = SPACING_CYCLE[a11yState.spacingIdx];
+      if (sp.cls) b.classList.add(sp.cls);
+      spacingBtn.setAttribute('aria-label', sp.label);
+      spacingBtn.classList.toggle('active', a11yState.spacingIdx > 0);
+      spacingBtn.querySelector('svg + span') && (spacingBtn.querySelector('svg + span').textContent = sp.btnLabel);
+
+      // Font size
+      FONT_SIZES.forEach(f => b.classList.remove(f.cls));
+      const fs = FONT_SIZES[a11yState.fontIdx];
+      if (fs.cls) b.classList.add(fs.cls);
+      fontLabel.textContent = fs.label;
+
+      // Theme from prefs
+      b.classList.remove('theme-clean');
+      if (a11yState.theme === 'clean') b.classList.add('theme-clean');
+
+      // Trigger dot — shows when any accessibility option is active
+      if (a11yTriggerBtn) {
+        const anyActive = a11yState.hcm || a11yState.focusMode || a11yState.dyslexic
+                        || a11yState.spacingIdx > 0 || a11yState.fontIdx > 0;
+        a11yTriggerBtn.classList.toggle('has-active', anyActive);
+      }
+    }
+
+    // ── A11y panel toggle ─────────────────────────────────────────────────
+    if (a11yTriggerBtn && a11yPanel) {
+      a11yTriggerBtn.addEventListener('click', () => {
+        const open = a11yPanel.classList.toggle('open');
+        a11yTriggerBtn.classList.toggle('open', open);
+        a11yTriggerBtn.setAttribute('aria-expanded', String(open));
+      });
+      // Close when clicking outside
+      document.addEventListener('click', e => {
+        if (!a11yTriggerBtn.contains(e.target) && !a11yPanel.contains(e.target)) {
+          a11yPanel.classList.remove('open');
+          a11yTriggerBtn.classList.remove('open');
+          a11yTriggerBtn.setAttribute('aria-expanded', 'false');
+        }
+      });
+      // Close on Escape
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && a11yPanel.classList.contains('open')) {
+          a11yPanel.classList.remove('open');
+          a11yTriggerBtn.classList.remove('open');
+          a11yTriggerBtn.setAttribute('aria-expanded', 'false');
+          a11yTriggerBtn.focus();
+        }
+      });
+    }
+
+    function loadA11y() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(A11Y_KEY) || '{}');
+        Object.assign(a11yState, saved);
+      } catch (_) {}
+    }
+
+    // ── HCM toggle ────────────────────────────────────────────────────────
     hcmBtn.addEventListener('click', () => {
-      const active = document.body.classList.toggle('hcm');
-      hcmBtn.classList.toggle('active', active);
-      hcmBtn.setAttribute('aria-pressed', String(active));
+      a11yState.hcm = !a11yState.hcm;
+      applyA11y(); saveA11y();
     });
 
-    // ── Load saved profile from Preferências ─────────────────────────────
-    try {
-      const savedPrefs = JSON.parse(localStorage.getItem('minded_prefs') || '{}');
-      // Map perfil_cognitivo checkboxes to the closest profile-select option
-      const cogMap = {
-        tdah:     'TDAH/Iniciante',
-        dislexia: 'Dislexia',
-        autismo:  'Autismo',
-        analitico:'Avançado',
-        criativo: 'TDAH/Iniciante',
-        visual:   'TDAH/Iniciante',
-        auditivo: 'TDAH/Iniciante',
-      };
-      if (savedPrefs.perfil_cognitivo) {
-        const firstTag = savedPrefs.perfil_cognitivo.split(', ')[0];
-        const mapped = cogMap[firstTag];
-        if (mapped) profileSelect.value = mapped;
+    // ── Focus mode toggle ──────────────────────────────────────────────────
+    focusBtn.addEventListener('click', () => {
+      a11yState.focusMode = !a11yState.focusMode;
+      applyA11y(); saveA11y();
+    });
+
+    // ── OpenDyslexic toggle ───────────────────────────────────────────────
+    dyslexicBtn.addEventListener('click', () => {
+      a11yState.dyslexic = !a11yState.dyslexic;
+      applyA11y(); saveA11y();
+    });
+
+    // ── Spacing cycle ─────────────────────────────────────────────────────
+    spacingBtn.addEventListener('click', () => {
+      a11yState.spacingIdx = (a11yState.spacingIdx + 1) % SPACING_CYCLE.length;
+      applyA11y(); saveA11y();
+    });
+
+    // ── Font size stepper ─────────────────────────────────────────────────
+    fontDecBtn.addEventListener('click', () => {
+      if (a11yState.fontIdx > 0) { a11yState.fontIdx--; applyA11y(); saveA11y(); }
+    });
+    fontIncBtn.addEventListener('click', () => {
+      if (a11yState.fontIdx < FONT_SIZES.length - 1) { a11yState.fontIdx++; applyA11y(); saveA11y(); }
+    });
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // BRIDGE: localStorage preferences → UI pre-fill + a11y state
+    // ═══════════════════════════════════════════════════════════════════════
+    function applyPreferences() {
+      try {
+        const prefs = JSON.parse(localStorage.getItem('minded_prefs') || '{}');
+
+        // Map cognitive profile to select option
+        const cogMap = {
+          tdah:     'TDAH/Iniciante',
+          dislexia: 'Dislexia',
+          autismo:  'Autismo',
+          analitico:'Avançado',
+          criativo: 'TDAH/Iniciante',
+          visual:   'TDAH/Iniciante',
+          auditivo: 'TDAH/Iniciante',
+        };
+        if (prefs.perfil_cognitivo) {
+          const tags = prefs.perfil_cognitivo.split(', ');
+          const firstMapped = tags.map(t => cogMap[t]).find(Boolean);
+          if (firstMapped) profileSelect.value = firstMapped;
+
+          // Auto-enable HCM for dislexia or visual profiles
+          if (tags.includes('dislexia') || tags.includes('visual')) {
+            if (!a11yState.hcm) { a11yState.hcm = true; }
+          }
+          // Auto-enable OpenDyslexic for dislexia
+          if (tags.includes('dislexia')) {
+            if (!a11yState.dyslexic) { a11yState.dyslexic = true; }
+          }
+          // Auto-enable TTS for auditivo — set flag so TTS fires on output
+          window._autoTts = tags.includes('auditivo');
+          // Comfortable spacing for dislexia + autismo
+          if ((tags.includes('dislexia') || tags.includes('autismo')) && a11yState.spacingIdx === 0) {
+            a11yState.spacingIdx = 1;
+          }
+        }
+
+        // Apply tema from prefs (step 2)
+        if (prefs.tema === 'clean') a11yState.theme = 'clean';
+        if (prefs.tema === 'foco')  { a11yState.theme = ''; a11yState.focusMode = true; }
+
+        // Pre-select mode from prefs if stored
+        if (prefs.modo) {
+          const radio = document.querySelector(`input[name="mode"][value="${prefs.modo}"]`);
+          if (radio) radio.checked = true;
+        }
+
+      } catch (_) {}
+    }
+
+    // Boot: load persisted a11y, apply prefs on top, then apply to DOM
+    loadA11y();
+    applyPreferences();
+    applyA11y();
+    saveA11y();
+
+    // ── Profile pill — shows active cognitive profile in header ───────────
+    (function renderProfilePill() {
+      const pill = document.getElementById('profile-pill');
+      if (!pill) return;
+      try {
+        const prefs = JSON.parse(localStorage.getItem('minded_prefs') || '{}');
+        const tags = prefs.perfil_cognitivo ? prefs.perfil_cognitivo.split(', ') : [];
+        const labelMap = {
+          tdah: 'TDAH', autismo: 'Autismo', dislexia: 'Dislexia',
+          analitico: 'Analítico', criativo: 'Criativo',
+          visual: 'Visual', auditivo: 'Auditivo',
+        };
+        if (tags.length) {
+          const names = tags.map(t => labelMap[t] || t).join(' + ');
+          pill.textContent = 'Perfil: ' + names;
+          pill.setAttribute('data-empty', 'false');
+          pill.setAttribute('aria-label', `Perfil ativo: ${names} — clique para editar preferências`);
+        }
+      } catch (_) {}
+    })();
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // FIRST-VISIT ONBOARDING MODAL
+    // Shows once when no prefs exist. Saves 3 quick answers to minded_prefs
+    // and applies a11y state immediately — no redirect required.
+    // ═══════════════════════════════════════════════════════════════════════
+    (function initOnboarding() {
+      const ONBOARD_KEY = 'minded_onboarded';
+      // Skip if already onboarded OR if prefs already exist from /preferencias
+      const alreadyDone = localStorage.getItem(ONBOARD_KEY);
+      const hasPrefs    = (() => {
+        try { return !!JSON.parse(localStorage.getItem('minded_prefs') || 'null'); }
+        catch(_) { return false; }
+      })();
+      if (alreadyDone || hasPrefs) return;
+
+      const backdrop = document.getElementById('onboard-backdrop');
+      const modal    = document.getElementById('onboard-modal');
+      const saveBtn  = document.getElementById('onboard-save');
+      const skipBtn  = document.getElementById('onboard-skip');
+      if (!backdrop || !modal) return;
+
+      // Collected answers
+      const obData = {};
+
+      // Wire option buttons
+      modal.querySelectorAll('.onboard-options').forEach(group => {
+        const isMulti = group.dataset.multi === 'true';
+        const key     = group.dataset.obGroup;
+        group.querySelectorAll('.onboard-opt').forEach(btn => {
+          btn.addEventListener('click', () => {
+            if (!isMulti) {
+              group.querySelectorAll('.onboard-opt').forEach(b => b.classList.remove('selected'));
+            }
+            btn.classList.toggle('selected');
+            // Collect selected values
+            const selected = [...group.querySelectorAll('.onboard-opt.selected')].map(b => b.dataset.value);
+            obData[key] = isMulti ? selected : selected[0];
+          });
+        });
+      });
+
+      // Open with slight delay so auth flash doesn't overlap
+      setTimeout(() => {
+        backdrop.classList.add('open');
+        modal.setAttribute('aria-hidden', 'false');
+        backdrop.setAttribute('aria-hidden', 'false');
+        // Use rAF so CSS transition fires (display:none → display:flex needs a tick)
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => modal.classList.add('open'));
+        });
+        // Trap focus: focus first button
+        const first = modal.querySelector('button, [tabindex="0"]');
+        if (first) setTimeout(() => first.focus(), 200);
+      }, 400);
+
+      function closeModal() {
+        modal.classList.remove('open');
+        backdrop.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+        backdrop.setAttribute('aria-hidden', 'true');
+        localStorage.setItem(ONBOARD_KEY, '1');
       }
-    } catch (_) {}
+
+      saveBtn.addEventListener('click', () => {
+        // Build and persist prefs from quick answers
+        const newPrefs = {};
+
+        // perfil_cognitivo from Q1
+        if (obData.perfil_cognitivo && obData.perfil_cognitivo.length) {
+          newPrefs.perfil_cognitivo = obData.perfil_cognitivo.join(', ');
+        }
+
+        // modo preferido from Q2 — pre-selects workspace radio
+        if (obData.modo_preferido) {
+          newPrefs.modo = obData.modo_preferido;
+          const radio = document.querySelector(`input[name="mode"][value="${obData.modo_preferido}"]`);
+          if (radio) radio.checked = true;
+        }
+
+        // Visual adjustments from Q3 — apply a11y immediately
+        if (obData.ajuste_visual && obData.ajuste_visual.length) {
+          if (obData.ajuste_visual.includes('hcm'))      { a11yState.hcm = true; }
+          if (obData.ajuste_visual.includes('dyslexic')) { a11yState.dyslexic = true; }
+          if (obData.ajuste_visual.includes('spacing'))  { a11yState.spacingIdx = 1; }
+        }
+
+        // Merge with any existing prefs
+        try {
+          const existing = JSON.parse(localStorage.getItem('minded_prefs') || '{}');
+          Object.assign(existing, newPrefs);
+          localStorage.setItem('minded_prefs', JSON.stringify(existing));
+        } catch(_) {}
+
+        // Apply all changes immediately
+        applyA11y(); saveA11y();
+
+        // Re-render profile pill
+        const pill = document.getElementById('profile-pill');
+        if (pill && newPrefs.perfil_cognitivo) {
+          const labelMap = {
+            tdah: 'TDAH', autismo: 'Autismo', dislexia: 'Dislexia',
+            analitico: 'Analítico', criativo: 'Criativo',
+            visual: 'Visual', auditivo: 'Auditivo',
+          };
+          const names = newPrefs.perfil_cognitivo.split(', ').map(t => labelMap[t] || t).join(' + ');
+          pill.textContent = 'Perfil: ' + names;
+          pill.setAttribute('data-empty', 'false');
+        }
+
+        closeModal();
+      });
+
+      skipBtn.addEventListener('click', closeModal);
+    })();
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // HISTORY
+    // ═══════════════════════════════════════════════════════════════════════
+    const HISTORY_KEY = 'minded_history';
+    const HISTORY_MAX = 20;
+
+    function loadHistory() {
+      try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); }
+      catch (_) { return []; }
+    }
+    function saveHistory(arr) {
+      try { localStorage.setItem(HISTORY_KEY, JSON.stringify(arr.slice(0, HISTORY_MAX))); } catch (_) {}
+    }
+    function addToHistory(data, mode, profile) {
+      const hist = loadHistory();
+      hist.unshift({
+        id:      Date.now(),
+        ts:      new Date().toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }),
+        titulo:  data.titulo,
+        mode,
+        profile,
+        data,
+      });
+      saveHistory(hist);
+      renderHistory();
+    }
+    function renderHistory() {
+      const hist = loadHistory();
+      const modeLabels = { metaphor: 'Metáfora', checklist: 'Microtarefas', summary: 'Resumo' };
+      if (!hist.length) {
+        historyList.innerHTML = '<p class="history-empty">Nenhuma adaptação ainda.<br/>Adapte um texto para criar o histórico.</p>';
+        return;
+      }
+      historyList.innerHTML = hist.map(h => `
+        <div class="history-item" role="listitem" data-id="${h.id}" tabindex="0"
+             aria-label="Restaurar: ${h.titulo}">
+          <div class="history-item__title">${esc(h.titulo)}</div>
+          <div class="history-item__meta">
+            <span class="history-item__badge">${modeLabels[h.mode] || h.mode}</span>
+            <span>${h.ts}</span>
+          </div>
+        </div>`).join('');
+
+      historyList.querySelectorAll('.history-item').forEach(el => {
+        const activate = () => {
+          const id = parseInt(el.dataset.id, 10);
+          const entry = loadHistory().find(h => h.id === id);
+          if (!entry) return;
+          const html = entry.mode === 'metaphor'  ? renderMetaphor(entry.data)
+                     : entry.mode === 'checklist' ? renderChecklist(entry.data)
+                     : renderSummary(entry.data);
+          showOutput(html, entry.data);
+          closeHistory();
+        };
+        el.addEventListener('click', activate);
+        el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(); }});
+      });
+    }
+
+    function openHistory()  {
+      historyPanel.classList.add('open');
+      historyOverlay.classList.add('open');
+      historyOverlay.setAttribute('aria-hidden', 'false');
+      historyBtn.setAttribute('aria-expanded', 'true');
+      historyBtn.classList.add('active');
+      renderHistory();
+    }
+    function closeHistory() {
+      historyPanel.classList.remove('open');
+      historyOverlay.classList.remove('open');
+      historyOverlay.setAttribute('aria-hidden', 'true');
+      historyBtn.setAttribute('aria-expanded', 'false');
+      historyBtn.classList.remove('active');
+    }
+
+    historyBtn.addEventListener('click',   () => historyPanel.classList.contains('open') ? closeHistory() : openHistory());
+    historyClose.addEventListener('click', closeHistory);
+    historyOverlay.addEventListener('click', closeHistory);
 
     // ── Char counter & button enabler ─────────────────────────────────────
     function updateCharCount() {
@@ -884,6 +1335,14 @@
       adaptBtn.disabled = len < 10;
     }
     textarea.addEventListener('input', updateCharCount);
+
+    // ── Keyboard shortcut: Cmd/Ctrl + Enter ───────────────────────────────
+    textarea.addEventListener('keydown', e => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        e.preventDefault();
+        if (!adaptBtn.disabled) adaptBtn.click();
+      }
+    });
 
     // ── Mode helper ───────────────────────────────────────────────────────
     function getMode() {
@@ -900,17 +1359,22 @@
     }
 
     // ── Markdown → HTML (bold + bullets, for summary) ─────────────────────
-    // NOTE: esc() must happen BEFORE bold replacement but on the inner text only,
-    // otherwise "**word**" becomes "&ast;&ast;word&ast;&ast;" and the regex never matches.
+    // FIX: escape HTML first, then apply bold markup so <strong> survives.
     function mdToHtml(text) {
-      return text
-        .replace(/\*\*(.*?)\*\*/g, (_, inner) => `<strong>${esc(inner)}</strong>`)
-        .replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' })[c])
+      // 1. Escape all HTML entities in the raw text
+      const escaped = text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+      // 2. Now safe to inject controlled HTML for bold and bullets
+      return escaped
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
         .replace(/^[-•] /gm, '<br/>• ')
         .replace(/\n/g, '<br/>');
     }
 
-    // ── Pilar 5 — Named skeleton phases ───────────────────────────────────
+    // ── Skeleton phases ───────────────────────────────────────────────────
     const SKELETON_PHASES = [
       'Analisando o texto…',
       'Identificando conceitos-chave…',
@@ -939,20 +1403,13 @@
       outputSkeleton.setAttribute('aria-hidden', 'true');
     }
 
-    // ── Pilar 4a — Concept-category icon map ──────────────────────────────
-    // Dual-coding: consistent semantic icons per concept category
+    // ── Concept-category icon map ─────────────────────────────────────────
     const CONCEPT_ICONS = {
-      // Storage / data
       banco: '🗄️', dados: '🗄️', database: '🗄️', armazenamento: '📦',
-      // Logic / rules
       regra: '⚖️', logica: '⚙️', validacao: '✅',
-      // Network / communication
       api: '🔌', rede: '🌐', comunicacao: '📡', protocolo: '📡',
-      // Processing
       servico: '⚙️', servicos: '⚙️', processamento: '⚙️', microsservico: '⚙️',
-      // Security
       autenticacao: '🔒', seguranca: '🔐', token: '🔑',
-      // Scale
       escalabilidade: '📈', performance: '⚡',
     };
     function iconForTerm(term) {
@@ -963,8 +1420,7 @@
       return '•';
     }
 
-    // ── Pilar 2a — Highlight prose spans that match a mapping term ────────
-    // Wraps occurrences of each termo_tecnico in the prose with <span data-term>
+    // ── Bidirectional highlight ───────────────────────────────────────────
     function highlightProseTerms(proseEl, mappings) {
       if (!mappings || !mappings.length) return;
       let html = proseEl.innerHTML;
@@ -974,6 +1430,23 @@
         html = html.replace(re, `<span class="prose-highlight" data-term="${idx}">$1</span>`);
       });
       proseEl.innerHTML = html;
+    }
+
+    // ── Build rich perfil string from all saved prefs ─────────────────────
+    // Passes the full context from onboarding to the API prompt
+    function buildPerfilString() {
+      try {
+        const prefs = JSON.parse(localStorage.getItem('minded_prefs') || '{}');
+        const parts = [];
+        if (prefs.perfil_cognitivo) parts.push(prefs.perfil_cognitivo);
+        if (prefs.ritmo)    parts.push(`ritmo:${prefs.ritmo}`);
+        if (prefs.formato)  parts.push(`formato:${prefs.formato}`);
+        if (prefs.sessao)   parts.push(`sessao:${prefs.sessao}`);
+        if (prefs.layout)   parts.push(`layout:${prefs.layout}`);
+        return parts.length ? parts.join('; ') : profileSelect.value;
+      } catch (_) {
+        return profileSelect.value;
+      }
     }
 
     // ── Render: Metaphor mode ─────────────────────────────────────────────
@@ -1028,7 +1501,6 @@
       const steps = data.passos_acao || [];
       checklistState = steps.map(() => false);
 
-      // Pilar 2b — Chunking: show first 5, rest behind "show more"
       const CHUNK = 5;
       const visible = steps.slice(0, CHUNK);
       const hidden  = steps.slice(CHUNK);
@@ -1083,7 +1555,7 @@
       `;
     }
 
-    // ── Action bar (Pilar 4b: TTS button added) ───────────────────────────
+    // ── Action bar ────────────────────────────────────────────────────────
     function actionBar(data) {
       const ttsSupported = 'speechSynthesis' in window;
       const ttsBtn = ttsSupported ? `
@@ -1106,7 +1578,80 @@
       `;
     }
 
-    // ── Show output (with all post-render interactions) ───────────────────
+    // ── TTS with word-by-word highlight ───────────────────────────────────
+    // Wraps each word in the prose/summary in a <span class="tts-word"> so
+    // the boundary event can illuminate the current word.
+    function wrapWordsForTts(container) {
+      const prose = container.querySelector('.output-prose, .summary-body');
+      if (!prose) return null;
+      const text = prose.innerText;
+      const words = text.split(/(\s+)/);
+      let idx = 0;
+      prose.innerHTML = words.map(w => {
+        if (/^\s+$/.test(w)) return w;
+        return `<span class="tts-word" data-widx="${idx++}">${esc(w)}</span>`;
+      }).join('');
+      return prose;
+    }
+
+    function wireTts(container) {
+      const ttsBtn = container.querySelector('#tts-btn');
+      if (!ttsBtn || !window.speechSynthesis) return;
+      const ttsLabel = ttsBtn.querySelector('.tts-label');
+      let speaking = false;
+      let wrappedEl = null;
+
+      function setTtsStopped() {
+        speaking = false;
+        if (ttsLabel) ttsLabel.textContent = 'Ouvir';
+        ttsBtn.setAttribute('aria-label', 'Ouvir conteúdo via síntese de voz');
+        // Remove all highlights
+        if (wrappedEl) wrappedEl.querySelectorAll('.tts-word.tts-active').forEach(s => s.classList.remove('tts-active'));
+      }
+
+      ttsBtn.addEventListener('click', () => {
+        if (speaking) {
+          window.speechSynthesis.cancel();
+          setTtsStopped();
+          return;
+        }
+        // Wrap words if not already done
+        if (!wrappedEl) wrappedEl = wrapWordsForTts(container);
+        const fullText = wrappedEl ? wrappedEl.innerText : container.innerText;
+
+        const utterance = new SpeechSynthesisUtterance(fullText);
+        utterance.lang = 'pt-BR';
+        utterance.rate = 0.92;
+
+        // Word boundary highlight
+        let wordSpans = wrappedEl ? [...wrappedEl.querySelectorAll('.tts-word')] : [];
+        utterance.onboundary = e => {
+          if (e.name !== 'word' || !wordSpans.length) return;
+          wordSpans.forEach(s => s.classList.remove('tts-active'));
+          // Find the span whose accumulated char offset matches
+          let charCount = 0;
+          for (const span of wordSpans) {
+            if (charCount >= e.charIndex) { span.classList.add('tts-active'); break; }
+            charCount += span.textContent.length + 1; // +1 for space
+          }
+        };
+
+        utterance.onend  = setTtsStopped;
+        utterance.onerror = setTtsStopped;
+        window.speechSynthesis.speak(utterance);
+        speaking = true;
+        if (ttsLabel) ttsLabel.textContent = '⏹ Parar';
+        ttsBtn.setAttribute('aria-label', 'Parar síntese de voz');
+      });
+
+      // Auto-fire TTS if user's pref is auditivo
+      if (window._autoTts) {
+        setTimeout(() => ttsBtn.click(), 600);
+        window._autoTts = false; // only once per output
+      }
+    }
+
+    // ── Show output ───────────────────────────────────────────────────────
     function showOutput(html, responseData) {
       stopSkeleton();
       outputContent.innerHTML = html;
@@ -1114,11 +1659,24 @@
       outputContent.setAttribute('aria-hidden', 'false');
       outputContent.classList.add('fade-up');
 
-      // Pilar 2a — Bidirectional highlight after metaphor render
+      // Mark body so focus mode knows there's output
+      document.body.classList.add('has-output');
+
+      // On mobile (single-column layout), scroll output panel into view
+      // so the user doesn't have to hunt for the result after clicking Adaptar
+      if (window.innerWidth <= 900) {
+        requestAnimationFrame(() => {
+          const outputSection = document.querySelector('.output-panel');
+          if (outputSection) {
+            outputSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      }
+
+      // Bidirectional highlight for metaphor
       const proseEl = outputContent.querySelector('#output-prose-text');
       if (proseEl && responseData && responseData.mapeamentos) {
         highlightProseTerms(proseEl, responseData.mapeamentos);
-        // Wire table rows <-> prose spans
         outputContent.querySelectorAll('.mapping-table tbody tr').forEach(row => {
           const termIdx = row.dataset.term;
           row.addEventListener('mouseenter', () => {
@@ -1158,14 +1716,12 @@
       }
       wireChecklist(outputContent);
 
-      // Pilar 2b — "Show more" expand button
+      // Show more
       const chunkBtn = document.getElementById('chunk-more-btn');
       if (chunkBtn) {
         chunkBtn.addEventListener('click', () => {
           const hiddenGroup = document.getElementById('chunk-hidden');
           const isNowHidden = hiddenGroup.classList.toggle('hidden');
-          // isNowHidden === true  → acabou de ser ocultado (collapsed)
-          // isNowHidden === false → acabou de ser mostrado (expanded)
           chunkBtn.setAttribute('aria-expanded', String(!isNowHidden));
           const remaining = checklistState.length - 5;
           chunkBtn.textContent = isNowHidden
@@ -1181,7 +1737,9 @@
         copyBtn.addEventListener('click', () => {
           navigator.clipboard.writeText(outputContent.innerText).then(() => {
             copyBtn.textContent = '✓ Copiado';
-            setTimeout(() => { copyBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copiar'; }, 2000);
+            setTimeout(() => {
+              copyBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copiar';
+            }, 2000);
           });
         });
       }
@@ -1198,66 +1756,47 @@
         });
       }
 
-      // Pilar 4b — Text-to-Speech via Web Speech API
-      const ttsBtn = document.getElementById('tts-btn');
-      if (ttsBtn && window.speechSynthesis) {
-        const ttsLabel = ttsBtn.querySelector('.tts-label');
-        let speaking = false;
-
-        function setTtsStopped() {
-          speaking = false;
-          if (ttsLabel) ttsLabel.textContent = 'Ouvir';
-          ttsBtn.setAttribute('aria-label', 'Ouvir conteúdo via síntese de voz');
-        }
-
-        ttsBtn.addEventListener('click', () => {
-          if (speaking) {
-            window.speechSynthesis.cancel();
-            setTtsStopped();
-            return;
-          }
-          const utterance = new SpeechSynthesisUtterance(outputContent.innerText);
-          utterance.lang = 'pt-BR';
-          utterance.rate = 0.92;
-          utterance.onend  = setTtsStopped;
-          utterance.onerror = setTtsStopped;
-          window.speechSynthesis.speak(utterance);
-          speaking = true;
-          if (ttsLabel) ttsLabel.textContent = '⏹ Parar';
-          ttsBtn.setAttribute('aria-label', 'Parar síntese de voz');
-        });
-      }
+      // TTS with word highlight
+      wireTts(outputContent);
     }
 
+    // ── Error state with retry ────────────────────────────────────────────
     function showError(msg) {
       stopSkeleton();
-      // Detect offline / API unreachable and show actionable guidance
       const isOffline = msg.includes('Failed to fetch') || msg.includes('NetworkError') || msg.includes('fetch');
       const friendlyMsg = isOffline
         ? 'Não foi possível conectar à API. Verifique se o servidor está rodando:<br/><code style="font-size:0.8rem;opacity:0.8">cd api &amp;&amp; uvicorn main:app --host 127.0.0.1 --port 8000</code>'
         : esc(msg);
       outputContent.innerHTML = `
         <div class="output-error" role="alert">
-          <span aria-hidden="true">❌</span>
-          <span><strong>${isOffline ? 'API offline' : 'Erro'}:</strong> ${friendlyMsg}</span>
+          <div class="output-error__body">
+            <span aria-hidden="true">❌</span>
+            <span><strong>${isOffline ? 'API offline' : 'Erro'}:</strong> ${friendlyMsg}</span>
+          </div>
+          <button class="retry-btn" id="retry-btn">↺ Tentar novamente</button>
         </div>`;
       outputContent.classList.remove('hidden');
       outputContent.setAttribute('aria-hidden', 'false');
+
+      document.getElementById('retry-btn').addEventListener('click', () => {
+        outputContent.classList.add('hidden');
+        adaptBtn.click();
+      });
     }
 
     // ── Adapt button click ────────────────────────────────────────────────
-    adaptBtn.addEventListener('click', async () => {
+    async function doAdapt() {
       const text    = textarea.value.trim();
       const mode    = getMode();
-      const profile = profileSelect.value;
+      const profile = buildPerfilString();   // rich profile from all prefs
 
       if (text.length < 10) return;
 
-      // Pilar 5 — start skeleton immediately, update btn
+      document.body.classList.remove('has-output');
       startSkeleton();
       adaptBtn.classList.add('loading');
       adaptBtn.disabled = true;
-      // Update skeleton label per mode
+
       const modeLabels = { metaphor: 'Construindo analogias…', checklist: 'Criando microtarefas…', summary: 'Sintetizando conceitos…' };
       setTimeout(() => { if (skeletonStatus) skeletonStatus.textContent = modeLabels[mode] || SKELETON_PHASES[2]; }, 900);
 
@@ -1274,21 +1813,23 @@
         }
 
         const data = await response.json();
-
         let html = '';
         if (data.modo === 'metaphor')       html = renderMetaphor(data);
         else if (data.modo === 'checklist') html = renderChecklist(data);
-        else                            html = renderSummary(data);
+        else                                html = renderSummary(data);
 
         showOutput(html, data);
+        addToHistory(data, mode, profile);
 
       } catch (err) {
         showError(err.message);
       } finally {
         adaptBtn.classList.remove('loading');
-        adaptBtn.disabled = false;
+        adaptBtn.disabled = textarea.value.trim().length < 10;
       }
-    });
+    }
+
+    adaptBtn.addEventListener('click', doAdapt);
   </script>
 </body>
 </html>

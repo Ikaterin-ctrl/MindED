@@ -191,6 +191,48 @@ def test_long_page_is_flagged_as_truncated(api, monkeypatch):
     assert len(res.json()["texto"]) == 60
 
 
+def test_prompt_tells_the_model_not_to_invent(api, monkeypatch):
+    models = install_gemini(monkeypatch)
+    api.post("/adapt", json={"texto": TEXTO, "modo": "summary"})
+    assert "não invente" in models.calls[0]["contents"]
+
+
+def test_daily_quota_blocks_before_calling_gemini(api, monkeypatch):
+    models = install_gemini(monkeypatch)
+    main._daily_usage.clear()
+    monkeypatch.setattr(main, "DAILY_CHAR_LIMIT", len(TEXTO) + 5)
+    body = {"texto": TEXTO, "modo": "summary"}
+    assert api.post("/adapt", json=body).status_code == 200
+    res = api.post("/adapt", json=body)
+    assert res.status_code == 429
+    assert "limite diário" in res.json()["detail"]
+    assert len(models.calls) == 1
+
+
+def test_explain_returns_explanation_and_hides_profile(api, monkeypatch):
+    models = install_gemini(monkeypatch, text='{"explicacao": "É quando uma célula vira duas.", "exemplo": "Como dividir um bolo."}')
+    res = api.post("/explain", json={"trecho": "prófase", "contexto": "Mitose", "perfil": "tdah, dislexia"})
+    assert res.status_code == 200
+    assert res.json()["exemplo"] == "Como dividir um bolo."
+    prompt = models.calls[0]["contents"].lower()
+    assert "prófase" in prompt
+    assert "tdah" not in prompt
+
+
+def test_explain_rejects_incomplete_output(api, monkeypatch):
+    install_gemini(monkeypatch, text='{"exemplo": "sem explicação"}')
+    assert api.post("/explain", json={"trecho": "prófase"}).status_code == 502
+
+
+def test_explain_counts_against_daily_quota(api, monkeypatch):
+    models = install_gemini(monkeypatch, text='{"explicacao": "ok"}')
+    main._daily_usage.clear()
+    monkeypatch.setattr(main, "DAILY_CHAR_LIMIT", 5)
+    res = api.post("/explain", json={"trecho": "prófase e metáfase"})
+    assert res.status_code == 429
+    assert models.calls == []
+
+
 def test_auth_required_when_enabled(monkeypatch):
     monkeypatch.setattr(main, "AUTH_DISABLED", False)
     install_gemini(monkeypatch)

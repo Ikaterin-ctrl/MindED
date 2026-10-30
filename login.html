@@ -7,7 +7,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="src/css/base.css" />
-  <link rel="icon" type="image/png" href="img/logominded.png" />
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png" />
+  <meta name="theme-color" content="#0B0A0F" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="MindED" />
   <style>
     .login-wrap {
       min-height: 100vh;
@@ -137,7 +143,7 @@
 
   <main class="login-wrap">
     <div class="login-card glass">
-      <img src="img/logominded.png" alt="MindED" class="login-logo" />
+      <span class="logo-link"><span>Mind<b>ED</b></span></span>
       <h1>Bem-vindo ao MindED</h1>
       <p>Entre com a sua conta Google para começar a adaptar seus textos.</p>
 
@@ -231,5 +237,6 @@
       }
     });
   </script>
+  <script src="src/js/pwa.js"></script>
 </body>
 </html>

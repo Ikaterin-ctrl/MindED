@@ -9,7 +9,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="src/css/base.css" />
-  <link rel="icon" type="image/png" href="img/logominded.png" />
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png" />
+  <meta name="theme-color" content="#0B0A0F" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="MindED" />
 
   <!-- Firebase auth guard — redirects to login.html if not signed in -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -66,10 +72,10 @@
     }
 
     .panel__title {
-      font-size: 0.875rem;
-      font-weight: 500;
-      letter-spacing: 0;
-      color: var(--clr-text-muted);
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--clr-text);
       padding-bottom: var(--sp-sm);
       border-bottom: 1px solid var(--clr-border);
     }
@@ -186,8 +192,8 @@
     }
     .mode-option input:checked + label {
       border-color: var(--clr-accent);
-      background: rgba(42,157,124,0.10);
-      box-shadow: 0 0 0 1px rgba(42,157,124,0.35);
+      background: rgba(183,148,255,0.10);
+      box-shadow: 0 0 0 1px rgba(183,148,255,0.35);
     }
     .mode-option input:focus-visible + label {
       outline: 2px solid var(--clr-accent);
@@ -383,8 +389,8 @@
       align-items: center;
       gap: 6px;
       padding: 4px 12px;
-      background: rgba(42,157,124,0.10);
-      border: 1px solid rgba(42,157,124,0.22);
+      background: rgba(183,148,255,0.10);
+      border: 1px solid rgba(183,148,255,0.22);
       border-radius: var(--r-pill);
       font-size: 0.875rem;
       font-weight: 600;
@@ -409,16 +415,16 @@
 
     /* ── Bidirectional highlight ─────────────────────────────── */
     .mapping-table tbody tr { cursor: default; }
-    .mapping-table tbody tr.row-active td { background: rgba(42,157,124,0.08); }
+    .mapping-table tbody tr.row-active td { background: rgba(183,148,255,0.08); }
     span.prose-highlight {
-      background: rgba(42,157,124,0.18);
+      background: rgba(183,148,255,0.18);
       border-radius: 3px;
       padding: 1px 2px;
       transition: background var(--t-base);
     }
     span.prose-highlight.lit {
-      background: rgba(42,157,124,0.38);
-      outline: 1px solid rgba(42,157,124,0.55);
+      background: rgba(183,148,255,0.38);
+      outline: 1px solid rgba(183,148,255,0.55);
     }
 
     /* ── TTS word-highlight ──────────────────────────────────── */
@@ -660,7 +666,7 @@
     }
     .example-btn:hover {
       border-color: var(--clr-accent);
-      background: rgba(42,157,124,0.07);
+      background: rgba(183,148,255,0.07);
       color: var(--clr-text);
     }
     .example-btn:focus-visible { outline: 2px solid var(--clr-accent); outline-offset: 2px; }
@@ -758,8 +764,8 @@
     }
     .flashcard__back {
       transform: rotateY(180deg);
-      background: rgba(42,157,124,0.08);
-      border-color: rgba(42,157,124,0.25);
+      background: rgba(183,148,255,0.08);
+      border-color: rgba(183,148,255,0.25);
     }
     .flashcard__term {
       font-size: 1rem;
@@ -807,7 +813,7 @@
       transition: border-color var(--t-base);
     }
     .question-card:has(.question-answer.visible) {
-      border-color: rgba(42,157,124,0.35);
+      border-color: rgba(183,148,255,0.35);
     }
     .question-card__q {
       padding: var(--sp-md);
@@ -840,11 +846,11 @@
     }
     .question-hint-btn:hover { background: rgba(251,191,36,0.16); }
     .question-reveal-btn {
-      background: rgba(42,157,124,0.08);
-      border-color: rgba(42,157,124,0.22);
+      background: rgba(183,148,255,0.08);
+      border-color: rgba(183,148,255,0.22);
       color: var(--clr-accent);
     }
-    .question-reveal-btn:hover { background: rgba(42,157,124,0.16); }
+    .question-reveal-btn:hover { background: rgba(183,148,255,0.16); }
     .question-hint,
     .question-answer {
       display: none;
@@ -884,6 +890,57 @@
     }
 
     [hidden] { display: none !important; }
+
+    /* ── Focus session ──────────────────────────────────────── */
+    .focus-start { align-self: flex-start; margin-top: var(--sp-sm); }
+    .focus-session {
+      position: fixed;
+      inset: 0;
+      z-index: 1200;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: var(--sp-lg);
+      padding: var(--sp-xl) max(var(--sp-md), calc((100vw - 760px) / 2));
+      background: var(--clr-bg);
+    }
+    .focus-session__count { color: var(--clr-accent); font-weight: 700; }
+    .focus-session__step {
+      font-family: var(--font-display);
+      font-size: clamp(1.7rem, 5vw, 3rem);
+      font-weight: 700;
+      line-height: 1.15;
+      color: var(--clr-text);
+    }
+    .focus-session__bar { height: 6px; background: var(--clr-surface-hi); }
+    .focus-session__fill {
+      height: 100%;
+      background: #7C3AED;
+      transform-origin: left;
+      transform: scaleX(0);
+      transition: transform 1s linear;
+    }
+    .focus-session__timer { font-size: 1.1rem; font-variant-numeric: tabular-nums; }
+    .focus-session__actions { display: flex; flex-wrap: wrap; gap: var(--sp-sm); }
+
+    /* ── Explain a passage ──────────────────────────────────── */
+    .explain-btn {
+      position: fixed;
+      left: 50%;
+      bottom: var(--sp-lg);
+      z-index: 850;
+      transform: translateX(-50%);
+    }
+    .explain-btn:hover { transform: translate(-50%, -2px); }
+    .explain-btn:active { transform: translate(-50%, 2px); }
+    .explain-card {
+      margin-top: var(--sp-md);
+      padding: var(--sp-md);
+      border-left: 4px solid #7C3AED;
+      background: var(--clr-surface-md);
+    }
+    .explain-card__quote { font-style: italic; margin-bottom: var(--sp-sm); }
+    .explain-card p { color: var(--clr-text); }
 
     /* ── Always-visible action ──────────────────────────────── */
     .input-panel { position: static; }
@@ -968,8 +1025,7 @@
   <header class="main-header">
     <div class="header-inner">
       <a href="index.html" class="logo-link">
-        <img src="img/logominded.png" alt="" aria-hidden="true" />
-        <span>MindED</span>
+        <span>Mind<b>ED</b></span>
       </a>
 
       <!-- Active profile pill — populated by JS from localStorage -->
@@ -1171,7 +1227,7 @@
 
   <!-- ── Footer ─────────────────────────────────────────────── -->
   <footer class="site-footer">
-    <p>&copy; 2025 MindED &mdash; Projeto open-source de acessibilidade cognitiva.</p>
+    <p>&copy; 2026 MindED &mdash; Projeto open-source de acessibilidade cognitiva.</p>
     <p><a href="termos.html">Termos de Uso</a> · <a href="privacidade.html">Política de Privacidade</a></p>
   </footer>
 
@@ -1181,7 +1237,6 @@
   <div class="onboard-modal" id="onboard-modal" role="dialog"
        aria-modal="true" aria-labelledby="onboard-title" aria-hidden="true" inert>
     <div class="onboard-modal__head">
-      <img src="img/logominded.png" alt="" aria-hidden="true" width="32" height="32" />
       <h2 id="onboard-title">Como prefere aprender?</h2>
       <p>Três perguntas rápidas. As respostas ficam neste navegador, e o Gemini recebe só orientações de escrita.</p>
     </div>
@@ -1218,6 +1273,21 @@
     <div class="onboard-actions">
       <button class="onboard-cta" id="onboard-save">Salvar</button>
       <button class="onboard-skip" id="onboard-skip">Agora não</button>
+    </div>
+  </div>
+
+  <button class="btn btn-primary btn-sm explain-btn" id="explain-btn" type="button" hidden>Não entendi esta parte</button>
+
+  <div class="focus-session" id="focus-session" role="dialog" aria-modal="true" aria-labelledby="fs-count" hidden>
+    <p class="focus-session__count" id="fs-count"></p>
+    <p class="focus-session__step" id="fs-step"></p>
+    <div class="focus-session__bar" aria-hidden="true"><div class="focus-session__fill" id="fs-fill"></div></div>
+    <p class="focus-session__timer" id="fs-timer"></p>
+    <div class="focus-session__actions">
+      <button class="btn btn-primary" id="fs-done" type="button">Concluí este passo</button>
+      <button class="btn btn-ghost" id="fs-pause" type="button">Pausar</button>
+      <button class="btn btn-ghost" id="fs-skip" type="button">Pular</button>
+      <button class="btn btn-ghost" id="fs-exit" type="button">Sair</button>
     </div>
   </div>
 
@@ -2224,6 +2294,7 @@
         </div>
         <div class="checklist-list" id="checklist-list" role="group" aria-label="Lista de tarefas">${visibleHtml}</div>
         ${showMoreBtn}
+        <button class="btn btn-primary focus-start" id="focus-start" type="button">Começar sessão de foco</button>
         <hr class="output-divider"/>
         ${actionBar(data)}
       `;
@@ -2461,6 +2532,8 @@
     function showOutput(html, responseData) {
       if (window.speechSynthesis) window.speechSynthesis.cancel();
       stopSkeleton();
+      currentResult = responseData;
+      hideExplainButton();
       outputContent.innerHTML = html;
       outputContent.classList.remove('hidden');
       outputContent.setAttribute('aria-hidden', 'false');
@@ -2642,6 +2715,10 @@
         });
       });
 
+      document.getElementById('focus-start')?.addEventListener('click', () => {
+        startFocusSession(responseData.passos_acao || []);
+      });
+
       // TTS with word highlight
       wireTts(outputContent);
     }
@@ -2668,6 +2745,7 @@
 
     // ── Adapt button click ────────────────────────────────────────────────
     let lastRequest = null;   // what produced the current result, for Simplificar mais
+    let currentResult = null; // the result on screen, used by explanations
     let lastOptions = {};
 
     function removeProfileNudge() {
@@ -2779,6 +2857,167 @@
       });
     });
 
+    // ═══════════════════════════════════════════════════════════════════════
+    // NÃO ENTENDI ESTA PARTE — explains a selected passage of the result
+    // ═══════════════════════════════════════════════════════════════════════
+    const explainBtn = document.getElementById('explain-btn');
+    let explainRange = null;
+
+    function hideExplainButton() {
+      explainBtn.hidden = true;
+      explainRange = null;
+    }
+
+    document.addEventListener('selectionchange', () => {
+      const selection = document.getSelection();
+      const text = selection ? selection.toString().trim() : '';
+      if (IS_DEMO || !currentResult || text.length < 3 || !selection.rangeCount
+          || !outputContent.contains(selection.anchorNode)) {
+        if (document.activeElement !== explainBtn) hideExplainButton();
+        return;
+      }
+      explainRange = selection.getRangeAt(0).cloneRange();
+      explainBtn.hidden = false;
+    });
+
+    // Keeps the text selected when the button is pressed
+    explainBtn.addEventListener('mousedown', e => e.preventDefault());
+
+    explainBtn.addEventListener('click', async () => {
+      const range = explainRange;
+      if (!range) return;
+      const trecho = range.toString().trim().slice(0, 1000);
+      const start = range.startContainer;
+      const block = (start.nodeType === 1 ? start : start.parentElement)
+        .closest('.output-prose, .summary-body, .checklist-item, .question-card, .mapping-grid-section, .output-alert')
+        || outputContent.lastElementChild;
+
+      hideExplainButton();
+      document.getSelection().removeAllRanges();
+
+      const card = document.createElement('div');
+      card.className = 'explain-card';
+      card.tabIndex = -1;
+      const quote = document.createElement('p');
+      quote.className = 'explain-card__quote';
+      quote.textContent = `“${trecho}”`;
+      const answer = document.createElement('p');
+      answer.textContent = 'Explicando…';
+      card.append(quote, answer);
+      block.after(card);
+      card.focus({ preventScroll: true });
+      card.scrollIntoView({ block: 'nearest' });
+
+      try {
+        const data = await apiPost('/explain', {
+          trecho,
+          contexto: toMarkdown(currentResult).slice(0, 6000),
+          perfil: buildPerfilString(),
+        });
+        answer.textContent = data.explicacao;
+        if (data.exemplo) {
+          const example = document.createElement('p');
+          example.textContent = `Exemplo: ${data.exemplo}`;
+          card.append(example);
+        }
+      } catch (err) {
+        answer.textContent = err.message;
+      }
+    });
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // SESSÃO DE FOCO — one step at a time, with a silent timer
+    // ═══════════════════════════════════════════════════════════════════════
+    const fsPanel = document.getElementById('focus-session');
+    const fsCount = document.getElementById('fs-count');
+    const fsStep  = document.getElementById('fs-step');
+    const fsFill  = document.getElementById('fs-fill');
+    const fsTimer = document.getElementById('fs-timer');
+    const fsDone  = document.getElementById('fs-done');
+    const fsPause = document.getElementById('fs-pause');
+    const fsSkip  = document.getElementById('fs-skip');
+    const fsExit  = document.getElementById('fs-exit');
+    const FOCUS_MINUTES = { curta: 5, media: 10, longa: 15 };
+    const fs = { steps: [], index: 0, done: 0, total: 300, left: 300, paused: false, interval: null, release: null };
+
+    function fsRenderTimer() {
+      const m = Math.floor(fs.left / 60);
+      const s = String(fs.left % 60).padStart(2, '0');
+      fsTimer.textContent = fs.left > 0 ? `${m}:${s}` : 'Tempo encerrado. Sem pressa: conclua quando puder.';
+      fsFill.style.transform = `scaleX(${1 - fs.left / fs.total})`;
+    }
+
+    function fsShowStep() {
+      fsCount.textContent = `Passo ${fs.index + 1} de ${fs.steps.length}`;
+      fsStep.textContent = fs.steps[fs.index];
+      fs.left = fs.total;
+      fs.paused = false;
+      fsPause.textContent = 'Pausar';
+      fsRenderTimer();
+      fsStep.tabIndex = -1;
+      fsStep.focus({ preventScroll: true });
+    }
+
+    function fsFinish() {
+      clearInterval(fs.interval);
+      fsCount.textContent = 'Sessão concluída';
+      fsStep.textContent = `Você concluiu ${fs.done} de ${fs.steps.length} passos.`;
+      fsTimer.textContent = '';
+      fsFill.style.transform = 'scaleX(1)';
+      [fsDone, fsPause, fsSkip].forEach(btn => { btn.hidden = true; });
+      fsExit.textContent = 'Fechar';
+      fsExit.focus();
+    }
+
+    function fsAdvance() {
+      fs.index += 1;
+      if (fs.index >= fs.steps.length) fsFinish();
+      else fsShowStep();
+    }
+
+    function closeFocusSession() {
+      clearInterval(fs.interval);
+      fsPanel.hidden = true;
+      document.body.style.overflow = '';
+      if (fs.release) fs.release();
+      fs.release = null;
+    }
+
+    function startFocusSession(steps) {
+      if (!steps.length) return;
+      let sessao = '';
+      try { sessao = JSON.parse(localStorage.getItem('minded_prefs') || '{}').sessao; } catch (_) {}
+      fs.steps = steps;
+      fs.index = 0;
+      fs.done = 0;
+      fs.total = (FOCUS_MINUTES[sessao] || 5) * 60;
+      [fsDone, fsPause, fsSkip].forEach(btn => { btn.hidden = false; });
+      fsExit.textContent = 'Sair';
+      fsPanel.hidden = false;
+      document.body.style.overflow = 'hidden';
+      fs.release = trapFocus(fsPanel, closeFocusSession);
+      fsShowStep();
+      clearInterval(fs.interval);
+      fs.interval = setInterval(() => {
+        if (fs.paused || fs.left <= 0) return;
+        fs.left -= 1;
+        fsRenderTimer();
+      }, 1000);
+    }
+
+    fsDone.addEventListener('click', () => {
+      const item = outputContent.querySelector(`.checklist-item[data-idx="${fs.index}"]`);
+      if (item && item.getAttribute('aria-checked') !== 'true') item.click();
+      fs.done += 1;
+      fsAdvance();
+    });
+    fsSkip.addEventListener('click', fsAdvance);
+    fsExit.addEventListener('click', closeFocusSession);
+    fsPause.addEventListener('click', () => {
+      fs.paused = !fs.paused;
+      fsPause.textContent = fs.paused ? 'Continuar' : 'Pausar';
+    });
+
     // ── Boot: demo mode or saved draft ────────────────────────────────────
     if (IS_DEMO) {
       document.getElementById('demo-banner').hidden = false;
@@ -2794,5 +3033,6 @@
     updateCharCount();
 
   </script>
+  <script src="src/js/pwa.js"></script>
 </body>
 </html>

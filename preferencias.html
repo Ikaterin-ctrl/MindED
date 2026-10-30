@@ -9,7 +9,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="src/css/base.css" />
-  <link rel="icon" type="image/png" href="img/logominded.png" />
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png" />
+  <meta name="theme-color" content="#0B0A0F" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="MindED" />
 
   <!-- Firebase auth guard -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -156,8 +162,7 @@
   <header class="main-header">
     <div class="header-inner">
       <a href="index.html" class="logo-link">
-        <img src="img/logominded.png" alt="" aria-hidden="true" />
-        <span>MindED</span>
+        <span>Mind<b>ED</b></span>
       </a>
 
       <button class="hamburger" id="hamburger" aria-label="Abrir menu" aria-expanded="false" aria-controls="main-nav">
@@ -294,7 +299,7 @@
 
   <!-- ── Footer ─────────────────────────────────────────────── -->
   <footer class="site-footer">
-    <p>&copy; 2025 MindED &mdash; Projeto open-source de acessibilidade cognitiva.</p>
+    <p>&copy; 2026 MindED &mdash; Projeto open-source de acessibilidade cognitiva.</p>
     <p><a href="termos.html">Termos de Uso</a> · <a href="privacidade.html">Política de Privacidade</a></p>
   </footer>
 
@@ -376,5 +381,6 @@
       eraseStatus.textContent = 'Seus dados foram apagados deste navegador.';
     });
   </script>
+  <script src="src/js/pwa.js"></script>
 </body>
 </html>

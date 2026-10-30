@@ -1,6 +1,6 @@
 # MindED
 
-**Estação cognitiva para neurodivergentes.** Adapta textos densos em metáforas do cotidiano, microtarefas acionáveis ou resumos semânticos de alto contraste — usando IA generativa (Gemini) e um design glassmorphism acessível.
+**Estação cognitiva para neurodivergentes.** Adapta textos densos em metáforas do cotidiano, microtarefas acionáveis ou resumos semânticos de alto contraste — usando IA generativa (Gemini) e um design acessível.
 
 Nasceu como projeto de Iniciação Científica sobre acessibilidade cognitiva. Evoluiu para um produto open-source.
 
@@ -109,6 +109,13 @@ O frontend está no Firebase Hosting; a API precisa de um host próprio (a image
 
 ---
 
+## App
+
+O MindED é um PWA: em HTTPS, pode ser instalado pelo navegador (`manifest.webmanifest` e `sw.js`).
+Ao alterar a lista de arquivos do `sw.js`, aumente `VERSION`.
+
+---
+
 ## Stack
 
 | Camada | Tecnologia |
@@ -116,7 +123,7 @@ O frontend está no Firebase Hosting; a API precisa de um host próprio (a image
 | Frontend | HTML + CSS (Design System próprio) + Vanilla JS |
 | Backend | Python · FastAPI · Pydantic v2 |
 | IA | Google Gemini (modelo configurável em `GEMINI_MODEL`) |
-| Design | Glassmorphism dark · Inter + Outfit · WCAG AA |
+| Design | Preto e roxo · Atkinson Hyperlegible + Bricolage Grotesque · WCAG AA |
 
 ---
 
@@ -138,6 +145,8 @@ Para vídeo, envie também `video_url` com um link público do YouTube. A API an
 
 As chamadas exigem `Authorization: Bearer <Firebase ID token>`.
 
+`POST /explain` explica um trecho selecionado do resultado (`trecho`, `contexto`, `perfil`).
+
 Resposta completa segue o schema `AdaptationResponse` em [`api/main.py`](api/main.py).
 
 ---
@@ -146,7 +155,7 @@ Resposta completa segue o schema `AdaptationResponse` em [`api/main.py`](api/mai
 
 - `GEMINI_API_KEY` exclusivamente via variável de ambiente — nunca hardcoded
 - Token do Firebase verificado no servidor em todas as rotas que usam IA ou buscam links
-- Limite de pedidos por usuário e por minuto (por processo)
+- Limites por usuário, por minuto e por dia (por processo, reiniciam com o servidor)
 - O nome do perfil (TDAH, autismo etc.) não chega ao Gemini: a API o converte em orientações de escrita
 - `/extract-url` bloqueia endereços internos, inclusive em redirecionamentos
 - CORS restrito às origens em `ALLOWED_ORIGINS`

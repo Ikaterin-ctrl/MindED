@@ -1092,7 +1092,7 @@
               />
               <button class="link-fetch-btn" id="link-fetch-btn" type="button" disabled>Buscar</button>
             </div>
-            <p class="link-status" id="link-status">Cola um link e clica em Buscar — o texto da página é extraído automaticamente.</p>
+            <p class="link-status" id="link-status">Cole um link e clique em Buscar — o texto da página é extraído automaticamente.</p>
           </div>
         </div>
 
@@ -1229,7 +1229,7 @@
 
   <!-- ── Footer ─────────────────────────────────────────────── -->
   <footer class="site-footer">
-    <p>&copy; 2025 MindED &mdash; Projecto open-source de acessibilidade cognitiva.</p>
+    <p>&copy; 2025 MindED &mdash; Projeto open-source de acessibilidade cognitiva.</p>
   </footer>
 
   <!-- ── History side-panel ─────────────────────────────────── -->
@@ -1347,7 +1347,39 @@
               Cmd+Enter, retry on error, TTS word-highlight, history,
               focus mode, OpenDyslexic, font size, line spacing.
     ===================================================================== */
-    const API_BASE = 'http://127.0.0.1:8000';
+    // Fill in PROD_API_BASE with the public API URL after deploying api/.
+    const PROD_API_BASE = '';
+    const IS_LOCAL = ['localhost', '127.0.0.1'].includes(location.hostname);
+    const API_BASE = IS_LOCAL ? 'http://127.0.0.1:8000' : PROD_API_BASE;
+
+    // ── Authenticated API call ────────────────────────────────────────────
+    async function apiPost(path, body) {
+      if (!API_BASE) throw new Error('O serviço de adaptação ainda não está disponível neste site.');
+
+      const headers = { 'Content-Type': 'application/json' };
+      const user = firebase.auth().currentUser;
+      if (user) headers.Authorization = `Bearer ${await user.getIdToken()}`;
+
+      let response;
+      try {
+        response = await fetch(`${API_BASE}${path}`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(body),
+          signal: AbortSignal.timeout(90000),
+        });
+      } catch (_) {
+        throw new Error(IS_LOCAL
+          ? 'Não foi possível conectar à API local. Verifique se o servidor está rodando na porta 8000.'
+          : 'Não foi possível conectar. Verifique sua internet e tente novamente.');
+      }
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(typeof err.detail === 'string' ? err.detail : `Erro inesperado (${response.status}).`);
+      }
+      return response.json();
+    }
 
     // ── DOM refs ──────────────────────────────────────────────────────────
     const textarea       = document.getElementById('text-input');
@@ -1393,7 +1425,7 @@
       if (!user) return;
       if (user.photoURL) {
         avatarEl.src = user.photoURL;
-        avatarEl.alt = user.displayName || 'Utilizador';
+        avatarEl.alt = user.displayName || 'Usuário';
         avatarEl.style.display = 'block';
       }
       logoutBtn.style.display = 'inline-flex';
@@ -1458,7 +1490,7 @@
       dyslexicBtn.setAttribute('aria-pressed', String(a11yState.dyslexic));
 
       // Line spacing
-      SPACING_CYCLE.forEach(s => b.classList.remove(s.cls));
+      SPACING_CYCLE.forEach(s => s.cls && b.classList.remove(s.cls));
       const sp = SPACING_CYCLE[a11yState.spacingIdx];
       if (sp.cls) b.classList.add(sp.cls);
       spacingBtn.setAttribute('aria-label', sp.label);
@@ -1466,7 +1498,7 @@
       spacingBtn.querySelector('svg + span') && (spacingBtn.querySelector('svg + span').textContent = sp.btnLabel);
 
       // Font size
-      FONT_SIZES.forEach(f => b.classList.remove(f.cls));
+      FONT_SIZES.forEach(f => f.cls && b.classList.remove(f.cls));
       const fs = FONT_SIZES[a11yState.fontIdx];
       if (fs.cls) b.classList.add(fs.cls);
       fontLabel.textContent = fs.label;
@@ -1992,43 +2024,11 @@
       if (!url) return;
       linkFetchBtn.disabled = true;
       linkStatus.className = 'link-status';
-      linkStatus.textContent = 'A buscar página…';
+      linkStatus.textContent = 'Buscando a página…';
 
       try {
-        // Try two CORS proxies in sequence
-        let html = null;
-        const proxies = [
-          `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
-          `https://corsproxy.io/?${encodeURIComponent(url)}`,
-        ];
-        let lastErr = null;
-        for (const proxy of proxies) {
-          try {
-            const res = await fetch(proxy, { signal: AbortSignal.timeout(10000) });
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            // allorigins returns JSON {contents}, corsproxy returns raw HTML
-            const ct = res.headers.get('content-type') || '';
-            if (ct.includes('application/json')) {
-              const json = await res.json();
-              html = json.contents || '';
-            } else {
-              html = await res.text();
-            }
-            if (html && html.length > 100) break;
-          } catch (e) { lastErr = e; html = null; }
-        }
-        if (!html) throw lastErr || new Error('Ambos os proxies falharam.');
-
-        // Strip HTML tags, collapse whitespace
-        const tmp = document.createElement('div');
-        tmp.innerHTML = html;
-        // Remove scripts, styles, nav, footer
-        tmp.querySelectorAll('script,style,nav,footer,header,[role="navigation"]').forEach(el => el.remove());
-        let text = (tmp.innerText || tmp.textContent || '').replace(/\s+/g, ' ').trim();
-
-        if (text.length < 50) throw new Error('Não foi possível extrair texto útil desta página.');
-
-        textarea.value = text;
+        const { texto } = await apiPost('/extract-url', { url });
+        textarea.value = texto;
         updateCharCount();
         switchTab(tabs.find(t => t.id === 'tab-text'));
         textarea.focus();
@@ -2131,13 +2131,34 @@
     // ── Bidirectional highlight ───────────────────────────────────────────
     function highlightProseTerms(proseEl, mappings) {
       if (!mappings || !mappings.length) return;
-      let html = proseEl.innerHTML;
+      // Works on text nodes only, so a term like "class" can never hit markup.
       mappings.forEach((m, idx) => {
+        if (!m.termo_tecnico) return;
         const safe = m.termo_tecnico.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        const re = new RegExp(`(${safe})`, 'gi');
-        html = html.replace(re, `<span class="prose-highlight" data-term="${idx}">$1</span>`);
+        const re = new RegExp(safe, 'gi');
+        const walker = document.createTreeWalker(proseEl, NodeFilter.SHOW_TEXT);
+        const nodes = [];
+        while (walker.nextNode()) {
+          if (!walker.currentNode.parentElement.closest('.prose-highlight')) nodes.push(walker.currentNode);
+        }
+        nodes.forEach(node => {
+          const text = node.textContent;
+          const frag = document.createDocumentFragment();
+          let last = 0;
+          for (const match of text.matchAll(re)) {
+            frag.append(text.slice(last, match.index));
+            const span = document.createElement('span');
+            span.className = 'prose-highlight';
+            span.dataset.term = idx;
+            span.textContent = match[0];
+            frag.append(span);
+            last = match.index + match[0].length;
+          }
+          if (last === 0) return;
+          frag.append(text.slice(last));
+          node.replaceWith(frag);
+        });
       });
-      proseEl.innerHTML = html;
     }
 
     // ── Build rich perfil string from all saved prefs ─────────────────────
@@ -2630,15 +2651,11 @@
     // ── Error state with retry ────────────────────────────────────────────
     function showError(msg) {
       stopSkeleton();
-      const isOffline = msg.includes('Failed to fetch') || msg.includes('NetworkError') || msg.includes('fetch');
-      const friendlyMsg = isOffline
-        ? 'Não foi possível conectar à API. Verifique se o servidor está rodando:<br/><code style="font-size:0.8rem;opacity:0.8">cd api &amp;&amp; uvicorn main:app --host 127.0.0.1 --port 8000</code>'
-        : esc(msg);
       outputContent.innerHTML = `
         <div class="output-error" role="alert">
           <div class="output-error__body">
             <span aria-hidden="true">❌</span>
-            <span><strong>${isOffline ? 'API offline' : 'Erro'}:</strong> ${friendlyMsg}</span>
+            <span><strong>Algo deu errado:</strong> ${esc(msg)}</span>
           </div>
           <button class="retry-btn" id="retry-btn">↺ Tentar novamente</button>
         </div>`;
@@ -2668,18 +2685,7 @@
       setTimeout(() => { if (skeletonStatus) skeletonStatus.textContent = modeLabels[mode] || SKELETON_PHASES[2]; }, 900);
 
       try {
-        const response = await fetch(`${API_BASE}/adapt`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ texto: text, modo: mode, perfil: profile }),
-        });
-
-        if (!response.ok) {
-          const err = await response.json().catch(() => ({ detail: response.statusText }));
-          throw new Error(err.detail || `HTTP ${response.status}`);
-        }
-
-        const data = await response.json();
+        const data = await apiPost('/adapt', { texto: text, modo: mode, perfil: profile });
         let html = '';
         if (data.modo === 'metaphor')        html = renderMetaphor(data);
         else if (data.modo === 'checklist')  html = renderChecklist(data);

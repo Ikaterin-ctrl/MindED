@@ -24,13 +24,14 @@ Pessoas neurodivergentes (TDAH, dislexia, autismo) e estudantes lidando com cont
 
 ## A solução
 
-Três lentes de assimilação do mesmo conteúdo:
+Quatro lentes de assimilação do mesmo conteúdo:
 
 | Modo | O que faz |
 |---|---|
 | 🧠 **Metáfora** | Converte a teoria em analogia do cotidiano com tabela termo → metáfora e alerta de limitações |
 | ✅ **Microtarefas** | Gera checklist sequencial e gamificado com barra de progresso em tempo real |
 | 📋 **Resumo Semântico** | Sintetiza em tópicos com palavras-chave em negrito para leitura dinâmica |
+| ❓ **Perguntas** | Gera perguntas de compreensão com dica e resposta para consolidar o que foi lido |
 
 ---
 
@@ -45,7 +46,9 @@ MindED/
 │   └── css/
 │       └── base.css    # Design system completo (tokens, glass, botões, header)
 ├── api/
-│   ├── main.py         # FastAPI — endpoint POST /adapt
+│   ├── main.py         # FastAPI — POST /adapt e POST /extract-url
+│   ├── test_main.py    # Testes da API (pytest)
+│   ├── Dockerfile      # Imagem para publicar a API
 │   ├── requirements.txt
 │   ├── .env.example
 │   └── README.md       # Instruções detalhadas do backend
@@ -81,10 +84,21 @@ cd api
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env   # adicione sua GEMINI_API_KEY
+# para testar sem login Firebase, adicione AUTH_DISABLED=true ao .env
 uvicorn main:app --host 127.0.0.1 --port 8000 --reload
 ```
 
 A API sobe em `http://127.0.0.1:8000`. Documentação interativa: `/docs`.
+
+Testes: `pip install pytest && pytest test_main.py`.
+
+### Publicação
+
+O frontend está no Firebase Hosting; a API precisa de um host próprio (a imagem de `api/Dockerfile` serve para isso). Depois de publicar:
+
+1. Defina `GEMINI_API_KEY` no host — e nunca `AUTH_DISABLED`.
+2. Preencha `PROD_API_BASE` no `workspace.html` com a URL pública da API.
+3. Se usar outro domínio no frontend, inclua-o em `ALLOWED_ORIGINS`.
 
 > **Obter chave Gemini:** [aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey) — gratuito.
 
@@ -96,7 +110,7 @@ A API sobe em `http://127.0.0.1:8000`. Documentação interativa: `/docs`.
 |---|---|
 | Frontend | HTML + CSS (Design System próprio) + Vanilla JS |
 | Backend | Python · FastAPI · Pydantic v2 |
-| IA | Google Gemini 1.5 Flash |
+| IA | Google Gemini (modelo configurável em `GEMINI_MODEL`) |
 | Design | Glassmorphism dark · Inter + Outfit · WCAG AA |
 
 ---
@@ -113,7 +127,9 @@ A API sobe em `http://127.0.0.1:8000`. Documentação interativa: `/docs`.
 }
 ```
 
-`modo` aceita: `metaphor` · `checklist` · `summary`
+`modo` aceita: `metaphor` · `checklist` · `summary` · `questions`
+
+As chamadas exigem `Authorization: Bearer <Firebase ID token>`.
 
 Resposta completa segue o schema `AdaptationResponse` em [`api/main.py`](api/main.py).
 
@@ -122,8 +138,11 @@ Resposta completa segue o schema `AdaptationResponse` em [`api/main.py`](api/mai
 ## Segurança
 
 - `GEMINI_API_KEY` exclusivamente via variável de ambiente — nunca hardcoded
-- Servidor API vincula apenas `127.0.0.1` — não exposto à rede
-- CORS restrito a origens `localhost`
+- Token do Firebase verificado no servidor em todas as rotas que usam IA ou buscam links
+- Limite de pedidos por usuário e por minuto (por processo)
+- `/extract-url` bloqueia endereços internos, inclusive em redirecionamentos
+- CORS restrito às origens em `ALLOWED_ORIGINS`
+- A chave `apiKey` do Firebase no frontend é pública por definição; a proteção vem das regras e dos domínios autorizados
 
 ---
 

@@ -22,7 +22,7 @@
   /* Text — warm off-white, not cold grey */
   --clr-text:        #F2EDE6;
   --clr-text-muted:  #9C9285;
-  --clr-text-subtle: #5C544A;
+  --clr-text-subtle: #8F8578;
 
   /* Accents — teal Tiffany as primary, warm amber as secondary */
   --clr-accent:      #2A9D7C;
@@ -36,8 +36,8 @@
   --clr-violet:      #2A9D7C;
 
   /* Primary button — teal solid */
-  --grad-primary:    #2A9D7C;
-  --grad-primary-r:  #238A6B;
+  --grad-primary:    #1F7F64;
+  --grad-primary-r:  #1A6C55;
 
   /* Background — warm dark, no spotlights */
   --grad-bg: #1C1713;

@@ -81,6 +81,19 @@ def test_triple_quotes_cannot_close_the_prompt_block(api, monkeypatch):
     assert 'fim """' not in models.calls[0]["contents"]
 
 
+def test_simplify_adds_instruction_and_keeps_original_text(api, monkeypatch):
+    models = install_gemini(monkeypatch)
+    api.post("/adapt", json={"texto": TEXTO, "modo": "summary", "simplificar": True})
+    assert "ainda mais simples" in models.calls[0]["contents"]
+    assert TEXTO in models.calls[0]["contents"]
+
+
+def test_normal_request_has_no_simplify_instruction(api, monkeypatch):
+    models = install_gemini(monkeypatch)
+    api.post("/adapt", json={"texto": TEXTO, "modo": "summary"})
+    assert "ainda mais simples" not in models.calls[0]["contents"]
+
+
 def test_auth_required_when_enabled(monkeypatch):
     monkeypatch.setattr(main, "AUTH_DISABLED", False)
     install_gemini(monkeypatch)

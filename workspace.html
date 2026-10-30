@@ -25,13 +25,17 @@
     };
     if (!firebase.apps.length) firebase.initializeApp(_fbConfig);
     const _auth = firebase.auth();
+    // ?demo=1 shows ready-made results to visitors without an account.
+    const IS_DEMO = new URLSearchParams(location.search).has('demo');
     document.documentElement.style.visibility = 'hidden';
     _auth.onAuthStateChanged(user => {
-      if (!user) {
+      if (user && IS_DEMO) {
+        window.location.replace('workspace.html');
+      } else if (!user && !IS_DEMO) {
         window.location.replace('login.html');
       } else {
         document.documentElement.style.visibility = '';
-        window._mindedUser = user;
+        if (user) window._mindedUser = user;
       }
     });
   </script>
@@ -42,7 +46,7 @@
     ══════════════════════════════════════════════════════════ */
     .workspace {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: var(--sp-lg);
       max-width: 1320px;
       margin: 0 auto;
@@ -367,6 +371,7 @@
       font-size: 1rem;
       gap: var(--sp-sm);
     }
+    #adapt-btn .btn-label { display: inline-flex; align-items: center; gap: 8px; }
     #adapt-btn .btn-spinner { display: none; }
     #adapt-btn.loading .btn-label { display: none; }
     #adapt-btn.loading .btn-spinner {
@@ -976,10 +981,73 @@
       .checklist-item.done .checklist-item__text { text-decoration: line-through; color: #888 !important; }
     }
 
+    [hidden] { display: none !important; }
+
+    /* ── Always-visible action ──────────────────────────────── */
+    .input-panel { position: static; }
+    .output-panel { scroll-margin-top: calc(64px + var(--sp-sm)); }
+    .adapt-bar {
+      position: sticky;
+      bottom: 0;
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-sm);
+      margin: 0 calc(var(--sp-md) * -1) calc(var(--sp-md) * -1);
+      padding: var(--sp-sm) var(--sp-md) var(--sp-md);
+      background: var(--clr-bg-alt);
+      border-radius: var(--r-md);
+    }
+    .adapt-hint {
+      font-size: 0.86rem;
+      color: var(--clr-text-muted);
+      text-align: center;
+    }
+    .adapt-hint[hidden] { display: none; }
+
+    /* ── Demo & profile invitation ──────────────────────────── */
+    .demo-banner {
+      padding: var(--sp-md);
+      border: 1px solid var(--clr-border-md);
+      border-radius: var(--r-md);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--clr-text-muted);
+    }
+    .demo-banner strong { color: var(--clr-text); }
+    .demo-banner a { color: var(--clr-accent); text-decoration: underline; }
+    .profile-nudge {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-sm);
+      margin-top: var(--sp-lg);
+      padding: var(--sp-md);
+      border: 1px solid var(--clr-border-md);
+      border-radius: var(--r-md);
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+    .profile-nudge__actions { display: flex; flex-wrap: wrap; gap: var(--sp-sm); }
+    .onboard-actions {
+      position: sticky;
+      bottom: calc(var(--sp-md) * -1);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-sm);
+      padding: var(--sp-sm) 0;
+      background: var(--clr-bg-alt);
+    }
+
     /* ── Responsive ─────────────────────────────────────────── */
     @media (max-width: 900px) {
+      .a11y-bar {
+        top: 72px;
+        bottom: auto;
+        right: var(--sp-sm);
+        flex-direction: column-reverse;
+      }
       .workspace {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
         padding: calc(64px + var(--sp-lg)) var(--sp-md) var(--sp-xl);
       }
       .panel { position: static; }
@@ -1028,8 +1096,14 @@
   <main class="workspace" id="workspace">
 
     <!-- ═══ LEFT: Input Panel ════════════════════════════════ -->
-    <section class="panel glass" aria-labelledby="input-panel-title">
+    <section class="panel glass input-panel" aria-labelledby="input-panel-title">
       <h2 class="panel__title" id="input-panel-title">O seu texto</h2>
+
+      <p class="demo-banner" id="demo-banner" hidden>
+        <strong>Demonstração sem cadastro.</strong> Este é um exemplo com resultados prontos.
+        Escolha um modo e clique em Adaptar.
+        <a href="login.html">Entre para adaptar os seus textos</a>.
+      </p>
 
       <!-- Input: tabs + panes -->
       <div class="input-area">
@@ -1066,15 +1140,15 @@
           <div class="pdf-drop-zone" id="pdf-drop-zone">
             <svg class="pdf-drop-zone__icon" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
             <span class="pdf-drop-zone__title">Arraste o PDF aqui</span>
-            <span class="pdf-drop-zone__hint">ou clique para escolher um ficheiro</span>
+            <span class="pdf-drop-zone__hint">ou clique para escolher um arquivo</span>
             <button type="button" class="pdf-upload-label" id="pdf-pick-btn">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-              Escolher ficheiro
+              Escolher arquivo
             </button>
             <span class="pdf-drop-zone__status" id="pdf-status" aria-live="polite"></span>
           </div>
           <!-- Input fora do drop zone, oculto por opacity (não clip) para garantir clique cross-browser -->
-          <input type="file" id="pdf-upload" accept=".pdf" aria-label="Carregar ficheiro PDF"
+          <input type="file" id="pdf-upload" accept=".pdf" aria-label="Enviar arquivo PDF"
             style="position:absolute;opacity:0;width:0;height:0;pointer-events:none;" />
         </div>
 
@@ -1176,18 +1250,22 @@
       </div>
 
       <!-- CTA -->
+      <div class="adapt-bar">
+      <p class="adapt-hint" id="adapt-hint">Escreva pelo menos 10 caracteres para adaptar.</p>
       <button
         id="adapt-btn"
         class="btn btn-primary"
         aria-label="Adaptar texto com MindED"
+        aria-describedby="adapt-hint"
         disabled
       >
         <span class="btn-label">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
           Adaptar
         </span>
-        <div class="btn-spinner" role="status" aria-label="A processar…"></div>
+        <div class="btn-spinner" role="status" aria-label="Processando…"></div>
       </button>
+      </div>
       <p class="shortcut-hint" aria-hidden="true">
         <kbd>⌘</kbd><kbd>↵</kbd> ou <kbd>Ctrl</kbd><kbd>↵</kbd> para adaptar
       </p>
@@ -1239,7 +1317,7 @@
        aria-modal="true" aria-labelledby="onboard-title" aria-hidden="true">
     <div class="onboard-modal__head">
       <img src="img/logominded.png" alt="" aria-hidden="true" width="32" height="32" />
-      <h2 id="onboard-title">Olá! Como prefere aprender?</h2>
+      <h2 id="onboard-title">Como prefere aprender?</h2>
       <p>Três perguntas rápidas para adaptar a experiência ao seu jeito.</p>
     </div>
 
@@ -1272,8 +1350,10 @@
       </div>
     </div>
 
-    <button class="onboard-cta" id="onboard-save">Continuar →</button>
-    <button class="onboard-skip" id="onboard-skip">Saltar por agora</button>
+    <div class="onboard-actions">
+      <button class="onboard-cta" id="onboard-save">Salvar</button>
+      <button class="onboard-skip" id="onboard-skip">Agora não</button>
+    </div>
   </div>
 
   <div class="history-overlay" id="history-overlay" aria-hidden="true"></div>
@@ -1340,6 +1420,7 @@
 
   </div>
 
+  <script src="src/js/demo-data.js"></script>
   <script>
     /* =====================================================================
        MindED Workspace — v2
@@ -1385,6 +1466,7 @@
     const textarea       = document.getElementById('text-input');
     const charCount      = document.getElementById('char-count');
     const adaptBtn       = document.getElementById('adapt-btn');
+    const adaptHint      = document.getElementById('adapt-hint');
     const profileStatus  = document.getElementById('profile-status');
     const profileEmpty   = document.getElementById('profile-empty');
     const profileTags    = document.getElementById('profile-status-tags');
@@ -1430,6 +1512,7 @@
       }
       logoutBtn.style.display = 'inline-flex';
       logoutBtn.addEventListener('click', async () => {
+        try { localStorage.removeItem(DRAFT_KEY); } catch (_) {}
         await firebase.auth().signOut();
         window.location.replace('login.html');
       });
@@ -1687,12 +1770,14 @@
     })();
 
     // ═══════════════════════════════════════════════════════════════════════
-    // FIRST-VISIT ONBOARDING MODAL
-    // Shows once when no prefs exist. Saves 3 quick answers to minded_prefs
-    // and applies a11y state immediately — no redirect required.
+    // PROFILE QUESTIONS MODAL
+    // Offered after the first result when no prefs exist, never on arrival.
+    // Saves 3 quick answers to minded_prefs and applies a11y state immediately.
     // ═══════════════════════════════════════════════════════════════════════
+    const ONBOARD_KEY = 'minded_onboarded';
+    let openOnboarding = null;
     (function initOnboarding() {
-      const ONBOARD_KEY = 'minded_onboarded';
+      if (IS_DEMO) return;
       // Skip if already onboarded OR if prefs already exist from /preferencias
       const alreadyDone = localStorage.getItem(ONBOARD_KEY);
       const hasPrefs    = (() => {
@@ -1727,8 +1812,7 @@
         });
       });
 
-      // Open with slight delay so auth flash doesn't overlap
-      setTimeout(() => {
+      openOnboarding = () => {
         backdrop.classList.add('open');
         modal.setAttribute('aria-hidden', 'false');
         backdrop.setAttribute('aria-hidden', 'false');
@@ -1739,7 +1823,7 @@
         // Trap focus: focus first button
         const first = modal.querySelector('button, [tabindex="0"]');
         if (first) setTimeout(() => first.focus(), 200);
-      }, 400);
+      };
 
       function closeModal() {
         modal.classList.remove('open');
@@ -1747,6 +1831,7 @@
         modal.setAttribute('aria-hidden', 'true');
         backdrop.setAttribute('aria-hidden', 'true');
         localStorage.setItem(ONBOARD_KEY, '1');
+        removeProfileNudge();
       }
 
       saveBtn.addEventListener('click', () => {
@@ -1814,7 +1899,7 @@
     function saveHistory(arr) {
       try { localStorage.setItem(HISTORY_KEY, JSON.stringify(arr.slice(0, HISTORY_MAX))); } catch (_) {}
     }
-    function addToHistory(data, mode, profile) {
+    function addToHistory(data, mode, profile, texto) {
       const hist = loadHistory();
       hist.unshift({
         id:      Date.now(),
@@ -1822,6 +1907,7 @@
         titulo:  data.titulo,
         mode,
         profile,
+        texto,
         data,
       });
       saveHistory(hist);
@@ -1853,6 +1939,7 @@
                      : entry.mode === 'checklist'  ? renderChecklist(entry.data)
                      : entry.mode === 'questions'  ? renderQuestions(entry.data)
                      : renderSummary(entry.data);
+          lastRequest = entry.texto ? { text: entry.texto, mode: entry.mode } : null;
           showOutput(html, entry.data);
           closeHistory();
         };
@@ -1886,8 +1973,24 @@
       const len = textarea.value.length;
       charCount.textContent = len > 0 ? `${len.toLocaleString('pt')} car.` : '';
       adaptBtn.disabled = len < 10;
+      adaptHint.hidden = len >= 10;
+      scheduleDraftSave();
     }
     textarea.addEventListener('input', updateCharCount);
+
+    // ── Draft — survives reloads, cleared on logout ───────────────────────
+    const DRAFT_KEY = 'minded_draft';
+    let _draftTimer = null;
+    function saveDraft() {
+      if (IS_DEMO) return;
+      clearTimeout(_draftTimer);
+      try { localStorage.setItem(DRAFT_KEY, textarea.value); } catch (_) {}
+    }
+    function scheduleDraftSave() {
+      clearTimeout(_draftTimer);
+      _draftTimer = setTimeout(saveDraft, 400);
+    }
+    window.addEventListener('pagehide', saveDraft);
 
     // ── Tab switcher ──────────────────────────────────────────────────────
     const tabs  = Array.from(document.querySelectorAll('.input-tab'));
@@ -1962,7 +2065,7 @@
         pdfStatus.textContent = 'Ficheiro inválido. Usa um PDF.';
         return;
       }
-      pdfStatus.textContent = 'A extrair texto…';
+      pdfStatus.textContent = 'Extraindo o texto…';
       try {
         const text = await extractPdf(file);
         pdfToTextThenSwitch(text);
@@ -1975,7 +2078,7 @@
 
     pdfUpload.addEventListener('change', e => handlePdfFile(e.target.files[0]));
 
-    // PDF: "Escolher ficheiro" button triggers the hidden input directly (user gesture → always allowed)
+    // PDF: "Escolher arquivo" button triggers the hidden input directly (user gesture → always allowed)
     document.getElementById('pdf-pick-btn').addEventListener('click', () => pdfUpload.click());
     // PDF: clicking anywhere else on the drop zone also opens the picker
     dropZone.addEventListener('click', e => {
@@ -2373,7 +2476,7 @@
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
             PDF
           </button>
-          <button class="simplify-btn" id="simplify-btn" aria-label="Simplificar ainda mais">
+          <button class="simplify-btn" id="simplify-btn" aria-label="Simplificar ainda mais"${lastRequest ? '' : ' hidden'}>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
             Simplificar mais
           </button>
@@ -2566,22 +2669,10 @@
         pdfBtn.addEventListener('click', () => window.print());
       }
 
-      // Simplificar mais — re-envia o output como novo input com instrução de simplificação
+      // Simplificar mais — re-adapts the original text, leaving the textarea alone
       const simplifyBtn = document.getElementById('simplify-btn');
       if (simplifyBtn) {
-        simplifyBtn.addEventListener('click', async () => {
-          const currentText = outputContent.innerText.trim();
-          if (!currentText) return;
-          const simplifiedInput = `Simplifica este texto para linguagem ainda mais simples, como se estivesses a explicar a uma criança de 10 anos:\n\n${currentText.substring(0, 4000)}`;
-          textarea.value = simplifiedInput;
-          updateCharCount();
-          // scroll ao topo do painel de input em mobile
-          if (window.innerWidth <= 900) {
-            document.querySelector('.panel').scrollIntoView({ behavior: 'smooth' });
-            await new Promise(r => setTimeout(r, 400));
-          }
-          adaptBtn.click();
-        });
+        simplifyBtn.addEventListener('click', () => doAdapt({ simplificar: true }));
       }
 
       // Flashcard interactivity
@@ -2664,14 +2755,44 @@
 
       document.getElementById('retry-btn').addEventListener('click', () => {
         outputContent.classList.add('hidden');
-        adaptBtn.click();
+        doAdapt(lastOptions);
       });
     }
 
     // ── Adapt button click ────────────────────────────────────────────────
-    async function doAdapt() {
-      const text    = textarea.value.trim();
-      const mode    = getMode();
+    let lastRequest = null;   // what produced the current result, for Simplificar mais
+    let lastOptions = {};
+
+    function removeProfileNudge() {
+      document.getElementById('profile-nudge')?.remove();
+    }
+
+    // Invites the profile questions below the result, without covering it.
+    function showProfileNudge() {
+      if (!openOnboarding || localStorage.getItem(ONBOARD_KEY)) return;
+      const nudge = document.createElement('div');
+      nudge.className = 'profile-nudge';
+      nudge.id = 'profile-nudge';
+      nudge.innerHTML = `
+        <p>Quer que os próximos resultados fiquem mais do seu jeito? São só 3 perguntas.</p>
+        <div class="profile-nudge__actions">
+          <button class="btn btn-primary btn-sm" id="nudge-open" type="button">Responder</button>
+          <button class="btn btn-ghost btn-sm" id="nudge-dismiss" type="button">Agora não</button>
+        </div>`;
+      outputContent.append(nudge);
+      nudge.querySelector('#nudge-open').addEventListener('click', openOnboarding);
+      nudge.querySelector('#nudge-dismiss').addEventListener('click', () => {
+        try { localStorage.setItem(ONBOARD_KEY, '1'); } catch (_) {}
+        removeProfileNudge();
+        document.getElementById('copy-btn')?.focus();
+      });
+    }
+
+    async function doAdapt(options = {}) {
+      const simplificar = !!options.simplificar && !!lastRequest;
+      lastOptions = options;
+      const text    = simplificar ? lastRequest.text : textarea.value.trim();
+      const mode    = simplificar ? lastRequest.mode : getMode();
       const profile = buildPerfilString();   // rich profile from all prefs
 
       if (text.length < 10) return;
@@ -2685,7 +2806,10 @@
       setTimeout(() => { if (skeletonStatus) skeletonStatus.textContent = modeLabels[mode] || SKELETON_PHASES[2]; }, 900);
 
       try {
-        const data = await apiPost('/adapt', { texto: text, modo: mode, perfil: profile });
+        const data = IS_DEMO
+          ? await new Promise(r => setTimeout(() => r(DEMO_RESULTS[mode]), 700))
+          : await apiPost('/adapt', { texto: text, modo: mode, perfil: profile, simplificar });
+        lastRequest = IS_DEMO ? null : { text, mode };
         let html = '';
         if (data.modo === 'metaphor')        html = renderMetaphor(data);
         else if (data.modo === 'checklist')  html = renderChecklist(data);
@@ -2693,7 +2817,10 @@
         else                                 html = renderSummary(data);
 
         showOutput(html, data);
-        addToHistory(data, mode, profile);
+        if (!IS_DEMO) {
+          addToHistory(data, mode, profile, text);
+          showProfileNudge();
+        }
 
       } catch (err) {
         showError(err.message);
@@ -2703,13 +2830,13 @@
       }
     }
 
-    adaptBtn.addEventListener('click', doAdapt);
+    adaptBtn.addEventListener('click', () => doAdapt());
 
     // ═══════════════════════════════════════════════════════════════════════
     // TEXTOS DE EXEMPLO
     // ═══════════════════════════════════════════════════════════════════════
     const EXAMPLES = {
-      ciencias: `A mitose é um processo de divisão celular em que uma célula-mãe se divide em duas células-filhas geneticamente idênticas. Ocorre em quatro fases principais: prófase, metáfase, anáfase e telófase. Durante a prófase, a cromatina se condensa em cromossomas visíveis e o fuso mitótico começa a formar-se. Na metáfase, os cromossomas alinham-se no plano equatorial da célula. Na anáfase, as cromátides-irmãs separam-se e migram para polos opostos da célula. Por fim, na telófase, forma-se uma nova membrana nuclear em torno de cada conjunto de cromossomas, e ocorre a citocinese, dividindo o citoplasma em duas células distintas.`,
+      ciencias: `A mitose é um processo de divisão celular em que uma célula-mãe se divide em duas células-filhas geneticamente idênticas. Ocorre em quatro fases principais: prófase, metáfase, anáfase e telófase. Durante a prófase, a cromatina se condensa em cromossomos visíveis e o fuso mitótico começa a se formar. Na metáfase, os cromossomos se alinham no plano equatorial da célula. Na anáfase, as cromátides-irmãs se separam e migram para polos opostos da célula. Por fim, na telófase, uma nova membrana se forma nuclear em torno de cada conjunto de cromossomos, e ocorre a citocinese, dividindo o citoplasma em duas células distintas.`,
 
       historia: `A Revolução Industrial, iniciada na Grã-Bretanha por volta de 1760, foi uma transformação profunda nos processos de produção, com a substituição do trabalho manual por máquinas movidas a vapor. As fábricas substituíram os ateliês artesanais, e enormes contingentes populacionais migraram do campo para as cidades em busca de emprego. Este processo trouxe tanto avanços tecnológicos como sérias consequências sociais: jornadas de trabalho exaustivas, trabalho infantil, condições insalubres nas fábricas e o crescimento de bairros operários sem saneamento básico. A concentração de riqueza nas mãos dos industriais e a pauperização dos trabalhadores criaram as condições para o surgimento dos movimentos operários e das primeiras reivindicações por direitos laborais.`,
 
@@ -2727,6 +2854,20 @@
         textarea.scrollTop = 0;
       });
     });
+
+    // ── Boot: demo mode or saved draft ────────────────────────────────────
+    if (IS_DEMO) {
+      document.getElementById('demo-banner').hidden = false;
+      document.getElementById('examples-group').hidden = true;
+      document.getElementById('profile-group').hidden = true;
+      document.querySelector('.input-tabs').hidden = true;
+      textarea.value = EXAMPLES.ciencias;
+      textarea.readOnly = true;
+      charCount.hidden = true;
+    } else {
+      try { textarea.value = localStorage.getItem(DRAFT_KEY) || ''; } catch (_) {}
+    }
+    updateCharCount();
 
   </script>
 </body>

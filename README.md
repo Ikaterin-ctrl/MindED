@@ -43,8 +43,10 @@ MindED/
 ├── workspace.html      # Workspace principal (two-column layout)
 ├── preferencias.html   # Onboarding de perfil cognitivo
 ├── src/
-│   └── css/
-│       └── base.css    # Design system completo (tokens, glass, botões, header)
+│   ├── css/
+│   │   └── base.css    # Design system completo (tokens, glass, botões, header)
+│   └── js/
+│       └── demo-data.js # Resultados prontos da demonstração sem login
 ├── api/
 │   ├── main.py         # FastAPI — POST /adapt e POST /extract-url
 │   ├── test_main.py    # Testes da API (pytest)

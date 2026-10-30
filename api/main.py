@@ -112,6 +112,7 @@ class AdaptationRequest(BaseModel):
     texto: str = Field(..., min_length=10, max_length=MAX_TEXT_CHARS, description="Texto original a ser adaptado")
     modo: Literal["metaphor", "checklist", "summary", "questions"] = "metaphor"
     perfil: Optional[str] = Field(default="TDAH/Iniciante", max_length=300)
+    simplificar: bool = False
 
 
 class AdaptationResponse(BaseModel):
@@ -220,7 +221,17 @@ _SAFETY_NOTE = (
 )
 
 
+_SIMPLIFY_NOTE = (
+    "\n\nUse uma linguagem ainda mais simples: frases curtas, palavras do dia a dia "
+    "e nenhum jargão, como se explicasse a uma criança de 10 anos."
+)
+
+
 def _build_prompt(req: AdaptationRequest) -> str:
+    return _base_prompt(req) + (_SIMPLIFY_NOTE if req.simplificar else "")
+
+
+def _base_prompt(req: AdaptationRequest) -> str:
     perfil = req.perfil or "TDAH/Iniciante"
     texto = req.texto.replace('"""', "'''")
 

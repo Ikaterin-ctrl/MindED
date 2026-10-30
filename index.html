@@ -3,319 +3,306 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="MindED — Transforma textos difíceis em linguagem que faz sentido para você. Para quem tem TDAH, dislexia, autismo ou simplesmente prefere aprender de outra forma." />
+  <meta name="description" content="MindED transforma textos, links, vídeos e PDFs difíceis em algo que faz sentido para o seu jeito de aprender." />
   <title>MindED — Aprenda do seu jeito</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="src/css/base.css" />
-  <link rel="icon" type="image/png" href="img/logominded.png" />
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png" />
+  <meta name="theme-color" content="#0B0A0F" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="MindED" />
 
   <style>
-    /* ── Landing ─────────────────────────────────────────────── */
-    .landing {
-      display: flex;
-      flex-direction: column;
+    .home { overflow-x: clip; }
+    .shell { width: min(1240px, 100%); margin: 0 auto; padding: 0 var(--sp-xl); }
+
+    /* ── Hero ────────────────────────────────────────────────── */
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      gap: var(--sp-2xl);
       align-items: center;
-      justify-content: center;
       min-height: calc(100vh - 64px);
-      padding: var(--sp-2xl) var(--sp-xl) var(--sp-xl);
-      text-align: center;
-      gap: var(--sp-xl);
+      padding-top: var(--sp-xl);
+      padding-bottom: var(--sp-xl);
     }
-
-    /* Doodle illustration above headline */
-    .landing__doodle {
-      opacity: 0.85;
-    }
-
-    /* Tag */
-    .landing__tag {
-      display: inline-block;
-      color: var(--clr-text-subtle);
-      font-size: 0.85rem;
-      font-style: italic;
-      font-family: var(--font-body);
-    }
-
-    /* Headline */
-    .landing__headline {
-      max-width: 680px;
-    }
-    .landing__headline h1 {
-      font-size: clamp(2.6rem, 5.5vw, 4.2rem);
-      font-weight: 700;
-      line-height: 1.05;
-      color: var(--clr-text);
+    .hero__tag {
+      font-size: 1rem;
+      color: var(--clr-accent);
       margin-bottom: var(--sp-md);
     }
-    /* Wavy underline on the highlighted word — pure CSS, no JS */
-    .landing__headline h1 em {
-      font-style: normal;
-      color: var(--clr-accent);
-      position: relative;
-      white-space: nowrap;
+    .hero h1 {
+      font-size: clamp(3rem, 7.2vw, 6.4rem);
+      line-height: 0.96;
+      letter-spacing: -0.035em;
+      margin-bottom: var(--sp-lg);
     }
-    .landing__headline h1 em::after {
+    .hero__lead {
+      max-width: 46ch;
+      font-size: 1.15rem;
+      line-height: 1.65;
+      margin-bottom: var(--sp-xl);
+    }
+    .hero__cta { display: flex; flex-wrap: wrap; gap: var(--sp-md); }
+
+    /* ── Lens playground ─────────────────────────────────────── */
+    .lens {
+      border: 1px solid var(--clr-border-md);
+      border-radius: var(--r-lg);
+      background: var(--clr-bg-alt);
+    }
+    .lens__head {
+      display: flex;
+      justify-content: space-between;
+      gap: var(--sp-md);
+      padding: var(--sp-md) var(--sp-lg);
+      border-bottom: 1px solid var(--clr-border);
+      font-size: 0.9rem;
+      color: var(--clr-text-muted);
+    }
+    .lens__stage {
+      min-height: 300px;
+      padding: var(--sp-lg);
+      font-size: 1.15rem;
+      line-height: 1.75;
+      color: var(--clr-text);
+      transition: opacity var(--t-base);
+    }
+    .lens__stage.swap { opacity: 0; }
+    .lens__stage p { color: inherit; }
+    .lens__stage ol, .lens__stage ul { display: grid; gap: var(--sp-sm); }
+    .lens__stage li { display: grid; grid-template-columns: 2ch 1fr; gap: var(--sp-sm); }
+    .lens__stage li > span:first-child { color: var(--clr-accent); font-weight: 700; }
+    .lens__stage details { margin-top: var(--sp-md); }
+    .lens__stage summary { color: var(--clr-accent); cursor: pointer; min-height: 44px; }
+    .lens__controls {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      border-top: 1px solid var(--clr-border);
+    }
+    .lens__btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      min-height: 64px;
+      padding: var(--sp-sm);
+      border: 0;
+      border-right: 1px solid var(--clr-border);
+      background: transparent;
+      color: var(--clr-text-muted);
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: background var(--t-base), color var(--t-base);
+    }
+    .lens__btn:last-child { border-right: 0; }
+    .lens__btn:hover { color: var(--clr-text); background: var(--clr-surface-md); }
+    .lens__btn[aria-pressed="true"] { background: var(--grad-primary); color: #fff; }
+    .lens__btn:focus-visible { outline: 2px solid var(--clr-accent); outline-offset: -3px; }
+
+    /* ── Sections ────────────────────────────────────────────── */
+    .band { padding: var(--sp-2xl) 0; border-top: 1px solid var(--clr-border); }
+    .band h2 {
+      font-size: clamp(2rem, 4.6vw, 3.8rem);
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+      max-width: 16ch;
+      margin-bottom: var(--sp-xl);
+    }
+
+    .sources { display: flex; flex-wrap: wrap; gap: var(--sp-sm) var(--sp-xl); }
+    .sources span {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 7vw, 5.4rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      color: var(--clr-text);
+    }
+    .sources span:nth-child(even) { color: var(--clr-accent); }
+
+    .rows { border-bottom: 1px solid var(--clr-border); }
+    .row {
+      display: grid;
+      grid-template-columns: 4rem minmax(0, 1fr) minmax(0, 1.2fr);
+      gap: var(--sp-lg);
+      align-items: baseline;
+      padding: var(--sp-lg) 0;
+      border-top: 1px solid var(--clr-border);
+      transition: padding-left var(--t-base);
+    }
+    .row:hover { padding-left: var(--sp-sm); }
+    .row__num { color: var(--clr-accent); font-family: var(--font-pixel); font-size: 1.25rem; font-weight: 600; }
+    .row h3 { font-family: var(--font-display); font-size: clamp(1.4rem, 2.6vw, 2.1rem); }
+    .row p { font-size: 1.05rem; }
+
+    .promises { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-xl); }
+    .promises h3 { font-size: 1.2rem; margin-bottom: var(--sp-sm); }
+
+    .closing { position: relative; background: var(--grad-primary); padding: calc(var(--sp-2xl) + 24px) 0 var(--sp-2xl); }
+    /* Dither strip, always above the text */
+    .closing::before {
       content: '';
       position: absolute;
-      left: 0; right: 0;
-      bottom: -4px;
-      height: 3px;
-      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='6'%3E%3Cpath d='M0 3 Q5 0 10 3 Q15 6 20 3' fill='none' stroke='%232A9D7C' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x center;
-      background-size: 20px 6px;
+      top: 0; left: 0; right: 0;
+      height: 24px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='24' shape-rendering='crispEdges'%3E%3Cpath fill='%230B0A0F' d='M0 0h16v8H0zM0 8h4v4H0zM8 8h4v4H8zM4 12h4v4H4zM12 12h4v4h-4zM0 16h4v4H0zM8 20h4v4H8z'/%3E%3C/svg%3E") repeat-x;
     }
-    .landing__headline p {
-      font-size: 1rem;
-      color: var(--clr-text-muted);
-      line-height: 1.85;
-      max-width: 500px;
-      margin: 0 auto;
-    }
-
-    /* CTAs */
-    .landing__cta {
-      display: flex;
-      align-items: center;
-      gap: var(--sp-md);
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    /* ── Feature cards ───────────────────────────────────────── */
-    .features {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--sp-lg);
-      max-width: 860px;
-      width: 100%;
-    }
-
-    .feature-card {
-      padding: var(--sp-lg) var(--sp-md);
-      text-align: left;
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-sm);
-      /* slightly organic border-radius */
-      border-radius: 14px 18px 14px 16px !important;
-    }
-
-    .feature-card__doodle {
-      width: 44px; height: 44px;
-      margin-bottom: var(--sp-xs);
-      color: var(--clr-accent);
-      opacity: 0.9;
-    }
-
-    .feature-card h3 {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: var(--clr-text);
-    }
-    .feature-card p {
-      font-size: 0.86rem;
-      color: var(--clr-text-muted);
-      line-height: 1.7;
-    }
-
-    /* ── How it works ────────────────────────────────────────── */
-    .how-section {
-      max-width: 760px;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-lg);
-    }
-    .how-section__title {
-      font-family: var(--font-display);
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: var(--clr-text);
-      text-align: center;
-    }
-    .how-steps {
-      display: flex;
-      gap: var(--sp-xl);
-      align-items: flex-start;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    .how-step {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--sp-sm);
-      text-align: center;
-      max-width: 180px;
-    }
-    .how-step__num {
-      font-family: var(--font-display);
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--clr-accent);
+    .closing h2 {
+      font-size: clamp(2.2rem, 5.4vw, 4.6rem);
       line-height: 1;
+      letter-spacing: -0.03em;
+      color: #fff;
+      max-width: 15ch;
+      margin-bottom: var(--sp-lg);
     }
-    .how-step p {
-      font-size: 0.84rem;
-      line-height: 1.65;
-      color: var(--clr-text-muted);
-    }
+    .closing .btn { --btn: #fff; --shadow-hard: #17131F; background: #fff; color: #17131F; }
+    .closing .btn:hover { --btn: #fff; background: #fff; }
 
-    /* ── Divider squiggle ────────────────────────────────────── */
-    .squiggle-divider {
-      width: 80px;
-      height: 8px;
-      opacity: 0.35;
+    @media (max-width: 960px) {
+      .hero { grid-template-columns: minmax(0, 1fr); min-height: 0; gap: var(--sp-xl); }
+      .promises { grid-template-columns: minmax(0, 1fr); gap: var(--sp-lg); }
     }
-
-    #como-funciona { scroll-margin-top: 80px; }
-
-    @media (max-width: 720px) {
-      .features { grid-template-columns: 1fr; max-width: 400px; }
-      .landing { padding: var(--sp-xl) var(--sp-md); }
-    }
-    @media (max-width: 480px) {
-      .landing__cta { flex-direction: column; width: 100%; }
-      .landing__cta .btn { width: 100%; }
+    @media (max-width: 640px) {
+      .shell { padding: 0 var(--sp-md); }
+      .row { grid-template-columns: minmax(0, 1fr); gap: var(--sp-xs); }
+      .lens__controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .lens__btn:nth-child(2) { border-right: 0; }
+      .lens__btn:nth-child(-n+2) { border-bottom: 1px solid var(--clr-border); }
+      .hero__cta .btn { width: 100%; }
+      .lens__stage { min-height: 340px; font-size: 1.05rem; }
     }
   </style>
 </head>
-<body>
+<body class="home">
+  <a href="#conteudo" class="skip-link">Pular para o conteúdo</a>
 
   <!-- ── Header ─────────────────────────────────────────────── -->
   <header class="main-header">
     <div class="header-inner">
-      <a href="index.html" class="logo-link">
-        <img src="img/logominded.png" alt="" aria-hidden="true" />
-        <span>MindED</span>
-      </a>
+      <a href="index.html" class="logo-link" aria-label="MindED, início"><span>Mind<b>ED</b></span></a>
 
       <button class="hamburger" id="hamburger" aria-label="Abrir menu" aria-expanded="false" aria-controls="main-nav">
         <span></span><span></span><span></span>
       </button>
 
       <nav class="main-nav" id="main-nav" role="navigation" aria-label="Principal">
-        <a href="index.html"        class="nav-link active">Início</a>
+        <a href="#lentes"           class="nav-link">Como funciona</a>
         <a href="workspace.html"    class="nav-link">Workspace</a>
         <a href="preferencias.html" class="nav-link">Preferências</a>
-        <a href="login.html"        class="btn btn-primary btn-sm">Começar</a>
+        <a href="login.html"        class="btn btn-primary btn-sm">Entrar</a>
       </nav>
     </div>
   </header>
 
-  <!-- ── Landing ────────────────────────────────────────────── -->
-  <main class="page-wrap">
-    <section class="landing" aria-labelledby="landing-headline">
+  <main class="page-wrap" id="conteudo" tabindex="-1">
 
-      <!-- Hand-drawn brain doodle -->
-      <svg class="landing__doodle fade-up" style="animation-delay:0.05s" width="80" height="80" viewBox="0 0 80 80" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-        <!-- brain outline, sketch style -->
-        <path d="M40 18 C28 14 16 20 15 32 C14 38 18 43 16 49 C14 56 20 65 30 66 C35 67 38 63 40 63 C42 63 45 67 50 66 C60 65 66 56 64 49 C62 43 66 38 65 32 C64 20 52 14 40 18Z" stroke="#2A9D7C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-        <!-- centre line -->
-        <path d="M40 18 C40 30 40 50 40 63" stroke="#2A9D7C" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="3 4"/>
-        <!-- left lobe wrinkles -->
-        <path d="M22 34 C25 30 30 32 28 38" stroke="#2A9D7C" stroke-width="1.5" stroke-linecap="round"/>
-        <path d="M19 45 C23 42 28 44 26 50" stroke="#2A9D7C" stroke-width="1.5" stroke-linecap="round"/>
-        <!-- right lobe wrinkles -->
-        <path d="M58 34 C55 30 50 32 52 38" stroke="#2A9D7C" stroke-width="1.5" stroke-linecap="round"/>
-        <path d="M61 45 C57 42 52 44 54 50" stroke="#2A9D7C" stroke-width="1.5" stroke-linecap="round"/>
-        <!-- little sparkle top -->
-        <path d="M40 10 L40 6 M36 12 L33 9 M44 12 L47 9" stroke="#2A9D7C" stroke-width="1.6" stroke-linecap="round"/>
-      </svg>
-
-      <span class="landing__tag fade-up" style="animation-delay:0.1s">para mentes que aprendem diferente</span>
-
-      <div class="landing__headline fade-up" style="animation-delay:0.2s">
-        <h1 id="landing-headline">
-          Qualquer texto.<br />
-          <em>Do seu jeito.</em>
-        </h1>
-        <p>
-          Cola um artigo, manual ou enunciado difícil —
-          o MindED transforma numa linguagem que funciona para você.
-          Sem jargão, sem frustração.
+    <section class="hero shell" aria-labelledby="hero-title">
+      <div>
+        <p class="hero__tag">Para mentes que aprendem diferente</p>
+        <h1 id="hero-title">Texto difícil entra. <span class="mark mark--load">Clareza</span> sai.</h1>
+        <p class="hero__lead">
+          Cole um texto, um link, um vídeo do YouTube ou um PDF.
+          O MindED troca o jargão por um formato que funciona para a sua cabeça.
         </p>
-      </div>
-
-      <div class="landing__cta fade-up" style="animation-delay:0.32s">
-        <a href="login.html" class="btn btn-primary">
-          Experimentar agora →
-        </a>
-        <a href="#como-funciona" class="btn btn-ghost">Como funciona</a>
-      </div>
-
-      <!-- Feature cards -->
-      <div class="features fade-up" style="animation-delay:0.48s" role="list">
-
-        <article class="feature-card glass" role="listitem">
-          <!-- hand-drawn pencil doodle -->
-          <svg class="feature-card__doodle" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M8 36 L14 22 L32 6 C34 4 38 4 40 6 C42 8 42 12 40 14 L22 32 L8 36Z" stroke-width="2.2"/>
-            <path d="M28 10 L34 16" stroke-width="2"/>
-            <path d="M8 36 L12 32" stroke-width="2"/>
-          </svg>
-          <h3>Metáforas do dia a dia</h3>
-          <p>Conceitos abstractos viram analogias concretas com coisas que você já conhece.</p>
-        </article>
-
-        <article class="feature-card glass" role="listitem">
-          <!-- hand-drawn checklist doodle -->
-          <svg class="feature-card__doodle" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <rect x="6" y="6" width="32" height="32" rx="4" stroke-width="2.2"/>
-            <path d="M13 16 L18 21 L26 12" stroke-width="2.2"/>
-            <path d="M13 26 L31 26" stroke-width="2"/>
-            <path d="M13 32 L24 32" stroke-width="2"/>
-          </svg>
-          <h3>Passos pequenos</h3>
-          <p>O conteúdo divide-se em tarefas que cabem numa única acção. Sem sobrecarga.</p>
-        </article>
-
-        <article class="feature-card glass" role="listitem">
-          <!-- hand-drawn summary / lines doodle -->
-          <svg class="feature-card__doodle" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M8 12 Q22 9 36 12" stroke-width="2.2"/>
-            <path d="M8 20 Q22 17 36 20" stroke-width="2.2"/>
-            <path d="M8 28 Q18 25 26 28" stroke-width="2.2"/>
-            <circle cx="34" cy="32" r="6" stroke-width="2"/>
-            <path d="M31 32 L33 34 L37 30" stroke-width="2"/>
-          </svg>
-          <h3>Resumo sem excesso</h3>
-          <p>Só o que importa, destacado. Leitura rápida sem perder o essencial.</p>
-        </article>
-
-      </div>
-
-      <!-- Squiggle divider -->
-      <svg class="squiggle-divider fade-up" style="animation-delay:0.55s" viewBox="0 0 80 8" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M0 4 Q10 0 20 4 Q30 8 40 4 Q50 0 60 4 Q70 8 80 4" stroke="#2A9D7C" stroke-width="2" stroke-linecap="round" fill="none"/>
-      </svg>
-
-      <!-- Como funciona -->
-      <div class="how-section fade-up" id="como-funciona" style="animation-delay:0.6s">
-        <p class="how-section__title">Como funciona</p>
-        <div class="how-steps">
-          <div class="how-step">
-            <span class="how-step__num">1</span>
-            <p>Cola o texto que quer entender — ou carrega um PDF, ou cola um link</p>
-          </div>
-          <div class="how-step">
-            <span class="how-step__num">2</span>
-            <p>Escolha como quer receber: metáfora, passos ou resumo</p>
-          </div>
-          <div class="how-step">
-            <span class="how-step__num">3</span>
-            <p>Leia, ouça ou guarde no histórico para voltar depois</p>
-          </div>
+        <div class="hero__cta">
+          <a href="workspace.html?demo=1" class="btn btn-primary">Experimentar sem cadastro</a>
+          <button class="btn btn-ghost" id="install-btn" type="button" hidden>Instalar o app</button>
+          <a href="#lentes" class="btn btn-ghost">Como funciona</a>
         </div>
       </div>
 
+      <div class="lens" aria-label="Demonstração: o mesmo texto em quatro formatos" role="group">
+        <div class="lens__head">
+          <span>Mesmo conteúdo, outra lente</span>
+          <span id="lens-label">Original</span>
+        </div>
+        <div class="lens__stage" id="lens-stage" aria-live="polite">
+          <p>A mitose é o processo de divisão celular em que uma célula-mãe origina duas células-filhas geneticamente idênticas, passando por prófase, metáfase, anáfase e telófase.</p>
+        </div>
+        <div class="lens__controls">
+          <button class="lens__btn" type="button" data-lens="metaphor" aria-pressed="false"><svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 2h6v1h-6zM4 3h1v1h-1zM11 3h1v1h-1zM3 4h1v1h-1zM12 4h1v1h-1zM3 5h1v1h-1zM12 5h1v1h-1zM3 6h1v1h-1zM12 6h1v1h-1zM3 7h1v1h-1zM6 7h1v1h-1zM9 7h1v1h-1zM12 7h1v1h-1zM4 8h1v1h-1zM7 8h2v1h-2zM11 8h1v1h-1zM5 9h1v1h-1zM10 9h1v1h-1zM5 10h1v1h-1zM10 10h1v1h-1zM5 11h6v1h-6zM5 12h6v1h-6zM6 13h4v1h-4z"/></svg>Metáfora</button>
+          <button class="lens__btn" type="button" data-lens="steps" aria-pressed="false"><svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2 3h8v1h-8zM2 4h1v1h-1zM9 4h1v1h-1zM13 4h2v1h-2zM2 5h1v1h-1zM9 5h1v1h-1zM12 5h2v1h-2zM2 6h1v1h-1zM9 6h1v1h-1zM11 6h2v1h-2zM2 7h1v1h-1zM5 7h1v1h-1zM9 7h2v1h-2zM2 8h1v1h-1zM5 8h2v1h-2zM8 8h2v1h-2zM11 8h1v1h-1zM2 9h1v1h-1zM6 9h3v1h-3zM11 9h1v1h-1zM2 10h1v1h-1zM7 10h1v1h-1zM11 10h1v1h-1zM2 11h1v1h-1zM11 11h1v1h-1zM2 12h10v1h-10z"/></svg>Passos</button>
+          <button class="lens__btn" type="button" data-lens="summary" aria-pressed="false"><svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2 4h2v1h-2zM6 4h8v1h-8zM2 5h2v1h-2zM6 5h8v1h-8zM2 7h2v1h-2zM6 7h8v1h-8zM2 8h2v1h-2zM6 8h8v1h-8zM2 10h2v1h-2zM6 10h5v1h-5zM2 11h2v1h-2zM6 11h5v1h-5z"/></svg>Resumo</button>
+          <button class="lens__btn" type="button" data-lens="question" aria-pressed="false"><svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 2h6v1h-6zM4 3h2v1h-2zM10 3h2v1h-2zM4 4h2v1h-2zM10 4h2v1h-2zM10 5h2v1h-2zM9 6h2v1h-2zM8 7h2v1h-2zM7 8h2v1h-2zM7 9h2v1h-2zM7 11h2v1h-2zM7 12h2v1h-2z"/></svg>Pergunta</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="fontes-title">
+      <div class="shell">
+        <h2 id="fontes-title" class="reveal">Comece pelo que você tem em mãos.</h2>
+        <div class="sources reveal" aria-label="Formatos aceitos">
+          <span>Texto</span><span>Link</span><span>Vídeo</span><span>PDF</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" id="lentes" aria-labelledby="lentes-title">
+      <div class="shell">
+        <h2 id="lentes-title" class="reveal">Quatro lentes para o mesmo assunto.</h2>
+        <div class="rows">
+          <article class="row reveal">
+            <span class="row__num" aria-hidden="true">01</span>
+            <h3>Metáfora</h3>
+            <p>O conceito vira uma cena do cotidiano, com um aviso sobre o que a comparação não explica.</p>
+          </article>
+          <article class="row reveal">
+            <span class="row__num" aria-hidden="true">02</span>
+            <h3>Passo a passo</h3>
+            <p>O conteúdo se divide em tarefas pequenas, e a sessão de foco mostra uma por vez.</p>
+          </article>
+          <article class="row reveal">
+            <span class="row__num" aria-hidden="true">03</span>
+            <h3>Resumo</h3>
+            <p>Só o essencial, com as palavras-chave marcadas para uma leitura rápida.</p>
+          </article>
+          <article class="row reveal">
+            <span class="row__num" aria-hidden="true">04</span>
+            <h3>Perguntas</h3>
+            <p>Teste o que ficou claro, com uma dica antes de abrir a resposta.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="promessas-title">
+      <div class="shell">
+        <h2 id="promessas-title" class="reveal">Calmo de propósito.</h2>
+        <div class="promises">
+          <div class="reveal">
+            <h3>Feito para ler</h3>
+            <p>Fonte criada para legibilidade, contraste alto e ajustes de tamanho e espaçamento.</p>
+          </div>
+          <div class="reveal">
+            <h3>Sem barulho</h3>
+            <p>Animações curtas, que somem se o seu aparelho estiver com movimento reduzido.</p>
+          </div>
+          <div class="reveal">
+            <h3>Seu perfil é seu</h3>
+            <p>As preferências ficam no navegador, e a IA recebe só orientações de escrita.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="closing" aria-labelledby="fim-title">
+      <div class="shell">
+        <h2 id="fim-title">Aquele texto impossível ainda está aberto?</h2>
+        <a href="workspace.html?demo=1" class="btn">Testar agora</a>
+      </div>
     </section>
   </main>
 
-  <!-- ── Footer ─────────────────────────────────────────────── -->
   <footer class="site-footer">
-    <p>&copy; 2025 MindED &mdash; Projecto open-source de acessibilidade cognitiva.</p>
+    <p>&copy; 2026 MindED &mdash; Projeto open-source de acessibilidade cognitiva.</p>
+    <p><a href="termos.html">Termos de Uso</a> · <a href="privacidade.html">Política de Privacidade</a></p>
   </footer>
 
   <script>
@@ -333,6 +320,67 @@
         hamburger.setAttribute('aria-expanded', 'false');
       });
     });
+
+    /* ── Lens playground ─────────────────────────────────────── */
+    const LENSES = {
+      metaphor: {
+        label: 'Metáfora',
+        html: '<p>Imagine uma biblioteca que vira duas. Os livros vão para <span class="mark">caixas</span>, as caixas se alinham no <span class="mark">corredor</span> e cada cópia é puxada para um lado. No fim, uma <span class="mark">parede</span> separa dois prédios iguais.</p>',
+      },
+      steps: {
+        label: 'Passos',
+        html: '<ol><li><span>1</span><span>Os cromossomos ficam visíveis.</span></li><li><span>2</span><span>Eles se alinham no meio da célula.</span></li><li><span>3</span><span>As cópias vão para lados opostos.</span></li><li><span>4</span><span>A célula se divide em duas.</span></li></ol>',
+      },
+      summary: {
+        label: 'Resumo',
+        html: '<p>Uma célula vira <span class="mark">duas células iguais</span>, em quatro fases: prófase, metáfase, anáfase e telófase.</p>',
+      },
+      question: {
+        label: 'Pergunta',
+        html: '<p>Quantas células existem ao fim da mitose?</p><details><summary>Ver resposta</summary><p>Duas, geneticamente idênticas à original.</p></details>',
+      },
+    };
+
+    const stage   = document.getElementById('lens-stage');
+    const label   = document.getElementById('lens-label');
+    const buttons = [...document.querySelectorAll('.lens__btn')];
+    const calm    = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function drawMarks(root) {
+      root.querySelectorAll('.mark').forEach((mark, i) => {
+        setTimeout(() => mark.classList.add('on'), calm ? 0 : 120 + i * 180);
+      });
+    }
+
+    buttons.forEach(btn => btn.addEventListener('click', () => {
+      const lens = LENSES[btn.dataset.lens];
+      buttons.forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+      stage.classList.add('swap');
+      setTimeout(() => {
+        stage.innerHTML = lens.html;
+        label.textContent = lens.label;
+        stage.classList.remove('swap');
+        drawMarks(stage);
+      }, calm ? 0 : 200);
+    }));
+
+    drawMarks(document.querySelector('.hero h1'));
+
+    /* ── Scroll reveal ───────────────────────────────────────── */
+    if (!calm && 'IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('in');
+          observer.unobserve(entry.target);
+        });
+      }, { threshold: 0.15 });
+      document.querySelectorAll('.reveal').forEach(el => {
+        el.classList.add('pending');
+        observer.observe(el);
+      });
+    }
   </script>
+  <script src="src/js/pwa.js"></script>
 </body>
 </html>

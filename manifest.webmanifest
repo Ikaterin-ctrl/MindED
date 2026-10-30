@@ -1,0 +1,21 @@
+{
+  "name": "MindED",
+  "short_name": "MindED",
+  "description": "Transforme textos, links, vídeos e PDFs difíceis em algo que faz sentido para você.",
+  "lang": "pt-BR",
+  "id": "/",
+  "start_url": "/workspace.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0B0A0F",
+  "theme_color": "#0B0A0F",
+  "icons": [
+    { "src": "img/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "img/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "img/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Adaptar um texto", "url": "/workspace.html" },
+    { "name": "Preferências", "url": "/preferencias.html" }
+  ]
+}

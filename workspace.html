@@ -9,7 +9,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="src/css/base.css" />
-  <link rel="icon" type="image/png" href="img/logominded.png" />
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png" />
+  <meta name="theme-color" content="#0B0A0F" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="MindED" />
 
   <!-- Firebase auth guard — redirects to login.html if not signed in -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -25,13 +31,17 @@
     };
     if (!firebase.apps.length) firebase.initializeApp(_fbConfig);
     const _auth = firebase.auth();
+    // ?demo=1 shows ready-made results to visitors without an account.
+    const IS_DEMO = new URLSearchParams(location.search).has('demo');
     document.documentElement.style.visibility = 'hidden';
     _auth.onAuthStateChanged(user => {
-      if (!user) {
+      if (user && IS_DEMO) {
+        window.location.replace('workspace.html');
+      } else if (!user && !IS_DEMO) {
         window.location.replace('login.html');
       } else {
         document.documentElement.style.visibility = '';
-        window._mindedUser = user;
+        if (user) window._mindedUser = user;
       }
     });
   </script>
@@ -42,7 +52,7 @@
     ══════════════════════════════════════════════════════════ */
     .workspace {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: var(--sp-lg);
       max-width: 1320px;
       margin: 0 auto;
@@ -62,10 +72,10 @@
     }
 
     .panel__title {
-      font-size: 0.78rem;
-      font-weight: 500;
-      letter-spacing: 0;
-      color: var(--clr-text-muted);
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--clr-text);
       padding-bottom: var(--sp-sm);
       border-bottom: 1px solid var(--clr-border);
     }
@@ -74,46 +84,29 @@
     /* ── Input area ─────────────────────────────────────────── */
     .input-area { display: flex; flex-direction: column; gap: 0; }
 
-    /* Tab switcher */
-    .input-tabs {
-      display: flex;
-      gap: 2px;
-      margin-bottom: -1px; /* overlap border below */
-      position: relative;
-      z-index: 1;
-    }
-    .input-tab {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 7px 14px;
-      font-size: 0.78rem;
-      font-weight: 500;
-      color: var(--clr-text-subtle);
-      background: transparent;
-      border: 1px solid transparent;
-      border-bottom: none;
-      border-radius: var(--r-sm) var(--r-sm) 0 0;
-      cursor: pointer;
-      transition: color var(--t-base), background var(--t-base), border-color var(--t-base);
-      font-family: var(--font-body);
-    }
-    .input-tab:hover { color: var(--clr-text-muted); }
-    .input-tab.active {
-      color: var(--clr-text);
-      background: var(--clr-surface);
-      border-color: var(--clr-border);
-    }
-
-    /* Tab panels */
+    /* Composer */
     .input-pane {
-      display: none;
       border: 1px solid var(--clr-border);
-      border-radius: 0 var(--r-md) var(--r-md) var(--r-md);
+      border-radius: var(--r-md);
       background: var(--clr-surface);
       position: relative;
     }
-    .input-pane.active { display: block; }
+    .input-pane.drag-over { border-color: var(--clr-accent); background: var(--clr-surface-md); }
+    .source-bar {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--sp-sm);
+      margin-top: var(--sp-sm);
+    }
+    .source-bar__hint { font-size: 0.875rem; color: var(--clr-text-muted); }
+    .source-status {
+      margin-top: var(--sp-sm);
+      font-size: 0.875rem;
+      color: var(--clr-text-muted);
+      line-height: 1.55;
+    }
+    .source-status:empty { display: none; }
 
     /* Pane: text */
     .input-area__textarea {
@@ -125,61 +118,29 @@
       padding-bottom: 28px; /* room for char count */
       background: transparent;
       border: none;
-      border-radius: 0 var(--r-md) var(--r-md) var(--r-md);
+      border-radius: var(--r-md);
       color: var(--clr-text);
       font-size: 0.9rem;
       line-height: var(--lh-body);
       outline: none;
     }
     .input-area__textarea::placeholder { color: var(--clr-text-subtle); }
-    .input-pane--text.drag-over { border-color: var(--clr-accent); background: rgba(42,157,124,0.05); }
 
     .char-count {
       position: absolute;
       bottom: 8px;
       right: 12px;
-      font-size: 0.70rem;
+      font-size: 0.875rem;
       color: var(--clr-text-subtle);
       pointer-events: none;
     }
 
-    /* Pane: PDF drop zone */
-    .pdf-drop-zone {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: var(--sp-md);
-      padding: var(--sp-2xl) var(--sp-lg);
-      min-height: 220px;
-      text-align: center;
-      cursor: pointer;
-      border-radius: 0 var(--r-md) var(--r-md) var(--r-md);
-      transition: background var(--t-base), border-color var(--t-base);
-    }
-    .pdf-drop-zone.drag-over { background: rgba(42,157,124,0.07); border-color: var(--clr-accent); }
-    .pdf-drop-zone__icon { color: var(--clr-text-subtle); opacity: 0.6; }
-    .pdf-drop-zone__title {
-      font-size: 0.88rem;
-      font-weight: 600;
-      color: var(--clr-text);
-    }
-    .pdf-drop-zone__hint {
-      font-size: 0.78rem;
-      color: var(--clr-text-subtle);
-      line-height: 1.5;
-    }
-    .pdf-drop-zone__status {
-      font-size: 0.80rem;
-      color: var(--clr-accent);
-      min-height: 1.2em;
-    }
     .pdf-upload-label {
       display: inline-flex;
       align-items: center;
       gap: 6px;
       padding: 7px 16px;
-      font-size: 0.82rem;
+      font-size: 0.875rem;
       font-weight: 600;
       color: var(--clr-text-muted);
       background: var(--clr-surface-md);
@@ -190,55 +151,6 @@
     }
     .pdf-upload-label:hover { background: var(--clr-surface-hi); color: var(--clr-text); }
 
-    /* Pane: link */
-    .link-pane-inner {
-      padding: var(--sp-md);
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-md);
-      min-height: 220px;
-    }
-    .link-input-row {
-      display: flex;
-      gap: var(--sp-sm);
-    }
-    .link-input {
-      flex: 1;
-      padding: 9px var(--sp-md);
-      background: var(--clr-surface-md);
-      border: 1px solid var(--clr-border-md);
-      border-radius: var(--r-sm);
-      color: var(--clr-text);
-      font-size: 0.88rem;
-      outline: none;
-      transition: border-color var(--t-base);
-      font-family: var(--font-body);
-    }
-    .link-input::placeholder { color: var(--clr-text-subtle); }
-    .link-input:focus { border-color: var(--clr-accent); }
-    .link-fetch-btn {
-      padding: 9px 16px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      background: var(--grad-primary);
-      color: #fff;
-      border: none;
-      border-radius: var(--r-sm);
-      cursor: pointer;
-      white-space: nowrap;
-      font-family: var(--font-body);
-      transition: background var(--t-base);
-    }
-    .link-fetch-btn:hover { background: var(--grad-primary-r); }
-    .link-fetch-btn:disabled { opacity: 0.5; pointer-events: none; }
-    .link-status {
-      font-size: 0.80rem;
-      color: var(--clr-text-subtle);
-      line-height: 1.55;
-      min-height: 1.2em;
-    }
-    .link-status.error { color: #FCA5A5; }
-
     /* ── Mode selector ──────────────────────────────────────── */
     .mode-group {
       display: flex;
@@ -246,7 +158,7 @@
       gap: var(--sp-sm);
     }
     .mode-group__label {
-      font-size: 0.82rem;
+      font-size: 0.875rem;
       font-weight: 500;
       color: var(--clr-text-muted);
     }
@@ -280,8 +192,8 @@
     }
     .mode-option input:checked + label {
       border-color: var(--clr-accent);
-      background: rgba(42,157,124,0.10);
-      box-shadow: 0 0 0 1px rgba(42,157,124,0.35);
+      background: rgba(183,148,255,0.10);
+      box-shadow: 0 0 0 1px rgba(183,148,255,0.35);
     }
     .mode-option input:focus-visible + label {
       outline: 2px solid var(--clr-accent);
@@ -293,8 +205,8 @@
       color: inherit;
     }
     .mode-option__icon svg { width: 18px; height: 18px; }
-    .mode-option__name { font-size: 0.78rem; font-weight: 600; color: var(--clr-text); }
-    .mode-option__desc { font-size: 0.70rem; color: var(--clr-text-subtle); line-height: 1.4; }
+    .mode-option__name { font-size: 0.875rem; font-weight: 600; color: var(--clr-text); }
+    .mode-option__desc { font-size: 0.875rem; color: var(--clr-text-subtle); line-height: 1.4; }
 
     /* ── Profile display ────────────────────────────────────── */
     .profile-group {
@@ -310,7 +222,7 @@
       gap: 6px;
     }
     .profile-status__label {
-      font-size: 0.78rem;
+      font-size: 0.875rem;
       font-weight: 500;
       color: var(--clr-text-muted);
     }
@@ -326,12 +238,12 @@
       background: var(--clr-surface-md);
       border: 1px solid var(--clr-border-md);
       border-radius: var(--r-sm);
-      font-size: 0.78rem;
+      font-size: 0.875rem;
       font-weight: 600;
       color: var(--clr-text);
     }
     .profile-status__edit {
-      font-size: 0.75rem;
+      font-size: 0.875rem;
       color: var(--clr-text-subtle);
       text-decoration: underline;
       text-underline-offset: 2px;
@@ -347,11 +259,11 @@
       gap: 4px;
     }
     .profile-empty__text {
-      font-size: 0.82rem;
+      font-size: 0.875rem;
       color: var(--clr-text-subtle);
     }
     .profile-empty__link {
-      font-size: 0.82rem;
+      font-size: 0.875rem;
       font-weight: 500;
       color: var(--clr-accent);
       text-decoration: underline;
@@ -367,6 +279,7 @@
       font-size: 1rem;
       gap: var(--sp-sm);
     }
+    #adapt-btn .btn-label { display: inline-flex; align-items: center; gap: 8px; }
     #adapt-btn .btn-spinner { display: none; }
     #adapt-btn.loading .btn-label { display: none; }
     #adapt-btn.loading .btn-spinner {
@@ -388,7 +301,7 @@
 
     /* Keyboard hint below CTA */
     .shortcut-hint {
-      font-size: 0.72rem;
+      font-size: 0.875rem;
       color: var(--clr-text-subtle);
       text-align: center;
       margin-top: -8px;
@@ -398,7 +311,7 @@
       padding: 1px 5px;
       border: 1px solid var(--clr-border-md);
       border-radius: 4px;
-      font-size: 0.68rem;
+      font-size: 0.875rem;
       font-family: var(--font-body);
       background: var(--clr-surface);
     }
@@ -428,7 +341,7 @@
       100% { background-position: -200% 0; }
     }
     .skeleton-status {
-      font-size: 0.80rem;
+      font-size: 0.875rem;
       color: var(--clr-text-subtle);
       text-align: center;
       padding: var(--sp-sm) 0 var(--sp-xs);
@@ -476,10 +389,10 @@
       align-items: center;
       gap: 6px;
       padding: 4px 12px;
-      background: rgba(42,157,124,0.10);
-      border: 1px solid rgba(42,157,124,0.22);
+      background: rgba(183,148,255,0.10);
+      border: 1px solid rgba(183,148,255,0.22);
       border-radius: var(--r-pill);
-      font-size: 0.75rem;
+      font-size: 0.875rem;
       font-weight: 600;
       color: var(--clr-accent);
       white-space: nowrap;
@@ -502,16 +415,16 @@
 
     /* ── Bidirectional highlight ─────────────────────────────── */
     .mapping-table tbody tr { cursor: default; }
-    .mapping-table tbody tr.row-active td { background: rgba(42,157,124,0.08); }
+    .mapping-table tbody tr.row-active td { background: rgba(183,148,255,0.08); }
     span.prose-highlight {
-      background: rgba(42,157,124,0.18);
+      background: rgba(183,148,255,0.18);
       border-radius: 3px;
       padding: 1px 2px;
       transition: background var(--t-base);
     }
     span.prose-highlight.lit {
-      background: rgba(42,157,124,0.38);
-      outline: 1px solid rgba(42,157,124,0.55);
+      background: rgba(183,148,255,0.38);
+      outline: 1px solid rgba(183,148,255,0.55);
     }
 
     /* ── TTS word-highlight ──────────────────────────────────── */
@@ -526,7 +439,7 @@
 
     /* ── Mapping grid ───────────────────────────────────────── */
     .mapping-grid-section h4 {
-      font-size: 0.82rem;
+      font-size: 0.875rem;
       font-weight: 500;
       color: var(--clr-text-muted);
       margin-bottom: var(--sp-md);
@@ -534,12 +447,12 @@
     .mapping-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.85rem;
+      font-size: 0.875rem;
     }
     .mapping-table th {
       text-align: left;
       padding: var(--sp-sm) var(--sp-md);
-      font-size: 0.75rem;
+      font-size: 0.875rem;
       font-weight: 600;
       color: var(--clr-text-subtle);
       border-bottom: 1px solid var(--clr-border);
@@ -566,7 +479,7 @@
       border-radius: var(--r-md);
     }
     .output-alert__icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 2px; }
-    .output-alert__text { font-size: 0.85rem; color: var(--clr-text-muted); line-height: 1.65; }
+    .output-alert__text { font-size: 0.875rem; color: var(--clr-text-muted); line-height: 1.65; }
 
     /* Checklist */
     .checklist-progress {
@@ -588,7 +501,7 @@
       transition: width var(--t-slow);
     }
     .checklist-progress__label {
-      font-size: 0.78rem;
+      font-size: 0.875rem;
       font-weight: 600;
       color: var(--clr-text-muted);
       white-space: nowrap;
@@ -605,7 +518,7 @@
       border: 1px dashed var(--clr-border-md);
       border-radius: var(--r-md);
       color: var(--clr-text-muted);
-      font-size: 0.82rem;
+      font-size: 0.875rem;
       font-weight: 500;
       cursor: pointer;
       transition: background var(--t-base), color var(--t-base);
@@ -711,7 +624,7 @@
       align-self: flex-start;
       margin-left: calc(var(--sp-md) + 1.1rem + var(--sp-md));
       padding: 7px 16px;
-      font-size: 0.82rem;
+      font-size: 0.875rem;
       font-weight: 600;
       border-radius: var(--r-sm);
       border: 1px solid rgba(239,68,68,0.40);
@@ -730,7 +643,7 @@
       gap: var(--sp-sm);
     }
     .examples-group__label {
-      font-size: 0.78rem;
+      font-size: 0.875rem;
       font-weight: 500;
       color: var(--clr-text-subtle);
     }
@@ -741,7 +654,7 @@
     }
     .example-btn {
       padding: 6px 14px;
-      font-size: 0.78rem;
+      font-size: 0.875rem;
       font-weight: 500;
       background: var(--clr-surface);
       border: 1px solid var(--clr-border-md);
@@ -753,7 +666,7 @@
     }
     .example-btn:hover {
       border-color: var(--clr-accent);
-      background: rgba(42,157,124,0.07);
+      background: rgba(183,148,255,0.07);
       color: var(--clr-text);
     }
     .example-btn:focus-visible { outline: 2px solid var(--clr-accent); outline-offset: 2px; }
@@ -764,7 +677,7 @@
       align-items: center;
       gap: 6px;
       padding: 7px 14px;
-      font-size: 0.80rem;
+      font-size: 0.875rem;
       font-weight: 600;
       background: transparent;
       border: 1px solid var(--clr-border-md);
@@ -783,7 +696,7 @@
       align-items: center;
       gap: 6px;
       padding: 7px 14px;
-      font-size: 0.80rem;
+      font-size: 0.875rem;
       font-weight: 600;
       background: transparent;
       border: 1px solid var(--clr-border-md);
@@ -803,7 +716,7 @@
       gap: var(--sp-md);
     }
     .flashcard-section__title {
-      font-size: 0.78rem;
+      font-size: 0.875rem;
       font-weight: 500;
       color: var(--clr-text-muted);
     }
@@ -814,7 +727,7 @@
       justify-content: center;
     }
     .flashcard-counter {
-      font-size: 0.80rem;
+      font-size: 0.875rem;
       color: var(--clr-text-subtle);
       min-width: 48px;
       text-align: center;
@@ -851,8 +764,8 @@
     }
     .flashcard__back {
       transform: rotateY(180deg);
-      background: rgba(42,157,124,0.08);
-      border-color: rgba(42,157,124,0.25);
+      background: rgba(183,148,255,0.08);
+      border-color: rgba(183,148,255,0.25);
     }
     .flashcard__term {
       font-size: 1rem;
@@ -860,16 +773,16 @@
       color: var(--clr-text);
     }
     .flashcard__hint {
-      font-size: 0.78rem;
+      font-size: 0.875rem;
       color: var(--clr-text-subtle);
     }
     .flashcard__answer {
-      font-size: 0.85rem;
+      font-size: 0.875rem;
       color: var(--clr-text-muted);
       line-height: 1.65;
     }
     .flashcard__tap {
-      font-size: 0.70rem;
+      font-size: 0.875rem;
       color: var(--clr-text-subtle);
       margin-top: auto;
     }
@@ -900,7 +813,7 @@
       transition: border-color var(--t-base);
     }
     .question-card:has(.question-answer.visible) {
-      border-color: rgba(42,157,124,0.35);
+      border-color: rgba(183,148,255,0.35);
     }
     .question-card__q {
       padding: var(--sp-md);
@@ -917,7 +830,7 @@
     }
     .question-hint-btn,
     .question-reveal-btn {
-      font-size: 0.75rem;
+      font-size: 0.875rem;
       font-weight: 600;
       padding: 5px 12px;
       border-radius: var(--r-pill);
@@ -933,16 +846,16 @@
     }
     .question-hint-btn:hover { background: rgba(251,191,36,0.16); }
     .question-reveal-btn {
-      background: rgba(42,157,124,0.08);
-      border-color: rgba(42,157,124,0.22);
+      background: rgba(183,148,255,0.08);
+      border-color: rgba(183,148,255,0.22);
       color: var(--clr-accent);
     }
-    .question-reveal-btn:hover { background: rgba(42,157,124,0.16); }
+    .question-reveal-btn:hover { background: rgba(183,148,255,0.16); }
     .question-hint,
     .question-answer {
       display: none;
       padding: var(--sp-sm) var(--sp-md) var(--sp-md);
-      font-size: 0.84rem;
+      font-size: 0.875rem;
       line-height: 1.65;
       border-top: 1px solid var(--clr-border);
     }
@@ -976,10 +889,118 @@
       .checklist-item.done .checklist-item__text { text-decoration: line-through; color: #888 !important; }
     }
 
+    [hidden] { display: none !important; }
+
+    /* ── Focus session ──────────────────────────────────────── */
+    .focus-start { align-self: flex-start; margin-top: var(--sp-sm); }
+    .focus-session {
+      position: fixed;
+      inset: 0;
+      z-index: 1200;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: var(--sp-lg);
+      padding: var(--sp-xl) max(var(--sp-md), calc((100vw - 760px) / 2));
+      background: var(--clr-bg);
+    }
+    .focus-session__count { color: var(--clr-accent); font-weight: 700; }
+    .focus-session__step {
+      font-family: var(--font-display);
+      font-size: clamp(1.7rem, 5vw, 3rem);
+      font-weight: 700;
+      line-height: 1.15;
+      color: var(--clr-text);
+    }
+    .focus-session__bar { height: 12px; }
+    .focus-session__fill { height: 100%; width: 0; }
+    .focus-session__timer { font-size: 1.1rem; font-variant-numeric: tabular-nums; }
+    .focus-session__actions { display: flex; flex-wrap: wrap; gap: var(--sp-sm); }
+
+    /* ── Explain a passage ──────────────────────────────────── */
+    .explain-btn {
+      position: fixed;
+      left: 50%;
+      bottom: var(--sp-lg);
+      z-index: 850;
+      transform: translateX(-50%);
+    }
+    .explain-btn:hover { transform: translate(-50%, -2px); }
+    .explain-btn:active { transform: translate(-50%, 2px); }
+    .explain-card {
+      margin-top: var(--sp-md);
+      padding: var(--sp-md);
+      border-left: 4px solid #7C3AED;
+      background: var(--clr-surface-md);
+    }
+    .explain-card__quote { font-style: italic; margin-bottom: var(--sp-sm); }
+    .explain-card p { color: var(--clr-text); }
+
+    /* ── Always-visible action ──────────────────────────────── */
+    .input-panel { position: static; }
+    .output-panel { scroll-margin-top: calc(64px + var(--sp-sm)); }
+    .adapt-bar {
+      position: sticky;
+      bottom: 0;
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-sm);
+      margin: 0 calc(var(--sp-md) * -1) calc(var(--sp-md) * -1);
+      padding: var(--sp-sm) var(--sp-md) var(--sp-md);
+      background: var(--clr-bg-alt);
+      border-radius: var(--r-md);
+    }
+    .adapt-hint {
+      font-size: 0.875rem;
+      color: var(--clr-text-muted);
+      text-align: center;
+    }
+    .adapt-hint[hidden] { display: none; }
+
+    /* ── Demo & profile invitation ──────────────────────────── */
+    .demo-banner {
+      padding: var(--sp-md);
+      border: 1px solid var(--clr-border-md);
+      border-radius: var(--r-md);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--clr-text-muted);
+    }
+    .demo-banner strong { color: var(--clr-text); }
+    .demo-banner a { color: var(--clr-accent); text-decoration: underline; }
+    .profile-nudge {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-sm);
+      margin-top: var(--sp-lg);
+      padding: var(--sp-md);
+      border: 1px solid var(--clr-border-md);
+      border-radius: var(--r-md);
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+    .profile-nudge__actions { display: flex; flex-wrap: wrap; gap: var(--sp-sm); }
+    .onboard-actions {
+      position: sticky;
+      bottom: calc(var(--sp-md) * -1);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-sm);
+      padding: var(--sp-sm) 0;
+      background: var(--clr-bg-alt);
+    }
+
     /* ── Responsive ─────────────────────────────────────────── */
     @media (max-width: 900px) {
+      .a11y-bar {
+        top: 72px;
+        bottom: auto;
+        right: var(--sp-sm);
+        flex-direction: column-reverse;
+      }
       .workspace {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
         padding: calc(64px + var(--sp-lg)) var(--sp-md) var(--sp-xl);
       }
       .panel { position: static; }
@@ -992,13 +1013,13 @@
   </style>
 </head>
 <body>
+  <a href="#conteudo" class="skip-link">Pular para o conteúdo</a>
 
   <!-- ── Header ─────────────────────────────────────────────── -->
   <header class="main-header">
     <div class="header-inner">
       <a href="index.html" class="logo-link">
-        <img src="img/logominded.png" alt="" aria-hidden="true" />
-        <span>MindED</span>
+        <span>Mind<b>ED</b></span>
       </a>
 
       <!-- Active profile pill — populated by JS from localStorage -->
@@ -1025,89 +1046,58 @@
   </header>
 
   <!-- ── Workspace ──────────────────────────────────────────── -->
-  <main class="workspace" id="workspace">
+  <main class="workspace" id="conteudo" tabindex="-1">
+    <h1 class="sr-only">Workspace do MindED</h1>
+    <p class="sr-only" id="sr-status" role="status"></p>
 
     <!-- ═══ LEFT: Input Panel ════════════════════════════════ -->
-    <section class="panel glass" aria-labelledby="input-panel-title">
-      <h2 class="panel__title" id="input-panel-title">O seu texto</h2>
+    <section class="panel glass input-panel" aria-labelledby="input-panel-title">
+      <h2 class="panel__title" id="input-panel-title">O que você quer entender?</h2>
+
+      <p class="demo-banner" id="demo-banner" hidden>
+        <strong>Demonstração sem cadastro.</strong> Este é um exemplo com resultados prontos.
+        Escolha um modo e clique em Adaptar.
+        <a href="login.html">Entre para adaptar os seus textos</a>.
+      </p>
 
       <!-- Input: tabs + panes -->
       <div class="input-area">
 
-        <!-- Tab switcher -->
-        <div class="input-tabs" role="tablist" aria-label="Tipo de entrada">
-          <button class="input-tab active" id="tab-text" role="tab" aria-selected="true"  aria-controls="pane-text">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
-            Texto
-          </button>
-          <button class="input-tab" id="tab-pdf" role="tab" aria-selected="false" aria-controls="pane-pdf">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            PDF
-          </button>
-          <button class="input-tab" id="tab-link" role="tab" aria-selected="false" aria-controls="pane-link">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
-            Link
-          </button>
-        </div>
-
-        <!-- Pane: texto / arrastar PDF -->
-        <div class="input-pane input-pane--text active" id="pane-text" role="tabpanel" aria-labelledby="tab-text">
+        <!-- One field for text and links; PDFs by button or drag and drop -->
+        <div class="input-pane" id="pane-text">
           <textarea
             id="text-input"
             class="input-area__textarea"
-            placeholder="Cole ou escreva aqui o texto… ou arraste um PDF para cima"
-            aria-describedby="char-hint"
+            placeholder="Cole um texto, o link de uma página ou um vídeo do YouTube…"
+            aria-label="Texto, link de página ou vídeo do YouTube"
+            aria-describedby="source-status"
           ></textarea>
-          <span class="char-count" id="char-count" aria-live="polite"></span>
+          <span class="char-count" id="char-count"></span>
         </div>
 
-        <!-- Pane: PDF drop zone -->
-        <div class="input-pane input-pane--pdf" id="pane-pdf" role="tabpanel" aria-labelledby="tab-pdf">
-          <div class="pdf-drop-zone" id="pdf-drop-zone">
-            <svg class="pdf-drop-zone__icon" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
-            <span class="pdf-drop-zone__title">Arraste o PDF aqui</span>
-            <span class="pdf-drop-zone__hint">ou clique para escolher um ficheiro</span>
-            <button type="button" class="pdf-upload-label" id="pdf-pick-btn">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-              Escolher ficheiro
-            </button>
-            <span class="pdf-drop-zone__status" id="pdf-status" aria-live="polite"></span>
-          </div>
-          <!-- Input fora do drop zone, oculto por opacity (não clip) para garantir clique cross-browser -->
-          <input type="file" id="pdf-upload" accept=".pdf" aria-label="Carregar ficheiro PDF"
+        <div class="source-bar" id="source-bar">
+          <button type="button" class="pdf-upload-label" id="pdf-pick-btn">
+            <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M7 2h2v1h-2zM6 3h4v1h-4zM5 4h6v1h-6zM4 5h8v1h-8zM7 6h2v1h-2zM7 7h2v1h-2zM7 8h2v1h-2zM1 10h1v1h-1zM14 10h1v1h-1zM1 11h1v1h-1zM14 11h1v1h-1zM1 12h14v1h-14z"/></svg>
+            Enviar PDF
+          </button>
+          <span class="source-bar__hint">ou arraste o arquivo para o campo</span>
+          <input type="file" id="pdf-upload" accept=".pdf,application/pdf" aria-label="Enviar arquivo PDF" tabindex="-1"
             style="position:absolute;opacity:0;width:0;height:0;pointer-events:none;" />
         </div>
-
-        <!-- Pane: link -->
-        <div class="input-pane input-pane--link" id="pane-link" role="tabpanel" aria-labelledby="tab-link">
-          <div class="link-pane-inner">
-            <div class="link-input-row">
-              <input
-                type="url"
-                id="link-input"
-                class="link-input"
-                placeholder="https://artigo.com/texto-que-quero-entender"
-                autocomplete="off"
-                spellcheck="false"
-              />
-              <button class="link-fetch-btn" id="link-fetch-btn" type="button" disabled>Buscar</button>
-            </div>
-            <p class="link-status" id="link-status">Cola um link e clica em Buscar — o texto da página é extraído automaticamente.</p>
-          </div>
-        </div>
+        <p class="source-status" id="source-status" role="status"></p>
 
       </div>
 
       <!-- Mode selector -->
-      <div class="mode-group" role="group" aria-labelledby="mode-group-label">
+      <div class="mode-group">
         <span class="mode-group__label" id="mode-group-label">Como quer receber?</span>
-        <div class="mode-options" role="radiogroup">
+        <div class="mode-options" role="radiogroup" aria-labelledby="mode-group-label">
 
           <div class="mode-option">
             <input type="radio" name="mode" id="mode-metaphor" value="metaphor" checked />
             <label for="mode-metaphor">
               <span class="mode-option__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                <svg class="pixel" width="32" height="32" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 2h6v1h-6zM4 3h1v1h-1zM11 3h1v1h-1zM3 4h1v1h-1zM12 4h1v1h-1zM3 5h1v1h-1zM12 5h1v1h-1zM3 6h1v1h-1zM12 6h1v1h-1zM3 7h1v1h-1zM6 7h1v1h-1zM9 7h1v1h-1zM12 7h1v1h-1zM4 8h1v1h-1zM7 8h2v1h-2zM11 8h1v1h-1zM5 9h1v1h-1zM10 9h1v1h-1zM5 10h1v1h-1zM10 10h1v1h-1zM5 11h6v1h-6zM5 12h6v1h-6zM6 13h4v1h-4z"/></svg>
               </span>
               <span class="mode-option__name">Metáfora</span>
               <span class="mode-option__desc">Com exemplos do dia a dia</span>
@@ -1118,7 +1108,7 @@
             <input type="radio" name="mode" id="mode-checklist" value="checklist" />
             <label for="mode-checklist">
               <span class="mode-option__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+                <svg class="pixel" width="32" height="32" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2 3h8v1h-8zM2 4h1v1h-1zM9 4h1v1h-1zM13 4h2v1h-2zM2 5h1v1h-1zM9 5h1v1h-1zM12 5h2v1h-2zM2 6h1v1h-1zM9 6h1v1h-1zM11 6h2v1h-2zM2 7h1v1h-1zM5 7h1v1h-1zM9 7h2v1h-2zM2 8h1v1h-1zM5 8h2v1h-2zM8 8h2v1h-2zM11 8h1v1h-1zM2 9h1v1h-1zM6 9h3v1h-3zM11 9h1v1h-1zM2 10h1v1h-1zM7 10h1v1h-1zM11 10h1v1h-1zM2 11h1v1h-1zM11 11h1v1h-1zM2 12h10v1h-10z"/></svg>
               </span>
               <span class="mode-option__name">Passo a passo</span>
               <span class="mode-option__desc">Tarefas pequenas e sequenciais</span>
@@ -1129,7 +1119,7 @@
             <input type="radio" name="mode" id="mode-summary" value="summary" />
             <label for="mode-summary">
               <span class="mode-option__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                <svg class="pixel" width="32" height="32" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2 4h2v1h-2zM6 4h8v1h-8zM2 5h2v1h-2zM6 5h8v1h-8zM2 7h2v1h-2zM6 7h8v1h-8zM2 8h2v1h-2zM6 8h8v1h-8zM2 10h2v1h-2zM6 10h5v1h-5zM2 11h2v1h-2zM6 11h5v1h-5z"/></svg>
               </span>
               <span class="mode-option__name">Resumo</span>
               <span class="mode-option__desc">Só o essencial, sem rodeios</span>
@@ -1140,7 +1130,7 @@
             <input type="radio" name="mode" id="mode-questions" value="questions" />
             <label for="mode-questions">
               <span class="mode-option__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <svg class="pixel" width="32" height="32" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 2h6v1h-6zM4 3h2v1h-2zM10 3h2v1h-2zM4 4h2v1h-2zM10 4h2v1h-2zM10 5h2v1h-2zM9 6h2v1h-2zM8 7h2v1h-2zM7 8h2v1h-2zM7 9h2v1h-2zM7 11h2v1h-2zM7 12h2v1h-2z"/></svg>
               </span>
               <span class="mode-option__name">Perguntas</span>
               <span class="mode-option__desc">Testa se entendeu o conteúdo</span>
@@ -1176,18 +1166,22 @@
       </div>
 
       <!-- CTA -->
+      <div class="adapt-bar">
+      <p class="adapt-hint" id="adapt-hint">Escreva pelo menos 10 caracteres para adaptar.</p>
       <button
         id="adapt-btn"
         class="btn btn-primary"
         aria-label="Adaptar texto com MindED"
+        aria-describedby="adapt-hint"
         disabled
       >
         <span class="btn-label">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M3 3h2v1h-2zM3 4h4v1h-4zM3 5h6v1h-6zM3 6h8v1h-8zM3 7h10v1h-10zM3 8h10v1h-10zM3 9h8v1h-8zM3 10h6v1h-6zM3 11h4v1h-4zM3 12h2v1h-2z"/></svg>
           Adaptar
         </span>
-        <div class="btn-spinner" role="status" aria-label="A processar…"></div>
+        <div class="btn-spinner" role="status" aria-label="Processando…"></div>
       </button>
+      </div>
       <p class="shortcut-hint" aria-hidden="true">
         <kbd>⌘</kbd><kbd>↵</kbd> ou <kbd>Ctrl</kbd><kbd>↵</kbd> para adaptar
       </p>
@@ -1195,22 +1189,20 @@
     </section>
 
     <!-- ═══ RIGHT: Output Panel ═══════════════════════════════ -->
-    <!-- aria-atomic="true" so screen readers announce the complete new output,
-         not each injected HTML fragment individually -->
-    <section class="panel glass output-panel" aria-labelledby="output-panel-title" aria-live="polite" aria-atomic="true">
+    <section class="panel glass output-panel" aria-labelledby="output-panel-title">
       <h2 class="panel__title" id="output-panel-title">Resultado</h2>
 
       <!-- Empty state -->
       <div class="output-empty" id="output-empty" aria-hidden="false">
         <div class="output-empty__icon" aria-hidden="true">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.35"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <svg class="pixel" width="32" height="32" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" style="opacity:0.5"><path d="M5 2h6v1h-6zM4 3h1v1h-1zM11 3h1v1h-1zM3 4h1v3h-1zM12 4h1v3h-1zM3 7h1v1h-1zM6 7h1v1h-1zM9 7h1v1h-1zM12 7h1v1h-1zM4 8h1v1h-1zM7 8h2v1h-2zM11 8h1v1h-1zM5 9h1v2h-1zM10 9h1v2h-1zM5 11h6v2h-6zM6 13h4v1h-4z"/></svg>
         </div>
         <p>Cole um texto ao lado e clique em <strong style="color:var(--clr-text)">Adaptar</strong><br/>para ver o resultado aqui.</p>
       </div>
 
       <!-- Skeleton screen shown during API call -->
       <div id="output-skeleton" class="skeleton-wrap hidden" aria-hidden="true">
-        <p class="skeleton-status" id="skeleton-status" aria-live="polite" aria-atomic="true">Analisando o texto…</p>
+        <p class="skeleton-status" id="skeleton-status">Analisando o texto…</p>
         <div class="skeleton-line skeleton-line--title"></div>
         <div class="skeleton-line skeleton-line--badge"></div>
         <div class="skeleton-line"></div>
@@ -1229,18 +1221,18 @@
 
   <!-- ── Footer ─────────────────────────────────────────────── -->
   <footer class="site-footer">
-    <p>&copy; 2025 MindED &mdash; Projecto open-source de acessibilidade cognitiva.</p>
+    <p>&copy; 2026 MindED &mdash; Projeto open-source de acessibilidade cognitiva.</p>
+    <p><a href="termos.html">Termos de Uso</a> · <a href="privacidade.html">Política de Privacidade</a></p>
   </footer>
 
   <!-- ── History side-panel ─────────────────────────────────── -->
   <!-- ── First-visit onboarding modal ──────────────────────── -->
   <div class="onboard-backdrop" id="onboard-backdrop" aria-hidden="true"></div>
   <div class="onboard-modal" id="onboard-modal" role="dialog"
-       aria-modal="true" aria-labelledby="onboard-title" aria-hidden="true">
+       aria-modal="true" aria-labelledby="onboard-title" aria-hidden="true" inert>
     <div class="onboard-modal__head">
-      <img src="img/logominded.png" alt="" aria-hidden="true" width="32" height="32" />
-      <h2 id="onboard-title">Olá! Como prefere aprender?</h2>
-      <p>Três perguntas rápidas para adaptar a experiência ao seu jeito.</p>
+      <h2 id="onboard-title">Como prefere aprender?</h2>
+      <p>Três perguntas rápidas. As respostas ficam neste navegador, e o Gemini recebe só orientações de escrita.</p>
     </div>
 
     <div class="onboard-q">
@@ -1272,17 +1264,34 @@
       </div>
     </div>
 
-    <button class="onboard-cta" id="onboard-save">Continuar →</button>
-    <button class="onboard-skip" id="onboard-skip">Saltar por agora</button>
+    <div class="onboard-actions">
+      <button class="onboard-cta" id="onboard-save">Salvar</button>
+      <button class="onboard-skip" id="onboard-skip">Agora não</button>
+    </div>
+  </div>
+
+  <button class="btn btn-primary btn-sm explain-btn" id="explain-btn" type="button" hidden>Não entendi esta parte</button>
+
+  <div class="focus-session" id="focus-session" role="dialog" aria-modal="true" aria-labelledby="fs-count" hidden>
+    <p class="focus-session__count" id="fs-count"></p>
+    <p class="focus-session__step" id="fs-step"></p>
+    <div class="focus-session__bar" aria-hidden="true"><div class="focus-session__fill" id="fs-fill"></div></div>
+    <p class="focus-session__timer" id="fs-timer"></p>
+    <div class="focus-session__actions">
+      <button class="btn btn-primary" id="fs-done" type="button">Concluí este passo</button>
+      <button class="btn btn-ghost" id="fs-pause" type="button">Pausar</button>
+      <button class="btn btn-ghost" id="fs-skip" type="button">Pular</button>
+      <button class="btn btn-ghost" id="fs-exit" type="button">Sair</button>
+    </div>
   </div>
 
   <div class="history-overlay" id="history-overlay" aria-hidden="true"></div>
-  <aside class="history-panel" id="history-panel" aria-label="Histórico de adaptações">
+  <aside class="history-panel" id="history-panel" role="dialog" aria-modal="true" aria-label="Histórico de adaptações" inert>
     <div class="history-panel__head">
       <h3>Histórico</h3>
       <button class="history-panel__close" id="history-close" aria-label="Fechar histórico">✕</button>
     </div>
-    <div class="history-panel__list" id="history-list" role="list"></div>
+    <div class="history-panel__list" id="history-list"></div>
   </aside>
 
   <!-- ── Accessibility toolbar — collapsible, bottom-right ─── -->
@@ -1293,32 +1302,32 @@
 
       <span class="a11y-panel__label">Histórico</span>
       <button class="a11y-toggle" id="history-btn" aria-expanded="false" aria-controls="history-panel">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 2h6v1h-6zM3 3h2v1h-2zM11 3h2v1h-2zM2 4h1v1h-1zM7 4h2v1h-2zM13 4h1v1h-1zM2 5h1v1h-1zM7 5h2v1h-2zM13 5h1v1h-1zM1 6h1v1h-1zM7 6h2v1h-2zM14 6h1v1h-1zM1 7h1v1h-1zM7 7h5v1h-5zM14 7h1v1h-1zM1 8h1v1h-1zM7 8h5v1h-5zM14 8h1v1h-1zM1 9h1v1h-1zM14 9h1v1h-1zM2 10h1v1h-1zM13 10h1v1h-1zM2 11h1v1h-1zM13 11h1v1h-1zM3 12h2v1h-2zM11 12h2v1h-2zM5 13h6v1h-6z"/></svg>
         Ver histórico
       </button>
 
       <span class="a11y-panel__label">Visualização</span>
       <button class="a11y-toggle" id="hcm-btn" aria-pressed="false">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 2h6v1h-6zM3 3h5v1h-5zM11 3h2v1h-2zM2 4h6v1h-6zM13 4h1v1h-1zM2 5h6v1h-6zM13 5h1v1h-1zM1 6h7v1h-7zM14 6h1v1h-1zM1 7h7v1h-7zM14 7h1v1h-1zM1 8h7v1h-7zM14 8h1v1h-1zM2 9h6v1h-6zM13 9h1v1h-1zM2 10h6v1h-6zM13 10h1v1h-1zM3 11h5v1h-5zM11 11h2v1h-2zM5 12h6v1h-6z"/></svg>
         Alto contraste
       </button>
       <button class="a11y-toggle" id="focus-btn" aria-pressed="false">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 3h8v1h-8zM2 4h2v1h-2zM12 4h2v1h-2zM2 5h1v1h-1zM6 5h4v1h-4zM13 5h1v1h-1zM2 6h1v1h-1zM5 6h1v1h-1zM10 6h1v1h-1zM13 6h1v1h-1zM2 7h1v1h-1zM5 7h1v1h-1zM7 7h2v1h-2zM10 7h1v1h-1zM13 7h1v1h-1zM2 8h1v1h-1zM5 8h1v1h-1zM7 8h2v1h-2zM10 8h1v1h-1zM13 8h1v1h-1zM2 9h1v1h-1zM5 9h1v1h-1zM10 9h1v1h-1zM13 9h1v1h-1zM2 10h1v1h-1zM6 10h4v1h-4zM13 10h1v1h-1zM2 11h2v1h-2zM12 11h2v1h-2zM4 12h8v1h-8z"/></svg>
         Modo foco
       </button>
 
       <button class="a11y-toggle" id="light-btn" aria-pressed="false">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M7 2h2v1h-2zM1 3h1v1h-1zM7 3h2v1h-2zM14 3h1v1h-1zM2 4h1v1h-1zM5 4h6v1h-6zM13 4h1v1h-1zM4 5h8v1h-8zM4 6h8v1h-8zM0 7h2v1h-2zM4 7h8v1h-8zM14 7h2v1h-2zM0 8h2v1h-2zM4 8h8v1h-8zM14 8h2v1h-2zM4 9h8v1h-8zM4 10h8v1h-8zM2 11h1v1h-1zM5 11h6v1h-6zM13 11h1v1h-1zM1 12h1v1h-1zM7 12h2v1h-2zM14 12h1v1h-1zM7 13h2v1h-2z"/></svg>
         Tema claro
       </button>
 
       <span class="a11y-panel__label">Leitura</span>
       <button class="a11y-toggle" id="dyslexic-btn" aria-pressed="false">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+        <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M6 4h4v1h-4zM5 5h2v1h-2zM9 5h2v1h-2zM4 6h2v1h-2zM10 6h2v1h-2zM4 7h2v1h-2zM10 7h2v1h-2zM4 8h8v1h-8zM4 9h8v1h-8zM4 10h2v1h-2zM10 10h2v1h-2zM4 11h2v1h-2zM10 11h2v1h-2z"/></svg>
         Fonte OpenDyslexic
       </button>
       <button class="a11y-toggle" id="spacing-btn" aria-label="Espaçamento: normal">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2 4h12v1h-12zM2 7h12v1h-12zM2 10h12v1h-12z"/></svg>
         Espaçamento de linha
       </button>
       <div class="a11y-stepper" role="group" aria-label="Tamanho de fonte">
@@ -1333,13 +1342,14 @@
     <button class="a11y-trigger" id="a11y-trigger-btn"
             aria-expanded="false" aria-controls="a11y-panel"
             aria-label="Opções de acessibilidade">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+      <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M3 2h2v1h-2zM0 3h16v1h-16zM3 4h2v1h-2zM10 6h2v1h-2zM0 7h16v1h-16zM10 8h2v1h-2zM4 10h2v1h-2zM0 11h16v1h-16zM4 12h2v1h-2z"/></svg>
       Acessibilidade
       <span class="a11y-trigger__dot" aria-hidden="true"></span>
     </button>
 
   </div>
 
+  <script src="src/js/demo-data.js"></script>
   <script>
     /* =====================================================================
        MindED Workspace — v2
@@ -1347,12 +1357,76 @@
               Cmd+Enter, retry on error, TTS word-highlight, history,
               focus mode, OpenDyslexic, font size, line spacing.
     ===================================================================== */
-    const API_BASE = 'http://127.0.0.1:8000';
+    // Fill in PROD_API_BASE with the public API URL after deploying api/.
+    const PROD_API_BASE = '';
+    const IS_LOCAL = ['localhost', '127.0.0.1'].includes(location.hostname);
+    const API_BASE = IS_LOCAL ? 'http://127.0.0.1:8000' : PROD_API_BASE;
+
+    // ── Focus trap for dialogs ──────────────────────────────────────────
+    // Returns a function that removes the trap and restores the previous focus.
+    function trapFocus(container, onEscape) {
+      const opener = document.activeElement;
+      const selector = 'a[href], button:not([disabled]), input:not([disabled]), textarea, [tabindex="0"]';
+      const onKey = e => {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          e.stopPropagation();
+          onEscape();
+          return;
+        }
+        if (e.key !== 'Tab') return;
+        const items = [...container.querySelectorAll(selector)].filter(el => el.offsetParent !== null);
+        if (!items.length) return;
+        const first = items[0], last = items[items.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      };
+      container.addEventListener('keydown', onKey);
+      return () => {
+        container.removeEventListener('keydown', onKey);
+        if (opener && opener.isConnected) opener.focus();
+      };
+    }
+
+    // ── Authenticated API call ────────────────────────────────────────────
+    async function apiPost(path, body, timeoutMs = 90000) {
+      if (!API_BASE) throw new Error('O serviço de adaptação ainda não está disponível neste site.');
+
+      const headers = { 'Content-Type': 'application/json' };
+      const user = firebase.auth().currentUser;
+      if (user) headers.Authorization = `Bearer ${await user.getIdToken()}`;
+
+      let response;
+      try {
+        response = await fetch(`${API_BASE}${path}`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(body),
+          signal: AbortSignal.timeout(timeoutMs),
+        });
+      } catch (_) {
+        throw new Error(IS_LOCAL
+          ? 'Não foi possível conectar à API local. Verifique se o servidor está rodando na porta 8000.'
+          : 'Não foi possível conectar. Verifique sua internet e tente novamente.');
+      }
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(typeof err.detail === 'string' ? err.detail : `Erro inesperado (${response.status}).`);
+      }
+      return response.json();
+    }
 
     // ── DOM refs ──────────────────────────────────────────────────────────
     const textarea       = document.getElementById('text-input');
     const charCount      = document.getElementById('char-count');
     const adaptBtn       = document.getElementById('adapt-btn');
+    const adaptHint      = document.getElementById('adapt-hint');
     const profileStatus  = document.getElementById('profile-status');
     const profileEmpty   = document.getElementById('profile-empty');
     const profileTags    = document.getElementById('profile-status-tags');
@@ -1393,11 +1467,12 @@
       if (!user) return;
       if (user.photoURL) {
         avatarEl.src = user.photoURL;
-        avatarEl.alt = user.displayName || 'Utilizador';
+        avatarEl.alt = user.displayName || 'Usuário';
         avatarEl.style.display = 'block';
       }
       logoutBtn.style.display = 'inline-flex';
       logoutBtn.addEventListener('click', async () => {
+        try { localStorage.removeItem(DRAFT_KEY); } catch (_) {}
         await firebase.auth().signOut();
         window.location.replace('login.html');
       });
@@ -1458,7 +1533,7 @@
       dyslexicBtn.setAttribute('aria-pressed', String(a11yState.dyslexic));
 
       // Line spacing
-      SPACING_CYCLE.forEach(s => b.classList.remove(s.cls));
+      SPACING_CYCLE.forEach(s => s.cls && b.classList.remove(s.cls));
       const sp = SPACING_CYCLE[a11yState.spacingIdx];
       if (sp.cls) b.classList.add(sp.cls);
       spacingBtn.setAttribute('aria-label', sp.label);
@@ -1466,7 +1541,7 @@
       spacingBtn.querySelector('svg + span') && (spacingBtn.querySelector('svg + span').textContent = sp.btnLabel);
 
       // Font size
-      FONT_SIZES.forEach(f => b.classList.remove(f.cls));
+      FONT_SIZES.forEach(f => f.cls && b.classList.remove(f.cls));
       const fs = FONT_SIZES[a11yState.fontIdx];
       if (fs.cls) b.classList.add(fs.cls);
       fontLabel.textContent = fs.label;
@@ -1494,10 +1569,12 @@
 
     // ── A11y panel toggle ─────────────────────────────────────────────────
     if (a11yTriggerBtn && a11yPanel) {
+      a11yPanel.inert = true;
       a11yTriggerBtn.addEventListener('click', () => {
         const open = a11yPanel.classList.toggle('open');
         a11yTriggerBtn.classList.toggle('open', open);
         a11yTriggerBtn.setAttribute('aria-expanded', String(open));
+        a11yPanel.inert = !open;
       });
       // Close when clicking outside
       document.addEventListener('click', e => {
@@ -1505,6 +1582,7 @@
           a11yPanel.classList.remove('open');
           a11yTriggerBtn.classList.remove('open');
           a11yTriggerBtn.setAttribute('aria-expanded', 'false');
+          a11yPanel.inert = true;
         }
       });
       // Close on Escape
@@ -1513,6 +1591,7 @@
           a11yPanel.classList.remove('open');
           a11yTriggerBtn.classList.remove('open');
           a11yTriggerBtn.setAttribute('aria-expanded', 'false');
+          a11yPanel.inert = true;
           a11yTriggerBtn.focus();
         }
       });
@@ -1655,12 +1734,14 @@
     })();
 
     // ═══════════════════════════════════════════════════════════════════════
-    // FIRST-VISIT ONBOARDING MODAL
-    // Shows once when no prefs exist. Saves 3 quick answers to minded_prefs
-    // and applies a11y state immediately — no redirect required.
+    // PROFILE QUESTIONS MODAL
+    // Offered after the first result when no prefs exist, never on arrival.
+    // Saves 3 quick answers to minded_prefs and applies a11y state immediately.
     // ═══════════════════════════════════════════════════════════════════════
+    const ONBOARD_KEY = 'minded_onboarded';
+    let openOnboarding = null;
     (function initOnboarding() {
-      const ONBOARD_KEY = 'minded_onboarded';
+      if (IS_DEMO) return;
       // Skip if already onboarded OR if prefs already exist from /preferencias
       const alreadyDone = localStorage.getItem(ONBOARD_KEY);
       const hasPrefs    = (() => {
@@ -1695,8 +1776,9 @@
         });
       });
 
-      // Open with slight delay so auth flash doesn't overlap
-      setTimeout(() => {
+      let releaseFocus = null;
+      openOnboarding = () => {
+        modal.inert = false;
         backdrop.classList.add('open');
         modal.setAttribute('aria-hidden', 'false');
         backdrop.setAttribute('aria-hidden', 'false');
@@ -1704,10 +1786,10 @@
         requestAnimationFrame(() => {
           requestAnimationFrame(() => modal.classList.add('open'));
         });
-        // Trap focus: focus first button
+        releaseFocus = trapFocus(modal, closeModal);
         const first = modal.querySelector('button, [tabindex="0"]');
         if (first) setTimeout(() => first.focus(), 200);
-      }, 400);
+      };
 
       function closeModal() {
         modal.classList.remove('open');
@@ -1715,6 +1797,12 @@
         modal.setAttribute('aria-hidden', 'true');
         backdrop.setAttribute('aria-hidden', 'true');
         localStorage.setItem(ONBOARD_KEY, '1');
+        modal.inert = true;
+        removeProfileNudge();
+        if (releaseFocus) releaseFocus();
+        if (!modal.contains(document.activeElement) && document.activeElement === document.body) {
+          document.getElementById('copy-btn')?.focus();
+        }
       }
 
       saveBtn.addEventListener('click', () => {
@@ -1782,7 +1870,7 @@
     function saveHistory(arr) {
       try { localStorage.setItem(HISTORY_KEY, JSON.stringify(arr.slice(0, HISTORY_MAX))); } catch (_) {}
     }
-    function addToHistory(data, mode, profile) {
+    function addToHistory(data, mode, profile, texto) {
       const hist = loadHistory();
       hist.unshift({
         id:      Date.now(),
@@ -1790,6 +1878,7 @@
         titulo:  data.titulo,
         mode,
         profile,
+        texto,
         data,
       });
       saveHistory(hist);
@@ -1803,8 +1892,8 @@
         return;
       }
       historyList.innerHTML = hist.map(h => `
-        <div class="history-item" role="listitem" data-id="${h.id}" tabindex="0"
-             aria-label="Restaurar: ${h.titulo}">
+        <div class="history-item" role="button" data-id="${h.id}" tabindex="0"
+             aria-label="Restaurar: ${esc(h.titulo)}">
           <div class="history-item__title">${esc(h.titulo)}</div>
           <div class="history-item__meta">
             <span class="history-item__badge">${modeLabels[h.mode] || h.mode}</span>
@@ -1821,6 +1910,7 @@
                      : entry.mode === 'checklist'  ? renderChecklist(entry.data)
                      : entry.mode === 'questions'  ? renderQuestions(entry.data)
                      : renderSummary(entry.data);
+          lastRequest = entry.texto ? { text: entry.texto, mode: entry.mode } : null;
           showOutput(html, entry.data);
           closeHistory();
         };
@@ -1829,13 +1919,17 @@
       });
     }
 
+    let releaseHistoryFocus = null;
     function openHistory()  {
+      historyPanel.inert = false;
       historyPanel.classList.add('open');
       historyOverlay.classList.add('open');
       historyOverlay.setAttribute('aria-hidden', 'false');
       historyBtn.setAttribute('aria-expanded', 'true');
       historyBtn.classList.add('active');
       renderHistory();
+      releaseHistoryFocus = trapFocus(historyPanel, closeHistory);
+      historyClose.focus();
     }
     function closeHistory() {
       historyPanel.classList.remove('open');
@@ -1843,47 +1937,59 @@
       historyOverlay.setAttribute('aria-hidden', 'true');
       historyBtn.setAttribute('aria-expanded', 'false');
       historyBtn.classList.remove('active');
+      historyPanel.inert = true;
+      if (releaseHistoryFocus) releaseHistoryFocus();
+      releaseHistoryFocus = null;
     }
 
     historyBtn.addEventListener('click',   () => historyPanel.classList.contains('open') ? closeHistory() : openHistory());
     historyClose.addEventListener('click', closeHistory);
     historyOverlay.addEventListener('click', closeHistory);
 
+    // ── Source detection ──────────────────────────────────────────────────
+    const MAX_TEXT_CHARS = 60000;
+    const VIDEO_MAX_MINUTES = 30;
+    const WEB_URL = /^(https?:\/\/|www\.)\S+$/i;
+    const YOUTUBE_URL = /^(https?:\/\/)?(www\.|m\.|music\.)?(youtube\.com\/(watch\?|shorts\/|live\/|embed\/)|youtu\.be\/)\S+$/i;
+    const sourceStatus = document.getElementById('source-status');
+
+    function asUrl(value) {
+      return /^https?:/i.test(value) ? value : `https://${value}`;
+    }
+    function describeSource(value) {
+      if (YOUTUBE_URL.test(value)) return `Vídeo do YouTube. Funciona com vídeos públicos, e usamos até os primeiros ${VIDEO_MAX_MINUTES} minutos.`;
+      if (WEB_URL.test(value)) return 'Link de página. Vamos ler o texto dela quando você clicar em Adaptar.';
+      return '';
+    }
+
     // ── Char counter & button enabler ─────────────────────────────────────
     function updateCharCount() {
       const len = textarea.value.length;
       charCount.textContent = len > 0 ? `${len.toLocaleString('pt')} car.` : '';
-      adaptBtn.disabled = len < 10;
+      const tooLong = len > MAX_TEXT_CHARS;
+      adaptBtn.disabled = len < 10 || tooLong;
+      adaptHint.hidden = len >= 10 && !tooLong;
+      adaptHint.textContent = tooLong
+        ? `Este texto tem ${len.toLocaleString('pt-BR')} caracteres. O limite é ${MAX_TEXT_CHARS.toLocaleString('pt-BR')}: use um trecho menor.`
+        : 'Escreva pelo menos 10 caracteres para adaptar.';
+      sourceStatus.textContent = describeSource(textarea.value.trim());
+      scheduleDraftSave();
     }
     textarea.addEventListener('input', updateCharCount);
 
-    // ── Tab switcher ──────────────────────────────────────────────────────
-    const tabs  = Array.from(document.querySelectorAll('.input-tab'));
-    const panes = Array.from(document.querySelectorAll('.input-pane'));
-
-    function switchTab(tabEl) {
-      // Deactivate all tabs + panes
-      tabs.forEach(t => {
-        t.classList.remove('active');
-        t.setAttribute('aria-selected', 'false');
-      });
-      panes.forEach(p => p.classList.remove('active'));
-
-      // Activate the clicked tab
-      tabEl.classList.add('active');
-      tabEl.setAttribute('aria-selected', 'true');
-
-      // Activate the pane it controls
-      const paneId = tabEl.getAttribute('aria-controls');
-      const pane   = document.getElementById(paneId);
-      if (pane) pane.classList.add('active');
+    // ── Draft — survives reloads, cleared on logout ───────────────────────
+    const DRAFT_KEY = 'minded_draft';
+    let _draftTimer = null;
+    function saveDraft() {
+      if (IS_DEMO) return;
+      clearTimeout(_draftTimer);
+      try { localStorage.setItem(DRAFT_KEY, textarea.value); } catch (_) {}
     }
-
-    tabs.forEach(t => t.addEventListener('click', () => switchTab(t)));
-
-    // Initialise: activate the tab that already has .active in HTML
-    const initialTab = tabs.find(t => t.classList.contains('active')) || tabs[0];
-    if (initialTab) switchTab(initialTab);
+    function scheduleDraftSave() {
+      clearTimeout(_draftTimer);
+      _draftTimer = setTimeout(saveDraft, 400);
+    }
+    window.addEventListener('pagehide', saveDraft);
 
     // ── PDF: load pdf.js ──────────────────────────────────────────────────
     async function loadPdfJs() {
@@ -1913,53 +2019,35 @@
       return fullText;
     }
 
-    function pdfToTextThenSwitch(text) {
+    function usePdfText(text) {
       textarea.value = text;
       updateCharCount();
-      switchTab(tabs.find(t => t.id === 'tab-text'));
       textarea.focus();
     }
 
     // PDF: file input
     const pdfUpload  = document.getElementById('pdf-upload');
-    const pdfStatus  = document.getElementById('pdf-status');
-    const dropZone   = document.getElementById('pdf-drop-zone');
 
     async function handlePdfFile(file) {
-      if (!file || file.type !== 'application/pdf') {
-        pdfStatus.textContent = 'Ficheiro inválido. Usa um PDF.';
+      const isPdf = file && (file.type === 'application/pdf' || /\.pdf$/i.test(file.name));
+      if (!isPdf) {
+        sourceStatus.textContent = 'Arquivo inválido. Use um PDF.';
         return;
       }
-      pdfStatus.textContent = 'A extrair texto…';
+      sourceStatus.textContent = 'Extraindo o texto…';
       try {
-        const text = await extractPdf(file);
-        pdfToTextThenSwitch(text);
+        usePdfText(await extractPdf(file));
       } catch (err) {
-        pdfStatus.textContent = 'Erro: ' + (err.message || err);
+        sourceStatus.textContent = 'Erro: ' + (err.message || err);
       } finally {
         pdfUpload.value = '';
       }
     }
 
     pdfUpload.addEventListener('change', e => handlePdfFile(e.target.files[0]));
-
-    // PDF: "Escolher ficheiro" button triggers the hidden input directly (user gesture → always allowed)
     document.getElementById('pdf-pick-btn').addEventListener('click', () => pdfUpload.click());
-    // PDF: clicking anywhere else on the drop zone also opens the picker
-    dropZone.addEventListener('click', e => {
-      if (e.target.id !== 'pdf-pick-btn') pdfUpload.click();
-    });
 
-    // PDF: drag and drop on drop zone
-    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-    dropZone.addEventListener('drop', e => {
-      e.preventDefault();
-      dropZone.classList.remove('drag-over');
-      handlePdfFile(e.dataTransfer.files[0]);
-    });
-
-    // PDF: drag onto the text pane also works
+    // PDF: drag and drop on the field
     const textPane = document.getElementById('pane-text');
     textPane.addEventListener('dragover', e => {
       if ([...e.dataTransfer.types].includes('Files')) {
@@ -1969,79 +2057,10 @@
     });
     textPane.addEventListener('dragleave', () => textPane.classList.remove('drag-over'));
     textPane.addEventListener('drop', e => {
-      const file = e.dataTransfer.files[0];
-      if (file && file.type === 'application/pdf') {
-        e.preventDefault();
-        textPane.classList.remove('drag-over');
-        switchTab(tabs.find(t => t.id === 'tab-pdf'));
-        handlePdfFile(file);
-      }
-    });
-
-    // ── Link fetch ────────────────────────────────────────────────────────
-    const linkInput    = document.getElementById('link-input');
-    const linkFetchBtn = document.getElementById('link-fetch-btn');
-    const linkStatus   = document.getElementById('link-status');
-
-    linkInput.addEventListener('input', () => {
-      linkFetchBtn.disabled = linkInput.value.trim().length < 10;
-    });
-
-    linkFetchBtn.addEventListener('click', async () => {
-      const url = linkInput.value.trim();
-      if (!url) return;
-      linkFetchBtn.disabled = true;
-      linkStatus.className = 'link-status';
-      linkStatus.textContent = 'A buscar página…';
-
-      try {
-        // Try two CORS proxies in sequence
-        let html = null;
-        const proxies = [
-          `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
-          `https://corsproxy.io/?${encodeURIComponent(url)}`,
-        ];
-        let lastErr = null;
-        for (const proxy of proxies) {
-          try {
-            const res = await fetch(proxy, { signal: AbortSignal.timeout(10000) });
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            // allorigins returns JSON {contents}, corsproxy returns raw HTML
-            const ct = res.headers.get('content-type') || '';
-            if (ct.includes('application/json')) {
-              const json = await res.json();
-              html = json.contents || '';
-            } else {
-              html = await res.text();
-            }
-            if (html && html.length > 100) break;
-          } catch (e) { lastErr = e; html = null; }
-        }
-        if (!html) throw lastErr || new Error('Ambos os proxies falharam.');
-
-        // Strip HTML tags, collapse whitespace
-        const tmp = document.createElement('div');
-        tmp.innerHTML = html;
-        // Remove scripts, styles, nav, footer
-        tmp.querySelectorAll('script,style,nav,footer,header,[role="navigation"]').forEach(el => el.remove());
-        let text = (tmp.innerText || tmp.textContent || '').replace(/\s+/g, ' ').trim();
-
-        if (text.length < 50) throw new Error('Não foi possível extrair texto útil desta página.');
-
-        textarea.value = text;
-        updateCharCount();
-        switchTab(tabs.find(t => t.id === 'tab-text'));
-        textarea.focus();
-
-      } catch (err) {
-        linkStatus.className = 'link-status error';
-        linkStatus.textContent = 'Não foi possível buscar a página: ' + (err.message || err);
-        linkFetchBtn.disabled = false;
-      }
-    });
-
-    linkInput.addEventListener('keydown', e => {
-      if (e.key === 'Enter' && !linkFetchBtn.disabled) linkFetchBtn.click();
+      if (!e.dataTransfer.files.length) return;
+      e.preventDefault();
+      textPane.classList.remove('drag-over');
+      handlePdfFile(e.dataTransfer.files[0]);
     });
 
     // ── Keyboard shortcut: Cmd/Ctrl + Enter ───────────────────────────────
@@ -2098,6 +2117,7 @@
       outputContent.setAttribute('aria-hidden', 'true');
       outputSkeleton.classList.remove('hidden');
       outputSkeleton.setAttribute('aria-hidden', 'false');
+      document.getElementById('sr-status').textContent = 'Adaptando o texto…';
       let i = 0;
       skeletonStatus.textContent = SKELETON_PHASES[0];
       _skeletonTimer = setInterval(() => {
@@ -2131,13 +2151,34 @@
     // ── Bidirectional highlight ───────────────────────────────────────────
     function highlightProseTerms(proseEl, mappings) {
       if (!mappings || !mappings.length) return;
-      let html = proseEl.innerHTML;
+      // Works on text nodes only, so a term like "class" can never hit markup.
       mappings.forEach((m, idx) => {
+        if (!m.termo_tecnico) return;
         const safe = m.termo_tecnico.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        const re = new RegExp(`(${safe})`, 'gi');
-        html = html.replace(re, `<span class="prose-highlight" data-term="${idx}">$1</span>`);
+        const re = new RegExp(safe, 'gi');
+        const walker = document.createTreeWalker(proseEl, NodeFilter.SHOW_TEXT);
+        const nodes = [];
+        while (walker.nextNode()) {
+          if (!walker.currentNode.parentElement.closest('.prose-highlight')) nodes.push(walker.currentNode);
+        }
+        nodes.forEach(node => {
+          const text = node.textContent;
+          const frag = document.createDocumentFragment();
+          let last = 0;
+          for (const match of text.matchAll(re)) {
+            frag.append(text.slice(last, match.index));
+            const span = document.createElement('span');
+            span.className = 'prose-highlight';
+            span.dataset.term = idx;
+            span.textContent = match[0];
+            frag.append(span);
+            last = match.index + match[0].length;
+          }
+          if (last === 0) return;
+          frag.append(text.slice(last));
+          node.replaceWith(frag);
+        });
       });
-      proseEl.innerHTML = html;
     }
 
     // ── Build rich perfil string from all saved prefs ─────────────────────
@@ -2148,9 +2189,7 @@
         const parts = [];
         if (prefs.perfil_cognitivo) parts.push(prefs.perfil_cognitivo);
         if (prefs.ritmo)    parts.push(`ritmo:${prefs.ritmo}`);
-        if (prefs.formato)  parts.push(`formato:${prefs.formato}`);
         if (prefs.sessao)   parts.push(`sessao:${prefs.sessao}`);
-        if (prefs.layout)   parts.push(`layout:${prefs.layout}`);
         return parts.length ? parts.join('; ') : 'geral';
       } catch (_) {
         return 'geral';
@@ -2249,6 +2288,7 @@
         </div>
         <div class="checklist-list" id="checklist-list" role="group" aria-label="Lista de tarefas">${visibleHtml}</div>
         ${showMoreBtn}
+        <button class="btn btn-primary focus-start" id="focus-start" type="button">Começar sessão de foco</button>
         <hr class="output-divider"/>
         ${actionBar(data)}
       `;
@@ -2274,11 +2314,11 @@
           <div class="question-card__q">${esc(q.pergunta)}</div>
           <div class="question-card__actions">
             <button class="question-hint-btn" data-qi="${i}" aria-expanded="false">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 2h6v1h-6zM4 3h1v1h-1zM11 3h1v1h-1zM3 4h1v1h-1zM12 4h1v1h-1zM3 5h1v1h-1zM12 5h1v1h-1zM3 6h1v1h-1zM12 6h1v1h-1zM3 7h1v1h-1zM6 7h1v1h-1zM9 7h1v1h-1zM12 7h1v1h-1zM4 8h1v1h-1zM7 8h2v1h-2zM11 8h1v1h-1zM5 9h1v1h-1zM10 9h1v1h-1zM5 10h1v1h-1zM10 10h1v1h-1zM5 11h6v1h-6zM5 12h6v1h-6zM6 13h4v1h-4z"/></svg>
               Dica
             </button>
             <button class="question-reveal-btn" data-qi="${i}" aria-expanded="false">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 4h8v1h-8zM2 5h2v1h-2zM12 5h2v1h-2zM1 6h1v1h-1zM7 6h2v1h-2zM14 6h1v1h-1zM0 7h1v1h-1zM6 7h4v1h-4zM15 7h1v1h-1zM0 8h1v1h-1zM6 8h4v1h-4zM15 8h1v1h-1zM1 9h1v1h-1zM7 9h2v1h-2zM14 9h1v1h-1zM2 10h2v1h-2zM12 10h2v1h-2zM4 11h8v1h-8z"/></svg>
               Ver resposta
             </button>
           </div>
@@ -2330,30 +2370,58 @@
         </div>`;
     }
 
+    // ── Clean text for copy and export ────────────────────────────────────
+    function toMarkdown(data) {
+      const cell = value => String(value).replace(/\|/g, '\\|').replace(/\s+/g, ' ');
+      const blocks = [`# ${data.titulo}`];
+      if (data.universo_analogia) blocks.push(`*Universo da metáfora: ${data.universo_analogia}*`);
+      if (data.conteudo_principal) blocks.push(data.conteudo_principal);
+      if (data.mapeamentos?.length) {
+        blocks.push('## Termo e metáfora');
+        blocks.push([
+          '| Termo | Na metáfora | Por que faz sentido |',
+          '|---|---|---|',
+          ...data.mapeamentos.map(m => `| ${cell(m.termo_tecnico)} | ${cell(m.equivalente_metafora)} | ${cell(m.explicacao_conexao)} |`),
+        ].join('\n'));
+      }
+      if (data.pontos_de_atencao) blocks.push(`## O que a metáfora não cobre\n\n${data.pontos_de_atencao}`);
+      if (data.passos_acao?.length) blocks.push(data.passos_acao.map(step => `- [ ] ${step}`).join('\n'));
+      (data.perguntas || []).forEach(q => {
+        blocks.push(`## ${q.pergunta}\n\n**Dica:** ${q.dica}\n\n**Resposta:** ${q.resposta}`);
+      });
+      return blocks.join('\n\n') + '\n';
+    }
+
+    function markdownFilename(data) {
+      const slug = String(data.titulo).normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 50);
+      return `minded-${slug || 'resultado'}.md`;
+    }
+
     // ── Action bar ────────────────────────────────────────────────────────
     function actionBar(data) {
       const ttsSupported = 'speechSynthesis' in window;
       const ttsBtn = ttsSupported ? `
         <button class="btn btn-ghost btn-sm" id="tts-btn" aria-label="Ouvir conteúdo via síntese de voz">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+          <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M6 3h2v1h-2zM5 4h3v1h-3zM11 4h1v1h-1zM4 5h4v1h-4zM12 5h1v1h-1zM1 6h7v1h-7zM10 6h1v1h-1zM13 6h1v1h-1zM1 7h7v1h-7zM10 7h1v1h-1zM13 7h1v1h-1zM1 8h7v1h-7zM10 8h1v1h-1zM13 8h1v1h-1zM1 9h7v1h-7zM10 9h1v1h-1zM13 9h1v1h-1zM4 10h4v1h-4zM12 10h1v1h-1zM5 11h3v1h-3zM11 11h1v1h-1zM6 12h2v1h-2z"/></svg>
           <span class="tts-label">Ouvir</span>
         </button>` : '';
       return `
         <div class="output-actions">
           <button class="btn btn-ghost btn-sm" id="copy-btn" aria-label="Copiar texto adaptado">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 3h8v1h-8zM4 4h1v1h-1zM11 4h1v1h-1zM2 5h8v1h-8zM11 5h1v1h-1zM2 6h1v1h-1zM9 6h1v1h-1zM11 6h1v1h-1zM2 7h1v1h-1zM9 7h1v1h-1zM11 7h1v1h-1zM2 8h1v1h-1zM9 8h1v1h-1zM11 8h1v1h-1zM2 9h1v1h-1zM9 9h1v1h-1zM11 9h1v1h-1zM2 10h1v1h-1zM9 10h3v1h-3zM2 11h1v1h-1zM9 11h1v1h-1zM2 12h8v1h-8z"/></svg>
             Copiar
           </button>
           <button class="btn btn-ghost btn-sm" id="md-btn" aria-label="Exportar em Markdown">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M7 2h2v1h-2zM7 3h2v1h-2zM7 4h2v1h-2zM4 5h8v1h-8zM5 6h6v1h-6zM6 7h4v1h-4zM7 8h2v1h-2zM1 10h1v1h-1zM14 10h1v1h-1zM1 11h1v1h-1zM14 11h1v1h-1zM1 12h14v1h-14z"/></svg>
             Exportar MD
           </button>
           <button class="pdf-btn" id="pdf-btn" aria-label="Exportar como PDF">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M3 2h8v1h-8zM3 3h1v1h-1zM10 3h2v1h-2zM3 4h1v1h-1zM11 4h2v1h-2zM3 5h1v1h-1zM12 5h1v1h-1zM3 6h1v1h-1zM6 6h4v1h-4zM12 6h1v1h-1zM3 7h1v1h-1zM12 7h1v1h-1zM3 8h1v1h-1zM6 8h4v1h-4zM12 8h1v1h-1zM3 9h1v1h-1zM12 9h1v1h-1zM3 10h1v1h-1zM6 10h4v1h-4zM12 10h1v1h-1zM3 11h1v1h-1zM12 11h1v1h-1zM3 12h10v1h-10z"/></svg>
             PDF
           </button>
-          <button class="simplify-btn" id="simplify-btn" aria-label="Simplificar ainda mais">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          <button class="simplify-btn" id="simplify-btn" aria-label="Simplificar ainda mais"${lastRequest ? '' : ' hidden'}>
+            <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M7 4h2v1h-2zM7 5h2v1h-2zM6 6h4v1h-4zM2 7h12v1h-12zM4 8h8v1h-8zM5 9h6v1h-6zM4 10h3v1h-3zM9 10h3v1h-3zM4 11h1v1h-1zM11 11h1v1h-1z"/></svg>
             Simplificar mais
           </button>
           ${ttsBtn}
@@ -2362,19 +2430,42 @@
     }
 
     // ── TTS with word-by-word highlight ───────────────────────────────────
-    // Wraps each word in the prose/summary in a <span class="tts-word"> so
-    // the boundary event can illuminate the current word.
-    function wrapWordsForTts(container) {
-      const prose = container.querySelector('.output-prose, .summary-body');
-      if (!prose) return null;
-      const text = prose.innerText;
-      const words = text.split(/(\s+)/);
-      let idx = 0;
-      prose.innerHTML = words.map(w => {
-        if (/^\s+$/.test(w)) return w;
-        return `<span class="tts-word" data-widx="${idx++}">${esc(w)}</span>`;
-      }).join('');
-      return prose;
+    // Wraps words in place, so bold text and term highlights survive, and
+    // records where each one starts in the spoken text for the boundary event.
+    const TTS_BLOCKS = '.output-title, .output-prose, .summary-body, .output-alert__text, .checklist-item__text, .question-card__q';
+
+    function wrapWordsForTts(block) {
+      const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT);
+      const nodes = [];
+      while (walker.nextNode()) nodes.push(walker.currentNode);
+      nodes.forEach(node => {
+        const frag = document.createDocumentFragment();
+        node.textContent.split(/(\s+)/).forEach(part => {
+          if (!/[\p{L}\p{N}]/u.test(part)) { frag.append(part); return; }
+          const span = document.createElement('span');
+          span.className = 'tts-word';
+          span.textContent = part;
+          frag.append(span);
+        });
+        node.replaceWith(frag);
+      });
+    }
+
+    function prepareSpeech(container) {
+      const spans = [], starts = [];
+      let text = '';
+      container.querySelectorAll(TTS_BLOCKS).forEach(block => {
+        wrapWordsForTts(block);
+        block.querySelectorAll('.tts-word').forEach(span => {
+          spans.push(span);
+          starts.push(text.length);
+          text += span.textContent + ' ';
+        });
+        text = text.trimEnd();
+        if (text && !/[.!?:]$/.test(text)) text += '.';
+        text += ' ';
+      });
+      return { text: text.trim(), spans, starts };
     }
 
     function wireTts(container) {
@@ -2382,14 +2473,20 @@
       if (!ttsBtn || !window.speechSynthesis) return;
       const ttsLabel = ttsBtn.querySelector('.tts-label');
       let speaking = false;
-      let wrappedEl = null;
+      let speech = null;
+      let activeWord = null;
+
+      function setActiveWord(span) {
+        if (activeWord) activeWord.classList.remove('tts-active');
+        activeWord = span;
+        if (activeWord) activeWord.classList.add('tts-active');
+      }
 
       function setTtsStopped() {
         speaking = false;
         if (ttsLabel) ttsLabel.textContent = 'Ouvir';
         ttsBtn.setAttribute('aria-label', 'Ouvir conteúdo via síntese de voz');
-        // Remove all highlights
-        if (wrappedEl) wrappedEl.querySelectorAll('.tts-word.tts-active').forEach(s => s.classList.remove('tts-active'));
+        setActiveWord(null);
       }
 
       ttsBtn.addEventListener('click', () => {
@@ -2398,25 +2495,16 @@
           setTtsStopped();
           return;
         }
-        // Wrap words if not already done
-        if (!wrappedEl) wrappedEl = wrapWordsForTts(container);
-        const fullText = wrappedEl ? wrappedEl.innerText : container.innerText;
+        if (!speech) speech = prepareSpeech(container);
 
-        const utterance = new SpeechSynthesisUtterance(fullText);
+        const utterance = new SpeechSynthesisUtterance(speech.text);
         utterance.lang = 'pt-BR';
         utterance.rate = 0.92;
 
-        // Word boundary highlight
-        let wordSpans = wrappedEl ? [...wrappedEl.querySelectorAll('.tts-word')] : [];
         utterance.onboundary = e => {
-          if (e.name !== 'word' || !wordSpans.length) return;
-          wordSpans.forEach(s => s.classList.remove('tts-active'));
-          // Find the span whose accumulated char offset matches
-          let charCount = 0;
-          for (const span of wordSpans) {
-            if (charCount >= e.charIndex) { span.classList.add('tts-active'); break; }
-            charCount += span.textContent.length + 1; // +1 for space
-          }
+          if (e.name !== 'word') return;
+          let i = speech.starts.findLastIndex(start => start <= e.charIndex);
+          if (i >= 0) setActiveWord(speech.spans[i]);
         };
 
         utterance.onend  = setTtsStopped;
@@ -2436,7 +2524,10 @@
 
     // ── Show output ───────────────────────────────────────────────────────
     function showOutput(html, responseData) {
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
       stopSkeleton();
+      currentResult = responseData;
+      hideExplainButton();
       outputContent.innerHTML = html;
       outputContent.classList.remove('hidden');
       outputContent.setAttribute('aria-hidden', 'false');
@@ -2444,6 +2535,14 @@
 
       // Mark body so focus mode knows there's output
       document.body.classList.add('has-output');
+
+      // Announce once, then put keyboard and screen reader users at the result
+      document.getElementById('sr-status').textContent = 'Resultado pronto.';
+      const resultTitle = outputContent.querySelector('.output-title');
+      if (resultTitle) {
+        resultTitle.tabIndex = -1;
+        resultTitle.focus({ preventScroll: true });
+      }
 
       // On mobile (single-column layout), scroll output panel into view
       // so the user doesn't have to hunt for the result after clicking Adaptar
@@ -2510,7 +2609,6 @@
           chunkBtn.textContent = isNowHidden
             ? `＋ Ver mais ${remaining} ${remaining === 1 ? 'tarefa' : 'tarefas'}`
             : '− Mostrar menos';
-          if (!isNowHidden) wireChecklist(hiddenGroup);
         });
       }
 
@@ -2518,10 +2616,10 @@
       const copyBtn = document.getElementById('copy-btn');
       if (copyBtn) {
         copyBtn.addEventListener('click', () => {
-          navigator.clipboard.writeText(outputContent.innerText).then(() => {
+          navigator.clipboard.writeText(toMarkdown(responseData)).then(() => {
             copyBtn.textContent = '✓ Copiado';
             setTimeout(() => {
-              copyBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copiar';
+              copyBtn.innerHTML = '<svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 3h8v1h-8zM4 4h1v1h-1zM11 4h1v1h-1zM2 5h8v1h-8zM11 5h1v1h-1zM2 6h1v1h-1zM9 6h1v1h-1zM11 6h1v1h-1zM2 7h1v1h-1zM9 7h1v1h-1zM11 7h1v1h-1zM2 8h1v1h-1zM9 8h1v1h-1zM11 8h1v1h-1zM2 9h1v1h-1zM9 9h1v1h-1zM11 9h1v1h-1zM2 10h1v1h-1zM9 10h3v1h-3zM2 11h1v1h-1zM9 11h1v1h-1zM2 12h8v1h-8z"/></svg> Copiar';
             }, 2000);
           });
         });
@@ -2531,10 +2629,10 @@
       const mdBtn = document.getElementById('md-btn');
       if (mdBtn) {
         mdBtn.addEventListener('click', () => {
-          const blob = new Blob([outputContent.innerText], { type: 'text/markdown' });
+          const blob = new Blob([toMarkdown(responseData)], { type: 'text/markdown;charset=utf-8' });
           const url  = URL.createObjectURL(blob);
           const a    = document.createElement('a');
-          a.href = url; a.download = 'minded-output.md'; a.click();
+          a.href = url; a.download = markdownFilename(responseData); a.click();
           URL.revokeObjectURL(url);
         });
       }
@@ -2545,22 +2643,10 @@
         pdfBtn.addEventListener('click', () => window.print());
       }
 
-      // Simplificar mais — re-envia o output como novo input com instrução de simplificação
+      // Simplificar mais — re-adapts the original text, leaving the textarea alone
       const simplifyBtn = document.getElementById('simplify-btn');
       if (simplifyBtn) {
-        simplifyBtn.addEventListener('click', async () => {
-          const currentText = outputContent.innerText.trim();
-          if (!currentText) return;
-          const simplifiedInput = `Simplifica este texto para linguagem ainda mais simples, como se estivesses a explicar a uma criança de 10 anos:\n\n${currentText.substring(0, 4000)}`;
-          textarea.value = simplifiedInput;
-          updateCharCount();
-          // scroll ao topo do painel de input em mobile
-          if (window.innerWidth <= 900) {
-            document.querySelector('.panel').scrollIntoView({ behavior: 'smooth' });
-            await new Promise(r => setTimeout(r, 400));
-          }
-          adaptBtn.click();
-        });
+        simplifyBtn.addEventListener('click', () => doAdapt({ simplificar: true }));
       }
 
       // Flashcard interactivity
@@ -2623,6 +2709,10 @@
         });
       });
 
+      document.getElementById('focus-start')?.addEventListener('click', () => {
+        startFocusSession(responseData.passos_acao || []);
+      });
+
       // TTS with word highlight
       wireTts(outputContent);
     }
@@ -2630,15 +2720,11 @@
     // ── Error state with retry ────────────────────────────────────────────
     function showError(msg) {
       stopSkeleton();
-      const isOffline = msg.includes('Failed to fetch') || msg.includes('NetworkError') || msg.includes('fetch');
-      const friendlyMsg = isOffline
-        ? 'Não foi possível conectar à API. Verifique se o servidor está rodando:<br/><code style="font-size:0.8rem;opacity:0.8">cd api &amp;&amp; uvicorn main:app --host 127.0.0.1 --port 8000</code>'
-        : esc(msg);
       outputContent.innerHTML = `
         <div class="output-error" role="alert">
           <div class="output-error__body">
             <span aria-hidden="true">❌</span>
-            <span><strong>${isOffline ? 'API offline' : 'Erro'}:</strong> ${friendlyMsg}</span>
+            <span><strong>Algo deu errado:</strong> ${esc(msg)}</span>
           </div>
           <button class="retry-btn" id="retry-btn">↺ Tentar novamente</button>
         </div>`;
@@ -2647,39 +2733,78 @@
 
       document.getElementById('retry-btn').addEventListener('click', () => {
         outputContent.classList.add('hidden');
-        adaptBtn.click();
+        doAdapt(lastOptions);
       });
     }
 
     // ── Adapt button click ────────────────────────────────────────────────
-    async function doAdapt() {
-      const text    = textarea.value.trim();
-      const mode    = getMode();
+    let lastRequest = null;   // what produced the current result, for Simplificar mais
+    let currentResult = null; // the result on screen, used by explanations
+    let lastOptions = {};
+
+    function removeProfileNudge() {
+      document.getElementById('profile-nudge')?.remove();
+    }
+
+    // Invites the profile questions below the result, without covering it.
+    function showProfileNudge() {
+      if (!openOnboarding || localStorage.getItem(ONBOARD_KEY)) return;
+      const nudge = document.createElement('div');
+      nudge.className = 'profile-nudge';
+      nudge.id = 'profile-nudge';
+      nudge.innerHTML = `
+        <p>Quer que os próximos resultados fiquem mais do seu jeito? São só 3 perguntas.</p>
+        <div class="profile-nudge__actions">
+          <button class="btn btn-primary btn-sm" id="nudge-open" type="button">Responder</button>
+          <button class="btn btn-ghost btn-sm" id="nudge-dismiss" type="button">Agora não</button>
+        </div>`;
+      outputContent.append(nudge);
+      nudge.querySelector('#nudge-open').addEventListener('click', openOnboarding);
+      nudge.querySelector('#nudge-dismiss').addEventListener('click', () => {
+        try { localStorage.setItem(ONBOARD_KEY, '1'); } catch (_) {}
+        removeProfileNudge();
+        document.getElementById('copy-btn')?.focus();
+      });
+    }
+
+    async function doAdapt(options = {}) {
+      const simplificar = !!options.simplificar && !!lastRequest;
+      lastOptions = options;
+      let text      = simplificar ? lastRequest.text : textarea.value.trim();
+      const mode    = simplificar ? lastRequest.mode : getMode();
       const profile = buildPerfilString();   // rich profile from all prefs
 
       if (text.length < 10) return;
+
+      const isVideo = !IS_DEMO && YOUTUBE_URL.test(text);
+      const isPage  = !IS_DEMO && !isVideo && WEB_URL.test(text);
+      let notice = '';
 
       document.body.classList.remove('has-output');
       startSkeleton();
       adaptBtn.classList.add('loading');
       adaptBtn.disabled = true;
 
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
       const modeLabels = { metaphor: 'Construindo analogias…', checklist: 'Dividindo em passos…', summary: 'Sintetizando…', questions: 'Criando perguntas…' };
       setTimeout(() => { if (skeletonStatus) skeletonStatus.textContent = modeLabels[mode] || SKELETON_PHASES[2]; }, 900);
 
       try {
-        const response = await fetch(`${API_BASE}/adapt`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ texto: text, modo: mode, perfil: profile }),
-        });
-
-        if (!response.ok) {
-          const err = await response.json().catch(() => ({ detail: response.statusText }));
-          throw new Error(err.detail || `HTTP ${response.status}`);
+        if (isPage) {
+          skeletonStatus.textContent = 'Lendo a página…';
+          const page = await apiPost('/extract-url', { url: asUrl(text) });
+          text = page.texto;
+          textarea.value = text;
+          if (page.truncado) notice = `Esta página é longa: usamos os primeiros ${MAX_TEXT_CHARS.toLocaleString('pt-BR')} caracteres.`;
         }
 
-        const data = await response.json();
+        const body = { texto: text, modo: mode, perfil: profile, simplificar };
+        if (isVideo) body.video_url = asUrl(text);
+
+        const data = IS_DEMO
+          ? await new Promise(r => setTimeout(() => r(DEMO_RESULTS[mode]), 700))
+          : await apiPost('/adapt', body, isVideo ? 180000 : undefined);
+        lastRequest = IS_DEMO ? null : { text, mode };
         let html = '';
         if (data.modo === 'metaphor')        html = renderMetaphor(data);
         else if (data.modo === 'checklist')  html = renderChecklist(data);
@@ -2687,23 +2812,27 @@
         else                                 html = renderSummary(data);
 
         showOutput(html, data);
-        addToHistory(data, mode, profile);
+        if (!IS_DEMO) {
+          addToHistory(data, mode, profile, text);
+          showProfileNudge();
+        }
 
       } catch (err) {
         showError(err.message);
       } finally {
         adaptBtn.classList.remove('loading');
-        adaptBtn.disabled = textarea.value.trim().length < 10;
+        updateCharCount();
+        if (notice) sourceStatus.textContent = notice;
       }
     }
 
-    adaptBtn.addEventListener('click', doAdapt);
+    adaptBtn.addEventListener('click', () => doAdapt());
 
     // ═══════════════════════════════════════════════════════════════════════
     // TEXTOS DE EXEMPLO
     // ═══════════════════════════════════════════════════════════════════════
     const EXAMPLES = {
-      ciencias: `A mitose é um processo de divisão celular em que uma célula-mãe se divide em duas células-filhas geneticamente idênticas. Ocorre em quatro fases principais: prófase, metáfase, anáfase e telófase. Durante a prófase, a cromatina se condensa em cromossomas visíveis e o fuso mitótico começa a formar-se. Na metáfase, os cromossomas alinham-se no plano equatorial da célula. Na anáfase, as cromátides-irmãs separam-se e migram para polos opostos da célula. Por fim, na telófase, forma-se uma nova membrana nuclear em torno de cada conjunto de cromossomas, e ocorre a citocinese, dividindo o citoplasma em duas células distintas.`,
+      ciencias: `A mitose é um processo de divisão celular em que uma célula-mãe se divide em duas células-filhas geneticamente idênticas. Ocorre em quatro fases principais: prófase, metáfase, anáfase e telófase. Durante a prófase, a cromatina se condensa em cromossomos visíveis e o fuso mitótico começa a se formar. Na metáfase, os cromossomos se alinham no plano equatorial da célula. Na anáfase, as cromátides-irmãs se separam e migram para polos opostos da célula. Por fim, na telófase, uma nova membrana se forma nuclear em torno de cada conjunto de cromossomos, e ocorre a citocinese, dividindo o citoplasma em duas células distintas.`,
 
       historia: `A Revolução Industrial, iniciada na Grã-Bretanha por volta de 1760, foi uma transformação profunda nos processos de produção, com a substituição do trabalho manual por máquinas movidas a vapor. As fábricas substituíram os ateliês artesanais, e enormes contingentes populacionais migraram do campo para as cidades em busca de emprego. Este processo trouxe tanto avanços tecnológicos como sérias consequências sociais: jornadas de trabalho exaustivas, trabalho infantil, condições insalubres nas fábricas e o crescimento de bairros operários sem saneamento básico. A concentração de riqueza nas mãos dos industriais e a pauperização dos trabalhadores criaram as condições para o surgimento dos movimentos operários e das primeiras reivindicações por direitos laborais.`,
 
@@ -2722,6 +2851,182 @@
       });
     });
 
+    // ═══════════════════════════════════════════════════════════════════════
+    // NÃO ENTENDI ESTA PARTE — explains a selected passage of the result
+    // ═══════════════════════════════════════════════════════════════════════
+    const explainBtn = document.getElementById('explain-btn');
+    let explainRange = null;
+
+    function hideExplainButton() {
+      explainBtn.hidden = true;
+      explainRange = null;
+    }
+
+    document.addEventListener('selectionchange', () => {
+      const selection = document.getSelection();
+      const text = selection ? selection.toString().trim() : '';
+      if (IS_DEMO || !currentResult || text.length < 3 || !selection.rangeCount
+          || !outputContent.contains(selection.anchorNode)) {
+        if (document.activeElement !== explainBtn) hideExplainButton();
+        return;
+      }
+      explainRange = selection.getRangeAt(0).cloneRange();
+      explainBtn.hidden = false;
+    });
+
+    // Keeps the text selected when the button is pressed
+    explainBtn.addEventListener('mousedown', e => e.preventDefault());
+
+    explainBtn.addEventListener('click', async () => {
+      const range = explainRange;
+      if (!range) return;
+      const trecho = range.toString().trim().slice(0, 1000);
+      const start = range.startContainer;
+      const block = (start.nodeType === 1 ? start : start.parentElement)
+        .closest('.output-prose, .summary-body, .checklist-item, .question-card, .mapping-grid-section, .output-alert')
+        || outputContent.lastElementChild;
+
+      hideExplainButton();
+      document.getSelection().removeAllRanges();
+
+      const card = document.createElement('div');
+      card.className = 'explain-card';
+      card.tabIndex = -1;
+      const quote = document.createElement('p');
+      quote.className = 'explain-card__quote';
+      quote.textContent = `“${trecho}”`;
+      const answer = document.createElement('p');
+      answer.textContent = 'Explicando…';
+      card.append(quote, answer);
+      block.after(card);
+      card.focus({ preventScroll: true });
+      card.scrollIntoView({ block: 'nearest' });
+
+      try {
+        const data = await apiPost('/explain', {
+          trecho,
+          contexto: toMarkdown(currentResult).slice(0, 6000),
+          perfil: buildPerfilString(),
+        });
+        answer.textContent = data.explicacao;
+        if (data.exemplo) {
+          const example = document.createElement('p');
+          example.textContent = `Exemplo: ${data.exemplo}`;
+          card.append(example);
+        }
+      } catch (err) {
+        answer.textContent = err.message;
+      }
+    });
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // SESSÃO DE FOCO — one step at a time, with a silent timer
+    // ═══════════════════════════════════════════════════════════════════════
+    const fsPanel = document.getElementById('focus-session');
+    const fsCount = document.getElementById('fs-count');
+    const fsStep  = document.getElementById('fs-step');
+    const fsFill  = document.getElementById('fs-fill');
+    const fsTimer = document.getElementById('fs-timer');
+    const fsDone  = document.getElementById('fs-done');
+    const fsPause = document.getElementById('fs-pause');
+    const fsSkip  = document.getElementById('fs-skip');
+    const fsExit  = document.getElementById('fs-exit');
+    const FOCUS_MINUTES = { curta: 5, media: 10, longa: 15 };
+    const fs = { steps: [], index: 0, done: 0, total: 300, left: 300, paused: false, interval: null, release: null };
+
+    function fsRenderTimer() {
+      const m = Math.floor(fs.left / 60);
+      const s = String(fs.left % 60).padStart(2, '0');
+      fsTimer.textContent = fs.left > 0 ? `${m}:${s}` : 'Tempo encerrado. Sem pressa: conclua quando puder.';
+      fsFill.style.width = `${(1 - fs.left / fs.total) * 100}%`;
+    }
+
+    function fsShowStep() {
+      fsCount.textContent = `Passo ${fs.index + 1} de ${fs.steps.length}`;
+      fsStep.textContent = fs.steps[fs.index];
+      fs.left = fs.total;
+      fs.paused = false;
+      fsPause.textContent = 'Pausar';
+      fsRenderTimer();
+      fsStep.tabIndex = -1;
+      fsStep.focus({ preventScroll: true });
+    }
+
+    function fsFinish() {
+      clearInterval(fs.interval);
+      fsCount.textContent = 'Sessão concluída';
+      fsStep.textContent = `Você concluiu ${fs.done} de ${fs.steps.length} passos.`;
+      fsTimer.textContent = '';
+      fsFill.style.width = '100%';
+      [fsDone, fsPause, fsSkip].forEach(btn => { btn.hidden = true; });
+      fsExit.textContent = 'Fechar';
+      fsExit.focus();
+    }
+
+    function fsAdvance() {
+      fs.index += 1;
+      if (fs.index >= fs.steps.length) fsFinish();
+      else fsShowStep();
+    }
+
+    function closeFocusSession() {
+      clearInterval(fs.interval);
+      fsPanel.hidden = true;
+      document.body.style.overflow = '';
+      if (fs.release) fs.release();
+      fs.release = null;
+    }
+
+    function startFocusSession(steps) {
+      if (!steps.length) return;
+      let sessao = '';
+      try { sessao = JSON.parse(localStorage.getItem('minded_prefs') || '{}').sessao; } catch (_) {}
+      fs.steps = steps;
+      fs.index = 0;
+      fs.done = 0;
+      fs.total = (FOCUS_MINUTES[sessao] || 5) * 60;
+      [fsDone, fsPause, fsSkip].forEach(btn => { btn.hidden = false; });
+      fsExit.textContent = 'Sair';
+      fsPanel.hidden = false;
+      document.body.style.overflow = 'hidden';
+      fs.release = trapFocus(fsPanel, closeFocusSession);
+      fsShowStep();
+      clearInterval(fs.interval);
+      fs.interval = setInterval(() => {
+        if (fs.paused || fs.left <= 0) return;
+        fs.left -= 1;
+        fsRenderTimer();
+      }, 1000);
+    }
+
+    fsDone.addEventListener('click', () => {
+      const item = outputContent.querySelector(`.checklist-item[data-idx="${fs.index}"]`);
+      if (item && item.getAttribute('aria-checked') !== 'true') item.click();
+      fs.done += 1;
+      fsAdvance();
+    });
+    fsSkip.addEventListener('click', fsAdvance);
+    fsExit.addEventListener('click', closeFocusSession);
+    fsPause.addEventListener('click', () => {
+      fs.paused = !fs.paused;
+      fsPause.textContent = fs.paused ? 'Continuar' : 'Pausar';
+    });
+
+    // ── Boot: demo mode or saved draft ────────────────────────────────────
+    if (IS_DEMO) {
+      document.getElementById('demo-banner').hidden = false;
+      document.getElementById('examples-group').hidden = true;
+      document.getElementById('profile-group').hidden = true;
+      document.getElementById('source-bar').hidden = true;
+      textarea.value = EXAMPLES.ciencias;
+      textarea.readOnly = true;
+      charCount.hidden = true;
+    } else {
+      try { textarea.value = localStorage.getItem(DRAFT_KEY) || ''; } catch (_) {}
+    }
+    updateCharCount();
+
   </script>
+  <script src="src/js/pwa.js"></script>
 </body>
 </html>

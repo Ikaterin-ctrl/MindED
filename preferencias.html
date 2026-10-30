@@ -3,13 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="MindED — Configure seu perfil cognitivo para receber adaptações personalizadas." />
+  <meta name="description" content="MindED — Configure como quer receber as adaptações dos seus textos." />
   <title>MindED — Preferências</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="src/css/base.css" />
-  <link rel="icon" type="image/png" href="img/logominded.png" />
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png" />
+  <meta name="theme-color" content="#0B0A0F" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="MindED" />
 
   <!-- Firebase auth guard -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -42,13 +48,9 @@
       gap: var(--sp-lg);
     }
 
-    /* Page header */
-    .prefs-hero {
-      text-align: center;
-      padding: var(--sp-xl) 0 var(--sp-md);
-    }
+    .prefs-hero { text-align: center; }
     .prefs-hero h1 {
-      font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+      font-size: clamp(1.8rem, 3.5vw, 2.4rem);
       margin-bottom: var(--sp-sm);
     }
     .prefs-hero p {
@@ -57,261 +59,110 @@
       margin: 0 auto;
     }
 
-    /* ── Mode picker (quick vs. full) ───────────────────────── */
-    .mode-picker {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--sp-md);
-    }
-    @media (max-width: 480px) { .mode-picker { grid-template-columns: 1fr; } }
-
-    .mode-card {
-      padding: var(--sp-lg);
+    .prefs-form {
       display: flex;
-      flex-direction: column;
-      gap: var(--sp-sm);
-      cursor: pointer;
-      border: 1px solid var(--clr-border-md);
-      border-radius: var(--r-lg);
-      background: var(--clr-surface);
-      transition: border-color var(--t-base), background var(--t-base);
-      text-align: left;
-    }
-    .mode-card:hover {
-      border-color: var(--clr-violet);
-      background: var(--clr-surface-md);
-    }
-    .mode-card:focus-visible { outline: 2px solid var(--clr-violet); outline-offset: 2px; }
-    .mode-card--quick { border-color: rgba(42,157,124,0.30); }
-
-    .mode-card__eyebrow {
-      font-size: 0.70rem;
-      font-weight: 600;
-      color: var(--clr-violet);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
-    .mode-card--full .mode-card__eyebrow { color: var(--clr-text-subtle); }
-
-    .mode-card__title {
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--clr-text);
-      line-height: 1.3;
-    }
-    .mode-card__desc {
-      font-size: 0.82rem;
-      color: var(--clr-text-muted);
-      line-height: 1.6;
-    }
-    .mode-card__time {
-      font-size: 0.75rem;
-      color: var(--clr-text-subtle);
-      margin-top: auto;
-      padding-top: var(--sp-sm);
-    }
-
-    /* ── "Podes alterar depois" notice ──────────────────────── */
-    .prefs-notice {
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      font-size: 0.78rem;
-      color: var(--clr-text-subtle);
-      line-height: 1.55;
-    }
-    .prefs-notice svg { flex-shrink: 0; margin-top: 1px; }
-
-    /* Progress bar */
-    .prefs-progress {
-      display: flex;
-      align-items: center;
-      gap: var(--sp-md);
-    }
-    .prefs-progress__bar {
-      flex: 1;
-      height: 4px;
-      background: rgba(255,255,255,0.08);
-      border-radius: var(--r-sm);
-      overflow: hidden;
-    }
-    .prefs-progress__fill {
-      height: 100%;
-      background: var(--grad-primary);
-      border-radius: var(--r-sm);
-      transition: width 0.4s ease;
-    }
-    .prefs-progress__label {
-      font-size: 0.78rem;
-      color: var(--clr-text-subtle);
-      white-space: nowrap;
-    }
-
-    /* Step card */
-    .step-card {
-      padding: var(--sp-xl);
-      display: none;
       flex-direction: column;
       gap: var(--sp-lg);
     }
-    .step-card.active { display: flex; }
-
-    .step-card h2 {
-      font-size: 1.15rem;
+    .prefs-section {
+      padding: var(--sp-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-md);
+      border: 1px solid var(--clr-border);
+      min-width: 0;
+    }
+    .prefs-section legend {
+      float: left;
+      width: 100%;
+      font-size: 1.05rem;
       font-weight: 600;
       color: var(--clr-text);
     }
-
-    .step-section {
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-sm);
-    }
-    .step-section h3 {
-      font-size: 0.88rem;
-      font-weight: 500;
+    .prefs-section legend + * { clear: both; }
+    .prefs-section > h2 { font-size: 1.05rem; font-weight: 600; }
+    .prefs-note {
+      font-size: 0.875rem;
       color: var(--clr-text-muted);
+      line-height: 1.6;
     }
+    .prefs-note a { color: var(--clr-accent); text-decoration: underline; }
 
-    /* Option buttons */
-    .options {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--sp-sm);
-    }
-
-    .opt-btn {
-      padding: 9px 18px;
-      background: var(--clr-surface);
-      border: 1px solid var(--clr-border-md);
-      border-radius: var(--r-md);
-      color: var(--clr-text-muted);
-      font-size: 0.85rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: border-color var(--t-base), background var(--t-base), color var(--t-base);
-    }
-    .opt-btn:hover {
-      border-color: var(--clr-border-md);
-      color: var(--clr-text);
-      background: var(--clr-surface-md);
-    }
-    .opt-btn.selected {
-      border-color: var(--clr-violet);
-      background: rgba(139,92,246,0.12);
-      color: var(--clr-text);
-    }
-    .opt-btn:focus-visible {
-      outline: 2px solid var(--clr-violet);
-      outline-offset: 2px;
-    }
-
-    /* Checkbox group */
     .check-group {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
       gap: var(--sp-sm);
     }
     .check-label {
       display: flex;
       align-items: flex-start;
       gap: var(--sp-sm);
+      min-height: 44px;
       padding: 12px 14px;
       background: var(--clr-surface);
-      border: 1px solid var(--clr-border);
+      border: 1px solid var(--clr-border-md);
       border-radius: var(--r-md);
       cursor: pointer;
       color: var(--clr-text-muted);
       transition: border-color var(--t-base), background var(--t-base), color var(--t-base);
     }
     .check-label:has(input:checked) {
-      border-color: var(--clr-violet);
-      background: rgba(139,92,246,0.10);
+      border-color: var(--clr-accent);
+      background: var(--clr-surface-md);
       color: var(--clr-text);
     }
+    .check-label:has(input:focus-visible) {
+      outline: 2px solid var(--clr-accent);
+      outline-offset: 2px;
+    }
     .check-label input {
-      accent-color: var(--clr-violet);
-      width: 16px; height: 16px;
+      accent-color: var(--clr-accent);
+      width: 18px; height: 18px;
       flex-shrink: 0;
       margin-top: 2px;
     }
-    /* Two-line label: name + description always visible */
     .check-label__content {
       display: flex;
       flex-direction: column;
       gap: 3px;
     }
     .check-label__name {
-      font-size: 0.88rem;
+      font-size: 0.92rem;
       font-weight: 600;
       line-height: 1.3;
     }
     .check-label__desc {
-      font-size: 0.75rem;
-      color: var(--clr-text-subtle);
+      font-size: 0.875rem;
+      color: var(--clr-text-muted);
       line-height: 1.45;
     }
-    .check-label:has(input:checked) .check-label__desc {
-      color: var(--clr-text-muted);
-    }
 
-    /* Review summary */
-    .review-list {
+    .prefs-actions {
       display: flex;
-      flex-direction: column;
-      gap: var(--sp-sm);
-    }
-    .review-item {
-      display: flex;
-      gap: var(--sp-md);
-      padding: 12px var(--sp-md);
-      background: var(--clr-surface);
-      border: 1px solid var(--clr-border);
-      border-radius: var(--r-md);
-      font-size: 0.88rem;
-    }
-    .review-item__key {
-      color: var(--clr-text-subtle);
-      min-width: 140px;
-      flex-shrink: 0;
-    }
-    .review-item__val {
-      color: var(--clr-text);
-      font-weight: 500;
-    }
-
-    /* Navigation */
-    .step-nav {
-      display: flex;
-      justify-content: space-between;
-      gap: var(--sp-md);
-      padding-top: var(--sp-sm);
       align-items: center;
+      gap: var(--sp-md);
+      flex-wrap: wrap;
     }
-
-    /* Save banner */
-    .save-banner {
-      text-align: center;
-      padding: var(--sp-xl);
+    .prefs-status { font-size: 0.92rem; color: var(--clr-text); }
+    .prefs-danger {
+      align-self: flex-start;
+      color: var(--clr-text);
     }
-    .save-banner h2 { margin-bottom: var(--sp-md); }
-    .save-banner p  { margin-bottom: var(--sp-lg); font-size: 0.95rem; }
 
     @media (max-width: 520px) {
-      .options { flex-direction: column; }
-      .step-nav { flex-direction: column-reverse; }
-      .step-nav .btn { width: 100%; }
+      .prefs-wrap { padding-left: var(--sp-md); padding-right: var(--sp-md); }
+      .prefs-actions .btn { width: 100%; }
     }
   </style>
 </head>
 <body>
+  <a href="#conteudo" class="skip-link">Pular para o conteúdo</a>
 
   <!-- ── Header ─────────────────────────────────────────────── -->
   <header class="main-header">
     <div class="header-inner">
       <a href="index.html" class="logo-link">
-        <img src="img/logominded.png" alt="" aria-hidden="true" />
-        <span>MindED</span>
+        <span>Mind<b>ED</b></span>
       </a>
 
       <button class="hamburger" id="hamburger" aria-label="Abrir menu" aria-expanded="false" aria-controls="main-nav">
@@ -321,284 +172,135 @@
       <nav class="main-nav" id="main-nav" role="navigation" aria-label="Principal">
         <a href="index.html"        class="nav-link">Início</a>
         <a href="workspace.html"    class="nav-link">Workspace</a>
-        <a href="preferencias.html" class="nav-link active">Preferências</a>
+        <a href="preferencias.html" class="nav-link active" aria-current="page">Preferências</a>
       </nav>
     </div>
   </header>
 
   <!-- ── Content ────────────────────────────────────────────── -->
-  <main class="page-wrap">
+  <main class="page-wrap" id="conteudo" tabindex="-1">
     <div class="prefs-wrap">
 
       <div class="prefs-hero">
         <h1>Como você aprende?</h1>
-        <p>Configure o seu perfil para que o MindED adapte o conteúdo ao seu jeito.</p>
+        <p>Quatro escolhas rápidas, todas opcionais. Você pode mudar quando quiser.</p>
       </div>
 
-      <!-- ── Mode picker — shown first, hides when a mode is chosen ── -->
-      <div id="mode-picker-screen">
-        <div class="mode-picker">
-          <button class="mode-card mode-card--quick" id="pick-quick" type="button">
-            <span class="mode-card__eyebrow">Recomendado</span>
-            <span class="mode-card__title">Configuração rápida</span>
-            <span class="mode-card__desc">Só o essencial — diz-nos como o seu cérebro funciona e começamos já.</span>
-            <span class="mode-card__time">≈ 30 segundos · pode completar o resto depois</span>
-          </button>
-          <button class="mode-card mode-card--full" id="pick-full" type="button">
-            <span class="mode-card__eyebrow">Completo</span>
-            <span class="mode-card__title">Configuração detalhada</span>
-            <span class="mode-card__desc">5 passos para personalizar ritmo, ambiente, formato e perfil cognitivo.</span>
-            <span class="mode-card__time">≈ 3 minutos</span>
-          </button>
-        </div>
-      </div>
+      <form class="prefs-form" id="prefs-form">
 
-      <!-- Progress (hidden until full-mode starts) -->
-      <div class="prefs-progress" role="progressbar" aria-valuemin="1" aria-valuemax="5" aria-valuenow="1" id="progress-wrap" style="display:none">
-        <div class="prefs-progress__bar">
-          <div class="prefs-progress__fill" id="progress-fill" style="width:20%"></div>
-        </div>
-        <span class="prefs-progress__label" id="progress-label">Passo 1 de 5</span>
-      </div>
-
-      <!-- ── Step 1 ─────────────────────────────────────────── -->
-      <div class="step-card glass" id="step-1" role="group" aria-labelledby="s1-title">
-        <h2 id="s1-title">1. Como você prefere absorver informação?</h2>
-        <p id="step-hint-1" class="step-hint" role="alert">Escolha pelo menos uma opção para continuar.</p>
-
-        <div class="step-section">
-          <h3>O que funciona melhor para você?</h3>
-          <div class="options" data-group="formato">
-            <button class="opt-btn" data-value="texto">Ler texto</button>
-            <button class="opt-btn" data-value="video">Ver vídeo</button>
-            <button class="opt-btn" data-value="audio">Ouvir</button>
-            <button class="opt-btn" data-value="infografico">Ver esquemas</button>
+        <fieldset class="prefs-section glass">
+          <legend>O que ajuda você a entender melhor?</legend>
+          <p class="prefs-note">
+            Marque tudo o que se aplica. Essas respostas ficam neste navegador. Para gerar o resultado,
+            o Gemini recebe só orientações de escrita, como “use frases curtas”, nunca o nome do que você marcou.
+            <a href="privacidade.html">Saiba mais</a>.
+          </p>
+          <div class="check-group">
+            <label class="check-label">
+              <input type="checkbox" name="perfil" value="tdah" />
+              <span class="check-label__content">
+                <span class="check-label__name">TDAH</span>
+                <span class="check-label__desc">Direto ao ponto, com exemplos concretos</span>
+              </span>
+            </label>
+            <label class="check-label">
+              <input type="checkbox" name="perfil" value="autismo" />
+              <span class="check-label__content">
+                <span class="check-label__name">Autismo</span>
+                <span class="check-label__desc">Linguagem direta e literal, estrutura previsível</span>
+              </span>
+            </label>
+            <label class="check-label">
+              <input type="checkbox" name="perfil" value="dislexia" />
+              <span class="check-label__content">
+                <span class="check-label__name">Dislexia</span>
+                <span class="check-label__desc">Frases curtas e palavras comuns</span>
+              </span>
+            </label>
+            <label class="check-label">
+              <input type="checkbox" name="perfil" value="analitico" />
+              <span class="check-label__content">
+                <span class="check-label__name">Gosto de detalhes</span>
+                <span class="check-label__desc">Definições precisas e termos técnicos explicados</span>
+              </span>
+            </label>
+            <label class="check-label">
+              <input type="checkbox" name="perfil" value="criativo" />
+              <span class="check-label__content">
+                <span class="check-label__name">Gosto de conexões</span>
+                <span class="check-label__desc">Ligações entre ideias diferentes</span>
+              </span>
+            </label>
+            <label class="check-label">
+              <input type="checkbox" name="perfil" value="visual" />
+              <span class="check-label__content">
+                <span class="check-label__name">Aprendo vendo</span>
+                <span class="check-label__desc">Listas e blocos bem organizados</span>
+              </span>
+            </label>
+            <label class="check-label">
+              <input type="checkbox" name="perfil" value="auditivo" />
+              <span class="check-label__content">
+                <span class="check-label__name">Aprendo ouvindo</span>
+                <span class="check-label__desc">O resultado é lido em voz alta automaticamente</span>
+              </span>
+            </label>
           </div>
-        </div>
+        </fieldset>
 
-        <div class="step-section">
-          <h3>Prefere interagir ou só ler?</h3>
-          <div class="options" data-group="interacao">
-            <button class="opt-btn" data-value="interativo">Interagir — quizzes ajudam</button>
-            <button class="opt-btn" data-value="absorver">Só ler, sem interrupções</button>
+        <fieldset class="prefs-section glass">
+          <legend>Como quer receber o resultado?</legend>
+          <div class="check-group">
+            <label class="check-label"><input type="radio" name="modo" value="metaphor" /><span class="check-label__name">Metáfora</span></label>
+            <label class="check-label"><input type="radio" name="modo" value="checklist" /><span class="check-label__name">Passo a passo</span></label>
+            <label class="check-label"><input type="radio" name="modo" value="summary" /><span class="check-label__name">Resumo</span></label>
+            <label class="check-label"><input type="radio" name="modo" value="questions" /><span class="check-label__name">Perguntas</span></label>
           </div>
-        </div>
+        </fieldset>
 
-        <div class="step-section">
-          <h3>Faz anotações enquanto estuda?</h3>
-          <div class="options" data-group="anotacoes">
-            <button class="opt-btn" data-value="sempre">Sim, sempre</button>
-            <button class="opt-btn" data-value="asvezes">Às vezes</button>
-            <button class="opt-btn" data-value="raramente">Raramente</button>
+        <fieldset class="prefs-section glass">
+          <legend>Quanto tempo costuma estudar de uma vez?</legend>
+          <div class="check-group">
+            <label class="check-label"><input type="radio" name="sessao" value="curta" /><span class="check-label__name">Menos de 15 min</span></label>
+            <label class="check-label"><input type="radio" name="sessao" value="media" /><span class="check-label__name">15 a 30 min</span></label>
+            <label class="check-label"><input type="radio" name="sessao" value="longa" /><span class="check-label__name">Mais de 30 min</span></label>
           </div>
-        </div>
+        </fieldset>
 
-        <div class="step-nav">
-          <span></span>
-          <button class="btn btn-primary" id="next-1">Próximo →</button>
+        <fieldset class="prefs-section glass">
+          <legend>Como prefere ver a tela?</legend>
+          <div class="check-group">
+            <label class="check-label"><input type="radio" name="tema" value="noite" /><span class="check-label__name">Escura</span></label>
+            <label class="check-label"><input type="radio" name="tema" value="clean" /><span class="check-label__name">Limpa, com menos efeitos</span></label>
+            <label class="check-label"><input type="radio" name="tema" value="foco" /><span class="check-label__name">Foco, só o essencial</span></label>
+          </div>
+          <p class="prefs-note">Fonte, espaçamento e contraste ficam no botão Acessibilidade do Workspace.</p>
+        </fieldset>
+
+        <div class="prefs-actions">
+          <button class="btn btn-primary" type="submit">Salvar preferências</button>
+          <a class="btn btn-ghost" href="workspace.html">Ir para o Workspace</a>
+          <p class="prefs-status" id="prefs-status" role="status"></p>
         </div>
-        <p class="prefs-notice">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          Pode alterar estas preferências a qualquer momento em Preferências.
+      </form>
+
+      <section class="prefs-section glass" aria-labelledby="dados-title">
+        <h2 id="dados-title">Seus dados</h2>
+        <p class="prefs-note">
+          Preferências, histórico e rascunho ficam guardados só neste navegador. Em um computador compartilhado,
+          apague tudo antes de sair. Essa ação não pode ser desfeita.
         </p>
-      </div>
-
-      <!-- ── Step 2 ─────────────────────────────────────────── -->
-      <div class="step-card glass" id="step-2" role="group" aria-labelledby="s2-title">
-        <h2 id="s2-title">2. O seu ambiente de estudo</h2>
-        <p id="step-hint-2" class="step-hint" role="alert">Escolha pelo menos uma opção para continuar.</p>
-
-        <div class="step-section">
-          <h3>Como prefere ver a interface?</h3>
-          <div class="options" data-group="tema">
-            <button class="opt-btn" data-value="noite">Escura</button>
-            <button class="opt-btn" data-value="clean">Limpa, menos efeitos</button>
-            <button class="opt-btn" data-value="foco">Modo foco — só o essencial</button>
-          </div>
-        </div>
-
-        <div class="step-section">
-          <h3>O que ouve enquanto estuda?</h3>
-          <div class="options" data-group="som">
-            <button class="opt-btn" data-value="lofi">Música Lo-fi</button>
-            <button class="opt-btn" data-value="branco">Som branco ou ambiente</button>
-            <button class="opt-btn" data-value="silencio">Silêncio</button>
-          </div>
-        </div>
-
-        <div class="step-section">
-          <h3>Como gosta de ver o conteúdo organizado?</h3>
-          <div class="options" data-group="layout">
-            <button class="opt-btn" data-value="compacto">Tudo visível, sem scroll</button>
-            <button class="opt-btn" data-value="expansivel">Secções expansíveis</button>
-            <button class="opt-btn" data-value="painel">Painel dividido lado a lado</button>
-          </div>
-        </div>
-
-        <div class="step-nav">
-          <button class="btn btn-ghost" id="prev-2">← Anterior</button>
-          <button class="btn btn-primary" id="next-2">Próximo →</button>
-        </div>
-        <p class="prefs-notice">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          Pode alterar estas preferências a qualquer momento em Preferências.
-        </p>
-      </div>
-
-      <!-- ── Step 3 ─────────────────────────────────────────── -->
-      <div class="step-card glass" id="step-3" role="group" aria-labelledby="s3-title">
-        <h2 id="s3-title">3. O seu ritmo</h2>
-        <p id="step-hint-3" class="step-hint" role="alert">Escolha pelo menos uma opção para continuar.</p>
-
-        <div class="step-section">
-          <h3>Com que velocidade costuma ler?</h3>
-          <div class="options" data-group="ritmo">
-            <button class="opt-btn" data-value="lento">Devagar, com calma</button>
-            <button class="opt-btn" data-value="medio">Ritmo normal</button>
-            <button class="opt-btn" data-value="rapido">Rápido, só o essencial</button>
-          </div>
-        </div>
-
-        <div class="step-section">
-          <h3>Costuma reler ou pausar partes?</h3>
-          <div class="options" data-group="pausa">
-            <button class="opt-btn" data-value="frequente">Sim, frequentemente</button>
-            <button class="opt-btn" data-value="asvezes">Às vezes</button>
-            <button class="opt-btn" data-value="nunca">Raramente</button>
-          </div>
-        </div>
-
-        <div class="step-section">
-          <h3>Quanto tempo costuma estudar de uma vez?</h3>
-          <div class="options" data-group="sessao">
-            <button class="opt-btn" data-value="curta">Menos de 15 min</button>
-            <button class="opt-btn" data-value="media">15 a 30 min</button>
-            <button class="opt-btn" data-value="longa">Mais de 30 min</button>
-          </div>
-        </div>
-
-        <div class="step-nav">
-          <button class="btn btn-ghost" id="prev-3">← Anterior</button>
-          <button class="btn btn-primary" id="next-3">Próximo →</button>
-        </div>
-        <p class="prefs-notice">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          Pode alterar estas preferências a qualquer momento em Preferências.
-        </p>
-      </div>
-
-      <!-- ── Step 4 ────────────────────────────────────────────── -->
-      <div class="step-card glass" id="step-4" role="group" aria-labelledby="s4-title">
-        <h2 id="s4-title">4. Como o seu cérebro funciona?</h2>
-        <p style="font-size:0.84rem;color:var(--clr-text-subtle);margin-top:-8px;line-height:1.65">
-          Marque tudo o que se aplica a você — pode ser mais do que uma coisa.
-        </p>
-
-        <div class="check-group" role="group" aria-label="Perfil cognitivo">
-
-          <label class="check-label">
-            <input type="checkbox" value="tdah" />
-            <span class="check-label__content">
-              <span class="check-label__name">TDAH</span>
-              <span class="check-label__desc">Exemplos rápidos, variedade e foco no concreto</span>
-            </span>
-          </label>
-
-          <label class="check-label">
-            <input type="checkbox" value="autismo" />
-            <span class="check-label__content">
-              <span class="check-label__name">Autismo</span>
-              <span class="check-label__desc">Linguagem direta e literal, estrutura previsível</span>
-            </span>
-          </label>
-
-          <label class="check-label">
-            <input type="checkbox" value="dislexia" />
-            <span class="check-label__content">
-              <span class="check-label__name">Dislexia</span>
-              <span class="check-label__desc">Frases curtas, espaçamento generoso, texto arejado</span>
-            </span>
-          </label>
-
-          <label class="check-label">
-            <input type="checkbox" value="analitico" />
-            <span class="check-label__content">
-              <span class="check-label__name">Pensamento analítico</span>
-              <span class="check-label__desc">Gosto de detalhes técnicos e precisão</span>
-            </span>
-          </label>
-
-          <label class="check-label">
-            <input type="checkbox" value="criativo" />
-            <span class="check-label__content">
-              <span class="check-label__name">Pensamento criativo</span>
-              <span class="check-label__desc">Metáforas e conexões entre ideias diferentes</span>
-            </span>
-          </label>
-
-          <label class="check-label">
-            <input type="checkbox" value="visual" />
-            <span class="check-label__content">
-              <span class="check-label__name">Aprendo visualmente</span>
-              <span class="check-label__desc">Prefiro estrutura espacial e ícones no resultado</span>
-            </span>
-          </label>
-
-          <label class="check-label">
-            <input type="checkbox" value="auditivo" />
-            <span class="check-label__content">
-              <span class="check-label__name">Aprendo ouvindo</span>
-              <span class="check-label__desc">Ativa a leitura em voz alta automaticamente</span>
-            </span>
-          </label>
-
-        </div>
-
-        <div class="step-nav">
-          <button class="btn btn-ghost" id="prev-4">← Anterior</button>
-          <button class="btn btn-primary" id="next-4">Próximo →</button>
-        </div>
-        <p class="prefs-notice">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          Pode seleccionar mais do que uma opção — e alterar o perfil sempre que precisar.
-        </p>
-      </div>
-
-      <!-- ── Modo preferido (salvo para pre-select no workspace) ── -->
-      <!-- Adicionado invisível ao step 4 — salvo junto com prefs -->
-      <div class="step-card glass hidden" id="step-4b" aria-hidden="true" style="display:none"></div>
-
-      <!-- ── Step 5 — Review ────────────────────────────────── -->
-      <div class="step-card glass" id="step-5" role="group" aria-labelledby="s5-title">
-        <h2 id="s5-title">5. Confirmar preferências</h2>
-
-        <div class="review-list" id="review-list" aria-live="polite">
-          <!-- Populated by JS -->
-        </div>
-
-        <div class="step-nav">
-          <button class="btn btn-ghost" id="prev-5">← Anterior</button>
-          <button class="btn btn-primary" id="save-btn">Guardar e continuar</button>
-        </div>
-      </div>
-
-      <!-- ── Saved state ─────────────────────────────────────── -->
-      <div class="glass save-banner hidden" id="save-banner" role="alert">
-        <h2>Preferências guardadas</h2>
-        <p>O MindED vai usar o seu perfil para personalizar as adaptações no Workspace.</p>
-        <p class="prefs-notice" style="margin-top:-8px">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          Pode voltar a esta página e alterar tudo quando quiser.
-        </p>
-        <a href="workspace.html" class="btn btn-primary">Ir para o Workspace →</a>
-      </div>
+        <button class="btn btn-ghost prefs-danger" id="erase-btn" type="button">Apagar meus dados deste navegador</button>
+        <p class="prefs-status" id="erase-status" role="status"></p>
+      </section>
 
     </div>
   </main>
 
   <!-- ── Footer ─────────────────────────────────────────────── -->
   <footer class="site-footer">
-    <p>&copy; 2025 MindED &mdash; Projecto open-source de acessibilidade cognitiva.</p>
+    <p>&copy; 2026 MindED &mdash; Projeto open-source de acessibilidade cognitiva.</p>
+    <p><a href="termos.html">Termos de Uso</a> · <a href="privacidade.html">Política de Privacidade</a></p>
   </footer>
 
   <script>
@@ -611,200 +313,74 @@
       hamburger.setAttribute('aria-expanded', String(open));
     });
 
-    /* ── Mode picker ────────────────────────────────────────── */
-    const pickerScreen = document.getElementById('mode-picker-screen');
-    const progressWrap = document.getElementById('progress-wrap');
-    let quickMode = false;
+    /* ── Load & save ────────────────────────────────────────── */
+    const PREFS_KEY = 'minded_prefs';
+    const A11Y_KEY  = 'minded_a11y';
+    const form      = document.getElementById('prefs-form');
+    const status    = document.getElementById('prefs-status');
 
-    function showPicker() {
-      document.querySelectorAll('.step-card.active').forEach(c => c.classList.remove('active'));
-      pickerScreen.style.display = '';
-      progressWrap.style.display = 'none';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    function readJson(key) {
+      try { return JSON.parse(localStorage.getItem(key) || '{}'); }
+      catch (_) { return {}; }
     }
 
-    document.getElementById('pick-quick').addEventListener('click', () => {
-      quickMode = true;
-      pickerScreen.style.display = 'none';
-      currentStep = 4;
-      document.getElementById('step-4').classList.add('active');
-      // Change button label to make it clear it saves
-      document.getElementById('next-4').textContent = 'Guardar →';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    const saved = readJson(PREFS_KEY);
+    const savedTags = (saved.perfil_cognitivo || '').split(', ');
+    form.querySelectorAll('input[name="perfil"]').forEach(box => {
+      box.checked = savedTags.includes(box.value);
+    });
+    ['modo', 'sessao', 'tema'].forEach(name => {
+      const radio = form.querySelector(`input[name="${name}"][value="${saved[name]}"]`);
+      if (radio) radio.checked = true;
     });
 
-    document.getElementById('pick-full').addEventListener('click', () => {
-      quickMode = false;
-      pickerScreen.style.display = 'none';
-      progressWrap.style.display = '';
-      currentStep = 1;
-      document.getElementById('step-1').classList.add('active');
-      updateProgress(1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-
-    /* ── State ──────────────────────────────────────────────── */
-    const prefs = {};
-    let currentStep = 1;
-    const TOTAL = 5;
-
-    /* ── Option button selection ────────────────────────────── */
-    document.querySelectorAll('.options').forEach(group => {
-      group.querySelectorAll('.opt-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          // single-select per group
-          group.querySelectorAll('.opt-btn').forEach(b => {
-            b.classList.remove('selected');
-            b.setAttribute('aria-pressed', 'false');
-          });
-          btn.classList.add('selected');
-          btn.setAttribute('aria-pressed', 'true');
-          prefs[group.dataset.group] = btn.dataset.value;
-        });
-        btn.setAttribute('role', 'button');
-        btn.setAttribute('aria-pressed', 'false');
-      });
-    });
-
-    /* ── Progress update ────────────────────────────────────── */
-    function updateProgress(step) {
-      const pct = Math.round((step / TOTAL) * 100);
-      document.getElementById('progress-fill').style.width = pct + '%';
-      document.getElementById('progress-label').textContent = `Passo ${step} de ${TOTAL}`;
-      document.getElementById('progress-wrap').setAttribute('aria-valuenow', String(step));
-    }
-
-    /* ── Navigation ─────────────────────────────────────────── */
-    function goTo(step) {
-      document.getElementById(`step-${currentStep}`).classList.remove('active');
-      currentStep = step;
-      document.getElementById(`step-${currentStep}`).classList.add('active');
-      updateProgress(step);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    /* ── Step validation ────────────────────────────────────── */
-    // Returns true if at least one opt-btn is selected in the step
-    function stepHasSelection(stepId) {
-      const card = document.getElementById(stepId);
-      return card.querySelectorAll('.opt-btn.selected').length > 0;
-    }
-
-    function showHint(stepNum) {
-      const hint = document.getElementById(`step-hint-${stepNum}`);
-      if (hint) {
-        hint.classList.add('visible');
-        hint.focus && hint.focus();
-        setTimeout(() => hint.classList.remove('visible'), 3500);
-      }
-    }
-
-    document.getElementById('next-1').addEventListener('click', () => {
-      if (!stepHasSelection('step-1')) { showHint(1); return; }
-      goTo(2);
-    });
-    document.getElementById('prev-2').addEventListener('click', () => goTo(1));
-    document.getElementById('next-2').addEventListener('click', () => {
-      if (!stepHasSelection('step-2')) { showHint(2); return; }
-      goTo(3);
-    });
-    document.getElementById('prev-3').addEventListener('click', () => goTo(2));
-    document.getElementById('next-3').addEventListener('click', () => {
-      if (!stepHasSelection('step-3')) { showHint(3); return; }
-      goTo(4);
-    });
-    document.getElementById('prev-4').addEventListener('click', () => {
-      if (quickMode) { showPicker(); } else { goTo(3); }
-    });
-    document.getElementById('next-4').addEventListener('click', () => {
-      if (quickMode) {
-        // quick mode: collect checkboxes and save directly
-        const checks = [...document.querySelectorAll('.check-group input:checked')].map(i => i.value);
-        if (checks.length) prefs.perfil_cognitivo = checks.join(', ');
-        try { localStorage.setItem('minded_prefs', JSON.stringify(prefs)); } catch (_) {}
-        document.getElementById('step-4').classList.remove('active');
-        document.getElementById('save-banner').classList.remove('hidden');
-        document.querySelector('.prefs-hero').scrollIntoView({ behavior: 'smooth' });
-      } else {
-        buildReview();
-        goTo(5);
-      }
-    });
-    document.getElementById('prev-5').addEventListener('click', () => goTo(4));
-
-    /* ── Build review ───────────────────────────────────────── */
-    const labels = {
-      formato:   'Formato preferido',
-      interacao: 'Interação ao aprender',
-      anotacoes: 'Frequência de anotações',
-      tema:      'Tema de interface',
-      som:       'Ambiente sonoro',
-      layout:    'Organização visual',
-      ritmo:     'Ritmo de estudo',
-      pausa:     'Pausas/retornos',
-      sessao:    'Duração de sessão',
-    };
-
-    function buildReview() {
-      // checkboxes
-      const checks = [...document.querySelectorAll('.check-group input:checked')].map(i => i.value);
-      if (checks.length) prefs.perfil_cognitivo = checks.join(', ');
-
-      const list = document.getElementById('review-list');
-      list.innerHTML = '';
-      const allKeys = [...Object.keys(labels), 'perfil_cognitivo'];
-      allKeys.forEach(key => {
-        if (!prefs[key]) return;
-        const div = document.createElement('div');
-        div.className = 'review-item';
-        div.innerHTML = `
-          <span class="review-item__key">${labels[key] || 'Perfil cognitivo'}</span>
-          <span class="review-item__val">${prefs[key]}</span>
-        `;
-        list.appendChild(div);
-      });
-      if (!list.children.length) {
-        list.innerHTML = '<p style="color:var(--clr-text-muted);font-size:.9rem">Nenhuma preferência selecionada ainda.</p>';
-      }
-    }
-
-    /* ── Save ───────────────────────────────────────────────── */
-    document.getElementById('save-btn').addEventListener('click', () => {
-      // Also persist checkboxes from step 4 into prefs
-      const checks = [...document.querySelectorAll('.check-group input:checked')].map(i => i.value);
-      if (checks.length) prefs.perfil_cognitivo = checks.join(', ');
-
-      try { localStorage.setItem('minded_prefs', JSON.stringify(prefs)); } catch (_) {}
-      document.getElementById('step-5').classList.remove('active');
-      document.getElementById('save-banner').classList.remove('hidden');
-      document.getElementById('progress-fill').style.width = '100%';
-      document.getElementById('progress-label').textContent = 'Concluído!';
-    });
-
-    /* ── Restore on load ────────────────────────────────────── */
-    try {
-      const saved = JSON.parse(localStorage.getItem('minded_prefs') || '{}');
-      Object.assign(prefs, saved);
-
-      // Restore opt-btn selections visually
-      document.querySelectorAll('.options').forEach(group => {
-        const key = group.dataset.group;
-        if (!saved[key]) return;
-        group.querySelectorAll('.opt-btn').forEach(btn => {
-          const isSelected = btn.dataset.value === saved[key];
-          btn.classList.toggle('selected', isSelected);
-          btn.setAttribute('aria-pressed', String(isSelected));
-        });
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const data = new FormData(form);
+      const prefs = {};
+      const tags = data.getAll('perfil');
+      if (tags.length) prefs.perfil_cognitivo = tags.join(', ');
+      ['modo', 'sessao', 'tema'].forEach(name => {
+        if (data.get(name)) prefs[name] = data.get(name);
       });
 
-      // Restore checkbox selections visually
-      if (saved.perfil_cognitivo) {
-        const vals = saved.perfil_cognitivo.split(', ');
-        document.querySelectorAll('.check-group input[type="checkbox"]').forEach(cb => {
-          cb.checked = vals.includes(cb.value);
-        });
+      try {
+        localStorage.setItem(PREFS_KEY, JSON.stringify(prefs));
+        // Focus theme is stored as a11y state, so leaving it must clear that state.
+        if (prefs.tema !== 'foco') {
+          const a11y = readJson(A11Y_KEY);
+          if (a11y.focusMode) {
+            a11y.focusMode = false;
+            localStorage.setItem(A11Y_KEY, JSON.stringify(a11y));
+          }
+        }
+        status.textContent = 'Preferências salvas.';
+      } catch (_) {
+        status.textContent = 'Não foi possível salvar neste navegador.';
       }
-    } catch (_) {}
+    });
+
+    /* ── Erase local data ───────────────────────────────────── */
+    const eraseBtn    = document.getElementById('erase-btn');
+    const eraseStatus = document.getElementById('erase-status');
+    let eraseArmed = false;
+
+    eraseBtn.addEventListener('click', () => {
+      if (!eraseArmed) {
+        eraseArmed = true;
+        eraseBtn.textContent = 'Confirmar: apagar tudo';
+        eraseStatus.textContent = 'Clique de novo para confirmar.';
+        return;
+      }
+      ['minded_prefs', 'minded_history', 'minded_a11y', 'minded_draft', 'minded_onboarded'].forEach(key => {
+        try { localStorage.removeItem(key); } catch (_) {}
+      });
+      form.reset();
+      eraseArmed = false;
+      eraseBtn.textContent = 'Apagar meus dados deste navegador';
+      eraseStatus.textContent = 'Seus dados foram apagados deste navegador.';
+    });
   </script>
+  <script src="src/js/pwa.js"></script>
 </body>
 </html>

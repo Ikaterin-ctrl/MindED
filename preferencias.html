@@ -18,6 +18,7 @@
   <meta name="apple-mobile-web-app-title" content="MindED" />
 
   <!-- Firebase auth guard -->
+  <script src="src/js/account.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script>
@@ -32,8 +33,15 @@
     if (!firebase.apps.length) firebase.initializeApp(_fbConfig);
     document.documentElement.style.visibility = 'hidden';
     firebase.auth().onAuthStateChanged(user => {
-      if (!user) { window.location.replace('login.html'); }
-      else { document.documentElement.style.visibility = ''; window._mindedUser = user; }
+      if (!user) {
+        mindedLeaveAccount();
+        window.location.replace('login.html');
+      } else if (mindedUseAccount(user.uid)) {
+        window.location.reload();
+      } else {
+        document.documentElement.style.visibility = '';
+        window._mindedUser = user;
+      }
     });
   </script>
 
@@ -156,6 +164,7 @@
   </style>
 </head>
 <body>
+  <script src="src/js/theme.js"></script>
   <a href="#conteudo" class="skip-link">Pular para o conteúdo</a>
 
   <!-- ── Header ─────────────────────────────────────────────── -->
@@ -287,8 +296,8 @@
       <section class="prefs-section glass" aria-labelledby="dados-title">
         <h2 id="dados-title">Seus dados</h2>
         <p class="prefs-note">
-          Preferências, histórico e rascunho ficam guardados só neste navegador. Em um computador compartilhado,
-          apague tudo antes de sair. Essa ação não pode ser desfeita.
+          Preferências, histórico e rascunho ficam guardados só neste navegador, separados por conta.
+          Em um computador compartilhado, apague tudo antes de sair. Essa ação não pode ser desfeita.
         </p>
         <button class="btn btn-ghost prefs-danger" id="erase-btn" type="button">Apagar meus dados deste navegador</button>
         <p class="prefs-status" id="erase-status" role="status"></p>

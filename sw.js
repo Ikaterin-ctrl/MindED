@@ -1,5 +1,5 @@
 /* MindED service worker. Change VERSION on every release that edits this list. */
-const VERSION = 'minded-v2';
+const VERSION = 'minded-v3';
 
 const SHELL = [
   'index.html',
@@ -11,6 +11,8 @@ const SHELL = [
   'src/css/base.css',
   'src/js/demo-data.js',
   'src/js/pwa.js',
+  'src/js/account.js',
+  'src/js/theme.js',
   'img/favicon.svg',
   'img/icon-192.png',
   'manifest.webmanifest',

@@ -135,6 +135,7 @@
   </style>
 </head>
 <body>
+  <script src="src/js/theme.js"></script>
   <!-- Voltar -->
   <a href="index.html" class="login-back" aria-label="Voltar à página inicial">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
@@ -144,7 +145,7 @@
   <main class="login-wrap">
     <div class="login-card glass">
       <span class="logo-link"><span>Mind<b>ED</b></span></span>
-      <h1>Bem-vindo ao MindED</h1>
+      <h1>Boas-vindas ao MindED</h1>
       <p>Entre com a sua conta Google para começar a adaptar seus textos.</p>
 
       <div class="login-error" id="login-error" role="alert"></div>
@@ -215,13 +216,18 @@
       }
     });
 
+    auth.getRedirectResult().catch(() => showError('Não foi possível entrar. Tente novamente.'));
+
     googleBtn.addEventListener('click', async () => {
       errorBox.classList.remove('visible');
       googleBtn.classList.add('loading');
       googleBtn.disabled = true;
 
       try {
-        await auth.signInWithPopup(provider);
+        // Installed apps handle pop-ups poorly, especially on iPhone
+        const installed = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+        if (installed) await auth.signInWithRedirect(provider);
+        else await auth.signInWithPopup(provider);
         // onAuthStateChanged above will redirect
       } catch (err) {
         googleBtn.classList.remove('loading');

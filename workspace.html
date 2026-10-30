@@ -18,6 +18,7 @@
   <meta name="apple-mobile-web-app-title" content="MindED" />
 
   <!-- Firebase auth guard — redirects to login.html if not signed in -->
+  <script src="src/js/account.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script>
@@ -37,11 +38,16 @@
     _auth.onAuthStateChanged(user => {
       if (user && IS_DEMO) {
         window.location.replace('workspace.html');
-      } else if (!user && !IS_DEMO) {
-        window.location.replace('login.html');
+      } else if (!user) {
+        const leftAccount = mindedLeaveAccount();
+        if (!IS_DEMO) window.location.replace('login.html');
+        else if (leftAccount) window.location.reload();
+        else document.documentElement.style.visibility = '';
+      } else if (mindedUseAccount(user.uid)) {
+        window.location.reload();
       } else {
         document.documentElement.style.visibility = '';
-        if (user) window._mindedUser = user;
+        window._mindedUser = user;
       }
     });
   </script>
@@ -1013,6 +1019,7 @@
   </style>
 </head>
 <body>
+  <script src="src/js/theme.js"></script>
   <a href="#conteudo" class="skip-link">Pular para o conteúdo</a>
 
   <!-- ── Header ─────────────────────────────────────────────── -->
@@ -1472,7 +1479,10 @@
       }
       logoutBtn.style.display = 'inline-flex';
       logoutBtn.addEventListener('click', async () => {
-        try { localStorage.removeItem(DRAFT_KEY); } catch (_) {}
+        // Emptied first, because leaving the page saves the field again
+        textarea.value = '';
+        saveDraft();
+        mindedLeaveAccount();
         await firebase.auth().signOut();
         window.location.replace('login.html');
       });

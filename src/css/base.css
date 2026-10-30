@@ -434,7 +434,8 @@ body.theme-light .input-area__textarea {
   color: #17131F !important;
   border-color: rgba(0,0,0,0.12) !important;
 }
-body.theme-light .input-area__textarea::placeholder { color: #bbb !important; }
+body.theme-light .input-area__textarea::placeholder { color: #5F5673 !important; }
+body.theme-light .output-error, body.theme-light .retry-btn, body.theme-light .login-error { color: #B91C1C !important; }
 body.theme-light .profile-tag {
   background: rgba(0,0,0,0.06) !important;
   border-color: rgba(0,0,0,0.12) !important;

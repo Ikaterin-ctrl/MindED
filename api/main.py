@@ -16,7 +16,7 @@ from collections import defaultdict, deque
 from html.parser import HTMLParser
 from pathlib import Path
 from typing import List, Literal, Optional
-from urllib.parse import urljoin, urlsplit
+from urllib.parse import parse_qs, urljoin, urlsplit
 
 import httpx
 from dotenv import load_dotenv
@@ -50,6 +50,9 @@ FIREBASE_PROJECT_ID = os.environ.get("FIREBASE_PROJECT_ID", "minded-3d49a")
 AUTH_DISABLED = os.environ.get("AUTH_DISABLED", "").lower() == "true"
 MAX_TEXT_CHARS = int(os.environ.get("MAX_TEXT_CHARS", "60000"))
 RATE_LIMIT_PER_MINUTE = int(os.environ.get("RATE_LIMIT_PER_MINUTE", "10"))
+# Video costs far more than text, so it has its own ceiling and a length cap.
+VIDEO_DAILY_LIMIT = int(os.environ.get("VIDEO_DAILY_LIMIT", "5"))
+VIDEO_MAX_SECONDS = int(os.environ.get("VIDEO_MAX_SECONDS", "1800"))
 ALLOWED_ORIGINS = [
     origin.strip()
     for origin in os.environ.get(
@@ -113,6 +116,7 @@ class AdaptationRequest(BaseModel):
     modo: Literal["metaphor", "checklist", "summary", "questions"] = "metaphor"
     perfil: Optional[str] = Field(default=None, max_length=300)
     simplificar: bool = False
+    video_url: Optional[str] = Field(default=None, max_length=300)
 
 
 class AdaptationResponse(BaseModel):
@@ -133,6 +137,7 @@ class ExtractUrlRequest(BaseModel):
 class ExtractUrlResponse(BaseModel):
     titulo: str
     texto: str
+    truncado: bool = False
 
 
 # Per-mode output schemas, enforced on the model through structured output.
@@ -212,6 +217,22 @@ def enforce_rate_limit(uid: str = Depends(require_user)) -> str:
     return uid
 
 
+_videos_by_user: dict[str, deque[float]] = defaultdict(deque)
+
+
+def enforce_video_limit(uid: str) -> None:
+    now = time.monotonic()
+    window = _videos_by_user[uid]
+    while window and now - window[0] > 86400:
+        window.popleft()
+    if len(window) >= VIDEO_DAILY_LIMIT:
+        raise HTTPException(
+            status_code=429,
+            detail=f"Você chegou ao limite de {VIDEO_DAILY_LIMIT} vídeos por dia. Tente de novo amanhã.",
+        )
+    window.append(now)
+
+
 # ---------------------------------------------------------------------------
 # Prompt builders
 # ---------------------------------------------------------------------------
@@ -244,6 +265,8 @@ def _writing_guidance(perfil: Optional[str]) -> str:
     return " ".join(dict.fromkeys(guidance)) or "Use linguagem clara e acessível."
 
 
+_VIDEO_CONTENT = "[O conteúdo a adaptar é o vídeo anexado. Use só o que é dito e mostrado nele.]"
+
 _SIMPLIFY_NOTE = (
     "\n\nUse uma linguagem ainda mais simples: frases curtas, palavras do dia a dia "
     "e nenhum jargão, como se explicasse a uma criança de 10 anos."
@@ -256,7 +279,7 @@ def _build_prompt(req: AdaptationRequest) -> str:
 
 def _base_prompt(req: AdaptationRequest) -> str:
     orientacoes = _writing_guidance(req.perfil)
-    texto = req.texto.replace('"""', "'''")
+    texto = _VIDEO_CONTENT if req.video_url else req.texto.replace('"""', "'''")
 
     if req.modo == "metaphor":
         return f"""Você é um educador especialista em acessibilidade cognitiva.
@@ -364,6 +387,27 @@ def extract_text(html: str) -> tuple[str, str]:
     return " ".join(parser.title.split()), re.sub(r"\s+", " ", " ".join(parser.parts)).strip()
 
 
+_YOUTUBE_HOSTS = {"youtube.com", "www.youtube.com", "m.youtube.com", "music.youtube.com"}
+_YOUTUBE_ID = re.compile(r"[\w-]{11}")
+
+
+def canonical_youtube_url(url: str) -> Optional[str]:
+    """Return the canonical watch URL, or None when it is not a YouTube video."""
+    parts = urlsplit(url.strip())
+    if parts.scheme not in {"http", "https"}:
+        return None
+    video_id = ""
+    if parts.hostname == "youtu.be":
+        video_id = parts.path.strip("/")
+    elif parts.hostname in _YOUTUBE_HOSTS:
+        if parts.path == "/watch":
+            video_id = parse_qs(parts.query).get("v", [""])[0]
+        else:
+            section, _, rest = parts.path.strip("/").partition("/")
+            video_id = rest if section in {"shorts", "live", "embed"} else ""
+    return f"https://www.youtube.com/watch?v={video_id}" if _YOUTUBE_ID.fullmatch(video_id) else None
+
+
 async def _assert_public_host(url: str) -> None:
     """Block requests to internal addresses (SSRF)."""
     parts = urlsplit(url)
@@ -419,22 +463,39 @@ async def extract_url(req: ExtractUrlRequest, _: str = Depends(enforce_rate_limi
     titulo, texto = extract_text(html)
     if len(texto) < 50:
         raise HTTPException(status_code=422, detail="Não encontramos texto útil nesta página.")
-    return ExtractUrlResponse(titulo=titulo, texto=texto[:MAX_TEXT_CHARS])
+    return ExtractUrlResponse(titulo=titulo, texto=texto[:MAX_TEXT_CHARS], truncado=len(texto) > MAX_TEXT_CHARS)
 
 
 @app.post("/adapt", response_model=AdaptationResponse)
-async def adapt(req: AdaptationRequest, _: str = Depends(enforce_rate_limit)) -> AdaptationResponse:
+async def adapt(req: AdaptationRequest, uid: str = Depends(enforce_rate_limit)) -> AdaptationResponse:
     if not client:
         raise HTTPException(status_code=503, detail="O serviço de IA ainda não está configurado.")
+
+    contents: str | list[types.Part] = _build_prompt(req)
+    media_resolution = None
+    if req.video_url:
+        video_url = canonical_youtube_url(req.video_url)
+        if not video_url:
+            raise HTTPException(status_code=422, detail="Use o link de um vídeo público do YouTube.")
+        enforce_video_limit(uid)
+        media_resolution = types.MediaResolution.MEDIA_RESOLUTION_LOW
+        contents = [
+            types.Part(
+                file_data=types.FileData(file_uri=video_url),
+                video_metadata=types.VideoMetadata(start_offset="0s", end_offset=f"{VIDEO_MAX_SECONDS}s"),
+            ),
+            types.Part(text=contents),
+        ]
 
     schema = OUTPUT_SCHEMAS[req.modo]
     try:
         result = await client.aio.models.generate_content(
             model=GEMINI_MODEL,
-            contents=_build_prompt(req),
+            contents=contents,
             config=types.GenerateContentConfig(
                 temperature=0.7,
                 max_output_tokens=8192,
+                media_resolution=media_resolution,
                 response_mime_type="application/json",
                 response_json_schema=schema.model_json_schema(),
             ),
@@ -446,6 +507,11 @@ async def adapt(req: AdaptationRequest, _: str = Depends(enforce_rate_limit)) ->
     except Exception as exc:
         # Provider errors can carry internal details, so they stay in the logs.
         logger.exception("Gemini request failed")
-        raise HTTPException(status_code=502, detail="A IA não respondeu agora. Tente novamente em instantes.") from exc
+        detail = (
+            "Não foi possível ler este vídeo. Confira se ele é público e tente novamente."
+            if req.video_url
+            else "A IA não respondeu agora. Tente novamente em instantes."
+        )
+        raise HTTPException(status_code=502, detail=detail) from exc
 
     return AdaptationResponse(modo=req.modo, **data)

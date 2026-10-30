@@ -134,6 +134,8 @@ O frontend está no Firebase Hosting; a API precisa de um host próprio (a image
 
 `modo` aceita: `metaphor` · `checklist` · `summary` · `questions`
 
+Para vídeo, envie também `video_url` com um link público do YouTube. A API analisa até `VIDEO_MAX_SECONDS` (30 minutos) e permite `VIDEO_DAILY_LIMIT` vídeos por dia para cada usuário.
+
 As chamadas exigem `Authorization: Bearer <Firebase ID token>`.
 
 Resposta completa segue o schema `AdaptationResponse` em [`api/main.py`](api/main.py).

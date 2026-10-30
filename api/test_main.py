@@ -111,6 +111,86 @@ def test_unknown_profile_text_is_dropped(api, monkeypatch):
     assert "linguagem clara" in models.calls[0]["contents"]
 
 
+@pytest.mark.parametrize(
+    "url",
+    [
+        "https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=30s",
+        "https://youtu.be/dQw4w9WgXcQ?si=abc",
+        "https://m.youtube.com/watch?v=dQw4w9WgXcQ",
+        "https://www.youtube.com/shorts/dQw4w9WgXcQ",
+    ],
+)
+def test_youtube_links_become_canonical(url):
+    assert main.canonical_youtube_url(url) == "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+
+
+@pytest.mark.parametrize(
+    "url",
+    [
+        "https://youtube.com.evil.com/watch?v=dQw4w9WgXcQ",
+        "https://vimeo.com/12345678901",
+        "https://www.youtube.com/watch?v=curto",
+        "https://www.youtube.com/playlist?list=dQw4w9WgXcQ",
+        "file:///etc/passwd",
+    ],
+)
+def test_non_youtube_links_are_rejected(url):
+    assert main.canonical_youtube_url(url) is None
+
+
+def test_video_is_sent_with_a_length_cap(api, monkeypatch):
+    models = install_gemini(monkeypatch)
+    main._videos_by_user.clear()
+    url = "https://youtu.be/dQw4w9WgXcQ"
+    res = api.post("/adapt", json={"texto": url, "modo": "summary", "video_url": url})
+    assert res.status_code == 200
+    video, prompt = models.calls[0]["contents"]
+    assert video.file_data.file_uri == "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+    assert video.video_metadata.end_offset == f"{main.VIDEO_MAX_SECONDS}s"
+    assert "vídeo anexado" in prompt.text
+    assert url not in prompt.text
+
+
+def test_invalid_video_link_is_rejected_before_gemini(api, monkeypatch):
+    models = install_gemini(monkeypatch)
+    res = api.post("/adapt", json={"texto": "https://vimeo.com/1", "modo": "summary", "video_url": "https://vimeo.com/1"})
+    assert res.status_code == 422
+    assert models.calls == []
+
+
+def test_daily_video_limit(api, monkeypatch):
+    models = install_gemini(monkeypatch)
+    main._videos_by_user.clear()
+    monkeypatch.setattr(main, "VIDEO_DAILY_LIMIT", 1)
+    body = {"texto": "https://youtu.be/dQw4w9WgXcQ", "modo": "summary", "video_url": "https://youtu.be/dQw4w9WgXcQ"}
+    assert api.post("/adapt", json=body).status_code == 200
+    res = api.post("/adapt", json=body)
+    assert res.status_code == 429
+    assert "vídeos por dia" in res.json()["detail"]
+    assert len(models.calls) == 1
+
+
+def test_video_failure_mentions_public_videos(api, monkeypatch):
+    install_gemini(monkeypatch, error=RuntimeError("privado"))
+    main._videos_by_user.clear()
+    body = {"texto": "https://youtu.be/dQw4w9WgXcQ", "modo": "summary", "video_url": "https://youtu.be/dQw4w9WgXcQ"}
+    res = api.post("/adapt", json=body)
+    assert res.status_code == 502
+    assert "público" in res.json()["detail"]
+
+
+def test_long_page_is_flagged_as_truncated(api, monkeypatch):
+    async def fake_fetch(_url):
+        return "<p>" + "palavra " * 20 + "</p>"
+
+    monkeypatch.setattr(main, "_fetch_html", fake_fetch)
+    monkeypatch.setattr(main, "MAX_TEXT_CHARS", 60)
+    res = api.post("/extract-url", json={"url": "https://exemplo.com/artigo"})
+    assert res.status_code == 200
+    assert res.json()["truncado"] is True
+    assert len(res.json()["texto"]) == 60
+
+
 def test_auth_required_when_enabled(monkeypatch):
     monkeypatch.setattr(main, "AUTH_DISABLED", False)
     install_gemini(monkeypatch)

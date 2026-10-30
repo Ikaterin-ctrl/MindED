@@ -78,46 +78,29 @@
     /* ── Input area ─────────────────────────────────────────── */
     .input-area { display: flex; flex-direction: column; gap: 0; }
 
-    /* Tab switcher */
-    .input-tabs {
-      display: flex;
-      gap: 2px;
-      margin-bottom: -1px; /* overlap border below */
-      position: relative;
-      z-index: 1;
-    }
-    .input-tab {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 7px 14px;
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: var(--clr-text-subtle);
-      background: transparent;
-      border: 1px solid transparent;
-      border-bottom: none;
-      border-radius: var(--r-sm) var(--r-sm) 0 0;
-      cursor: pointer;
-      transition: color var(--t-base), background var(--t-base), border-color var(--t-base);
-      font-family: var(--font-body);
-    }
-    .input-tab:hover { color: var(--clr-text-muted); }
-    .input-tab.active {
-      color: var(--clr-text);
-      background: var(--clr-surface);
-      border-color: var(--clr-border);
-    }
-
-    /* Tab panels */
+    /* Composer */
     .input-pane {
-      display: none;
       border: 1px solid var(--clr-border);
-      border-radius: 0 var(--r-md) var(--r-md) var(--r-md);
+      border-radius: var(--r-md);
       background: var(--clr-surface);
       position: relative;
     }
-    .input-pane.active { display: block; }
+    .input-pane.drag-over { border-color: var(--clr-accent); background: var(--clr-surface-md); }
+    .source-bar {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--sp-sm);
+      margin-top: var(--sp-sm);
+    }
+    .source-bar__hint { font-size: 0.875rem; color: var(--clr-text-muted); }
+    .source-status {
+      margin-top: var(--sp-sm);
+      font-size: 0.875rem;
+      color: var(--clr-text-muted);
+      line-height: 1.55;
+    }
+    .source-status:empty { display: none; }
 
     /* Pane: text */
     .input-area__textarea {
@@ -129,14 +112,13 @@
       padding-bottom: 28px; /* room for char count */
       background: transparent;
       border: none;
-      border-radius: 0 var(--r-md) var(--r-md) var(--r-md);
+      border-radius: var(--r-md);
       color: var(--clr-text);
       font-size: 0.9rem;
       line-height: var(--lh-body);
       outline: none;
     }
     .input-area__textarea::placeholder { color: var(--clr-text-subtle); }
-    .input-pane--text.drag-over { border-color: var(--clr-accent); background: rgba(42,157,124,0.05); }
 
     .char-count {
       position: absolute;
@@ -147,37 +129,6 @@
       pointer-events: none;
     }
 
-    /* Pane: PDF drop zone */
-    .pdf-drop-zone {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: var(--sp-md);
-      padding: var(--sp-2xl) var(--sp-lg);
-      min-height: 220px;
-      text-align: center;
-      cursor: pointer;
-      border-radius: 0 var(--r-md) var(--r-md) var(--r-md);
-      transition: background var(--t-base), border-color var(--t-base);
-    }
-    .pdf-drop-zone.drag-over { background: rgba(42,157,124,0.07); border-color: var(--clr-accent); }
-    .pdf-drop-zone__icon { color: var(--clr-text-subtle); opacity: 0.6; }
-    .pdf-drop-zone__title {
-      font-size: 0.88rem;
-      font-weight: 600;
-      color: var(--clr-text);
-    }
-    .pdf-drop-zone__hint {
-      font-size: 0.875rem;
-      color: var(--clr-text-subtle);
-      line-height: 1.5;
-    }
-    .pdf-drop-zone__status {
-      font-size: 0.875rem;
-      color: var(--clr-accent);
-      min-height: 1.2em;
-    }
     .pdf-upload-label {
       display: inline-flex;
       align-items: center;
@@ -193,55 +144,6 @@
       transition: background var(--t-base), color var(--t-base);
     }
     .pdf-upload-label:hover { background: var(--clr-surface-hi); color: var(--clr-text); }
-
-    /* Pane: link */
-    .link-pane-inner {
-      padding: var(--sp-md);
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-md);
-      min-height: 220px;
-    }
-    .link-input-row {
-      display: flex;
-      gap: var(--sp-sm);
-    }
-    .link-input {
-      flex: 1;
-      padding: 9px var(--sp-md);
-      background: var(--clr-surface-md);
-      border: 1px solid var(--clr-border-md);
-      border-radius: var(--r-sm);
-      color: var(--clr-text);
-      font-size: 0.88rem;
-      outline: none;
-      transition: border-color var(--t-base);
-      font-family: var(--font-body);
-    }
-    .link-input::placeholder { color: var(--clr-text-subtle); }
-    .link-input:focus { border-color: var(--clr-accent); }
-    .link-fetch-btn {
-      padding: 9px 16px;
-      font-size: 0.875rem;
-      font-weight: 600;
-      background: var(--grad-primary);
-      color: #fff;
-      border: none;
-      border-radius: var(--r-sm);
-      cursor: pointer;
-      white-space: nowrap;
-      font-family: var(--font-body);
-      transition: background var(--t-base);
-    }
-    .link-fetch-btn:hover { background: var(--grad-primary-r); }
-    .link-fetch-btn:disabled { opacity: 0.5; pointer-events: none; }
-    .link-status {
-      font-size: 0.875rem;
-      color: var(--clr-text-subtle);
-      line-height: 1.55;
-      min-height: 1.2em;
-    }
-    .link-status.error { color: #FCA5A5; }
 
     /* ── Mode selector ──────────────────────────────────────── */
     .mode-group {
@@ -1100,7 +1002,7 @@
 
     <!-- ═══ LEFT: Input Panel ════════════════════════════════ -->
     <section class="panel glass input-panel" aria-labelledby="input-panel-title">
-      <h2 class="panel__title" id="input-panel-title">O seu texto</h2>
+      <h2 class="panel__title" id="input-panel-title">O que você quer entender?</h2>
 
       <p class="demo-banner" id="demo-banner" hidden>
         <strong>Demonstração sem cadastro.</strong> Este é um exemplo com resultados prontos.
@@ -1111,68 +1013,28 @@
       <!-- Input: tabs + panes -->
       <div class="input-area">
 
-        <!-- Tab switcher -->
-        <div class="input-tabs" role="tablist" aria-label="Tipo de entrada">
-          <button class="input-tab active" id="tab-text" role="tab" aria-selected="true"  aria-controls="pane-text">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
-            Texto
-          </button>
-          <button class="input-tab" id="tab-pdf" role="tab" aria-selected="false" aria-controls="pane-pdf">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            PDF
-          </button>
-          <button class="input-tab" id="tab-link" role="tab" aria-selected="false" aria-controls="pane-link">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
-            Link
-          </button>
-        </div>
-
-        <!-- Pane: texto / arrastar PDF -->
-        <div class="input-pane input-pane--text active" id="pane-text" role="tabpanel" aria-labelledby="tab-text">
+        <!-- One field for text and links; PDFs by button or drag and drop -->
+        <div class="input-pane" id="pane-text">
           <textarea
             id="text-input"
             class="input-area__textarea"
-            placeholder="Cole ou escreva aqui o texto… ou arraste um PDF para cima"
-            aria-label="Texto que você quer adaptar"
+            placeholder="Cole um texto, o link de uma página ou um vídeo do YouTube…"
+            aria-label="Texto, link de página ou vídeo do YouTube"
+            aria-describedby="source-status"
           ></textarea>
           <span class="char-count" id="char-count"></span>
         </div>
 
-        <!-- Pane: PDF drop zone -->
-        <div class="input-pane input-pane--pdf" id="pane-pdf" role="tabpanel" aria-labelledby="tab-pdf">
-          <div class="pdf-drop-zone" id="pdf-drop-zone">
-            <svg class="pdf-drop-zone__icon" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
-            <span class="pdf-drop-zone__title">Arraste o PDF aqui</span>
-            <span class="pdf-drop-zone__hint">ou clique para escolher um arquivo</span>
-            <button type="button" class="pdf-upload-label" id="pdf-pick-btn">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-              Escolher arquivo
-            </button>
-            <span class="pdf-drop-zone__status" id="pdf-status" aria-live="polite"></span>
-          </div>
-          <!-- Input fora do drop zone, oculto por opacity (não clip) para garantir clique cross-browser -->
-          <input type="file" id="pdf-upload" accept=".pdf" aria-label="Enviar arquivo PDF"
+        <div class="source-bar" id="source-bar">
+          <button type="button" class="pdf-upload-label" id="pdf-pick-btn">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Enviar PDF
+          </button>
+          <span class="source-bar__hint">ou arraste o arquivo para o campo</span>
+          <input type="file" id="pdf-upload" accept=".pdf,application/pdf" aria-label="Enviar arquivo PDF" tabindex="-1"
             style="position:absolute;opacity:0;width:0;height:0;pointer-events:none;" />
         </div>
-
-        <!-- Pane: link -->
-        <div class="input-pane input-pane--link" id="pane-link" role="tabpanel" aria-labelledby="tab-link">
-          <div class="link-pane-inner">
-            <div class="link-input-row">
-              <label class="sr-only" for="link-input">Link da página</label>
-              <input
-                type="url"
-                id="link-input"
-                class="link-input"
-                placeholder="https://artigo.com/texto-que-quero-entender"
-                autocomplete="off"
-                spellcheck="false"
-              />
-              <button class="link-fetch-btn" id="link-fetch-btn" type="button" disabled>Buscar</button>
-            </div>
-            <p class="link-status" id="link-status">Cole um link e clique em Buscar — o texto da página é extraído automaticamente.</p>
-          </div>
-        </div>
+        <p class="source-status" id="source-status" role="status"></p>
 
       </div>
 
@@ -1468,7 +1330,7 @@
     }
 
     // ── Authenticated API call ────────────────────────────────────────────
-    async function apiPost(path, body) {
+    async function apiPost(path, body, timeoutMs = 90000) {
       if (!API_BASE) throw new Error('O serviço de adaptação ainda não está disponível neste site.');
 
       const headers = { 'Content-Type': 'application/json' };
@@ -1481,7 +1343,7 @@
           method: 'POST',
           headers,
           body: JSON.stringify(body),
-          signal: AbortSignal.timeout(90000),
+          signal: AbortSignal.timeout(timeoutMs),
         });
       } catch (_) {
         throw new Error(IS_LOCAL
@@ -2020,12 +1882,33 @@
     historyClose.addEventListener('click', closeHistory);
     historyOverlay.addEventListener('click', closeHistory);
 
+    // ── Source detection ──────────────────────────────────────────────────
+    const MAX_TEXT_CHARS = 60000;
+    const VIDEO_MAX_MINUTES = 30;
+    const WEB_URL = /^(https?:\/\/|www\.)\S+$/i;
+    const YOUTUBE_URL = /^(https?:\/\/)?(www\.|m\.|music\.)?(youtube\.com\/(watch\?|shorts\/|live\/|embed\/)|youtu\.be\/)\S+$/i;
+    const sourceStatus = document.getElementById('source-status');
+
+    function asUrl(value) {
+      return /^https?:/i.test(value) ? value : `https://${value}`;
+    }
+    function describeSource(value) {
+      if (YOUTUBE_URL.test(value)) return `Vídeo do YouTube. Funciona com vídeos públicos, e usamos até os primeiros ${VIDEO_MAX_MINUTES} minutos.`;
+      if (WEB_URL.test(value)) return 'Link de página. Vamos ler o texto dela quando você clicar em Adaptar.';
+      return '';
+    }
+
     // ── Char counter & button enabler ─────────────────────────────────────
     function updateCharCount() {
       const len = textarea.value.length;
       charCount.textContent = len > 0 ? `${len.toLocaleString('pt')} car.` : '';
-      adaptBtn.disabled = len < 10;
-      adaptHint.hidden = len >= 10;
+      const tooLong = len > MAX_TEXT_CHARS;
+      adaptBtn.disabled = len < 10 || tooLong;
+      adaptHint.hidden = len >= 10 && !tooLong;
+      adaptHint.textContent = tooLong
+        ? `Este texto tem ${len.toLocaleString('pt-BR')} caracteres. O limite é ${MAX_TEXT_CHARS.toLocaleString('pt-BR')}: use um trecho menor.`
+        : 'Escreva pelo menos 10 caracteres para adaptar.';
+      sourceStatus.textContent = describeSource(textarea.value.trim());
       scheduleDraftSave();
     }
     textarea.addEventListener('input', updateCharCount);
@@ -2043,48 +1926,6 @@
       _draftTimer = setTimeout(saveDraft, 400);
     }
     window.addEventListener('pagehide', saveDraft);
-
-    // ── Tab switcher ──────────────────────────────────────────────────────
-    const tabs  = Array.from(document.querySelectorAll('.input-tab'));
-    const panes = Array.from(document.querySelectorAll('.input-pane'));
-
-    tabs.forEach(t => {
-      t.tabIndex = t.classList.contains('active') ? 0 : -1;
-      t.addEventListener('keydown', e => {
-        const i = tabs.indexOf(t);
-        const next = { ArrowRight: tabs[(i + 1) % tabs.length], ArrowLeft: tabs[(i - 1 + tabs.length) % tabs.length],
-                       Home: tabs[0], End: tabs[tabs.length - 1] }[e.key];
-        if (!next) return;
-        e.preventDefault();
-        switchTab(next);
-        next.focus();
-      });
-    });
-
-    function switchTab(tabEl) {
-      // Deactivate all tabs + panes
-      tabs.forEach(t => {
-        t.classList.remove('active');
-        t.setAttribute('aria-selected', 'false');
-      });
-      panes.forEach(p => p.classList.remove('active'));
-
-      // Activate the clicked tab
-      tabEl.classList.add('active');
-      tabEl.setAttribute('aria-selected', 'true');
-      tabs.forEach(t => { t.tabIndex = t === tabEl ? 0 : -1; });
-
-      // Activate the pane it controls
-      const paneId = tabEl.getAttribute('aria-controls');
-      const pane   = document.getElementById(paneId);
-      if (pane) pane.classList.add('active');
-    }
-
-    tabs.forEach(t => t.addEventListener('click', () => switchTab(t)));
-
-    // Initialise: activate the tab that already has .active in HTML
-    const initialTab = tabs.find(t => t.classList.contains('active')) || tabs[0];
-    if (initialTab) switchTab(initialTab);
 
     // ── PDF: load pdf.js ──────────────────────────────────────────────────
     async function loadPdfJs() {
@@ -2114,53 +1955,35 @@
       return fullText;
     }
 
-    function pdfToTextThenSwitch(text) {
+    function usePdfText(text) {
       textarea.value = text;
       updateCharCount();
-      switchTab(tabs.find(t => t.id === 'tab-text'));
       textarea.focus();
     }
 
     // PDF: file input
     const pdfUpload  = document.getElementById('pdf-upload');
-    const pdfStatus  = document.getElementById('pdf-status');
-    const dropZone   = document.getElementById('pdf-drop-zone');
 
     async function handlePdfFile(file) {
-      if (!file || file.type !== 'application/pdf') {
-        pdfStatus.textContent = 'Ficheiro inválido. Usa um PDF.';
+      const isPdf = file && (file.type === 'application/pdf' || /\.pdf$/i.test(file.name));
+      if (!isPdf) {
+        sourceStatus.textContent = 'Arquivo inválido. Use um PDF.';
         return;
       }
-      pdfStatus.textContent = 'Extraindo o texto…';
+      sourceStatus.textContent = 'Extraindo o texto…';
       try {
-        const text = await extractPdf(file);
-        pdfToTextThenSwitch(text);
+        usePdfText(await extractPdf(file));
       } catch (err) {
-        pdfStatus.textContent = 'Erro: ' + (err.message || err);
+        sourceStatus.textContent = 'Erro: ' + (err.message || err);
       } finally {
         pdfUpload.value = '';
       }
     }
 
     pdfUpload.addEventListener('change', e => handlePdfFile(e.target.files[0]));
-
-    // PDF: "Escolher arquivo" button triggers the hidden input directly (user gesture → always allowed)
     document.getElementById('pdf-pick-btn').addEventListener('click', () => pdfUpload.click());
-    // PDF: clicking anywhere else on the drop zone also opens the picker
-    dropZone.addEventListener('click', e => {
-      if (e.target.id !== 'pdf-pick-btn') pdfUpload.click();
-    });
 
-    // PDF: drag and drop on drop zone
-    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-    dropZone.addEventListener('drop', e => {
-      e.preventDefault();
-      dropZone.classList.remove('drag-over');
-      handlePdfFile(e.dataTransfer.files[0]);
-    });
-
-    // PDF: drag onto the text pane also works
+    // PDF: drag and drop on the field
     const textPane = document.getElementById('pane-text');
     textPane.addEventListener('dragover', e => {
       if ([...e.dataTransfer.types].includes('Files')) {
@@ -2170,47 +1993,10 @@
     });
     textPane.addEventListener('dragleave', () => textPane.classList.remove('drag-over'));
     textPane.addEventListener('drop', e => {
-      const file = e.dataTransfer.files[0];
-      if (file && file.type === 'application/pdf') {
-        e.preventDefault();
-        textPane.classList.remove('drag-over');
-        switchTab(tabs.find(t => t.id === 'tab-pdf'));
-        handlePdfFile(file);
-      }
-    });
-
-    // ── Link fetch ────────────────────────────────────────────────────────
-    const linkInput    = document.getElementById('link-input');
-    const linkFetchBtn = document.getElementById('link-fetch-btn');
-    const linkStatus   = document.getElementById('link-status');
-
-    linkInput.addEventListener('input', () => {
-      linkFetchBtn.disabled = linkInput.value.trim().length < 10;
-    });
-
-    linkFetchBtn.addEventListener('click', async () => {
-      const url = linkInput.value.trim();
-      if (!url) return;
-      linkFetchBtn.disabled = true;
-      linkStatus.className = 'link-status';
-      linkStatus.textContent = 'Buscando a página…';
-
-      try {
-        const { texto } = await apiPost('/extract-url', { url });
-        textarea.value = texto;
-        updateCharCount();
-        switchTab(tabs.find(t => t.id === 'tab-text'));
-        textarea.focus();
-
-      } catch (err) {
-        linkStatus.className = 'link-status error';
-        linkStatus.textContent = 'Não foi possível buscar a página: ' + (err.message || err);
-        linkFetchBtn.disabled = false;
-      }
-    });
-
-    linkInput.addEventListener('keydown', e => {
-      if (e.key === 'Enter' && !linkFetchBtn.disabled) linkFetchBtn.click();
+      if (!e.dataTransfer.files.length) return;
+      e.preventDefault();
+      textPane.classList.remove('drag-over');
+      handlePdfFile(e.dataTransfer.files[0]);
     });
 
     // ── Keyboard shortcut: Cmd/Ctrl + Enter ───────────────────────────────
@@ -2519,6 +2305,34 @@
         </div>`;
     }
 
+    // ── Clean text for copy and export ────────────────────────────────────
+    function toMarkdown(data) {
+      const cell = value => String(value).replace(/\|/g, '\\|').replace(/\s+/g, ' ');
+      const blocks = [`# ${data.titulo}`];
+      if (data.universo_analogia) blocks.push(`*Universo da metáfora: ${data.universo_analogia}*`);
+      if (data.conteudo_principal) blocks.push(data.conteudo_principal);
+      if (data.mapeamentos?.length) {
+        blocks.push('## Termo e metáfora');
+        blocks.push([
+          '| Termo | Na metáfora | Por que faz sentido |',
+          '|---|---|---|',
+          ...data.mapeamentos.map(m => `| ${cell(m.termo_tecnico)} | ${cell(m.equivalente_metafora)} | ${cell(m.explicacao_conexao)} |`),
+        ].join('\n'));
+      }
+      if (data.pontos_de_atencao) blocks.push(`## O que a metáfora não cobre\n\n${data.pontos_de_atencao}`);
+      if (data.passos_acao?.length) blocks.push(data.passos_acao.map(step => `- [ ] ${step}`).join('\n'));
+      (data.perguntas || []).forEach(q => {
+        blocks.push(`## ${q.pergunta}\n\n**Dica:** ${q.dica}\n\n**Resposta:** ${q.resposta}`);
+      });
+      return blocks.join('\n\n') + '\n';
+    }
+
+    function markdownFilename(data) {
+      const slug = String(data.titulo).normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 50);
+      return `minded-${slug || 'resultado'}.md`;
+    }
+
     // ── Action bar ────────────────────────────────────────────────────────
     function actionBar(data) {
       const ttsSupported = 'speechSynthesis' in window;
@@ -2551,19 +2365,42 @@
     }
 
     // ── TTS with word-by-word highlight ───────────────────────────────────
-    // Wraps each word in the prose/summary in a <span class="tts-word"> so
-    // the boundary event can illuminate the current word.
-    function wrapWordsForTts(container) {
-      const prose = container.querySelector('.output-prose, .summary-body');
-      if (!prose) return null;
-      const text = prose.innerText;
-      const words = text.split(/(\s+)/);
-      let idx = 0;
-      prose.innerHTML = words.map(w => {
-        if (/^\s+$/.test(w)) return w;
-        return `<span class="tts-word" data-widx="${idx++}">${esc(w)}</span>`;
-      }).join('');
-      return prose;
+    // Wraps words in place, so bold text and term highlights survive, and
+    // records where each one starts in the spoken text for the boundary event.
+    const TTS_BLOCKS = '.output-title, .output-prose, .summary-body, .output-alert__text, .checklist-item__text, .question-card__q';
+
+    function wrapWordsForTts(block) {
+      const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT);
+      const nodes = [];
+      while (walker.nextNode()) nodes.push(walker.currentNode);
+      nodes.forEach(node => {
+        const frag = document.createDocumentFragment();
+        node.textContent.split(/(\s+)/).forEach(part => {
+          if (!/[\p{L}\p{N}]/u.test(part)) { frag.append(part); return; }
+          const span = document.createElement('span');
+          span.className = 'tts-word';
+          span.textContent = part;
+          frag.append(span);
+        });
+        node.replaceWith(frag);
+      });
+    }
+
+    function prepareSpeech(container) {
+      const spans = [], starts = [];
+      let text = '';
+      container.querySelectorAll(TTS_BLOCKS).forEach(block => {
+        wrapWordsForTts(block);
+        block.querySelectorAll('.tts-word').forEach(span => {
+          spans.push(span);
+          starts.push(text.length);
+          text += span.textContent + ' ';
+        });
+        text = text.trimEnd();
+        if (text && !/[.!?:]$/.test(text)) text += '.';
+        text += ' ';
+      });
+      return { text: text.trim(), spans, starts };
     }
 
     function wireTts(container) {
@@ -2571,14 +2408,20 @@
       if (!ttsBtn || !window.speechSynthesis) return;
       const ttsLabel = ttsBtn.querySelector('.tts-label');
       let speaking = false;
-      let wrappedEl = null;
+      let speech = null;
+      let activeWord = null;
+
+      function setActiveWord(span) {
+        if (activeWord) activeWord.classList.remove('tts-active');
+        activeWord = span;
+        if (activeWord) activeWord.classList.add('tts-active');
+      }
 
       function setTtsStopped() {
         speaking = false;
         if (ttsLabel) ttsLabel.textContent = 'Ouvir';
         ttsBtn.setAttribute('aria-label', 'Ouvir conteúdo via síntese de voz');
-        // Remove all highlights
-        if (wrappedEl) wrappedEl.querySelectorAll('.tts-word.tts-active').forEach(s => s.classList.remove('tts-active'));
+        setActiveWord(null);
       }
 
       ttsBtn.addEventListener('click', () => {
@@ -2587,25 +2430,16 @@
           setTtsStopped();
           return;
         }
-        // Wrap words if not already done
-        if (!wrappedEl) wrappedEl = wrapWordsForTts(container);
-        const fullText = wrappedEl ? wrappedEl.innerText : container.innerText;
+        if (!speech) speech = prepareSpeech(container);
 
-        const utterance = new SpeechSynthesisUtterance(fullText);
+        const utterance = new SpeechSynthesisUtterance(speech.text);
         utterance.lang = 'pt-BR';
         utterance.rate = 0.92;
 
-        // Word boundary highlight
-        let wordSpans = wrappedEl ? [...wrappedEl.querySelectorAll('.tts-word')] : [];
         utterance.onboundary = e => {
-          if (e.name !== 'word' || !wordSpans.length) return;
-          wordSpans.forEach(s => s.classList.remove('tts-active'));
-          // Find the span whose accumulated char offset matches
-          let charCount = 0;
-          for (const span of wordSpans) {
-            if (charCount >= e.charIndex) { span.classList.add('tts-active'); break; }
-            charCount += span.textContent.length + 1; // +1 for space
-          }
+          if (e.name !== 'word') return;
+          let i = speech.starts.findLastIndex(start => start <= e.charIndex);
+          if (i >= 0) setActiveWord(speech.spans[i]);
         };
 
         utterance.onend  = setTtsStopped;
@@ -2625,6 +2459,7 @@
 
     // ── Show output ───────────────────────────────────────────────────────
     function showOutput(html, responseData) {
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
       stopSkeleton();
       outputContent.innerHTML = html;
       outputContent.classList.remove('hidden');
@@ -2707,7 +2542,6 @@
           chunkBtn.textContent = isNowHidden
             ? `＋ Ver mais ${remaining} ${remaining === 1 ? 'tarefa' : 'tarefas'}`
             : '− Mostrar menos';
-          if (!isNowHidden) wireChecklist(hiddenGroup);
         });
       }
 
@@ -2715,7 +2549,7 @@
       const copyBtn = document.getElementById('copy-btn');
       if (copyBtn) {
         copyBtn.addEventListener('click', () => {
-          navigator.clipboard.writeText(outputContent.innerText).then(() => {
+          navigator.clipboard.writeText(toMarkdown(responseData)).then(() => {
             copyBtn.textContent = '✓ Copiado';
             setTimeout(() => {
               copyBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copiar';
@@ -2728,10 +2562,10 @@
       const mdBtn = document.getElementById('md-btn');
       if (mdBtn) {
         mdBtn.addEventListener('click', () => {
-          const blob = new Blob([outputContent.innerText], { type: 'text/markdown' });
+          const blob = new Blob([toMarkdown(responseData)], { type: 'text/markdown;charset=utf-8' });
           const url  = URL.createObjectURL(blob);
           const a    = document.createElement('a');
-          a.href = url; a.download = 'minded-output.md'; a.click();
+          a.href = url; a.download = markdownFilename(responseData); a.click();
           URL.revokeObjectURL(url);
         });
       }
@@ -2864,24 +2698,40 @@
     async function doAdapt(options = {}) {
       const simplificar = !!options.simplificar && !!lastRequest;
       lastOptions = options;
-      const text    = simplificar ? lastRequest.text : textarea.value.trim();
+      let text      = simplificar ? lastRequest.text : textarea.value.trim();
       const mode    = simplificar ? lastRequest.mode : getMode();
       const profile = buildPerfilString();   // rich profile from all prefs
 
       if (text.length < 10) return;
+
+      const isVideo = !IS_DEMO && YOUTUBE_URL.test(text);
+      const isPage  = !IS_DEMO && !isVideo && WEB_URL.test(text);
+      let notice = '';
 
       document.body.classList.remove('has-output');
       startSkeleton();
       adaptBtn.classList.add('loading');
       adaptBtn.disabled = true;
 
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
       const modeLabels = { metaphor: 'Construindo analogias…', checklist: 'Dividindo em passos…', summary: 'Sintetizando…', questions: 'Criando perguntas…' };
       setTimeout(() => { if (skeletonStatus) skeletonStatus.textContent = modeLabels[mode] || SKELETON_PHASES[2]; }, 900);
 
       try {
+        if (isPage) {
+          skeletonStatus.textContent = 'Lendo a página…';
+          const page = await apiPost('/extract-url', { url: asUrl(text) });
+          text = page.texto;
+          textarea.value = text;
+          if (page.truncado) notice = `Esta página é longa: usamos os primeiros ${MAX_TEXT_CHARS.toLocaleString('pt-BR')} caracteres.`;
+        }
+
+        const body = { texto: text, modo: mode, perfil: profile, simplificar };
+        if (isVideo) body.video_url = asUrl(text);
+
         const data = IS_DEMO
           ? await new Promise(r => setTimeout(() => r(DEMO_RESULTS[mode]), 700))
-          : await apiPost('/adapt', { texto: text, modo: mode, perfil: profile, simplificar });
+          : await apiPost('/adapt', body, isVideo ? 180000 : undefined);
         lastRequest = IS_DEMO ? null : { text, mode };
         let html = '';
         if (data.modo === 'metaphor')        html = renderMetaphor(data);
@@ -2899,7 +2749,8 @@
         showError(err.message);
       } finally {
         adaptBtn.classList.remove('loading');
-        adaptBtn.disabled = textarea.value.trim().length < 10;
+        updateCharCount();
+        if (notice) sourceStatus.textContent = notice;
       }
     }
 
@@ -2933,7 +2784,7 @@
       document.getElementById('demo-banner').hidden = false;
       document.getElementById('examples-group').hidden = true;
       document.getElementById('profile-group').hidden = true;
-      document.querySelector('.input-tabs').hidden = true;
+      document.getElementById('source-bar').hidden = true;
       textarea.value = EXAMPLES.ciencias;
       textarea.readOnly = true;
       charCount.hidden = true;

@@ -912,14 +912,8 @@
       line-height: 1.15;
       color: var(--clr-text);
     }
-    .focus-session__bar { height: 6px; background: var(--clr-surface-hi); }
-    .focus-session__fill {
-      height: 100%;
-      background: #7C3AED;
-      transform-origin: left;
-      transform: scaleX(0);
-      transition: transform 1s linear;
-    }
+    .focus-session__bar { height: 12px; }
+    .focus-session__fill { height: 100%; width: 0; }
     .focus-session__timer { font-size: 1.1rem; font-variant-numeric: tabular-nums; }
     .focus-session__actions { display: flex; flex-wrap: wrap; gap: var(--sp-sm); }
 
@@ -1083,7 +1077,7 @@
 
         <div class="source-bar" id="source-bar">
           <button type="button" class="pdf-upload-label" id="pdf-pick-btn">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M7 2h2v1h-2zM6 3h4v1h-4zM5 4h6v1h-6zM4 5h8v1h-8zM7 6h2v1h-2zM7 7h2v1h-2zM7 8h2v1h-2zM1 10h1v1h-1zM14 10h1v1h-1zM1 11h1v1h-1zM14 11h1v1h-1zM1 12h14v1h-14z"/></svg>
             Enviar PDF
           </button>
           <span class="source-bar__hint">ou arraste o arquivo para o campo</span>
@@ -1103,7 +1097,7 @@
             <input type="radio" name="mode" id="mode-metaphor" value="metaphor" checked />
             <label for="mode-metaphor">
               <span class="mode-option__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                <svg class="pixel" width="32" height="32" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 2h6v1h-6zM4 3h1v1h-1zM11 3h1v1h-1zM3 4h1v1h-1zM12 4h1v1h-1zM3 5h1v1h-1zM12 5h1v1h-1zM3 6h1v1h-1zM12 6h1v1h-1zM3 7h1v1h-1zM6 7h1v1h-1zM9 7h1v1h-1zM12 7h1v1h-1zM4 8h1v1h-1zM7 8h2v1h-2zM11 8h1v1h-1zM5 9h1v1h-1zM10 9h1v1h-1zM5 10h1v1h-1zM10 10h1v1h-1zM5 11h6v1h-6zM5 12h6v1h-6zM6 13h4v1h-4z"/></svg>
               </span>
               <span class="mode-option__name">Metáfora</span>
               <span class="mode-option__desc">Com exemplos do dia a dia</span>
@@ -1114,7 +1108,7 @@
             <input type="radio" name="mode" id="mode-checklist" value="checklist" />
             <label for="mode-checklist">
               <span class="mode-option__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+                <svg class="pixel" width="32" height="32" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2 3h8v1h-8zM2 4h1v1h-1zM9 4h1v1h-1zM13 4h2v1h-2zM2 5h1v1h-1zM9 5h1v1h-1zM12 5h2v1h-2zM2 6h1v1h-1zM9 6h1v1h-1zM11 6h2v1h-2zM2 7h1v1h-1zM5 7h1v1h-1zM9 7h2v1h-2zM2 8h1v1h-1zM5 8h2v1h-2zM8 8h2v1h-2zM11 8h1v1h-1zM2 9h1v1h-1zM6 9h3v1h-3zM11 9h1v1h-1zM2 10h1v1h-1zM7 10h1v1h-1zM11 10h1v1h-1zM2 11h1v1h-1zM11 11h1v1h-1zM2 12h10v1h-10z"/></svg>
               </span>
               <span class="mode-option__name">Passo a passo</span>
               <span class="mode-option__desc">Tarefas pequenas e sequenciais</span>
@@ -1125,7 +1119,7 @@
             <input type="radio" name="mode" id="mode-summary" value="summary" />
             <label for="mode-summary">
               <span class="mode-option__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                <svg class="pixel" width="32" height="32" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2 4h2v1h-2zM6 4h8v1h-8zM2 5h2v1h-2zM6 5h8v1h-8zM2 7h2v1h-2zM6 7h8v1h-8zM2 8h2v1h-2zM6 8h8v1h-8zM2 10h2v1h-2zM6 10h5v1h-5zM2 11h2v1h-2zM6 11h5v1h-5z"/></svg>
               </span>
               <span class="mode-option__name">Resumo</span>
               <span class="mode-option__desc">Só o essencial, sem rodeios</span>
@@ -1136,7 +1130,7 @@
             <input type="radio" name="mode" id="mode-questions" value="questions" />
             <label for="mode-questions">
               <span class="mode-option__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <svg class="pixel" width="32" height="32" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 2h6v1h-6zM4 3h2v1h-2zM10 3h2v1h-2zM4 4h2v1h-2zM10 4h2v1h-2zM10 5h2v1h-2zM9 6h2v1h-2zM8 7h2v1h-2zM7 8h2v1h-2zM7 9h2v1h-2zM7 11h2v1h-2zM7 12h2v1h-2z"/></svg>
               </span>
               <span class="mode-option__name">Perguntas</span>
               <span class="mode-option__desc">Testa se entendeu o conteúdo</span>
@@ -1182,7 +1176,7 @@
         disabled
       >
         <span class="btn-label">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M3 3h2v1h-2zM3 4h4v1h-4zM3 5h6v1h-6zM3 6h8v1h-8zM3 7h10v1h-10zM3 8h10v1h-10zM3 9h8v1h-8zM3 10h6v1h-6zM3 11h4v1h-4zM3 12h2v1h-2z"/></svg>
           Adaptar
         </span>
         <div class="btn-spinner" role="status" aria-label="Processando…"></div>
@@ -1201,7 +1195,7 @@
       <!-- Empty state -->
       <div class="output-empty" id="output-empty" aria-hidden="false">
         <div class="output-empty__icon" aria-hidden="true">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.35"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <svg class="pixel" width="32" height="32" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" style="opacity:0.5"><path d="M5 2h6v1h-6zM4 3h1v1h-1zM11 3h1v1h-1zM3 4h1v3h-1zM12 4h1v3h-1zM3 7h1v1h-1zM6 7h1v1h-1zM9 7h1v1h-1zM12 7h1v1h-1zM4 8h1v1h-1zM7 8h2v1h-2zM11 8h1v1h-1zM5 9h1v2h-1zM10 9h1v2h-1zM5 11h6v2h-6zM6 13h4v1h-4z"/></svg>
         </div>
         <p>Cole um texto ao lado e clique em <strong style="color:var(--clr-text)">Adaptar</strong><br/>para ver o resultado aqui.</p>
       </div>
@@ -1308,32 +1302,32 @@
 
       <span class="a11y-panel__label">Histórico</span>
       <button class="a11y-toggle" id="history-btn" aria-expanded="false" aria-controls="history-panel">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 2h6v1h-6zM3 3h2v1h-2zM11 3h2v1h-2zM2 4h1v1h-1zM7 4h2v1h-2zM13 4h1v1h-1zM2 5h1v1h-1zM7 5h2v1h-2zM13 5h1v1h-1zM1 6h1v1h-1zM7 6h2v1h-2zM14 6h1v1h-1zM1 7h1v1h-1zM7 7h5v1h-5zM14 7h1v1h-1zM1 8h1v1h-1zM7 8h5v1h-5zM14 8h1v1h-1zM1 9h1v1h-1zM14 9h1v1h-1zM2 10h1v1h-1zM13 10h1v1h-1zM2 11h1v1h-1zM13 11h1v1h-1zM3 12h2v1h-2zM11 12h2v1h-2zM5 13h6v1h-6z"/></svg>
         Ver histórico
       </button>
 
       <span class="a11y-panel__label">Visualização</span>
       <button class="a11y-toggle" id="hcm-btn" aria-pressed="false">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 2h6v1h-6zM3 3h5v1h-5zM11 3h2v1h-2zM2 4h6v1h-6zM13 4h1v1h-1zM2 5h6v1h-6zM13 5h1v1h-1zM1 6h7v1h-7zM14 6h1v1h-1zM1 7h7v1h-7zM14 7h1v1h-1zM1 8h7v1h-7zM14 8h1v1h-1zM2 9h6v1h-6zM13 9h1v1h-1zM2 10h6v1h-6zM13 10h1v1h-1zM3 11h5v1h-5zM11 11h2v1h-2zM5 12h6v1h-6z"/></svg>
         Alto contraste
       </button>
       <button class="a11y-toggle" id="focus-btn" aria-pressed="false">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 3h8v1h-8zM2 4h2v1h-2zM12 4h2v1h-2zM2 5h1v1h-1zM6 5h4v1h-4zM13 5h1v1h-1zM2 6h1v1h-1zM5 6h1v1h-1zM10 6h1v1h-1zM13 6h1v1h-1zM2 7h1v1h-1zM5 7h1v1h-1zM7 7h2v1h-2zM10 7h1v1h-1zM13 7h1v1h-1zM2 8h1v1h-1zM5 8h1v1h-1zM7 8h2v1h-2zM10 8h1v1h-1zM13 8h1v1h-1zM2 9h1v1h-1zM5 9h1v1h-1zM10 9h1v1h-1zM13 9h1v1h-1zM2 10h1v1h-1zM6 10h4v1h-4zM13 10h1v1h-1zM2 11h2v1h-2zM12 11h2v1h-2zM4 12h8v1h-8z"/></svg>
         Modo foco
       </button>
 
       <button class="a11y-toggle" id="light-btn" aria-pressed="false">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M7 2h2v1h-2zM1 3h1v1h-1zM7 3h2v1h-2zM14 3h1v1h-1zM2 4h1v1h-1zM5 4h6v1h-6zM13 4h1v1h-1zM4 5h8v1h-8zM4 6h8v1h-8zM0 7h2v1h-2zM4 7h8v1h-8zM14 7h2v1h-2zM0 8h2v1h-2zM4 8h8v1h-8zM14 8h2v1h-2zM4 9h8v1h-8zM4 10h8v1h-8zM2 11h1v1h-1zM5 11h6v1h-6zM13 11h1v1h-1zM1 12h1v1h-1zM7 12h2v1h-2zM14 12h1v1h-1zM7 13h2v1h-2z"/></svg>
         Tema claro
       </button>
 
       <span class="a11y-panel__label">Leitura</span>
       <button class="a11y-toggle" id="dyslexic-btn" aria-pressed="false">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+        <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M6 4h4v1h-4zM5 5h2v1h-2zM9 5h2v1h-2zM4 6h2v1h-2zM10 6h2v1h-2zM4 7h2v1h-2zM10 7h2v1h-2zM4 8h8v1h-8zM4 9h8v1h-8zM4 10h2v1h-2zM10 10h2v1h-2zM4 11h2v1h-2zM10 11h2v1h-2z"/></svg>
         Fonte OpenDyslexic
       </button>
       <button class="a11y-toggle" id="spacing-btn" aria-label="Espaçamento: normal">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2 4h12v1h-12zM2 7h12v1h-12zM2 10h12v1h-12z"/></svg>
         Espaçamento de linha
       </button>
       <div class="a11y-stepper" role="group" aria-label="Tamanho de fonte">
@@ -1348,7 +1342,7 @@
     <button class="a11y-trigger" id="a11y-trigger-btn"
             aria-expanded="false" aria-controls="a11y-panel"
             aria-label="Opções de acessibilidade">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+      <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M3 2h2v1h-2zM0 3h16v1h-16zM3 4h2v1h-2zM10 6h2v1h-2zM0 7h16v1h-16zM10 8h2v1h-2zM4 10h2v1h-2zM0 11h16v1h-16zM4 12h2v1h-2z"/></svg>
       Acessibilidade
       <span class="a11y-trigger__dot" aria-hidden="true"></span>
     </button>
@@ -2320,11 +2314,11 @@
           <div class="question-card__q">${esc(q.pergunta)}</div>
           <div class="question-card__actions">
             <button class="question-hint-btn" data-qi="${i}" aria-expanded="false">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 2h6v1h-6zM4 3h1v1h-1zM11 3h1v1h-1zM3 4h1v1h-1zM12 4h1v1h-1zM3 5h1v1h-1zM12 5h1v1h-1zM3 6h1v1h-1zM12 6h1v1h-1zM3 7h1v1h-1zM6 7h1v1h-1zM9 7h1v1h-1zM12 7h1v1h-1zM4 8h1v1h-1zM7 8h2v1h-2zM11 8h1v1h-1zM5 9h1v1h-1zM10 9h1v1h-1zM5 10h1v1h-1zM10 10h1v1h-1zM5 11h6v1h-6zM5 12h6v1h-6zM6 13h4v1h-4z"/></svg>
               Dica
             </button>
             <button class="question-reveal-btn" data-qi="${i}" aria-expanded="false">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 4h8v1h-8zM2 5h2v1h-2zM12 5h2v1h-2zM1 6h1v1h-1zM7 6h2v1h-2zM14 6h1v1h-1zM0 7h1v1h-1zM6 7h4v1h-4zM15 7h1v1h-1zM0 8h1v1h-1zM6 8h4v1h-4zM15 8h1v1h-1zM1 9h1v1h-1zM7 9h2v1h-2zM14 9h1v1h-1zM2 10h2v1h-2zM12 10h2v1h-2zM4 11h8v1h-8z"/></svg>
               Ver resposta
             </button>
           </div>
@@ -2409,25 +2403,25 @@
       const ttsSupported = 'speechSynthesis' in window;
       const ttsBtn = ttsSupported ? `
         <button class="btn btn-ghost btn-sm" id="tts-btn" aria-label="Ouvir conteúdo via síntese de voz">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+          <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M6 3h2v1h-2zM5 4h3v1h-3zM11 4h1v1h-1zM4 5h4v1h-4zM12 5h1v1h-1zM1 6h7v1h-7zM10 6h1v1h-1zM13 6h1v1h-1zM1 7h7v1h-7zM10 7h1v1h-1zM13 7h1v1h-1zM1 8h7v1h-7zM10 8h1v1h-1zM13 8h1v1h-1zM1 9h7v1h-7zM10 9h1v1h-1zM13 9h1v1h-1zM4 10h4v1h-4zM12 10h1v1h-1zM5 11h3v1h-3zM11 11h1v1h-1zM6 12h2v1h-2z"/></svg>
           <span class="tts-label">Ouvir</span>
         </button>` : '';
       return `
         <div class="output-actions">
           <button class="btn btn-ghost btn-sm" id="copy-btn" aria-label="Copiar texto adaptado">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 3h8v1h-8zM4 4h1v1h-1zM11 4h1v1h-1zM2 5h8v1h-8zM11 5h1v1h-1zM2 6h1v1h-1zM9 6h1v1h-1zM11 6h1v1h-1zM2 7h1v1h-1zM9 7h1v1h-1zM11 7h1v1h-1zM2 8h1v1h-1zM9 8h1v1h-1zM11 8h1v1h-1zM2 9h1v1h-1zM9 9h1v1h-1zM11 9h1v1h-1zM2 10h1v1h-1zM9 10h3v1h-3zM2 11h1v1h-1zM9 11h1v1h-1zM2 12h8v1h-8z"/></svg>
             Copiar
           </button>
           <button class="btn btn-ghost btn-sm" id="md-btn" aria-label="Exportar em Markdown">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M7 2h2v1h-2zM7 3h2v1h-2zM7 4h2v1h-2zM4 5h8v1h-8zM5 6h6v1h-6zM6 7h4v1h-4zM7 8h2v1h-2zM1 10h1v1h-1zM14 10h1v1h-1zM1 11h1v1h-1zM14 11h1v1h-1zM1 12h14v1h-14z"/></svg>
             Exportar MD
           </button>
           <button class="pdf-btn" id="pdf-btn" aria-label="Exportar como PDF">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M3 2h8v1h-8zM3 3h1v1h-1zM10 3h2v1h-2zM3 4h1v1h-1zM11 4h2v1h-2zM3 5h1v1h-1zM12 5h1v1h-1zM3 6h1v1h-1zM6 6h4v1h-4zM12 6h1v1h-1zM3 7h1v1h-1zM12 7h1v1h-1zM3 8h1v1h-1zM6 8h4v1h-4zM12 8h1v1h-1zM3 9h1v1h-1zM12 9h1v1h-1zM3 10h1v1h-1zM6 10h4v1h-4zM12 10h1v1h-1zM3 11h1v1h-1zM12 11h1v1h-1zM3 12h10v1h-10z"/></svg>
             PDF
           </button>
           <button class="simplify-btn" id="simplify-btn" aria-label="Simplificar ainda mais"${lastRequest ? '' : ' hidden'}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M7 4h2v1h-2zM7 5h2v1h-2zM6 6h4v1h-4zM2 7h12v1h-12zM4 8h8v1h-8zM5 9h6v1h-6zM4 10h3v1h-3zM9 10h3v1h-3zM4 11h1v1h-1zM11 11h1v1h-1z"/></svg>
             Simplificar mais
           </button>
           ${ttsBtn}
@@ -2625,7 +2619,7 @@
           navigator.clipboard.writeText(toMarkdown(responseData)).then(() => {
             copyBtn.textContent = '✓ Copiado';
             setTimeout(() => {
-              copyBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copiar';
+              copyBtn.innerHTML = '<svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 3h8v1h-8zM4 4h1v1h-1zM11 4h1v1h-1zM2 5h8v1h-8zM11 5h1v1h-1zM2 6h1v1h-1zM9 6h1v1h-1zM11 6h1v1h-1zM2 7h1v1h-1zM9 7h1v1h-1zM11 7h1v1h-1zM2 8h1v1h-1zM9 8h1v1h-1zM11 8h1v1h-1zM2 9h1v1h-1zM9 9h1v1h-1zM11 9h1v1h-1zM2 10h1v1h-1zM9 10h3v1h-3zM2 11h1v1h-1zM9 11h1v1h-1zM2 12h8v1h-8z"/></svg> Copiar';
             }, 2000);
           });
         });
@@ -2944,7 +2938,7 @@
       const m = Math.floor(fs.left / 60);
       const s = String(fs.left % 60).padStart(2, '0');
       fsTimer.textContent = fs.left > 0 ? `${m}:${s}` : 'Tempo encerrado. Sem pressa: conclua quando puder.';
-      fsFill.style.transform = `scaleX(${1 - fs.left / fs.total})`;
+      fsFill.style.width = `${(1 - fs.left / fs.total) * 100}%`;
     }
 
     function fsShowStep() {
@@ -2963,7 +2957,7 @@
       fsCount.textContent = 'Sessão concluída';
       fsStep.textContent = `Você concluiu ${fs.done} de ${fs.steps.length} passos.`;
       fsTimer.textContent = '';
-      fsFill.style.transform = 'scaleX(1)';
+      fsFill.style.width = '100%';
       [fsDone, fsPause, fsSkip].forEach(btn => { btn.hidden = true; });
       fsExit.textContent = 'Fechar';
       fsExit.focus();

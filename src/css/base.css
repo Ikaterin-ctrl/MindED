@@ -4,7 +4,7 @@
    WCAG AA · Movimento curto e opcional
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400..700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400..700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Pixelify+Sans:wght@500..700&display=swap');
 /* OpenDyslexic via CDN — loaded conditionally by JS but declared here */
 @import url('https://fonts.cdnfonts.com/css/opendyslexic?display=swap');
 
@@ -44,10 +44,10 @@
   --blur-glass:  none;
   --blur-header: none;
 
-  --r-sm:   3px;
-  --r-md:   6px;
-  --r-lg:   10px;
-  --r-xl:   14px;
+  --r-sm:   0;
+  --r-md:   0;
+  --r-lg:   0;
+  --r-xl:   0;
   --r-pill: 999px;
 
   --sp-xs:  4px;
@@ -59,6 +59,7 @@
 
   --font-body:    'Atkinson Hyperlegible Next', 'Atkinson Hyperlegible', system-ui, sans-serif;
   --font-display: 'Bricolage Grotesque', 'Atkinson Hyperlegible Next', sans-serif;
+  --font-pixel:   'Pixelify Sans', 'Bricolage Grotesque', sans-serif;
   --font-size-base: 16px;
   --lh-body:      1.7;
   --lh-heading:   1.1;
@@ -906,37 +907,67 @@ body.fontsize-lg  { --font-size-base: 19px; }
    ════════════════════════════════════════════════════════════ */
 ::selection { background: #7C3AED; color: #fff; }
 
-.logo-link { font-weight: 800; letter-spacing: -0.03em; }
+.logo-link { font-family: var(--font-pixel); font-weight: 600; font-size: 1.6rem; letter-spacing: 0; }
 .logo-link b {
   display: inline-block;
-  margin-left: 1px;
-  padding: 0 0.16em;
-  border-radius: 2px;
+  margin-left: 2px;
+  padding: 0 0.18em;
   background: #7C3AED;
   color: #fff;
-  font-weight: 800;
+  font-weight: 700;
 }
 
-/* Highlighter stroke: the brand gesture, drawn from left to right */
+/* Highlighter stroke: the brand gesture, drawn in blocks with stepped ends */
 .mark {
   padding: 0 0.12em;
   margin: 0 -0.04em;
-  border-radius: 0.12em 0.32em 0.16em 0.28em;
   background: linear-gradient(#7C3AED, #7C3AED) no-repeat left center / 0% 100%;
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
-  transition: background-size 420ms cubic-bezier(.65, 0, .35, 1), color 420ms ease;
+  transition: background-size 480ms steps(8, end), color 120ms steps(2, end) 240ms;
 }
-.mark.on { background-size: 100% 100%; color: #fff; }
+.mark.on {
+  background-size: 100% 100%;
+  color: #fff;
+  box-shadow: 6px 0 0 -3px #7C3AED, -6px 0 0 -3px #7C3AED;
+}
 
-/* Solid offset shadow instead of glow */
+/* Notched pixel corners: the fill grows on four sides, leaving the corners out */
 .btn-primary {
-  box-shadow: 4px 4px 0 var(--shadow-hard);
-  transition: transform var(--t-fast), box-shadow var(--t-fast), background var(--t-base);
+  --btn: var(--grad-primary);
+  --pixel-edge: 0 -3px 0 var(--btn), 0 3px 0 var(--btn), -3px 0 0 var(--btn), 3px 0 0 var(--btn);
+  box-shadow: var(--pixel-edge), 6px 3px 0 var(--shadow-hard), 3px 6px 0 var(--shadow-hard);
+  transition: transform 80ms steps(2, end), box-shadow 80ms steps(2, end), background var(--t-fast);
 }
-.btn-primary:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--shadow-hard); }
-.btn-primary:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--shadow-hard); opacity: 1; }
-.btn-primary:disabled { box-shadow: none; }
+.btn-primary:hover {
+  --btn: var(--grad-primary-r);
+  transform: translate(-2px, -2px);
+  box-shadow: var(--pixel-edge), 8px 5px 0 var(--shadow-hard), 5px 8px 0 var(--shadow-hard);
+}
+.btn-primary:active {
+  transform: translate(2px, 2px);
+  box-shadow: var(--pixel-edge), 4px 3px 0 var(--shadow-hard), 3px 4px 0 var(--shadow-hard);
+  opacity: 1;
+}
+.btn-primary:disabled { box-shadow: var(--pixel-edge); }
+.btn-ghost { border-width: 2px; }
+
+/* Pixel icons stay sharp at whole-number sizes */
+.pixel { shape-rendering: crispEdges; flex-shrink: 0; }
+.mode-option__icon svg.pixel { width: 32px; height: 32px; }
+
+/* Progress in blocks, like a health bar */
+body .checklist-progress__bar, body .focus-session__bar, body .flashcard-progress {
+  height: 12px;
+  border-radius: 0;
+  background: repeating-linear-gradient(90deg, var(--clr-surface-hi) 0 12px, transparent 12px 15px);
+}
+body .checklist-progress__fill, body .focus-session__fill, body .flashcard-progress__fill {
+  border-radius: 0;
+  background: repeating-linear-gradient(90deg, #7C3AED 0 12px, transparent 12px 15px);
+  transition: width 200ms steps(4, end);
+}
+.focus-session__count, #lens-label { font-family: var(--font-pixel); font-size: 1.2rem; font-weight: 600; }
 
 .glass { backdrop-filter: none; -webkit-backdrop-filter: none; }
 .main-header { background: var(--clr-bg); backdrop-filter: none; -webkit-backdrop-filter: none; }

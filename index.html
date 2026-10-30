@@ -86,7 +86,12 @@
       border-top: 1px solid var(--clr-border);
     }
     .lens__btn {
-      min-height: 56px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      min-height: 64px;
       padding: var(--sp-sm);
       border: 0;
       border-right: 1px solid var(--clr-border);
@@ -133,14 +138,22 @@
       transition: padding-left var(--t-base);
     }
     .row:hover { padding-left: var(--sp-sm); }
-    .row__num { color: var(--clr-accent); font-weight: 700; }
+    .row__num { color: var(--clr-accent); font-family: var(--font-pixel); font-size: 1.25rem; font-weight: 600; }
     .row h3 { font-family: var(--font-display); font-size: clamp(1.4rem, 2.6vw, 2.1rem); }
     .row p { font-size: 1.05rem; }
 
     .promises { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-xl); }
     .promises h3 { font-size: 1.2rem; margin-bottom: var(--sp-sm); }
 
-    .closing { background: var(--grad-primary); padding: var(--sp-2xl) 0; }
+    .closing { position: relative; background: var(--grad-primary); padding: calc(var(--sp-2xl) + 24px) 0 var(--sp-2xl); }
+    /* Dither strip, always above the text */
+    .closing::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 24px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='24' shape-rendering='crispEdges'%3E%3Cpath fill='%230B0A0F' d='M0 0h16v8H0zM0 8h4v4H0zM8 8h4v4H8zM4 12h4v4H4zM12 12h4v4h-4zM0 16h4v4H0zM8 20h4v4H8z'/%3E%3C/svg%3E") repeat-x;
+    }
     .closing h2 {
       font-size: clamp(2.2rem, 5.4vw, 4.6rem);
       line-height: 1;
@@ -149,8 +162,8 @@
       max-width: 15ch;
       margin-bottom: var(--sp-lg);
     }
-    .closing .btn { background: #fff; color: #17131F; box-shadow: 4px 4px 0 #17131F; }
-    .closing .btn:hover { background: #fff; box-shadow: 6px 6px 0 #17131F; }
+    .closing .btn { --btn: #fff; --shadow-hard: #17131F; background: #fff; color: #17131F; }
+    .closing .btn:hover { --btn: #fff; background: #fff; }
 
     @media (max-width: 960px) {
       .hero { grid-template-columns: minmax(0, 1fr); min-height: 0; gap: var(--sp-xl); }
@@ -214,10 +227,10 @@
           <p>A mitose é o processo de divisão celular em que uma célula-mãe origina duas células-filhas geneticamente idênticas, passando por prófase, metáfase, anáfase e telófase.</p>
         </div>
         <div class="lens__controls">
-          <button class="lens__btn" type="button" data-lens="metaphor" aria-pressed="false">Metáfora</button>
-          <button class="lens__btn" type="button" data-lens="steps" aria-pressed="false">Passos</button>
-          <button class="lens__btn" type="button" data-lens="summary" aria-pressed="false">Resumo</button>
-          <button class="lens__btn" type="button" data-lens="question" aria-pressed="false">Pergunta</button>
+          <button class="lens__btn" type="button" data-lens="metaphor" aria-pressed="false"><svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 2h6v1h-6zM4 3h1v1h-1zM11 3h1v1h-1zM3 4h1v1h-1zM12 4h1v1h-1zM3 5h1v1h-1zM12 5h1v1h-1zM3 6h1v1h-1zM12 6h1v1h-1zM3 7h1v1h-1zM6 7h1v1h-1zM9 7h1v1h-1zM12 7h1v1h-1zM4 8h1v1h-1zM7 8h2v1h-2zM11 8h1v1h-1zM5 9h1v1h-1zM10 9h1v1h-1zM5 10h1v1h-1zM10 10h1v1h-1zM5 11h6v1h-6zM5 12h6v1h-6zM6 13h4v1h-4z"/></svg>Metáfora</button>
+          <button class="lens__btn" type="button" data-lens="steps" aria-pressed="false"><svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2 3h8v1h-8zM2 4h1v1h-1zM9 4h1v1h-1zM13 4h2v1h-2zM2 5h1v1h-1zM9 5h1v1h-1zM12 5h2v1h-2zM2 6h1v1h-1zM9 6h1v1h-1zM11 6h2v1h-2zM2 7h1v1h-1zM5 7h1v1h-1zM9 7h2v1h-2zM2 8h1v1h-1zM5 8h2v1h-2zM8 8h2v1h-2zM11 8h1v1h-1zM2 9h1v1h-1zM6 9h3v1h-3zM11 9h1v1h-1zM2 10h1v1h-1zM7 10h1v1h-1zM11 10h1v1h-1zM2 11h1v1h-1zM11 11h1v1h-1zM2 12h10v1h-10z"/></svg>Passos</button>
+          <button class="lens__btn" type="button" data-lens="summary" aria-pressed="false"><svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2 4h2v1h-2zM6 4h8v1h-8zM2 5h2v1h-2zM6 5h8v1h-8zM2 7h2v1h-2zM6 7h8v1h-8zM2 8h2v1h-2zM6 8h8v1h-8zM2 10h2v1h-2zM6 10h5v1h-5zM2 11h2v1h-2zM6 11h5v1h-5z"/></svg>Resumo</button>
+          <button class="lens__btn" type="button" data-lens="question" aria-pressed="false"><svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 2h6v1h-6zM4 3h2v1h-2zM10 3h2v1h-2zM4 4h2v1h-2zM10 4h2v1h-2zM10 5h2v1h-2zM9 6h2v1h-2zM8 7h2v1h-2zM7 8h2v1h-2zM7 9h2v1h-2zM7 11h2v1h-2zM7 12h2v1h-2z"/></svg>Pergunta</button>
         </div>
       </div>
     </section>

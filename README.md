@@ -123,7 +123,7 @@ Ao alterar a lista de arquivos do `sw.js`, aumente `VERSION`.
 | Frontend | HTML + CSS (Design System próprio) + Vanilla JS |
 | Backend | Python · FastAPI · Pydantic v2 |
 | IA | Google Gemini (modelo configurável em `GEMINI_MODEL`) |
-| Design | Preto e roxo · Atkinson Hyperlegible + Bricolage Grotesque · WCAG AA |
+| Design | Preto e roxo com toques de pixel art · Atkinson Hyperlegible + Bricolage Grotesque + Pixelify Sans · WCAG AA |
 
 ---
 

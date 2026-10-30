@@ -111,7 +111,7 @@ class Question(BaseModel):
 class AdaptationRequest(BaseModel):
     texto: str = Field(..., min_length=10, max_length=MAX_TEXT_CHARS, description="Texto original a ser adaptado")
     modo: Literal["metaphor", "checklist", "summary", "questions"] = "metaphor"
-    perfil: Optional[str] = Field(default="TDAH/Iniciante", max_length=300)
+    perfil: Optional[str] = Field(default=None, max_length=300)
     simplificar: bool = False
 
 
@@ -221,6 +221,29 @@ _SAFETY_NOTE = (
 )
 
 
+# Profile labels can reveal health information, so they stop at this server:
+# the model only ever receives the writing guidance they map to.
+PROFILE_GUIDANCE = {
+    "tdah": "Comece pelo mais importante, use exemplos concretos e blocos curtos.",
+    "autismo": "Use linguagem direta e literal, sem ironia, e mantenha uma estrutura previsível.",
+    "dislexia": "Use frases curtas, palavras comuns e uma ideia por parágrafo.",
+    "analitico": "Inclua definições precisas e explique os termos técnicos.",
+    "criativo": "Mostre conexões entre ideias diferentes.",
+    "visual": "Organize em listas e blocos bem separados.",
+    "auditivo": "Escreva frases que soem naturais quando lidas em voz alta.",
+    "ritmo:lento": "Avance devagar, sem pular etapas.",
+    "ritmo:rapido": "Vá direto ao essencial.",
+    "sessao:curta": "Mantenha o conteúdo adequado a uma sessão de menos de 15 minutos.",
+    "sessao:longa": "Pode aprofundar o conteúdo para uma sessão de mais de 30 minutos.",
+}
+
+
+def _writing_guidance(perfil: Optional[str]) -> str:
+    tokens = re.split(r"[;,]\s*", (perfil or "").lower())
+    guidance = [PROFILE_GUIDANCE[token.strip()] for token in tokens if token.strip() in PROFILE_GUIDANCE]
+    return " ".join(dict.fromkeys(guidance)) or "Use linguagem clara e acessível."
+
+
 _SIMPLIFY_NOTE = (
     "\n\nUse uma linguagem ainda mais simples: frases curtas, palavras do dia a dia "
     "e nenhum jargão, como se explicasse a uma criança de 10 anos."
@@ -232,12 +255,12 @@ def _build_prompt(req: AdaptationRequest) -> str:
 
 
 def _base_prompt(req: AdaptationRequest) -> str:
-    perfil = req.perfil or "TDAH/Iniciante"
+    orientacoes = _writing_guidance(req.perfil)
     texto = req.texto.replace('"""', "'''")
 
     if req.modo == "metaphor":
         return f"""Você é um educador especialista em acessibilidade cognitiva.
-Perfil do estudante: {perfil}
+Orientações de escrita: {orientacoes}
 {_SAFETY_NOTE}
 
 Texto a adaptar:
@@ -254,7 +277,7 @@ Adapte o texto em uma metáfora do cotidiano, em português do Brasil:
 
     if req.modo == "checklist":
         return f"""Você é um especialista em aprendizado ativo e acessibilidade cognitiva.
-Perfil do estudante: {perfil}
+Orientações de escrita: {orientacoes}
 {_SAFETY_NOTE}
 
 Texto a adaptar:
@@ -269,7 +292,7 @@ Transforme o texto em passos de estudo, em português do Brasil:
 
     if req.modo == "summary":
         return f"""Você é um especialista em síntese cognitiva e clareza textual.
-Perfil do estudante: {perfil}
+Orientações de escrita: {orientacoes}
 {_SAFETY_NOTE}
 
 Texto a adaptar:
@@ -283,7 +306,7 @@ Resuma o texto em português do Brasil:
 
     # questions
     return f"""Você é um educador especialista em avaliação formativa e acessibilidade cognitiva.
-Perfil do estudante: {perfil}
+Orientações de escrita: {orientacoes}
 {_SAFETY_NOTE}
 
 Texto original:
@@ -292,7 +315,7 @@ Texto original:
 \"\"\"
 
 Gere perguntas de compreensão que ajudem o estudante a consolidar o que leu.
-As perguntas devem ser concretas, sem ambiguidade, adequadas ao perfil indicado.
+As perguntas devem ser concretas, sem ambiguidade, seguindo as orientações de escrita.
 Escreva em português do Brasil:
 - titulo: título motivador para o conjunto de perguntas
 - conteudo_principal: breve instrução sobre como usar as perguntas (1 frase)

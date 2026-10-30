@@ -41,7 +41,9 @@ Quatro lentes de assimilação do mesmo conteúdo:
 MindED/
 ├── index.html          # Landing page
 ├── workspace.html      # Workspace principal (two-column layout)
-├── preferencias.html   # Onboarding de perfil cognitivo
+├── preferencias.html   # Preferências e controle dos dados locais
+├── termos.html         # Termos de Uso
+├── privacidade.html    # Política de Privacidade
 ├── src/
 │   ├── css/
 │   │   └── base.css    # Design system completo (tokens, glass, botões, header)
@@ -98,11 +100,12 @@ Testes: `pip install pytest && pytest test_main.py`.
 
 O frontend está no Firebase Hosting; a API precisa de um host próprio (a imagem de `api/Dockerfile` serve para isso). Depois de publicar:
 
-1. Defina `GEMINI_API_KEY` no host — e nunca `AUTH_DISABLED`.
+1. Defina no host uma `GEMINI_API_KEY` com faturamento ativo — e nunca `AUTH_DISABLED`.
 2. Preencha `PROD_API_BASE` no `workspace.html` com a URL pública da API.
 3. Se usar outro domínio no frontend, inclua-o em `ALLOWED_ORIGINS`.
+4. Preencha os campos `[PREENCHER: ...]` de `termos.html` e `privacidade.html` e faça revisão jurídica.
 
-> **Obter chave Gemini:** [aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey) — gratuito.
+> **Obter chave Gemini:** [aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey). A chave gratuita serve só para testes com textos fictícios. Em produção, use uma chave com faturamento ativo: os termos do Google pedem para não enviar dados pessoais ou sensíveis ao plano gratuito.
 
 ---
 
@@ -142,6 +145,7 @@ Resposta completa segue o schema `AdaptationResponse` em [`api/main.py`](api/mai
 - `GEMINI_API_KEY` exclusivamente via variável de ambiente — nunca hardcoded
 - Token do Firebase verificado no servidor em todas as rotas que usam IA ou buscam links
 - Limite de pedidos por usuário e por minuto (por processo)
+- O nome do perfil (TDAH, autismo etc.) não chega ao Gemini: a API o converte em orientações de escrita
 - `/extract-url` bloqueia endereços internos, inclusive em redirecionamentos
 - CORS restrito às origens em `ALLOWED_ORIGINS`
 - A chave `apiKey` do Firebase no frontend é pública por definição; a proteção vem das regras e dos domínios autorizados

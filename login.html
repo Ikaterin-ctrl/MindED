@@ -72,7 +72,7 @@
       align-items: center;
       gap: var(--sp-md);
       color: var(--clr-text-subtle);
-      font-size: 0.75rem;
+      font-size: 0.875rem;
     }
     .login-sep::before,
     .login-sep::after {
@@ -88,7 +88,7 @@
       border: 1px solid rgba(239,68,68,0.25);
       border-radius: var(--r-md);
       color: #FCA5A5;
-      font-size: 0.84rem;
+      font-size: 0.875rem;
       text-align: left;
       display: none;
       line-height: 1.5;
@@ -106,7 +106,7 @@
     .btn-google.loading .btn-google-label { display: none; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .login-note {
-      font-size: 0.73rem;
+      font-size: 0.875rem;
       color: var(--clr-text-subtle);
       line-height: 1.65;
     }
@@ -119,7 +119,7 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 0.83rem;
+      font-size: 0.875rem;
       color: var(--clr-text-subtle);
       padding: 6px 12px;
       border-radius: var(--r-sm);
@@ -135,7 +135,7 @@
     Voltar
   </a>
 
-  <div class="login-wrap">
+  <main class="login-wrap">
     <div class="login-card glass">
       <img src="img/logominded.png" alt="MindED" class="login-logo" />
       <h1>Bem-vindo ao MindED</h1>
@@ -160,11 +160,12 @@
       <div class="login-sep">início de sessão seguro</div>
 
       <p class="login-note">
-        Ao entrar, aceita os <a href="#">Termos de Uso</a> e a
-        <a href="#">Política de Privacidade</a> do MindED.
+        Ao entrar, você confirma ter 18 anos ou mais e aceita os
+        <a href="termos.html">Termos de Uso</a> e a
+        <a href="privacidade.html">Política de Privacidade</a> do MindED.
       </p>
     </div>
-  </div>
+  </main>
 
   <!-- Firebase SDK (compat — works without bundler) -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>

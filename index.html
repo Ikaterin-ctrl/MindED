@@ -33,7 +33,7 @@
     .landing__tag {
       display: inline-block;
       color: var(--clr-text-subtle);
-      font-size: 0.85rem;
+      font-size: 0.875rem;
       font-style: italic;
       font-family: var(--font-body);
     }
@@ -108,13 +108,13 @@
       opacity: 0.9;
     }
 
-    .feature-card h3 {
+    .feature-card h2 {
       font-size: 1.15rem;
       font-weight: 700;
       color: var(--clr-text);
     }
     .feature-card p {
-      font-size: 0.86rem;
+      font-size: 0.875rem;
       color: var(--clr-text-muted);
       line-height: 1.7;
     }
@@ -157,7 +157,7 @@
       line-height: 1;
     }
     .how-step p {
-      font-size: 0.84rem;
+      font-size: 0.875rem;
       line-height: 1.65;
       color: var(--clr-text-muted);
     }
@@ -182,6 +182,7 @@
   </style>
 </head>
 <body>
+  <a href="#conteudo" class="skip-link">Pular para o conteúdo</a>
 
   <!-- ── Header ─────────────────────────────────────────────── -->
   <header class="main-header">
@@ -205,7 +206,7 @@
   </header>
 
   <!-- ── Landing ────────────────────────────────────────────── -->
-  <main class="page-wrap">
+  <main class="page-wrap" id="conteudo" tabindex="-1">
     <section class="landing" aria-labelledby="landing-headline">
 
       <!-- Hand-drawn brain doodle -->
@@ -255,7 +256,7 @@
             <path d="M28 10 L34 16" stroke-width="2"/>
             <path d="M8 36 L12 32" stroke-width="2"/>
           </svg>
-          <h3>Metáforas do dia a dia</h3>
+          <h2>Metáforas do dia a dia</h2>
           <p>Conceitos abstratos viram analogias concretas com coisas que você já conhece.</p>
         </article>
 
@@ -267,7 +268,7 @@
             <path d="M13 26 L31 26" stroke-width="2"/>
             <path d="M13 32 L24 32" stroke-width="2"/>
           </svg>
-          <h3>Passos pequenos</h3>
+          <h2>Passos pequenos</h2>
           <p>O conteúdo se divide em tarefas que cabem em uma única ação. Sem sobrecarga.</p>
         </article>
 
@@ -280,7 +281,7 @@
             <circle cx="34" cy="32" r="6" stroke-width="2"/>
             <path d="M31 32 L33 34 L37 30" stroke-width="2"/>
           </svg>
-          <h3>Resumo sem excesso</h3>
+          <h2>Resumo sem excesso</h2>
           <p>Só o que importa, destacado. Leitura rápida sem perder o essencial.</p>
         </article>
 
@@ -293,7 +294,7 @@
 
       <!-- Como funciona -->
       <div class="how-section fade-up" id="como-funciona" style="animation-delay:0.6s">
-        <p class="how-section__title">Como funciona</p>
+        <h2 class="how-section__title">Como funciona</h2>
         <div class="how-steps">
           <div class="how-step">
             <span class="how-step__num">1</span>
@@ -316,6 +317,7 @@
   <!-- ── Footer ─────────────────────────────────────────────── -->
   <footer class="site-footer">
     <p>&copy; 2025 MindED &mdash; Projeto open-source de acessibilidade cognitiva.</p>
+    <p><a href="termos.html">Termos de Uso</a> · <a href="privacidade.html">Política de Privacidade</a></p>
   </footer>
 
   <script>

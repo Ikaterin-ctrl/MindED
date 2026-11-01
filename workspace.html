@@ -923,6 +923,37 @@
     .focus-session__timer { font-size: 1.1rem; font-variant-numeric: tabular-nums; }
     .focus-session__actions { display: flex; flex-wrap: wrap; gap: var(--sp-sm); }
 
+    .focus-session__mascot { color: var(--clr-accent); animation: mascot-hop 480ms steps(2, end) 4; }
+    @keyframes mascot-hop { 50% { transform: translateY(-8px); } }
+
+    /* ── Result sections that open on demand ────────────────── */
+    .result-more { margin-top: var(--sp-md); border: 1px solid var(--clr-border-md); }
+    .result-more > summary {
+      display: flex;
+      align-items: center;
+      min-height: 44px;
+      padding: var(--sp-sm) var(--sp-md);
+      font-weight: 600;
+      color: var(--clr-text);
+      cursor: pointer;
+    }
+    .result-more[open] > summary { border-bottom: 1px solid var(--clr-border); }
+    .result-more > :not(summary) { margin: var(--sp-md); }
+    .explain-block-btn { align-self: flex-start; margin-top: var(--sp-sm); }
+
+    /* ── PDF page range ─────────────────────────────────────── */
+    .pdf-range { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-sm); margin-top: var(--sp-sm); }
+    .pdf-range p { flex-basis: 100%; font-size: 0.9rem; }
+    .pdf-range label { display: flex; align-items: center; gap: 6px; font-size: 0.9rem; color: var(--clr-text-muted); }
+    .pdf-range input {
+      width: 5rem;
+      min-height: 44px;
+      padding: 0 var(--sp-sm);
+      background: var(--clr-surface-md);
+      border: 1px solid var(--clr-border-md);
+      color: var(--clr-text);
+    }
+
     /* ── Explain a passage ──────────────────────────────────── */
     .explain-btn {
       position: fixed;
@@ -1092,6 +1123,12 @@
             style="position:absolute;opacity:0;width:0;height:0;pointer-events:none;" />
         </div>
         <p class="source-status" id="source-status" role="status"></p>
+        <form class="pdf-range" id="pdf-range" hidden>
+          <p id="pdf-range-text"></p>
+          <label>De <input type="number" id="pdf-from" min="1" required /></label>
+          <label>até <input type="number" id="pdf-to" min="1" required /></label>
+          <button class="btn btn-ghost btn-sm" type="submit">Usar estas páginas</button>
+        </form>
 
       </div>
 
@@ -1280,6 +1317,7 @@
   <button class="btn btn-primary btn-sm explain-btn" id="explain-btn" type="button" hidden>Não entendi esta parte</button>
 
   <div class="focus-session" id="focus-session" role="dialog" aria-modal="true" aria-labelledby="fs-count" hidden>
+    <svg class="pixel focus-session__mascot" id="fs-mascot" width="96" height="96" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" hidden><path d="M5 3h6v1h-6zM3 4h2v1h-2zM7 4h2v1h-2zM11 4h2v1h-2zM2 5h1v1h-1zM7 5h2v1h-2zM13 5h1v1h-1zM1 6h1v1h-1zM4 6h1v1h-1zM7 6h2v1h-2zM11 6h1v1h-1zM14 6h1v1h-1zM1 7h1v1h-1zM7 7h2v1h-2zM14 7h1v1h-1zM1 8h1v1h-1zM4 8h1v1h-1zM7 8h2v1h-2zM11 8h1v1h-1zM14 8h1v1h-1zM2 9h1v1h-1zM7 9h2v1h-2zM13 9h1v1h-1zM3 10h2v1h-2zM6 10h4v1h-4zM11 10h2v1h-2zM5 11h2v1h-2zM9 11h2v1h-2zM5 12h2v1h-2zM9 12h2v1h-2z"/></svg>
     <p class="focus-session__count" id="fs-count"></p>
     <p class="focus-session__step" id="fs-step"></p>
     <div class="focus-session__bar" aria-hidden="true"><div class="focus-session__fill" id="fs-fill"></div></div>
@@ -1539,6 +1577,9 @@
 
       // OpenDyslexic
       b.classList.toggle('font-dyslexic', a11yState.dyslexic);
+      if (a11yState.dyslexic && !document.getElementById('dyslexic-font')) {
+        document.head.insertAdjacentHTML('beforeend', '<link id="dyslexic-font" rel="stylesheet" href="https://fonts.cdnfonts.com/css/opendyslexic?display=swap" />');
+      }
       dyslexicBtn.classList.toggle('active', a11yState.dyslexic);
       dyslexicBtn.setAttribute('aria-pressed', String(a11yState.dyslexic));
 
@@ -1880,10 +1921,13 @@
     function saveHistory(arr) {
       try { localStorage.setItem(HISTORY_KEY, JSON.stringify(arr.slice(0, HISTORY_MAX))); } catch (_) {}
     }
+    let currentEntryId = null;
+
     function addToHistory(data, mode, profile, texto) {
       const hist = loadHistory();
+      const id = Date.now();
       hist.unshift({
-        id:      Date.now(),
+        id,
         ts:      new Date().toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }),
         titulo:  data.titulo,
         mode,
@@ -1893,7 +1937,37 @@
       });
       saveHistory(hist);
       renderHistory();
+      rememberResult(id);
+      return id;
     }
+
+    function rememberResult(id) {
+      currentEntryId = id;
+      try { sessionStorage.setItem('minded_last_result', String(id)); } catch (_) {}
+    }
+
+    function saveChecklistProgress() {
+      const hist = loadHistory();
+      const entry = hist.find(h => h.id === currentEntryId);
+      if (!entry) return;
+      entry.done = checklistState.flatMap((checked, i) => (checked ? [i] : []));
+      saveHistory(hist);
+    }
+
+    function restoreEntry(entry, quiet = false) {
+      // Set first: the action bar reads it while the result is rendered
+      lastRequest = entry.texto ? { text: entry.texto, mode: entry.mode } : null;
+      rememberResult(entry.id);
+      const html = entry.mode === 'metaphor'   ? renderMetaphor(entry.data)
+                 : entry.mode === 'checklist'  ? renderChecklist(entry.data)
+                 : entry.mode === 'questions'  ? renderQuestions(entry.data)
+                 : renderSummary(entry.data);
+      showOutput(html, entry.data, quiet);
+      (entry.done || []).forEach(i => {
+        outputContent.querySelector(`.checklist-item[data-idx="${i}"]`)?.click();
+      });
+    }
+
     function renderHistory() {
       const hist = loadHistory();
       const modeLabels = { metaphor: 'Metáfora', checklist: 'Passo a passo', summary: 'Resumo', questions: 'Perguntas' };
@@ -1916,12 +1990,7 @@
           const id = parseInt(el.dataset.id, 10);
           const entry = loadHistory().find(h => h.id === id);
           if (!entry) return;
-          const html = entry.mode === 'metaphor'   ? renderMetaphor(entry.data)
-                     : entry.mode === 'checklist'  ? renderChecklist(entry.data)
-                     : entry.mode === 'questions'  ? renderQuestions(entry.data)
-                     : renderSummary(entry.data);
-          lastRequest = entry.texto ? { text: entry.texto, mode: entry.mode } : null;
-          showOutput(html, entry.data);
+          restoreEntry(entry);
           closeHistory();
         };
         el.addEventListener('click', activate);
@@ -2018,15 +2087,14 @@
       await loadPdfJs();
       const arrayBuffer = await file.arrayBuffer();
       const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-      let fullText = '';
+      const pages = [];
       for (let i = 1; i <= pdf.numPages; i++) {
         const page    = await pdf.getPage(i);
         const content = await page.getTextContent();
-        fullText += content.items.map(item => item.str).join(' ') + '\n\n';
+        pages.push(content.items.map(item => item.str).join(' '));
       }
-      fullText = fullText.trim();
-      if (fullText.length < 10) throw new Error('O PDF não tem texto extraível (pode ser uma imagem digitalizada).');
-      return fullText;
+      if (pages.join('').trim().length < 10) throw new Error('O PDF não tem texto extraível (pode ser uma imagem digitalizada).');
+      return pages;
     }
 
     function usePdfText(text) {
@@ -2046,13 +2114,43 @@
       }
       sourceStatus.textContent = 'Extraindo o texto…';
       try {
-        usePdfText(await extractPdf(file));
+        const pages = await extractPdf(file);
+        const text = pages.join('\n\n').trim();
+        if (text.length <= MAX_TEXT_CHARS) usePdfText(text);
+        else offerPageRange(pages);
       } catch (err) {
         sourceStatus.textContent = 'Erro: ' + (err.message || err);
       } finally {
         pdfUpload.value = '';
       }
     }
+
+    // Long PDFs: the reader picks a stretch instead of hitting the limit
+    const pdfRange = document.getElementById('pdf-range');
+    const pdfFrom  = document.getElementById('pdf-from');
+    const pdfTo    = document.getElementById('pdf-to');
+    let pdfPages = [];
+
+    function offerPageRange(pages) {
+      pdfPages = pages;
+      pdfFrom.max = pdfTo.max = pages.length;
+      pdfFrom.value = 1;
+      pdfTo.value = Math.min(10, pages.length);
+      document.getElementById('pdf-range-text').textContent =
+        `Este PDF tem ${pages.length} páginas e passa do limite. Escolha um trecho:`;
+      sourceStatus.textContent = '';
+      pdfRange.hidden = false;
+      pdfFrom.focus();
+    }
+
+    pdfRange.addEventListener('submit', e => {
+      e.preventDefault();
+      const from = Math.min(Number(pdfFrom.value), Number(pdfTo.value));
+      const to   = Math.max(Number(pdfFrom.value), Number(pdfTo.value));
+      pdfRange.hidden = true;
+      usePdfText(pdfPages.slice(from - 1, to).join('\n\n').trim());
+      pdfPages = [];
+    });
 
     pdfUpload.addEventListener('change', e => handlePdfFile(e.target.files[0]));
     document.getElementById('pdf-pick-btn').addEventListener('click', () => pdfUpload.click());
@@ -2216,9 +2314,8 @@
         </tr>`).join('');
 
       const mappingSection = maps ? `
-        <hr class="output-divider"/>
-        <div class="mapping-grid-section">
-          <h4>Mapeamento Termo ➔ Metáfora</h4>
+        <details class="result-more mapping-grid-section">
+          <summary>Ver termo por termo</summary>
           <table class="mapping-table" role="table">
             <thead>
               <tr>
@@ -2229,7 +2326,7 @@
             </thead>
             <tbody>${maps}</tbody>
           </table>
-        </div>` : '';
+        </details>` : '';
 
       const alertSection = data.pontos_de_atencao ? `
         <hr class="output-divider"/>
@@ -2352,9 +2449,8 @@
       if (!mappings || !mappings.length) return '';
       const total = mappings.length;
       return `
-        <hr class="output-divider"/>
-        <div class="flashcard-section" id="flashcard-section">
-          <span class="flashcard-section__title">Flashcards — ${total} ${total === 1 ? 'conceito' : 'conceitos'}</span>
+        <details class="result-more flashcard-section" id="flashcard-section">
+          <summary>Praticar com ${total} ${total === 1 ? 'flashcard' : 'flashcards'}</summary>
           <div class="flashcard-progress" role="progressbar" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="1">
             <div class="flashcard-progress__fill" id="fc-progress" style="width:${Math.round(1/total*100)}%"></div>
           </div>
@@ -2377,7 +2473,7 @@
             <span class="flashcard-counter" id="fc-counter" aria-live="polite">1 / ${total}</span>
             <button class="btn btn-ghost btn-sm" id="fc-next" aria-label="Próximo" ${total < 2 ? 'disabled' : ''}>→</button>
           </div>
-        </div>`;
+        </details>`;
     }
 
     // ── Clean text for copy and export ────────────────────────────────────
@@ -2533,7 +2629,7 @@
     }
 
     // ── Show output ───────────────────────────────────────────────────────
-    function showOutput(html, responseData) {
+    function showOutput(html, responseData, quiet = false) {
       if (window.speechSynthesis) window.speechSynthesis.cancel();
       stopSkeleton();
       currentResult = responseData;
@@ -2546,23 +2642,20 @@
       // Mark body so focus mode knows there's output
       document.body.classList.add('has-output');
 
-      // Announce once, then put keyboard and screen reader users at the result
-      document.getElementById('sr-status').textContent = 'Resultado pronto.';
-      const resultTitle = outputContent.querySelector('.output-title');
-      if (resultTitle) {
-        resultTitle.tabIndex = -1;
-        resultTitle.focus({ preventScroll: true });
-      }
-
-      // On mobile (single-column layout), scroll output panel into view
-      // so the user doesn't have to hunt for the result after clicking Adaptar
-      if (window.innerWidth <= 900) {
-        requestAnimationFrame(() => {
-          const outputSection = document.querySelector('.output-panel');
-          if (outputSection) {
-            outputSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }
-        });
+      // Announce once, then put keyboard and screen reader users at the result.
+      // On mobile (single-column layout), also scroll the result into view.
+      if (!quiet) {
+        document.getElementById('sr-status').textContent = 'Resultado pronto.';
+        const resultTitle = outputContent.querySelector('.output-title');
+        if (resultTitle) {
+          resultTitle.tabIndex = -1;
+          resultTitle.focus({ preventScroll: true });
+        }
+        if (window.innerWidth <= 900) {
+          requestAnimationFrame(() => {
+            document.querySelector('.output-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+        }
       }
 
       // Bidirectional highlight for metaphor
@@ -2601,6 +2694,7 @@
             if (fill)  fill.style.width  = pct + '%';
             if (label) label.textContent = `${done} / ${total}`;
             if (wrap)  wrap.setAttribute('aria-valuenow', String(done));
+            saveChecklistProgress();
           }
           item.addEventListener('click', toggle);
           item.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggle(); } });
@@ -2719,6 +2813,19 @@
         });
       });
 
+      // Button for touch and keyboard, where selecting text is hard
+      const mainBlock = outputContent.querySelector('.output-prose, .summary-body');
+      if (!IS_DEMO && mainBlock && ['metaphor', 'summary'].includes(responseData?.modo)) {
+        const explainBlockBtn = document.createElement('button');
+        explainBlockBtn.type = 'button';
+        explainBlockBtn.className = 'btn btn-ghost btn-sm explain-block-btn';
+        explainBlockBtn.textContent = 'Não entendi esta parte';
+        explainBlockBtn.addEventListener('click', () => {
+          explainPassage(mainBlock.innerText.trim().slice(0, 1000), mainBlock);
+        });
+        mainBlock.after(explainBlockBtn);
+      }
+
       document.getElementById('focus-start')?.addEventListener('click', () => {
         startFocusSession(responseData.passos_acao || []);
       });
@@ -2821,6 +2928,7 @@
         else if (data.modo === 'questions')  html = renderQuestions(data);
         else                                 html = renderSummary(data);
 
+        currentEntryId = null;
         showOutput(html, data);
         if (!IS_DEMO) {
           addToHistory(data, mode, profile, text);
@@ -2898,7 +3006,10 @@
 
       hideExplainButton();
       document.getSelection().removeAllRanges();
+      explainPassage(trecho, block);
+    });
 
+    async function explainPassage(trecho, block) {
       const card = document.createElement('div');
       card.className = 'explain-card';
       card.tabIndex = -1;
@@ -2927,7 +3038,7 @@
       } catch (err) {
         answer.textContent = err.message;
       }
-    });
+    }
 
     // ═══════════════════════════════════════════════════════════════════════
     // SESSÃO DE FOCO — one step at a time, with a silent timer
@@ -2964,6 +3075,7 @@
 
     function fsFinish() {
       clearInterval(fs.interval);
+      document.getElementById('fs-mascot').hidden = false;
       fsCount.textContent = 'Sessão concluída';
       fsStep.textContent = `Você concluiu ${fs.done} de ${fs.steps.length} passos.`;
       fsTimer.textContent = '';
@@ -2995,6 +3107,7 @@
       fs.index = 0;
       fs.done = 0;
       fs.total = (FOCUS_MINUTES[sessao] || 5) * 60;
+      document.getElementById('fs-mascot').hidden = true;
       [fsDone, fsPause, fsSkip].forEach(btn => { btn.hidden = false; });
       fsExit.textContent = 'Sair';
       fsPanel.hidden = false;
@@ -3025,6 +3138,8 @@
     // ── Boot: demo mode or saved draft ────────────────────────────────────
     if (IS_DEMO) {
       document.getElementById('demo-banner').hidden = false;
+      nav.querySelectorAll('a[href="workspace.html"], a[href="preferencias.html"]').forEach(link => { link.hidden = true; });
+      nav.insertAdjacentHTML('beforeend', '<a href="login.html" class="btn btn-primary btn-sm">Entrar</a>');
       document.getElementById('examples-group').hidden = true;
       document.getElementById('profile-group').hidden = true;
       document.getElementById('source-bar').hidden = true;
@@ -3032,7 +3147,13 @@
       textarea.readOnly = true;
       charCount.hidden = true;
     } else {
-      try { textarea.value = localStorage.getItem(DRAFT_KEY) || ''; } catch (_) {}
+      try {
+        textarea.value = localStorage.getItem(DRAFT_KEY) || '';
+        // A reload in the same tab keeps the result on screen
+        const lastId = Number(sessionStorage.getItem('minded_last_result'));
+        const lastEntry = loadHistory().find(h => h.id === lastId);
+        if (lastEntry) restoreEntry(lastEntry, true);
+      } catch (_) {}
     }
     updateCharCount();
 

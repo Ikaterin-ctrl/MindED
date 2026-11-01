@@ -6,14 +6,6 @@ Nasceu como projeto de Iniciação Científica sobre acessibilidade cognitiva. E
 
 ---
 
-## Demonstração visual
-
-| Modo Metáfora | Modo Microtarefas |
-|:---:|:---:|
-| ![Workspace — Modo Metáfora](docs/demo-metaphor.svg) | ![Workspace — Modo Microtarefas](docs/demo-checklist.svg) |
-
----
-
 ## O problema
 
 Pessoas neurodivergentes (TDAH, dislexia, autismo) e estudantes lidando com conteúdos técnicos densos frequentemente encontram:
@@ -58,9 +50,6 @@ MindED/
 │   └── README.md       # Instruções detalhadas do backend
 ├── img/
 │   └── logominded.png
-└── docs/
-    ├── demo-metaphor.svg
-    └── demo-checklist.svg
 ```
 
 ---
@@ -165,4 +154,4 @@ Resposta completa segue o schema `AdaptationResponse` em [`api/main.py`](api/mai
 
 ## Licença
 
-MIT — livre para usar, estudar e contribuir.
+[MIT](LICENSE) — livre para usar, estudar e contribuir.

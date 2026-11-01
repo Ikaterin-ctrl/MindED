@@ -5,8 +5,6 @@
    ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400..700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Pixelify+Sans:wght@500..700&display=swap');
-/* OpenDyslexic via CDN — loaded conditionally by JS but declared here */
-@import url('https://fonts.cdnfonts.com/css/opendyslexic?display=swap');
 
 /* ── CSS Custom Properties ────────────────────────────────── */
 :root {

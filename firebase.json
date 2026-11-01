@@ -9,16 +9,36 @@
       ".gitattributes",
       "README.md",
       "api/**",
-      "docs/**"
+      "docs/**",
+      "**/.*",
+      "**/*.md",
+      "img/logominded.png"
     ],
     "rewrites": [],
     "headers": [
+      {
+        "source": "**",
+        "headers": [
+          {
+            "key": "X-Content-Type-Options",
+            "value": "nosniff"
+          },
+          {
+            "key": "X-Frame-Options",
+            "value": "DENY"
+          },
+          {
+            "key": "Referrer-Policy",
+            "value": "strict-origin-when-cross-origin"
+          }
+        ]
+      },
       {
         "source": "**/*.@(js|css)",
         "headers": [
           {
             "key": "Cache-Control",
-            "value": "max-age=86400"
+            "value": "no-cache"
           }
         ]
       },

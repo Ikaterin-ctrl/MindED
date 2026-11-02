@@ -1,0 +1,2047 @@
+/* Workspace page. Runs after the auth guard in workspace.html, which defines IS_DEMO and _auth. */
+/* =====================================================================
+   MindED Workspace — v2
+   Fixes: mdToHtml XSS, aria-atomic, HCM persistence, prefs bridge,
+          Cmd+Enter, retry on error, TTS word-highlight, history,
+          focus mode, OpenDyslexic, font size, line spacing.
+===================================================================== */
+// Fill in PROD_API_BASE with the public API URL after deploying api/.
+const PROD_API_BASE = '';
+const IS_LOCAL = ['localhost', '127.0.0.1'].includes(location.hostname);
+const API_BASE = IS_LOCAL ? 'http://127.0.0.1:8000' : PROD_API_BASE;
+
+// ── Focus trap for dialogs ──────────────────────────────────────────
+// Returns a function that removes the trap and restores the previous focus.
+function trapFocus(container, onEscape) {
+  const opener = document.activeElement;
+  const selector = 'a[href], button:not([disabled]), input:not([disabled]), textarea, [tabindex="0"]';
+  const onKey = e => {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      e.stopPropagation();
+      onEscape();
+      return;
+    }
+    if (e.key !== 'Tab') return;
+    const items = [...container.querySelectorAll(selector)].filter(el => el.offsetParent !== null);
+    if (!items.length) return;
+    const first = items[0], last = items[items.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  };
+  container.addEventListener('keydown', onKey);
+  return () => {
+    container.removeEventListener('keydown', onKey);
+    if (opener && opener.isConnected) opener.focus();
+  };
+}
+
+// ── Authenticated API call ────────────────────────────────────────────
+async function apiPost(path, body, timeoutMs = 90000) {
+  if (!API_BASE) throw new Error('O serviço de adaptação ainda não está disponível neste site.');
+
+  const headers = { 'Content-Type': 'application/json' };
+  const user = firebase.auth().currentUser;
+  if (user) headers.Authorization = `Bearer ${await user.getIdToken()}`;
+
+  let response;
+  try {
+    response = await fetch(`${API_BASE}${path}`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(timeoutMs),
+    });
+  } catch (_) {
+    throw new Error(IS_LOCAL
+      ? 'Não foi possível conectar à API local. Verifique se o servidor está rodando na porta 8000.'
+      : 'Não foi possível conectar. Verifique sua internet e tente novamente.');
+  }
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(typeof err.detail === 'string' ? err.detail : `Erro inesperado (${response.status}).`);
+  }
+  return response.json();
+}
+
+// ── DOM refs ──────────────────────────────────────────────────────────
+const textarea       = document.getElementById('text-input');
+const charCount      = document.getElementById('char-count');
+const adaptBtn       = document.getElementById('adapt-btn');
+const adaptHint      = document.getElementById('adapt-hint');
+const profileStatus  = document.getElementById('profile-status');
+const profileEmpty   = document.getElementById('profile-empty');
+const profileTags    = document.getElementById('profile-status-tags');
+const outputEmpty    = document.getElementById('output-empty');
+const outputContent  = document.getElementById('output-content');
+const outputSkeleton = document.getElementById('output-skeleton');
+const skeletonStatus = document.getElementById('skeleton-status');
+const hamburger      = document.getElementById('hamburger');
+const nav            = document.getElementById('main-nav');
+const hcmBtn         = document.getElementById('hcm-btn');
+const focusBtn       = document.getElementById('focus-btn');
+const dyslexicBtn    = document.getElementById('dyslexic-btn');
+const spacingBtn     = document.getElementById('spacing-btn');
+const fontDecBtn     = document.getElementById('font-dec');
+const fontIncBtn     = document.getElementById('font-inc');
+const fontLabel      = document.getElementById('font-label');
+const historyBtn     = document.getElementById('history-btn');
+const historyPanel   = document.getElementById('history-panel');
+const historyClose   = document.getElementById('history-close');
+const historyOverlay = document.getElementById('history-overlay');
+const historyList    = document.getElementById('history-list');
+const a11yTriggerBtn = document.getElementById('a11y-trigger-btn');
+const a11yPanel      = document.getElementById('a11y-panel');
+
+// ── Hamburger ─────────────────────────────────────────────────────────
+hamburger.addEventListener('click', () => {
+  const open = nav.classList.toggle('open');
+  hamburger.classList.toggle('open', open);
+  hamburger.setAttribute('aria-expanded', String(open));
+});
+
+// ── Firebase user UI ──────────────────────────────────────────────────
+const avatarEl  = document.getElementById('user-avatar');
+const logoutBtn = document.getElementById('logout-btn');
+
+function initUserUI() {
+  const user = window._mindedUser;
+  if (!user) return;
+  if (user.photoURL) {
+    avatarEl.src = user.photoURL;
+    avatarEl.alt = user.displayName || 'Usuário';
+    avatarEl.style.display = 'block';
+  }
+  logoutBtn.style.display = 'inline-flex';
+  logoutBtn.addEventListener('click', async () => {
+    // Emptied first, because leaving the page saves the field again
+    textarea.value = '';
+    saveDraft();
+    mindedLeaveAccount();
+    await firebase.auth().signOut();
+    window.location.replace('login.html');
+  });
+}
+if (window._mindedUser) {
+  initUserUI();
+} else {
+  firebase.auth().onAuthStateChanged(user => {
+    if (user) { window._mindedUser = user; initUserUI(); }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// ACCESSIBILITY STATE — persisted in localStorage key 'minded_a11y'
+// ═══════════════════════════════════════════════════════════════════════
+const A11Y_KEY = 'minded_a11y';
+const SPACING_CYCLE = [
+  { cls: '',                    label: 'Espaçamento: normal',       btnLabel: 'Espaçamento' },
+  { cls: 'spacing-comfortable', label: 'Espaçamento: confortável',  btnLabel: 'Espaç. ×1' },
+  { cls: 'spacing-relaxed',     label: 'Espaçamento: relaxado',     btnLabel: 'Espaç. ×2' },
+];
+const FONT_SIZES = [
+  { cls: '',            label: 'A',  size: '15px' },
+  { cls: 'fontsize-md', label: 'A+', size: '17px' },
+  { cls: 'fontsize-lg', label: 'A++',size: '19px' },
+];
+
+let a11yState = {
+  hcm:        false,
+  focusMode:  false,
+  dyslexic:   false,
+  lightMode:  false,
+  spacingIdx: 0,
+  fontIdx:    0,
+  theme:      '',   // 'noite' | 'clean' | 'foco' from prefs
+};
+
+function saveA11y() {
+  try { localStorage.setItem(A11Y_KEY, JSON.stringify(a11yState)); } catch (_) {}
+}
+
+function applyA11y() {
+  const b = document.body;
+
+  // HCM
+  b.classList.toggle('hcm', a11yState.hcm);
+  hcmBtn.classList.toggle('active', a11yState.hcm);
+  hcmBtn.setAttribute('aria-pressed', String(a11yState.hcm));
+
+  // Focus mode
+  b.classList.toggle('focus-mode', a11yState.focusMode);
+  focusBtn.classList.toggle('active', a11yState.focusMode);
+  focusBtn.setAttribute('aria-pressed', String(a11yState.focusMode));
+
+  // OpenDyslexic
+  b.classList.toggle('font-dyslexic', a11yState.dyslexic);
+  if (a11yState.dyslexic && !document.getElementById('dyslexic-font')) {
+    document.head.insertAdjacentHTML('beforeend', '<link id="dyslexic-font" rel="stylesheet" href="https://fonts.cdnfonts.com/css/opendyslexic?display=swap" />');
+  }
+  dyslexicBtn.classList.toggle('active', a11yState.dyslexic);
+  dyslexicBtn.setAttribute('aria-pressed', String(a11yState.dyslexic));
+
+  // Line spacing
+  SPACING_CYCLE.forEach(s => s.cls && b.classList.remove(s.cls));
+  const sp = SPACING_CYCLE[a11yState.spacingIdx];
+  if (sp.cls) b.classList.add(sp.cls);
+  spacingBtn.setAttribute('aria-label', sp.label);
+  spacingBtn.classList.toggle('active', a11yState.spacingIdx > 0);
+  spacingBtn.querySelector('svg + span') && (spacingBtn.querySelector('svg + span').textContent = sp.btnLabel);
+
+  // Font size
+  FONT_SIZES.forEach(f => f.cls && b.classList.remove(f.cls));
+  const fs = FONT_SIZES[a11yState.fontIdx];
+  if (fs.cls) b.classList.add(fs.cls);
+  fontLabel.textContent = fs.label;
+
+  // Light mode toggle (manual)
+  b.classList.toggle('theme-light', a11yState.lightMode);
+  const lightBtn = document.getElementById('light-btn');
+  if (lightBtn) {
+    lightBtn.classList.toggle('active', a11yState.lightMode);
+    lightBtn.setAttribute('aria-pressed', String(a11yState.lightMode));
+  }
+
+  // Theme from prefs (overrides light only if not manually set)
+  b.classList.remove('theme-clean');
+  if (!a11yState.lightMode && a11yState.theme === 'clean') b.classList.add('theme-clean');
+
+  // Trigger dot — shows when any accessibility option is active
+  if (a11yTriggerBtn) {
+    const anyActive = a11yState.hcm || a11yState.focusMode || a11yState.dyslexic
+                    || a11yState.lightMode
+                    || a11yState.spacingIdx > 0 || a11yState.fontIdx > 0;
+    a11yTriggerBtn.classList.toggle('has-active', anyActive);
+  }
+}
+
+// ── A11y panel toggle ─────────────────────────────────────────────────
+if (a11yTriggerBtn && a11yPanel) {
+  a11yPanel.inert = true;
+  a11yTriggerBtn.addEventListener('click', () => {
+    const open = a11yPanel.classList.toggle('open');
+    a11yTriggerBtn.classList.toggle('open', open);
+    a11yTriggerBtn.setAttribute('aria-expanded', String(open));
+    a11yPanel.inert = !open;
+  });
+  // Close when clicking outside
+  document.addEventListener('click', e => {
+    if (!a11yTriggerBtn.contains(e.target) && !a11yPanel.contains(e.target)) {
+      a11yPanel.classList.remove('open');
+      a11yTriggerBtn.classList.remove('open');
+      a11yTriggerBtn.setAttribute('aria-expanded', 'false');
+      a11yPanel.inert = true;
+    }
+  });
+  // Close on Escape
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && a11yPanel.classList.contains('open')) {
+      a11yPanel.classList.remove('open');
+      a11yTriggerBtn.classList.remove('open');
+      a11yTriggerBtn.setAttribute('aria-expanded', 'false');
+      a11yPanel.inert = true;
+      a11yTriggerBtn.focus();
+    }
+  });
+}
+
+function loadA11y() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(A11Y_KEY) || '{}');
+    Object.assign(a11yState, saved);
+  } catch (_) {}
+}
+
+// ── HCM toggle ────────────────────────────────────────────────────────
+hcmBtn.addEventListener('click', () => {
+  a11yState.hcm = !a11yState.hcm;
+  applyA11y(); saveA11y();
+});
+
+// ── Focus mode toggle ──────────────────────────────────────────────────
+focusBtn.addEventListener('click', () => {
+  a11yState.focusMode = !a11yState.focusMode;
+  applyA11y(); saveA11y();
+});
+
+// ── Light mode toggle ─────────────────────────────────────────────────
+document.getElementById('light-btn').addEventListener('click', () => {
+  a11yState.lightMode = !a11yState.lightMode;
+  applyA11y(); saveA11y();
+});
+
+// ── OpenDyslexic toggle ───────────────────────────────────────────────
+dyslexicBtn.addEventListener('click', () => {
+  a11yState.dyslexic = !a11yState.dyslexic;
+  applyA11y(); saveA11y();
+});
+
+// ── Spacing cycle ─────────────────────────────────────────────────────
+spacingBtn.addEventListener('click', () => {
+  a11yState.spacingIdx = (a11yState.spacingIdx + 1) % SPACING_CYCLE.length;
+  applyA11y(); saveA11y();
+});
+
+// ── Font size stepper ─────────────────────────────────────────────────
+fontDecBtn.addEventListener('click', () => {
+  if (a11yState.fontIdx > 0) { a11yState.fontIdx--; applyA11y(); saveA11y(); }
+});
+fontIncBtn.addEventListener('click', () => {
+  if (a11yState.fontIdx < FONT_SIZES.length - 1) { a11yState.fontIdx++; applyA11y(); saveA11y(); }
+});
+
+// ═══════════════════════════════════════════════════════════════════════
+// BRIDGE: localStorage preferences → UI + a11y state
+// ═══════════════════════════════════════════════════════════════════════
+// What each choice changes, shown instead of the category name, which may be
+// a diagnosis the person would rather not have on screen.
+const PROFILE_LABELS = {
+  tdah: 'Direto, com exemplos', autismo: 'Linguagem literal', dislexia: 'Frases curtas',
+  analitico: 'Com detalhes', criativo: 'Com conexões',
+  visual: 'Listas organizadas', auditivo: 'Leitura em voz alta',
+};
+
+function renderProfilePill(perfil) {
+  const pill = document.getElementById('profile-pill');
+  if (!pill || !perfil) return;
+  const names = perfil.split(', ').map(t => PROFILE_LABELS[t] || t).join(', ');
+  pill.textContent = 'Seu perfil';
+  pill.setAttribute('data-empty', 'false');
+  pill.setAttribute('aria-label', `Seu perfil: ${names}. Editar preferências`);
+}
+
+function applyPreferences() {
+  try {
+    const prefs = JSON.parse(localStorage.getItem('minded_prefs') || '{}');
+
+    if (prefs.perfil_cognitivo) {
+      const tags = prefs.perfil_cognitivo.split(', ');
+
+      // Render profile tags in the panel
+      if (profileTags) {
+        profileTags.innerHTML = tags.map(t =>
+          `<span class="profile-tag">${esc(PROFILE_LABELS[t] || t)}</span>`
+        ).join('');
+      }
+      if (profileStatus) profileStatus.style.display = '';
+      if (profileEmpty)  profileEmpty.style.display  = 'none';
+
+      // Auto-enable HCM for dislexia or visual profiles
+      if (tags.includes('dislexia') || tags.includes('visual')) {
+        if (!a11yState.hcm) { a11yState.hcm = true; }
+      }
+      // Auto-enable OpenDyslexic for dislexia
+      if (tags.includes('dislexia')) {
+        if (!a11yState.dyslexic) { a11yState.dyslexic = true; }
+      }
+      // Auto-enable TTS for auditivo — set flag so TTS fires on output
+      window._autoTts = tags.includes('auditivo');
+      // Comfortable spacing for dislexia + autismo
+      if ((tags.includes('dislexia') || tags.includes('autismo')) && a11yState.spacingIdx === 0) {
+        a11yState.spacingIdx = 1;
+      }
+    }
+
+    // Apply tema from prefs (step 2)
+    if (prefs.tema === 'clean') a11yState.theme = 'clean';
+    if (prefs.tema === 'foco')  { a11yState.theme = ''; a11yState.focusMode = true; }
+    if (prefs.tema === 'noite') { a11yState.theme = ''; a11yState.lightMode = false; }
+
+    // Aplicar font size a partir de prefs (se ainda não guardado via a11y manual)
+    if (prefs.fontIdx !== undefined && a11yState.fontIdx === 0) {
+      a11yState.fontIdx = Math.min(parseInt(prefs.fontIdx, 10) || 0, FONT_SIZES.length - 1);
+    }
+
+    // Aplicar espaçamento a partir de prefs (se não ajustado manualmente)
+    if (prefs.spacingIdx !== undefined && a11yState.spacingIdx === 0) {
+      a11yState.spacingIdx = Math.min(parseInt(prefs.spacingIdx, 10) || 0, SPACING_CYCLE.length - 1);
+    }
+
+    // Pre-select mode from prefs if stored
+    if (prefs.modo) {
+      const radio = document.querySelector(`input[name="mode"][value="${prefs.modo}"]`);
+      if (radio) radio.checked = true;
+    }
+
+  } catch (_) {}
+}
+
+// Boot: load persisted a11y, apply prefs on top, then apply to DOM
+loadA11y();
+applyPreferences();
+applyA11y();
+saveA11y();
+
+// ── Profile pill — shows active cognitive profile in header ───────────
+try { renderProfilePill(JSON.parse(localStorage.getItem('minded_prefs') || '{}').perfil_cognitivo); } catch (_) {}
+
+// ═══════════════════════════════════════════════════════════════════════
+// PROFILE QUESTIONS MODAL
+// Offered after the first result when no prefs exist, never on arrival.
+// Saves 3 quick answers to minded_prefs and applies a11y state immediately.
+// ═══════════════════════════════════════════════════════════════════════
+const ONBOARD_KEY = 'minded_onboarded';
+let openOnboarding = null;
+(function initOnboarding() {
+  if (IS_DEMO) return;
+  // Skip if already onboarded OR if prefs already exist from /preferencias
+  const alreadyDone = localStorage.getItem(ONBOARD_KEY);
+  const hasPrefs    = (() => {
+    try { return !!JSON.parse(localStorage.getItem('minded_prefs') || 'null'); }
+    catch(_) { return false; }
+  })();
+  if (alreadyDone || hasPrefs) return;
+
+  const backdrop = document.getElementById('onboard-backdrop');
+  const modal    = document.getElementById('onboard-modal');
+  const saveBtn  = document.getElementById('onboard-save');
+  const skipBtn  = document.getElementById('onboard-skip');
+  if (!backdrop || !modal) return;
+
+  // Collected answers
+  const obData = {};
+
+  // Wire option buttons
+  modal.querySelectorAll('.onboard-options').forEach(group => {
+    const isMulti = group.dataset.multi === 'true';
+    const key     = group.dataset.obGroup;
+    group.querySelectorAll('.onboard-opt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (!isMulti) {
+          group.querySelectorAll('.onboard-opt').forEach(b => b.classList.remove('selected'));
+        }
+        btn.classList.toggle('selected');
+        // Collect selected values
+        const selected = [...group.querySelectorAll('.onboard-opt.selected')].map(b => b.dataset.value);
+        obData[key] = isMulti ? selected : selected[0];
+      });
+    });
+  });
+
+  let releaseFocus = null;
+  openOnboarding = () => {
+    modal.inert = false;
+    backdrop.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    backdrop.setAttribute('aria-hidden', 'false');
+    // Use rAF so CSS transition fires (display:none → display:flex needs a tick)
+    requestAnimationFrame(() => {
+      // Skipped if the modal was closed before the frame came
+      requestAnimationFrame(() => { if (!modal.inert) modal.classList.add('open'); });
+    });
+    releaseFocus = trapFocus(modal, closeModal);
+    const first = modal.querySelector('button, [tabindex="0"]');
+    if (first) setTimeout(() => first.focus(), 200);
+  };
+
+  function closeModal() {
+    modal.classList.remove('open');
+    backdrop.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    backdrop.setAttribute('aria-hidden', 'true');
+    localStorage.setItem(ONBOARD_KEY, '1');
+    modal.inert = true;
+    removeProfileNudge();
+    if (releaseFocus) releaseFocus();
+    if (!modal.contains(document.activeElement) && document.activeElement === document.body) {
+      document.getElementById('copy-btn')?.focus();
+    }
+  }
+
+  saveBtn.addEventListener('click', () => {
+    // Build and persist prefs from quick answers
+    const newPrefs = {};
+
+    // perfil_cognitivo from Q1
+    if (obData.perfil_cognitivo && obData.perfil_cognitivo.length) {
+      newPrefs.perfil_cognitivo = obData.perfil_cognitivo.join(', ');
+    }
+
+    // modo preferido from Q2 — pre-selects workspace radio
+    if (obData.modo_preferido) {
+      newPrefs.modo = obData.modo_preferido;
+      const radio = document.querySelector(`input[name="mode"][value="${obData.modo_preferido}"]`);
+      if (radio) radio.checked = true;
+    }
+
+    // Visual adjustments from Q3 — apply a11y immediately
+    if (obData.ajuste_visual && obData.ajuste_visual.length) {
+      if (obData.ajuste_visual.includes('hcm'))      { a11yState.hcm = true; }
+      if (obData.ajuste_visual.includes('dyslexic')) { a11yState.dyslexic = true; }
+      if (obData.ajuste_visual.includes('spacing'))  { a11yState.spacingIdx = 1; }
+    }
+
+    // Merge with any existing prefs
+    try {
+      const existing = JSON.parse(localStorage.getItem('minded_prefs') || '{}');
+      Object.assign(existing, newPrefs);
+      localStorage.setItem('minded_prefs', JSON.stringify(existing));
+    } catch(_) {}
+
+    // Apply all changes immediately
+    if (newPrefs.perfil_cognitivo) applyPreferences();
+    applyA11y(); saveA11y();
+    renderProfilePill(newPrefs.perfil_cognitivo);
+
+    closeModal();
+  });
+
+  skipBtn.addEventListener('click', closeModal);
+})();
+
+// ═══════════════════════════════════════════════════════════════════════
+// HISTORY
+// ═══════════════════════════════════════════════════════════════════════
+const HISTORY_KEY = 'minded_history';
+const HISTORY_MAX = 20;
+
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); }
+  catch (_) { return []; }
+}
+function saveHistory(arr) {
+  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(arr.slice(0, HISTORY_MAX))); } catch (_) {}
+}
+let currentEntryId = null;
+
+// extra: { fonte } for pages read from a link, { simplificado } for "Simplificar mais"
+function addToHistory(data, mode, profile, texto, extra = {}) {
+  const hist = loadHistory();
+  const id = Date.now();
+  hist.unshift({
+    id,
+    ts:      new Date().toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }),
+    titulo:  data.titulo,
+    mode,
+    profile,
+    texto,
+    data,
+    ...extra,
+  });
+  saveHistory(hist);
+  renderHistory();
+  rememberResult(id);
+  return id;
+}
+
+function rememberResult(id) {
+  currentEntryId = id;
+  try { sessionStorage.setItem('minded_last_result', String(id)); } catch (_) {}
+}
+
+function saveChecklistProgress() {
+  const hist = loadHistory();
+  const entry = hist.find(h => h.id === currentEntryId);
+  if (!entry) return;
+  entry.done = checklistState.flatMap((checked, i) => (checked ? [i] : []));
+  saveHistory(hist);
+}
+
+function restoreEntry(entry, quiet = false) {
+  // Set first: the action bar reads it while the result is rendered
+  lastRequest = entry.texto ? { text: entry.texto, mode: entry.mode, fonte: entry.fonte } : null;
+  rememberResult(entry.id);
+  // The next Adaptar should produce the same kind of result that is on screen
+  const radio = document.querySelector(`input[name="mode"][value="${entry.mode}"]`);
+  if (radio) radio.checked = true;
+  const html = renderResult({ ...entry.data, modo: entry.mode });
+  showOutput(html, entry.data, quiet);
+  (entry.done || []).forEach(i => {
+    outputContent.querySelector(`.checklist-item[data-idx="${i}"]`)?.click();
+  });
+}
+
+function renderHistory() {
+  const hist = loadHistory();
+  const modeLabels = { metaphor: 'Metáfora', checklist: 'Passo a passo', summary: 'Resumo', questions: 'Perguntas', mindmap: 'Mapa de ideias' };
+  if (!hist.length) {
+    historyList.innerHTML = '<p class="history-empty">Nenhuma adaptação ainda.<br/>Adapte um texto para criar o histórico.</p>';
+    return;
+  }
+  historyList.innerHTML = hist.map(h => `
+    <div class="history-item" data-id="${h.id}">
+      <button type="button" class="history-item__open" aria-label="Abrir: ${esc(h.titulo)}, ${esc(historySource(h))}">
+        <span class="history-item__title">${esc(h.titulo)}</span>
+        <span class="history-item__source">${esc(historySource(h))}</span>
+        <span class="history-item__meta">
+          <span class="history-item__badge">${modeLabels[h.mode] || h.mode}</span>
+          ${h.simplificado ? '<span class="history-item__badge">Mais simples</span>' : ''}
+          <span>${h.ts}</span>
+        </span>
+      </button>
+      <button type="button" class="history-item__delete" aria-label="Apagar do histórico: ${esc(h.titulo)}">
+        <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M3 3h2v1h-2zM11 3h2v1h-2zM4 4h2v1h-2zM10 4h2v1h-2zM5 5h2v1h-2zM9 5h2v1h-2zM6 6h4v1h-4zM7 7h2v2h-2zM6 9h4v1h-4zM5 10h2v1h-2zM9 10h2v1h-2zM4 11h2v1h-2zM10 11h2v1h-2zM3 12h2v1h-2zM11 12h2v1h-2z"/></svg>
+      </button>
+    </div>`).join('');
+
+  historyList.querySelectorAll('.history-item').forEach(el => {
+    const id = parseInt(el.dataset.id, 10);
+    el.querySelector('.history-item__open').addEventListener('click', () => {
+      const entry = loadHistory().find(h => h.id === id);
+      if (!entry) return;
+      restoreEntry(entry);
+      closeHistory();
+    });
+    el.querySelector('.history-item__delete').addEventListener('click', () => {
+      // Focus moves to the neighbour, so keyboard users keep their place
+      const items = [...historyList.querySelectorAll('.history-item')];
+      const pos = items.indexOf(el);
+      saveHistory(loadHistory().filter(h => h.id !== id));
+      if (currentEntryId === id) rememberResult(null);
+      renderHistory();
+      const rest = historyList.querySelectorAll('.history-item__delete');
+      (rest[Math.min(pos, rest.length - 1)] || historyClose).focus();
+    });
+  });
+}
+
+// A line that tells apart results with the same title
+function historySource(h) {
+  const src = h.fonte || h.texto || '';
+  if (/^(https?:\/\/|www\.)/i.test(src)) {
+    try { return new URL(asUrl(src)).hostname.replace(/^www\./, ''); } catch (_) {}
+  }
+  const flat = src.replace(/\s+/g, ' ').trim();
+  return flat.length > 60 ? flat.slice(0, 60) + '…' : flat;
+}
+
+let releaseHistoryFocus = null;
+function openHistory()  {
+  historyPanel.inert = false;
+  historyPanel.classList.add('open');
+  historyOverlay.classList.add('open');
+  historyOverlay.setAttribute('aria-hidden', 'false');
+  historyBtn.setAttribute('aria-expanded', 'true');
+  historyBtn.classList.add('active');
+  renderHistory();
+  releaseHistoryFocus = trapFocus(historyPanel, closeHistory);
+  historyClose.focus();
+}
+function closeHistory() {
+  historyPanel.classList.remove('open');
+  historyOverlay.classList.remove('open');
+  historyOverlay.setAttribute('aria-hidden', 'true');
+  historyBtn.setAttribute('aria-expanded', 'false');
+  historyBtn.classList.remove('active');
+  historyPanel.inert = true;
+  if (releaseHistoryFocus) releaseHistoryFocus();
+  releaseHistoryFocus = null;
+}
+
+historyBtn.addEventListener('click',   () => historyPanel.classList.contains('open') ? closeHistory() : openHistory());
+historyClose.addEventListener('click', closeHistory);
+historyOverlay.addEventListener('click', closeHistory);
+
+// ── Source detection ──────────────────────────────────────────────────
+const MAX_TEXT_CHARS = 60000;
+const VIDEO_MAX_MINUTES = 30;
+const WEB_URL = /^(https?:\/\/|www\.)\S+$/i;
+const YOUTUBE_URL = /^(https?:\/\/)?(www\.|m\.|music\.)?(youtube\.com\/(watch\?|shorts\/|live\/|embed\/)|youtu\.be\/)\S+$/i;
+const sourceStatus = document.getElementById('source-status');
+
+function asUrl(value) {
+  return /^https?:/i.test(value) ? value : `https://${value}`;
+}
+function describeSource(value) {
+  if (YOUTUBE_URL.test(value)) return `Vídeo do YouTube. Funciona com vídeos públicos, e usamos até os primeiros ${VIDEO_MAX_MINUTES} minutos.`;
+  if (WEB_URL.test(value)) return 'Link de página. Vamos ler o texto dela quando você clicar em Adaptar.';
+  return '';
+}
+
+// ── Char counter & button enabler ─────────────────────────────────────
+function updateCharCount() {
+  const len = textarea.value.length;
+  charCount.textContent = len > 0 ? `${len.toLocaleString('pt')} car.` : '';
+  const tooLong = len > MAX_TEXT_CHARS;
+  adaptBtn.disabled = len < 10 || tooLong;
+  adaptHint.hidden = len >= 10 && !tooLong;
+  adaptHint.textContent = tooLong
+    ? `Este texto tem ${len.toLocaleString('pt-BR')} caracteres. O limite é ${MAX_TEXT_CHARS.toLocaleString('pt-BR')}: use um trecho menor.`
+    : 'Escreva pelo menos 10 caracteres para adaptar.';
+  sourceStatus.textContent = describeSource(textarea.value.trim());
+  scheduleDraftSave();
+}
+textarea.addEventListener('input', () => {
+  // Edits to the page text keep its origin; clearing it or pasting a new source drops it
+  const value = textarea.value.trim();
+  if (!value || WEB_URL.test(value)) hideSourceOrigin();
+  updateCharCount();
+});
+
+// ── Origin of text read from a link, with a way back to the link ───────
+const sourceOrigin = document.getElementById('source-origin');
+let originUrl = '';
+function showSourceOrigin(url) {
+  originUrl = url;
+  let host = url;
+  try { host = new URL(url).hostname.replace(/^www\./, ''); } catch (_) {}
+  document.getElementById('source-origin-text').textContent = `Texto lido de ${host}.`;
+  sourceOrigin.hidden = false;
+}
+function hideSourceOrigin() {
+  originUrl = '';
+  sourceOrigin.hidden = true;
+}
+document.getElementById('source-origin-back').addEventListener('click', () => {
+  textarea.value = originUrl;
+  hideSourceOrigin();
+  updateCharCount();
+  textarea.focus();
+});
+
+// ── Draft — survives reloads, cleared on logout ───────────────────────
+const DRAFT_KEY = 'minded_draft';
+let _draftTimer = null;
+function saveDraft() {
+  if (IS_DEMO) return;
+  clearTimeout(_draftTimer);
+  try { localStorage.setItem(DRAFT_KEY, textarea.value); } catch (_) {}
+}
+function scheduleDraftSave() {
+  clearTimeout(_draftTimer);
+  _draftTimer = setTimeout(saveDraft, 400);
+}
+window.addEventListener('pagehide', saveDraft);
+
+// ── PDF: load pdf.js ──────────────────────────────────────────────────
+async function loadPdfJs() {
+  if (window.pdfjsLib) return;
+  await new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    s.onload = res; s.onerror = rej;
+    document.head.appendChild(s);
+  });
+  window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
+
+async function extractPdf(file) {
+  await loadPdfJs();
+  const arrayBuffer = await file.arrayBuffer();
+  const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  const pages = [];
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page    = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    pages.push(content.items.map(item => item.str).join(' '));
+  }
+  if (pages.join('').trim().length < 10) throw new Error('O PDF não tem texto extraível (pode ser uma imagem digitalizada).');
+  return pages;
+}
+
+function usePdfText(text) {
+  textarea.value = text;
+  hideSourceOrigin();
+  updateCharCount();
+  textarea.focus();
+}
+
+// PDF: file input
+const pdfUpload  = document.getElementById('pdf-upload');
+
+async function handlePdfFile(file) {
+  const isPdf = file && (file.type === 'application/pdf' || /\.pdf$/i.test(file.name));
+  if (!isPdf) {
+    sourceStatus.textContent = 'Arquivo inválido. Use um PDF.';
+    return;
+  }
+  sourceStatus.textContent = 'Extraindo o texto…';
+  try {
+    const pages = await extractPdf(file);
+    const text = pages.join('\n\n').trim();
+    if (text.length <= MAX_TEXT_CHARS) usePdfText(text);
+    else offerPageRange(pages);
+  } catch (err) {
+    sourceStatus.textContent = 'Erro: ' + (err.message || err);
+  } finally {
+    pdfUpload.value = '';
+  }
+}
+
+// Long PDFs: the reader picks a stretch instead of hitting the limit
+const pdfRange = document.getElementById('pdf-range');
+const pdfFrom  = document.getElementById('pdf-from');
+const pdfTo    = document.getElementById('pdf-to');
+let pdfPages = [];
+
+function offerPageRange(pages) {
+  pdfPages = pages;
+  pdfFrom.max = pdfTo.max = pages.length;
+  pdfFrom.value = 1;
+  pdfTo.value = Math.min(10, pages.length);
+  document.getElementById('pdf-range-text').textContent =
+    `Este PDF tem ${pages.length} páginas e passa do limite. Escolha um trecho:`;
+  sourceStatus.textContent = '';
+  pdfRange.hidden = false;
+  pdfFrom.focus();
+}
+
+pdfRange.addEventListener('submit', e => {
+  e.preventDefault();
+  const from = Math.min(Number(pdfFrom.value), Number(pdfTo.value));
+  const to   = Math.max(Number(pdfFrom.value), Number(pdfTo.value));
+  pdfRange.hidden = true;
+  usePdfText(pdfPages.slice(from - 1, to).join('\n\n').trim());
+  pdfPages = [];
+});
+
+pdfUpload.addEventListener('change', e => handlePdfFile(e.target.files[0]));
+document.getElementById('pdf-pick-btn').addEventListener('click', () => pdfUpload.click());
+
+// PDF: drag and drop on the field
+const textPane = document.getElementById('pane-text');
+textPane.addEventListener('dragover', e => {
+  if ([...e.dataTransfer.types].includes('Files')) {
+    e.preventDefault();
+    textPane.classList.add('drag-over');
+  }
+});
+textPane.addEventListener('dragleave', () => textPane.classList.remove('drag-over'));
+textPane.addEventListener('drop', e => {
+  if (!e.dataTransfer.files.length) return;
+  e.preventDefault();
+  textPane.classList.remove('drag-over');
+  handlePdfFile(e.dataTransfer.files[0]);
+});
+
+// ── Keyboard shortcut: Cmd/Ctrl + Enter ───────────────────────────────
+textarea.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+    e.preventDefault();
+    if (!adaptBtn.disabled) adaptBtn.click();
+  }
+});
+
+// ── Mode helper ───────────────────────────────────────────────────────
+function getMode() {
+  return document.querySelector('input[name="mode"]:checked').value;
+}
+
+// ── Escape HTML helper ────────────────────────────────────────────────
+function esc(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// ── Markdown → HTML (bold + bullets, for summary) ─────────────────────
+// FIX: escape HTML first, then apply bold markup so <strong> survives.
+function mdToHtml(text) {
+  // 1. Escape all HTML entities in the raw text
+  const escaped = text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+  // 2. Now safe to inject controlled HTML for bold and bullets
+  return escaped
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/^[-•] /gm, '<br/>• ')
+    .replace(/\n/g, '<br/>');
+}
+
+// ── Skeleton phases ───────────────────────────────────────────────────
+const SKELETON_PHASES = [
+  'Analisando o texto…',
+  'Identificando conceitos-chave…',
+  'Construindo analogias…',
+  'Verificando consistência…',
+  'Finalizando…',
+];
+let _skeletonTimer = null;
+function startSkeleton() {
+  outputEmpty.classList.add('hidden');
+  outputEmpty.setAttribute('aria-hidden', 'true');
+  outputContent.classList.add('hidden');
+  outputContent.setAttribute('aria-hidden', 'true');
+  outputSkeleton.classList.remove('hidden');
+  outputSkeleton.setAttribute('aria-hidden', 'false');
+  document.getElementById('sr-status').textContent = 'Adaptando o texto…';
+  let i = 0;
+  skeletonStatus.textContent = SKELETON_PHASES[0];
+  _skeletonTimer = setInterval(() => {
+    i = Math.min(i + 1, SKELETON_PHASES.length - 1);
+    skeletonStatus.textContent = SKELETON_PHASES[i];
+  }, 1800);
+}
+function stopSkeleton() {
+  clearInterval(_skeletonTimer);
+  outputSkeleton.classList.add('hidden');
+  outputSkeleton.setAttribute('aria-hidden', 'true');
+}
+
+// ── Concept-category icon map ─────────────────────────────────────────
+const CONCEPT_ICONS = {
+  banco: '🗄️', dados: '🗄️', database: '🗄️', armazenamento: '📦',
+  regra: '⚖️', logica: '⚙️', validacao: '✅',
+  api: '🔌', rede: '🌐', comunicacao: '📡', protocolo: '📡',
+  servico: '⚙️', servicos: '⚙️', processamento: '⚙️', microsservico: '⚙️',
+  autenticacao: '🔒', seguranca: '🔐', token: '🔑',
+  escalabilidade: '📈', performance: '⚡',
+};
+function iconForTerm(term) {
+  const lower = term.toLowerCase().replace(/[^a-záéíóúâêîôûãõç]/g, '');
+  for (const [key, icon] of Object.entries(CONCEPT_ICONS)) {
+    if (lower.includes(key)) return icon;
+  }
+  return '•';
+}
+
+// ── Bidirectional highlight ───────────────────────────────────────────
+function highlightProseTerms(proseEl, mappings) {
+  if (!mappings || !mappings.length) return;
+  // Works on text nodes only, so a term like "class" can never hit markup.
+  mappings.forEach((m, idx) => {
+    if (!m.termo_tecnico) return;
+    const safe = m.termo_tecnico.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const re = new RegExp(safe, 'gi');
+    const walker = document.createTreeWalker(proseEl, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walker.nextNode()) {
+      if (!walker.currentNode.parentElement.closest('.prose-highlight')) nodes.push(walker.currentNode);
+    }
+    nodes.forEach(node => {
+      const text = node.textContent;
+      const frag = document.createDocumentFragment();
+      let last = 0;
+      for (const match of text.matchAll(re)) {
+        frag.append(text.slice(last, match.index));
+        const span = document.createElement('span');
+        span.className = 'prose-highlight';
+        span.dataset.term = idx;
+        span.textContent = match[0];
+        frag.append(span);
+        last = match.index + match[0].length;
+      }
+      if (last === 0) return;
+      frag.append(text.slice(last));
+      node.replaceWith(frag);
+    });
+  });
+}
+
+// ── Build rich perfil string from all saved prefs ─────────────────────
+// Passes the full context from onboarding to the API prompt
+function buildPerfilString() {
+  try {
+    const prefs = JSON.parse(localStorage.getItem('minded_prefs') || '{}');
+    const parts = [];
+    if (prefs.perfil_cognitivo) parts.push(prefs.perfil_cognitivo);
+    if (prefs.ritmo)    parts.push(`ritmo:${prefs.ritmo}`);
+    if (prefs.sessao)   parts.push(`sessao:${prefs.sessao}`);
+    return parts.length ? parts.join('; ') : 'geral';
+  } catch (_) {
+    return 'geral';
+  }
+}
+
+// ── Render: Metaphor mode ─────────────────────────────────────────────
+function renderMetaphor(data) {
+  const maps = (data.mapeamentos || []).map((m, idx) => `
+    <tr data-term="${idx}">
+      <td><span class="term-icon" aria-hidden="true">${iconForTerm(m.termo_tecnico)}</span> ${esc(m.termo_tecnico)}</td>
+      <td>${esc(m.equivalente_metafora)}</td>
+      <td>${esc(m.explicacao_conexao)}</td>
+    </tr>`).join('');
+
+  const mappingSection = maps ? `
+    <details class="result-more mapping-grid-section">
+      <summary>Ver termo por termo</summary>
+      <table class="mapping-table" role="table">
+        <thead>
+          <tr>
+            <th scope="col">Termo Técnico</th>
+            <th scope="col">Na Metáfora</th>
+            <th scope="col">Por quê faz sentido</th>
+          </tr>
+        </thead>
+        <tbody>${maps}</tbody>
+      </table>
+    </details>` : '';
+
+  const alertSection = data.pontos_de_atencao ? `
+    <hr class="output-divider"/>
+    <div class="output-alert" role="note" aria-label="Limitação da metáfora">
+      <span class="output-alert__icon" aria-hidden="true">⚠️</span>
+      <p class="output-alert__text"><strong style="color:var(--clr-amber)">O que a metáfora NÃO cobre:</strong><br/>${esc(data.pontos_de_atencao)}</p>
+    </div>` : '';
+
+  const flashcardSection = buildFlashcards(data.mapeamentos);
+
+  return `
+    <div class="output-header">
+      <h3 class="output-title">${esc(data.titulo)}</h3>
+      ${data.universo_analogia ? `<span class="output-universe">${esc(data.universo_analogia)}</span>` : ''}
+    </div>
+    <p class="output-prose" id="output-prose-text">${esc(data.conteudo_principal)}</p>
+    ${mappingSection}
+    ${alertSection}
+    ${flashcardSection}
+    <hr class="output-divider"/>
+    ${actionBar(data)}
+  `;
+}
+
+// ── Render: Checklist mode ────────────────────────────────────────────
+let checklistState = [];
+
+function renderChecklist(data) {
+  const steps = data.passos_acao || [];
+  checklistState = steps.map(() => false);
+
+  const CHUNK = 5;
+  const visible = steps.slice(0, CHUNK);
+  const hidden  = steps.slice(CHUNK);
+
+  const makeItem = (step, i) => `
+    <div class="checklist-item" role="checkbox" aria-checked="false" tabindex="0" data-idx="${i}">
+      <div class="checklist-item__checkbox" aria-hidden="true">
+        <svg class="checklist-item__check-svg" viewBox="0 0 12 10">
+          <polyline points="1.5 5.5 4.5 8.5 10.5 1.5"/>
+        </svg>
+      </div>
+      <span class="checklist-item__text">${esc(step)}</span>
+    </div>`;
+
+  const visibleHtml = visible.map((s, i) => makeItem(s, i)).join('');
+  const hiddenHtml  = hidden.map((s, i) => makeItem(s, i + CHUNK)).join('');
+
+  const showMoreBtn = hidden.length ? `
+    <button class="chunk-more-btn" id="chunk-more-btn" aria-expanded="false" aria-controls="chunk-hidden">
+      ＋ Ver mais ${hidden.length} ${hidden.length === 1 ? 'tarefa' : 'tarefas'}
+    </button>
+    <div id="chunk-hidden" class="checklist-list hidden" role="group" aria-label="Tarefas adicionais">${hiddenHtml}</div>
+  ` : '';
+
+  return `
+    <div class="output-header">
+      <h3 class="output-title">${esc(data.titulo)}</h3>
+    </div>
+    ${data.conteudo_principal ? `<p class="output-prose">${esc(data.conteudo_principal)}</p>` : ''}
+    <div class="checklist-progress" role="progressbar" aria-valuemin="0" aria-valuemax="${steps.length}" aria-valuenow="0" id="progress-bar-wrap">
+      <div class="checklist-progress__bar">
+        <div class="checklist-progress__fill" id="progress-fill" style="width:0%"></div>
+      </div>
+      <span class="checklist-progress__label" id="progress-label">0 / ${steps.length}</span>
+    </div>
+    <div class="checklist-list" id="checklist-list" role="group" aria-label="Lista de tarefas">${visibleHtml}</div>
+    ${showMoreBtn}
+    <button class="btn btn-primary focus-start" id="focus-start" type="button">Começar sessão de foco</button>
+    <hr class="output-divider"/>
+    ${actionBar(data)}
+  `;
+}
+
+// ── Render: Summary mode ──────────────────────────────────────────────
+function renderSummary(data) {
+  return `
+    <div class="output-header">
+      <h3 class="output-title">${esc(data.titulo)}</h3>
+    </div>
+    <div class="summary-body">${mdToHtml(data.conteudo_principal)}</div>
+    <hr class="output-divider"/>
+    ${actionBar(data)}
+  `;
+}
+
+// ── Render: Mind map mode ─────────────────────────────────────────────
+// Nested lists, so screen readers get the same structure the eye sees
+function renderMindMap(data) {
+  const branches = (data.ramos || []).map(r => `
+    <li class="mindmap__branch">
+      <span class="mindmap__idea">${esc(r.ideia)}</span>
+      <ul class="mindmap__details">${(r.detalhes || []).map(d => `<li>${esc(d)}</li>`).join('')}</ul>
+    </li>`).join('');
+  return `
+    <div class="output-header">
+      <h3 class="output-title">${esc(data.titulo)}</h3>
+    </div>
+    <div class="mindmap">
+      <p class="mindmap__center output-prose">${esc(data.conteudo_principal)}</p>
+      <ul class="mindmap__branches" aria-label="Ideias ligadas ao tema">${branches}</ul>
+    </div>
+    <hr class="output-divider"/>
+    ${actionBar(data)}
+  `;
+}
+
+function renderResult(data) {
+  if (data.modo === 'metaphor')  return renderMetaphor(data);
+  if (data.modo === 'checklist') return renderChecklist(data);
+  if (data.modo === 'questions') return renderQuestions(data);
+  if (data.modo === 'mindmap')   return renderMindMap(data);
+  return renderSummary(data);
+}
+
+// ── Render: Questions mode ────────────────────────────────────────────
+function renderQuestions(data) {
+  const qs = (data.perguntas || []);
+  const cards = qs.map((q, i) => `
+    <div class="question-card" data-qi="${i}">
+      <div class="question-card__q" id="q-text-${i}">${esc(q.pergunta)}</div>
+      <!-- Trying an answer first helps it stick; it stays on this screen only -->
+      <label class="question-guess">
+        <span class="question-guess__label">Seu palpite (opcional)</span>
+        <textarea rows="2" aria-describedby="q-text-${i}"
+                  placeholder="Escreva com suas palavras antes de ver a resposta"></textarea>
+      </label>
+      <div class="question-card__actions">
+        <button class="question-hint-btn" data-qi="${i}" aria-expanded="false">
+          <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 2h6v1h-6zM4 3h1v1h-1zM11 3h1v1h-1zM3 4h1v1h-1zM12 4h1v1h-1zM3 5h1v1h-1zM12 5h1v1h-1zM3 6h1v1h-1zM12 6h1v1h-1zM3 7h1v1h-1zM6 7h1v1h-1zM9 7h1v1h-1zM12 7h1v1h-1zM4 8h1v1h-1zM7 8h2v1h-2zM11 8h1v1h-1zM5 9h1v1h-1zM10 9h1v1h-1zM5 10h1v1h-1zM10 10h1v1h-1zM5 11h6v1h-6zM5 12h6v1h-6zM6 13h4v1h-4z"/></svg>
+          Dica
+        </button>
+        <button class="question-reveal-btn" data-qi="${i}" aria-expanded="false">
+          <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 4h8v1h-8zM2 5h2v1h-2zM12 5h2v1h-2zM1 6h1v1h-1zM7 6h2v1h-2zM14 6h1v1h-1zM0 7h1v1h-1zM6 7h4v1h-4zM15 7h1v1h-1zM0 8h1v1h-1zM6 8h4v1h-4zM15 8h1v1h-1zM1 9h1v1h-1zM7 9h2v1h-2zM14 9h1v1h-1zM2 10h2v1h-2zM12 10h2v1h-2zM4 11h8v1h-8z"/></svg>
+          Ver resposta
+        </button>
+      </div>
+      <div class="question-hint" data-qi="${i}">${esc(q.dica)}</div>
+      <div class="question-answer" data-qi="${i}"><strong>Resposta:</strong> ${esc(q.resposta)}</div>
+      ${IS_DEMO ? '' : `
+      <div class="question-rate" data-qi="${i}" role="group" aria-label="Como foi esta pergunta?" hidden>
+        <span>Como foi?</span>
+        <button class="btn btn-ghost btn-sm" type="button" data-grade="0">Errei</button>
+        <button class="btn btn-ghost btn-sm" type="button" data-grade="1">Quase</button>
+        <button class="btn btn-ghost btn-sm" type="button" data-grade="2">Acertei</button>
+      </div>`}
+    </div>`).join('');
+
+  return `
+    <div class="output-header">
+      <h3 class="output-title">${esc(data.titulo)}</h3>
+    </div>
+    ${data.conteudo_principal ? `<p class="output-prose">${esc(data.conteudo_principal)}</p>` : ''}
+    <div class="questions-list">${cards}</div>
+    <hr class="output-divider"/>
+    ${actionBar(data)}
+  `;
+}
+
+// ── Render: Flashcards (dos mapeamentos, modo Metáfora) ───────────────
+function buildFlashcards(mappings) {
+  if (!mappings || !mappings.length) return '';
+  const total = mappings.length;
+  return `
+    <details class="result-more flashcard-section" id="flashcard-section">
+      <summary>Praticar com ${total} ${total === 1 ? 'flashcard' : 'flashcards'}</summary>
+      <div class="flashcard-progress" role="progressbar" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="1">
+        <div class="flashcard-progress__fill" id="fc-progress" style="width:${Math.round(1/total*100)}%"></div>
+      </div>
+      <div class="flashcard" id="flashcard" tabindex="0" aria-label="Clique para revelar a metáfora" role="button">
+        <div class="flashcard__inner">
+          <div class="flashcard__front">
+            <div class="flashcard__term" id="fc-term">${esc(mappings[0].termo_tecnico)}</div>
+            <div class="flashcard__hint" id="fc-hint">Qual é a metáfora?</div>
+            <span class="flashcard__tap">Clique para revelar</span>
+          </div>
+          <div class="flashcard__back">
+            <div class="flashcard__term" id="fc-answer" style="font-size:0.95rem">${esc(mappings[0].equivalente_metafora)}</div>
+            <div class="flashcard__answer" id="fc-explain">${esc(mappings[0].explicacao_conexao)}</div>
+            <span class="flashcard__tap">Clique para virar</span>
+          </div>
+        </div>
+      </div>
+      <div class="flashcard-nav">
+        <button class="btn btn-ghost btn-sm" id="fc-prev" aria-label="Anterior" ${total < 2 ? 'disabled' : ''}>←</button>
+        <span class="flashcard-counter" id="fc-counter" aria-live="polite">1 / ${total}</span>
+        <button class="btn btn-ghost btn-sm" id="fc-next" aria-label="Próximo" ${total < 2 ? 'disabled' : ''}>→</button>
+      </div>
+    </details>`;
+}
+
+// ── Clean text for copy and export ────────────────────────────────────
+function toMarkdown(data) {
+  const cell = value => String(value).replace(/\|/g, '\\|').replace(/\s+/g, ' ');
+  const blocks = [`# ${data.titulo}`];
+  if (data.universo_analogia) blocks.push(`*Universo da metáfora: ${data.universo_analogia}*`);
+  if (data.conteudo_principal) blocks.push(data.conteudo_principal);
+  if (data.mapeamentos?.length) {
+    blocks.push('## Termo e metáfora');
+    blocks.push([
+      '| Termo | Na metáfora | Por que faz sentido |',
+      '|---|---|---|',
+      ...data.mapeamentos.map(m => `| ${cell(m.termo_tecnico)} | ${cell(m.equivalente_metafora)} | ${cell(m.explicacao_conexao)} |`),
+    ].join('\n'));
+  }
+  if (data.pontos_de_atencao) blocks.push(`## O que a metáfora não cobre\n\n${data.pontos_de_atencao}`);
+  if (data.passos_acao?.length) blocks.push(data.passos_acao.map(step => `- [ ] ${step}`).join('\n'));
+  (data.perguntas || []).forEach(q => {
+    blocks.push(`## ${q.pergunta}\n\n**Dica:** ${q.dica}\n\n**Resposta:** ${q.resposta}`);
+  });
+  (data.ramos || []).forEach(r => {
+    blocks.push(`## ${r.ideia}\n\n${(r.detalhes || []).map(d => `- ${d}`).join('\n')}`);
+  });
+  return blocks.join('\n\n') + '\n';
+}
+
+function markdownFilename(data) {
+  const slug = String(data.titulo).normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 50);
+  return `minded-${slug || 'resultado'}.md`;
+}
+
+// ── Action bar ────────────────────────────────────────────────────────
+function actionBar(data) {
+  const ttsSupported = 'speechSynthesis' in window;
+  const ttsBtn = ttsSupported ? `
+    <button class="btn btn-ghost btn-sm" id="tts-btn" aria-label="Ouvir conteúdo via síntese de voz">
+      <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M6 3h2v1h-2zM5 4h3v1h-3zM11 4h1v1h-1zM4 5h4v1h-4zM12 5h1v1h-1zM1 6h7v1h-7zM10 6h1v1h-1zM13 6h1v1h-1zM1 7h7v1h-7zM10 7h1v1h-1zM13 7h1v1h-1zM1 8h7v1h-7zM10 8h1v1h-1zM13 8h1v1h-1zM1 9h7v1h-7zM10 9h1v1h-1zM13 9h1v1h-1zM4 10h4v1h-4zM12 10h1v1h-1zM5 11h3v1h-3zM11 11h1v1h-1zM6 12h2v1h-2z"/></svg>
+      <span class="tts-label">Ouvir</span>
+    </button>
+    <button class="btn btn-ghost btn-sm" id="tts-rate-btn" type="button">${ttsRateLabel()}</button>` : '';
+  return `
+    <div class="output-actions">
+      <button class="btn btn-ghost btn-sm" id="copy-btn" aria-label="Copiar texto adaptado">
+        <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 3h8v1h-8zM4 4h1v1h-1zM11 4h1v1h-1zM2 5h8v1h-8zM11 5h1v1h-1zM2 6h1v1h-1zM9 6h1v1h-1zM11 6h1v1h-1zM2 7h1v1h-1zM9 7h1v1h-1zM11 7h1v1h-1zM2 8h1v1h-1zM9 8h1v1h-1zM11 8h1v1h-1zM2 9h1v1h-1zM9 9h1v1h-1zM11 9h1v1h-1zM2 10h1v1h-1zM9 10h3v1h-3zM2 11h1v1h-1zM9 11h1v1h-1zM2 12h8v1h-8z"/></svg>
+        Copiar
+      </button>
+      <button class="btn btn-ghost btn-sm" id="md-btn" aria-label="Exportar em Markdown">
+        <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M7 2h2v1h-2zM7 3h2v1h-2zM7 4h2v1h-2zM4 5h8v1h-8zM5 6h6v1h-6zM6 7h4v1h-4zM7 8h2v1h-2zM1 10h1v1h-1zM14 10h1v1h-1zM1 11h1v1h-1zM14 11h1v1h-1zM1 12h14v1h-14z"/></svg>
+        Exportar MD
+      </button>
+      <button class="pdf-btn" id="pdf-btn" aria-label="Exportar como PDF">
+        <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M3 2h8v1h-8zM3 3h1v1h-1zM10 3h2v1h-2zM3 4h1v1h-1zM11 4h2v1h-2zM3 5h1v1h-1zM12 5h1v1h-1zM3 6h1v1h-1zM6 6h4v1h-4zM12 6h1v1h-1zM3 7h1v1h-1zM12 7h1v1h-1zM3 8h1v1h-1zM6 8h4v1h-4zM12 8h1v1h-1zM3 9h1v1h-1zM12 9h1v1h-1zM3 10h1v1h-1zM6 10h4v1h-4zM12 10h1v1h-1zM3 11h1v1h-1zM12 11h1v1h-1zM3 12h10v1h-10z"/></svg>
+        PDF
+      </button>
+      <button class="simplify-btn" id="simplify-btn" aria-label="Simplificar ainda mais"${lastRequest ? '' : ' hidden'}>
+        <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M7 4h2v1h-2zM7 5h2v1h-2zM6 6h4v1h-4zM2 7h12v1h-12zM4 8h8v1h-8zM5 9h6v1h-6zM4 10h3v1h-3zM9 10h3v1h-3zM4 11h1v1h-1zM11 11h1v1h-1z"/></svg>
+        Simplificar mais
+      </button>
+      ${ttsBtn}
+    </div>
+  `;
+}
+
+// ── TTS with word-by-word highlight ───────────────────────────────────
+// Wraps words in place, so bold text and term highlights survive, and
+// records where each one starts in the spoken text for the boundary event.
+const TTS_BLOCKS = '.output-title, .output-prose, .summary-body, .output-alert__text, .checklist-item__text, .question-card__q, .mindmap__idea, .mindmap__details li';
+
+function wrapWordsForTts(block) {
+  const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT);
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+  nodes.forEach(node => {
+    const frag = document.createDocumentFragment();
+    node.textContent.split(/(\s+)/).forEach(part => {
+      if (!/[\p{L}\p{N}]/u.test(part)) { frag.append(part); return; }
+      const span = document.createElement('span');
+      span.className = 'tts-word';
+      span.textContent = part;
+      frag.append(span);
+    });
+    node.replaceWith(frag);
+  });
+}
+
+function prepareSpeech(container) {
+  const spans = [], starts = [];
+  let text = '';
+  container.querySelectorAll(TTS_BLOCKS).forEach(block => {
+    wrapWordsForTts(block);
+    block.querySelectorAll('.tts-word').forEach(span => {
+      spans.push(span);
+      starts.push(text.length);
+      text += span.textContent + ' ';
+    });
+    text = text.trimEnd();
+    if (text && !/[.!?:]$/.test(text)) text += '.';
+    text += ' ';
+  });
+  return { text: text.trim(), spans, starts };
+}
+
+// Reading speed belongs to the device, like the other accessibility settings
+const TTS_RATES = [
+  { rate: 0.75, label: 'Devagar' },
+  { rate: 0.92, label: 'Normal' },
+  { rate: 1.15, label: 'Rápido' },
+];
+let ttsRateIdx = 1;
+try {
+  const saved = localStorage.getItem('minded_tts_rate');
+  if (saved !== null && TTS_RATES[Number(saved)]) ttsRateIdx = Number(saved);
+} catch (_) {}
+function ttsRateLabel() {
+  return `Ritmo: ${TTS_RATES[ttsRateIdx].label}`;
+}
+
+function wireTts(container) {
+  const ttsBtn = container.querySelector('#tts-btn');
+  if (!ttsBtn || !window.speechSynthesis) return;
+  const rateBtn = container.querySelector('#tts-rate-btn');
+  const ttsLabel = ttsBtn.querySelector('.tts-label');
+  let speaking = false;
+  let speech = null;
+  let activeWord = null;
+
+  function setActiveWord(span) {
+    if (activeWord) activeWord.classList.remove('tts-active');
+    activeWord = span;
+    if (activeWord) activeWord.classList.add('tts-active');
+  }
+
+  function setTtsStopped() {
+    speaking = false;
+    if (ttsLabel) ttsLabel.textContent = 'Ouvir';
+    ttsBtn.setAttribute('aria-label', 'Ouvir conteúdo via síntese de voz');
+    setActiveWord(null);
+  }
+
+  ttsBtn.addEventListener('click', () => {
+    if (speaking) {
+      window.speechSynthesis.cancel();
+      setTtsStopped();
+      return;
+    }
+    if (!speech) speech = prepareSpeech(container);
+
+    const utterance = new SpeechSynthesisUtterance(speech.text);
+    utterance.lang = 'pt-BR';
+    utterance.rate = TTS_RATES[ttsRateIdx].rate;
+
+    utterance.onboundary = e => {
+      if (e.name !== 'word') return;
+      let i = speech.starts.findLastIndex(start => start <= e.charIndex);
+      if (i >= 0) setActiveWord(speech.spans[i]);
+    };
+
+    utterance.onend  = setTtsStopped;
+    utterance.onerror = setTtsStopped;
+    window.speechSynthesis.speak(utterance);
+    speaking = true;
+    if (ttsLabel) ttsLabel.textContent = '⏹ Parar';
+    ttsBtn.setAttribute('aria-label', 'Parar síntese de voz');
+  });
+
+  rateBtn?.addEventListener('click', () => {
+    ttsRateIdx = (ttsRateIdx + 1) % TTS_RATES.length;
+    rateBtn.textContent = ttsRateLabel();
+    try { localStorage.setItem('minded_tts_rate', String(ttsRateIdx)); } catch (_) {}
+    // Speech already playing restarts at the new speed
+    if (speaking) {
+      window.speechSynthesis.cancel();
+      setTtsStopped();
+      ttsBtn.click();
+    }
+  });
+
+  // Auto-fire TTS if user's pref is auditivo
+  if (window._autoTts) {
+    setTimeout(() => ttsBtn.click(), 600);
+    window._autoTts = false; // only once per output
+  }
+}
+
+// ── Show output ───────────────────────────────────────────────────────
+function showOutput(html, responseData, quiet = false) {
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+  stopSkeleton();
+  currentResult = responseData;
+  hideExplainButton();
+  outputContent.innerHTML = html;
+  outputContent.classList.remove('hidden');
+  outputContent.setAttribute('aria-hidden', 'false');
+  outputContent.classList.add('fade-up');
+
+  // Mark body so focus mode knows there's output
+  document.body.classList.add('has-output');
+
+  // Announce once, then put keyboard and screen reader users at the result.
+  // On mobile (single-column layout), also scroll the result into view.
+  if (!quiet) {
+    document.getElementById('sr-status').textContent = 'Resultado pronto.';
+    const resultTitle = outputContent.querySelector('.output-title');
+    if (resultTitle) {
+      resultTitle.tabIndex = -1;
+      resultTitle.focus({ preventScroll: true });
+    }
+    if (window.innerWidth <= 900) {
+      requestAnimationFrame(() => {
+        document.querySelector('.output-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+  }
+
+  // Bidirectional highlight for metaphor
+  const proseEl = outputContent.querySelector('#output-prose-text');
+  if (proseEl && responseData && responseData.mapeamentos) {
+    highlightProseTerms(proseEl, responseData.mapeamentos);
+    outputContent.querySelectorAll('.mapping-table tbody tr').forEach(row => {
+      const termIdx = row.dataset.term;
+      row.addEventListener('mouseenter', () => {
+        row.classList.add('row-active');
+        outputContent.querySelectorAll(`.prose-highlight[data-term="${termIdx}"]`)
+          .forEach(s => s.classList.add('lit'));
+      });
+      row.addEventListener('mouseleave', () => {
+        row.classList.remove('row-active');
+        outputContent.querySelectorAll(`.prose-highlight[data-term="${termIdx}"]`)
+          .forEach(s => s.classList.remove('lit'));
+      });
+    });
+  }
+
+  // Checklist interactions
+  function wireChecklist(container) {
+    container.querySelectorAll('.checklist-item').forEach(item => {
+      function toggle() {
+        const idx  = parseInt(item.dataset.idx, 10);
+        checklistState[idx] = !checklistState[idx];
+        item.classList.toggle('done', checklistState[idx]);
+        item.setAttribute('aria-checked', String(checklistState[idx]));
+        const done  = checklistState.filter(Boolean).length;
+        const total = checklistState.length;
+        const pct   = total ? Math.round(done / total * 100) : 0;
+        const fill  = document.getElementById('progress-fill');
+        const label = document.getElementById('progress-label');
+        const wrap  = document.getElementById('progress-bar-wrap');
+        if (fill)  fill.style.width  = pct + '%';
+        if (label) label.textContent = `${done} / ${total}`;
+        if (wrap)  wrap.setAttribute('aria-valuenow', String(done));
+        saveChecklistProgress();
+      }
+      item.addEventListener('click', toggle);
+      item.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggle(); } });
+    });
+  }
+  wireChecklist(outputContent);
+
+  // Show more
+  const chunkBtn = document.getElementById('chunk-more-btn');
+  if (chunkBtn) {
+    chunkBtn.addEventListener('click', () => {
+      const hiddenGroup = document.getElementById('chunk-hidden');
+      const isNowHidden = hiddenGroup.classList.toggle('hidden');
+      chunkBtn.setAttribute('aria-expanded', String(!isNowHidden));
+      const remaining = checklistState.length - 5;
+      chunkBtn.textContent = isNowHidden
+        ? `＋ Ver mais ${remaining} ${remaining === 1 ? 'tarefa' : 'tarefas'}`
+        : '− Mostrar menos';
+    });
+  }
+
+  // Copy
+  const copyBtn = document.getElementById('copy-btn');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(toMarkdown(responseData)).then(() => {
+        copyBtn.textContent = '✓ Copiado';
+        setTimeout(() => {
+          copyBtn.innerHTML = '<svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 3h8v1h-8zM4 4h1v1h-1zM11 4h1v1h-1zM2 5h8v1h-8zM11 5h1v1h-1zM2 6h1v1h-1zM9 6h1v1h-1zM11 6h1v1h-1zM2 7h1v1h-1zM9 7h1v1h-1zM11 7h1v1h-1zM2 8h1v1h-1zM9 8h1v1h-1zM11 8h1v1h-1zM2 9h1v1h-1zM9 9h1v1h-1zM11 9h1v1h-1zM2 10h1v1h-1zM9 10h3v1h-3zM2 11h1v1h-1zM9 11h1v1h-1zM2 12h8v1h-8z"/></svg> Copiar';
+        }, 2000);
+      });
+    });
+  }
+
+  // Markdown export
+  const mdBtn = document.getElementById('md-btn');
+  if (mdBtn) {
+    mdBtn.addEventListener('click', () => {
+      const blob = new Blob([toMarkdown(responseData)], { type: 'text/markdown;charset=utf-8' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href = url; a.download = markdownFilename(responseData); a.click();
+      URL.revokeObjectURL(url);
+    });
+  }
+
+  // PDF export
+  const pdfBtn = document.getElementById('pdf-btn');
+  if (pdfBtn) {
+    pdfBtn.addEventListener('click', () => window.print());
+  }
+
+  // Simplificar mais — re-adapts the original text, leaving the textarea alone
+  const simplifyBtn = document.getElementById('simplify-btn');
+  if (simplifyBtn) {
+    simplifyBtn.addEventListener('click', () => doAdapt({ simplificar: true }));
+  }
+
+  // Flashcard interactivity
+  const fcEl = document.getElementById('flashcard');
+  if (fcEl) {
+    const mappings = responseData && responseData.mapeamentos ? responseData.mapeamentos : [];
+    let fcIdx = 0;
+
+    function updateFlashcard() {
+      const m = mappings[fcIdx];
+      if (!m) return;
+      const term    = document.getElementById('fc-term');
+      const answer  = document.getElementById('fc-answer');
+      const explain = document.getElementById('fc-explain');
+      const counter = document.getElementById('fc-counter');
+      const progress= document.getElementById('fc-progress');
+      if (term)    term.textContent    = m.termo_tecnico;
+      if (answer)  answer.textContent  = m.equivalente_metafora;
+      if (explain) explain.textContent = m.explicacao_conexao;
+      if (counter) counter.textContent = `${fcIdx + 1} / ${mappings.length}`;
+      if (progress) progress.style.width = `${Math.round((fcIdx + 1) / mappings.length * 100)}%`;
+      fcEl.classList.remove('flipped');
+      fcEl.setAttribute('aria-label', 'Clique para revelar a metáfora');
+      const wrap = fcEl.closest('[role="progressbar"]');
+      if (wrap) wrap.setAttribute('aria-valuenow', String(fcIdx + 1));
+    }
+
+    fcEl.addEventListener('click', () => {
+      fcEl.classList.toggle('flipped');
+      fcEl.setAttribute('aria-label', fcEl.classList.contains('flipped') ? 'Clique para virar' : 'Clique para revelar a metáfora');
+    });
+    fcEl.addEventListener('keydown', e => {
+      if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); fcEl.click(); }
+    });
+
+    const prevBtn = document.getElementById('fc-prev');
+    const nextBtn = document.getElementById('fc-next');
+    if (prevBtn) prevBtn.addEventListener('click', () => { if (fcIdx > 0) { fcIdx--; updateFlashcard(); } });
+    if (nextBtn) nextBtn.addEventListener('click', () => { if (fcIdx < mappings.length - 1) { fcIdx++; updateFlashcard(); } });
+  }
+
+  // Questions interactivity
+  outputContent.querySelectorAll('.question-hint-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const qi = btn.dataset.qi;
+      const hint = outputContent.querySelector(`.question-hint[data-qi="${qi}"]`);
+      if (!hint) return;
+      const isOpen = hint.classList.toggle('visible');
+      btn.setAttribute('aria-expanded', String(isOpen));
+    });
+  });
+  outputContent.querySelectorAll('.question-reveal-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const qi = btn.dataset.qi;
+      const ans = outputContent.querySelector(`.question-answer[data-qi="${qi}"]`);
+      if (!ans) return;
+      const isOpen = ans.classList.toggle('visible');
+      btn.setAttribute('aria-expanded', String(isOpen));
+      btn.textContent = isOpen ? 'Esconder' : 'Ver resposta';
+      const rate = outputContent.querySelector(`.question-rate[data-qi="${qi}"]`);
+      if (rate && isOpen) rate.hidden = false;
+    });
+  });
+  // Rating an answer schedules the question for spaced review
+  outputContent.querySelectorAll('.question-rate').forEach(row => {
+    row.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+      const q = (responseData.perguntas || [])[row.dataset.qi];
+      if (!q) return;
+      const days = rateCard(q, responseData.titulo, Number(b.dataset.grade));
+      row.removeAttribute('role');
+      row.removeAttribute('aria-label');
+      row.textContent = reviewMessage(days);
+      row.tabIndex = -1;
+      row.focus();
+      updateReviewDue();
+    }));
+  });
+
+  // Button for touch and keyboard, where selecting text is hard
+  const mainBlock = outputContent.querySelector('.output-prose, .summary-body');
+  if (!IS_DEMO && mainBlock && ['metaphor', 'summary'].includes(responseData?.modo)) {
+    const explainBlockBtn = document.createElement('button');
+    explainBlockBtn.type = 'button';
+    explainBlockBtn.className = 'btn btn-ghost btn-sm explain-block-btn';
+    explainBlockBtn.textContent = 'Não entendi esta parte';
+    explainBlockBtn.addEventListener('click', () => {
+      explainPassage(mainBlock.innerText.trim().slice(0, 1000), mainBlock, true);
+    });
+    mainBlock.after(explainBlockBtn);
+  }
+
+  document.getElementById('focus-start')?.addEventListener('click', () => {
+    startFocusSession(responseData.passos_acao || []);
+  });
+
+  // TTS with word highlight
+  wireTts(outputContent);
+}
+
+// ── Error state with retry ────────────────────────────────────────────
+function showError(msg) {
+  stopSkeleton();
+  outputContent.innerHTML = `
+    <div class="output-error" role="alert">
+      <div class="output-error__body">
+        <span aria-hidden="true">❌</span>
+        <span><strong>Algo deu errado:</strong> ${esc(msg)}</span>
+      </div>
+      <button class="retry-btn" id="retry-btn">↺ Tentar novamente</button>
+    </div>`;
+  outputContent.classList.remove('hidden');
+  outputContent.setAttribute('aria-hidden', 'false');
+
+  document.getElementById('retry-btn').addEventListener('click', () => {
+    outputContent.classList.add('hidden');
+    doAdapt(lastOptions);
+  });
+}
+
+// ── Adapt button click ────────────────────────────────────────────────
+let lastRequest = null;   // what produced the current result, for Simplificar mais
+let currentResult = null; // the result on screen, used by explanations
+let lastOptions = {};
+
+function removeProfileNudge() {
+  document.getElementById('profile-nudge')?.remove();
+}
+
+// Invites the profile questions below the result, without covering it.
+function showProfileNudge() {
+  if (!openOnboarding || localStorage.getItem(ONBOARD_KEY)) return;
+  const nudge = document.createElement('div');
+  nudge.className = 'profile-nudge';
+  nudge.id = 'profile-nudge';
+  nudge.innerHTML = `
+    <p>Quer que os próximos resultados fiquem mais do seu jeito? São só 3 perguntas.</p>
+    <div class="profile-nudge__actions">
+      <button class="btn btn-primary btn-sm" id="nudge-open" type="button">Responder</button>
+      <button class="btn btn-ghost btn-sm" id="nudge-dismiss" type="button">Agora não</button>
+    </div>`;
+  outputContent.append(nudge);
+  nudge.querySelector('#nudge-open').addEventListener('click', openOnboarding);
+  nudge.querySelector('#nudge-dismiss').addEventListener('click', () => {
+    try { localStorage.setItem(ONBOARD_KEY, '1'); } catch (_) {}
+    removeProfileNudge();
+    document.getElementById('copy-btn')?.focus();
+  });
+}
+
+async function doAdapt(options = {}) {
+  const simplificar = !!options.simplificar && !!lastRequest;
+  lastOptions = options;
+  let text      = simplificar ? lastRequest.text : textarea.value.trim();
+  const mode    = simplificar ? lastRequest.mode : getMode();
+  let fonte     = simplificar ? lastRequest.fonte : originUrl;
+  const profile = buildPerfilString();   // rich profile from all prefs
+
+  if (text.length < 10) return;
+
+  const isVideo = !IS_DEMO && YOUTUBE_URL.test(text);
+  const isPage  = !IS_DEMO && !isVideo && WEB_URL.test(text);
+  let notice = '';
+
+  document.body.classList.remove('has-output');
+  startSkeleton();
+  adaptBtn.classList.add('loading');
+  adaptBtn.disabled = true;
+
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+  const modeLabels = { metaphor: 'Construindo analogias…', checklist: 'Dividindo em passos…', summary: 'Sintetizando…', questions: 'Criando perguntas…', mindmap: 'Ligando as ideias…' };
+  setTimeout(() => { if (skeletonStatus) skeletonStatus.textContent = modeLabels[mode] || SKELETON_PHASES[2]; }, 900);
+
+  try {
+    if (isPage) {
+      skeletonStatus.textContent = 'Lendo a página…';
+      fonte = asUrl(text);
+      const page = await apiPost('/extract-url', { url: fonte });
+      text = page.texto;
+      textarea.value = text;
+      showSourceOrigin(fonte);
+      if (page.truncado) notice = `Esta página é longa: usamos os primeiros ${MAX_TEXT_CHARS.toLocaleString('pt-BR')} caracteres.`;
+    }
+
+    const body = { texto: text, modo: mode, perfil: profile, simplificar };
+    if (isVideo) body.video_url = asUrl(text);
+
+    const data = IS_DEMO
+      ? await new Promise(r => setTimeout(() => r(DEMO_RESULTS[mode]), 700))
+      : await apiPost('/adapt', body, isVideo ? 180000 : undefined);
+    lastRequest = IS_DEMO ? null : { text, mode, fonte };
+    const html = renderResult(data);
+
+    currentEntryId = null;
+    showOutput(html, data);
+    if (!IS_DEMO) {
+      const extra = {};
+      if (fonte) extra.fonte = fonte;
+      if (simplificar) extra.simplificado = true;
+      addToHistory(data, mode, profile, text, extra);
+      showProfileNudge();
+    }
+
+  } catch (err) {
+    showError(err.message);
+  } finally {
+    adaptBtn.classList.remove('loading');
+    updateCharCount();
+    if (notice) sourceStatus.textContent = notice;
+  }
+}
+
+adaptBtn.addEventListener('click', () => doAdapt());
+
+// ═══════════════════════════════════════════════════════════════════════
+// TEXTOS DE EXEMPLO
+// ═══════════════════════════════════════════════════════════════════════
+const EXAMPLES = {
+  ciencias: `A mitose é um processo de divisão celular em que uma célula-mãe se divide em duas células-filhas geneticamente idênticas. Ocorre em quatro fases principais: prófase, metáfase, anáfase e telófase. Durante a prófase, a cromatina se condensa em cromossomos visíveis e o fuso mitótico começa a se formar. Na metáfase, os cromossomos se alinham no plano equatorial da célula. Na anáfase, as cromátides-irmãs se separam e migram para polos opostos da célula. Por fim, na telófase, uma nova membrana se forma nuclear em torno de cada conjunto de cromossomos, e ocorre a citocinese, dividindo o citoplasma em duas células distintas.`,
+
+  historia: `A Revolução Industrial, iniciada na Grã-Bretanha por volta de 1760, foi uma transformação profunda nos processos de produção, com a substituição do trabalho manual por máquinas movidas a vapor. As fábricas substituíram os ateliês artesanais, e enormes contingentes populacionais migraram do campo para as cidades em busca de emprego. Este processo trouxe tanto avanços tecnológicos como sérias consequências sociais: jornadas de trabalho exaustivas, trabalho infantil, condições insalubres nas fábricas e o crescimento de bairros operários sem saneamento básico. A concentração de riqueza nas mãos dos industriais e a pauperização dos trabalhadores criaram as condições para o surgimento dos movimentos operários e das primeiras reivindicações por direitos laborais.`,
+
+  matematica: `Uma função quadrática é uma função polinomial de segundo grau definida pela equação f(x) = ax² + bx + c, onde a ≠ 0. O gráfico de uma função quadrática é uma parábola: quando a > 0, a parábola abre para cima e tem um mínimo; quando a < 0, abre para baixo e tem um máximo. O vértice da parábola, ponto de máximo ou mínimo, pode ser calculado pela fórmula xv = -b/(2a) e yv = -Δ/(4a), onde Δ = b² - 4ac é o discriminante. As raízes da equação quadrática — os valores de x para os quais f(x) = 0 — são obtidas pela fórmula de Bhaskara: x = (-b ± √Δ) / (2a). O discriminante determina o número de raízes reais: Δ > 0 indica duas raízes distintas, Δ = 0 uma raiz dupla, e Δ < 0 nenhuma raiz real.`,
+};
+
+document.querySelectorAll('.example-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const key = btn.dataset.example;
+    if (!EXAMPLES[key]) return;
+    textarea.value = EXAMPLES[key];
+    hideSourceOrigin();
+    updateCharCount();
+    textarea.focus();
+    // Scroll textarea ao topo se estiver longo
+    textarea.scrollTop = 0;
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════
+// NÃO ENTENDI ESTA PARTE — explains a selected passage of the result
+// ═══════════════════════════════════════════════════════════════════════
+const explainBtn = document.getElementById('explain-btn');
+let explainRange = null;
+
+function hideExplainButton() {
+  explainBtn.hidden = true;
+  explainRange = null;
+}
+
+document.addEventListener('selectionchange', () => {
+  const selection = document.getSelection();
+  const text = selection ? selection.toString().trim() : '';
+  if (IS_DEMO || !currentResult || text.length < 3 || !selection.rangeCount
+      || !outputContent.contains(selection.anchorNode)) {
+    if (document.activeElement !== explainBtn) hideExplainButton();
+    return;
+  }
+  explainRange = selection.getRangeAt(0).cloneRange();
+  explainBtn.hidden = false;
+});
+
+// Keeps the text selected when the button is pressed
+explainBtn.addEventListener('mousedown', e => e.preventDefault());
+
+explainBtn.addEventListener('click', async () => {
+  const range = explainRange;
+  if (!range) return;
+  const trecho = range.toString().trim().slice(0, 1000);
+  const start = range.startContainer;
+  const block = (start.nodeType === 1 ? start : start.parentElement)
+    .closest('.output-prose, .summary-body, .checklist-item, .question-card, .mapping-grid-section, .output-alert')
+    || outputContent.lastElementChild;
+
+  hideExplainButton();
+  document.getSelection().removeAllRanges();
+  explainPassage(trecho, block);
+});
+
+// wholeBlock: the person asked about the block they just read, so no need to quote it back
+async function explainPassage(trecho, block, wholeBlock = false) {
+  // Asking again shows the explanation already there instead of paying for another
+  const existing = [...outputContent.querySelectorAll('.explain-card')].find(c => c.dataset.trecho === trecho);
+  if (existing && !existing.classList.contains('is-error')) {
+    existing.focus({ preventScroll: true });
+    existing.scrollIntoView({ block: 'nearest' });
+    return;
+  }
+  existing?.remove();
+
+  const card = document.createElement('div');
+  card.className = 'explain-card';
+  card.dataset.trecho = trecho;
+  card.tabIndex = -1;
+  card.setAttribute('aria-live', 'polite');
+  const quote = document.createElement('p');
+  quote.className = 'explain-card__quote';
+  quote.textContent = wholeBlock ? 'Explicando de outro jeito:' : `“${trecho}”`;
+  const answer = document.createElement('p');
+  answer.textContent = 'Explicando…';
+  card.append(quote, answer);
+  block.after(card);
+  card.focus({ preventScroll: true });
+  card.scrollIntoView({ block: 'nearest' });
+
+  try {
+    const data = await apiPost('/explain', {
+      trecho,
+      contexto: toMarkdown(currentResult).slice(0, 6000),
+      perfil: buildPerfilString(),
+    });
+    answer.textContent = data.explicacao;
+    if (data.exemplo) {
+      const example = document.createElement('p');
+      example.textContent = `Exemplo: ${data.exemplo}`;
+      card.append(example);
+    }
+  } catch (err) {
+    answer.textContent = err.message;
+    card.classList.add('is-error');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// SESSÃO DE FOCO — one step at a time, with a silent timer
+// ═══════════════════════════════════════════════════════════════════════
+const fsPanel = document.getElementById('focus-session');
+const fsCount = document.getElementById('fs-count');
+const fsStep  = document.getElementById('fs-step');
+const fsFill  = document.getElementById('fs-fill');
+const fsTimer = document.getElementById('fs-timer');
+const fsDone  = document.getElementById('fs-done');
+const fsPause = document.getElementById('fs-pause');
+const fsSkip  = document.getElementById('fs-skip');
+const fsExit  = document.getElementById('fs-exit');
+const FOCUS_MINUTES = { curta: 5, media: 10, longa: 15 };
+const fs = { steps: [], index: 0, done: 0, total: 300, left: 300, paused: false, interval: null, release: null };
+
+function fsRenderTimer() {
+  const m = Math.floor(fs.left / 60);
+  const s = String(fs.left % 60).padStart(2, '0');
+  fsTimer.textContent = fs.left > 0 ? `${m}:${s}` : 'Tempo encerrado. Sem pressa: conclua quando puder.';
+  fsFill.style.width = `${(1 - fs.left / fs.total) * 100}%`;
+}
+
+function fsShowStep() {
+  fsCount.textContent = `Passo ${fs.index + 1} de ${fs.steps.length}`;
+  fsStep.textContent = fs.steps[fs.index];
+  fs.left = fs.total;
+  fs.paused = false;
+  fsPause.textContent = 'Pausar';
+  fsRenderTimer();
+  fsStep.tabIndex = -1;
+  fsStep.focus({ preventScroll: true });
+}
+
+function fsFinish() {
+  clearInterval(fs.interval);
+  document.getElementById('fs-mascot').hidden = false;
+  fsCount.textContent = 'Sessão concluída';
+  const ticked = checklistState.filter(Boolean).length;
+  fsStep.textContent = `Você concluiu ${ticked} de ${fs.steps.length} passos.`;
+  fsTimer.textContent = '';
+  fsFill.style.width = '100%';
+  [fsDone, fsPause, fsSkip].forEach(btn => { btn.hidden = true; });
+  fsExit.textContent = 'Fechar';
+  fsExit.focus();
+}
+
+// Steps already ticked in the checklist are not shown again
+function nextPendingStep(from) {
+  let i = from;
+  while (i < fs.steps.length && checklistState[i]) i += 1;
+  return i;
+}
+
+function fsAdvance() {
+  fs.index = nextPendingStep(fs.index + 1);
+  if (fs.index >= fs.steps.length) fsFinish();
+  else fsShowStep();
+}
+
+function closeFocusSession() {
+  clearInterval(fs.interval);
+  fsPanel.hidden = true;
+  document.body.style.overflow = '';
+  if (fs.release) fs.release();
+  fs.release = null;
+}
+
+function startFocusSession(steps) {
+  if (!steps.length) return;
+  let sessao = '';
+  try { sessao = JSON.parse(localStorage.getItem('minded_prefs') || '{}').sessao; } catch (_) {}
+  fs.steps = steps;
+  // Starts at the first unticked step, or from the top when all are done
+  fs.index = nextPendingStep(0);
+  if (fs.index >= steps.length) fs.index = 0;
+  fs.done = 0;
+  fs.total = (FOCUS_MINUTES[sessao] || 5) * 60;
+  document.getElementById('fs-mascot').hidden = true;
+  [fsDone, fsPause, fsSkip].forEach(btn => { btn.hidden = false; });
+  fsExit.textContent = 'Sair';
+  fsPanel.hidden = false;
+  document.body.style.overflow = 'hidden';
+  fs.release = trapFocus(fsPanel, closeFocusSession);
+  fsShowStep();
+  clearInterval(fs.interval);
+  fs.interval = setInterval(() => {
+    if (fs.paused || fs.left <= 0) return;
+    fs.left -= 1;
+    fsRenderTimer();
+  }, 1000);
+}
+
+fsDone.addEventListener('click', () => {
+  const item = outputContent.querySelector(`.checklist-item[data-idx="${fs.index}"]`);
+  if (item && item.getAttribute('aria-checked') !== 'true') item.click();
+  fs.done += 1;
+  fsAdvance();
+});
+fsSkip.addEventListener('click', fsAdvance);
+fsExit.addEventListener('click', closeFocusSession);
+fsPause.addEventListener('click', () => {
+  fs.paused = !fs.paused;
+  fsPause.textContent = fs.paused ? 'Continuar' : 'Pausar';
+});
+
+// ═══════════════════════════════════════════════════════════════════════
+// REVISÃO ESPAÇADA — rated questions come back after growing intervals
+// ═══════════════════════════════════════════════════════════════════════
+const REVIEW_KEY = 'minded_review';
+const REVIEW_DAYS = [1, 3, 7, 14, 30];
+const DAY_MS = 86400000;
+
+function loadReview() {
+  try { return JSON.parse(localStorage.getItem(REVIEW_KEY) || '[]'); }
+  catch (_) { return []; }
+}
+function saveReview(cards) {
+  try { localStorage.setItem(REVIEW_KEY, JSON.stringify(cards.slice(-200))); } catch (_) {}
+}
+function startOfToday() {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d.getTime();
+}
+
+// grade: 0 errei (back tomorrow), 1 quase (same interval), 2 acertei (next interval)
+function rateCard(q, titulo, grade) {
+  const cards = loadReview();
+  let card = cards.find(c => c.pergunta === q.pergunta);
+  if (!card) {
+    card = { pergunta: q.pergunta, dica: q.dica, resposta: q.resposta, titulo, box: 0 };
+    cards.push(card);
+  }
+  if (grade === 0) card.box = 0;
+  if (grade === 2) card.box = Math.min(card.box + 1, REVIEW_DAYS.length - 1);
+  const days = grade === 0 ? 1 : REVIEW_DAYS[card.box];
+  card.due = startOfToday() + days * DAY_MS;
+  saveReview(cards);
+  return days;
+}
+
+function reviewMessage(days) {
+  return days === 1 ? 'Ela volta amanhã para revisão.' : `Ela volta para revisão em ${days} dias.`;
+}
+
+function dueCards() {
+  return loadReview().filter(c => c.due <= Date.now());
+}
+
+function updateReviewDue() {
+  const n = IS_DEMO ? 0 : dueCards().length;
+  document.getElementById('review-due').hidden = n === 0;
+  document.getElementById('review-due-text').textContent =
+    `${n} ${n === 1 ? 'pergunta' : 'perguntas'} para revisar hoje.`;
+}
+
+const rvPanel  = document.getElementById('review-session');
+const rvGuess  = document.getElementById('rv-guess');
+const rvAnswer = document.getElementById('rv-answer');
+const rvReveal = document.getElementById('rv-reveal');
+const rvExit   = document.getElementById('rv-exit');
+const rvRevealRow = document.getElementById('rv-reveal-row');
+const rvRateRow   = document.getElementById('rv-rate-row');
+const rv = { cards: [], index: 0, release: null };
+
+function rvShowCard() {
+  const card = rv.cards[rv.index];
+  document.getElementById('rv-count').textContent = `Revisão ${rv.index + 1} de ${rv.cards.length}`;
+  document.getElementById('rv-from').textContent = card.titulo ? `De: ${card.titulo}` : '';
+  const question = document.getElementById('rv-question');
+  question.textContent = card.pergunta;
+  rvGuess.value = '';
+  rvGuess.closest('label').hidden = false;
+  rvAnswer.hidden = true;
+  rvRevealRow.hidden = false;
+  rvReveal.hidden = false;
+  rvRateRow.hidden = true;
+  question.tabIndex = -1;
+  question.focus({ preventScroll: true });
+}
+
+function rvFinish() {
+  const n = rv.cards.length;
+  document.getElementById('rv-count').textContent = 'Revisão concluída';
+  document.getElementById('rv-from').textContent = '';
+  document.getElementById('rv-question').textContent =
+    `Você revisou ${n} ${n === 1 ? 'pergunta' : 'perguntas'}.`;
+  rvGuess.closest('label').hidden = true;
+  rvAnswer.hidden = true;
+  rvRateRow.hidden = true;
+  rvRevealRow.hidden = false;
+  rvReveal.hidden = true;
+  rvExit.textContent = 'Fechar';
+  rvExit.focus();
+}
+
+function startReview() {
+  rv.cards = dueCards();
+  if (!rv.cards.length) return;
+  rv.index = 0;
+  rvExit.textContent = 'Sair';
+  rvPanel.hidden = false;
+  document.body.style.overflow = 'hidden';
+  rv.release = trapFocus(rvPanel, closeReview);
+  rvShowCard();
+}
+
+function closeReview() {
+  rvPanel.hidden = true;
+  document.body.style.overflow = '';
+  if (rv.release) rv.release();
+  rv.release = null;
+  updateReviewDue();
+  const start = document.getElementById('review-start');
+  (start.offsetParent ? start : textarea).focus();
+}
+
+rvReveal.addEventListener('click', () => {
+  const card = rv.cards[rv.index];
+  rvAnswer.textContent = `Resposta: ${card.resposta}`;
+  rvAnswer.hidden = false;
+  rvRevealRow.hidden = true;
+  rvRateRow.hidden = false;
+  rvRateRow.querySelector('button').focus();
+});
+rvRateRow.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+  rateCard(rv.cards[rv.index], rv.cards[rv.index].titulo, Number(b.dataset.grade));
+  rv.index += 1;
+  if (rv.index >= rv.cards.length) rvFinish();
+  else rvShowCard();
+}));
+rvExit.addEventListener('click', closeReview);
+document.getElementById('review-start').addEventListener('click', startReview);
+updateReviewDue();
+
+// ── Boot: demo mode or saved draft ────────────────────────────────────
+if (IS_DEMO) {
+  document.getElementById('demo-banner').hidden = false;
+  nav.querySelectorAll('a[href="workspace.html"], a[href="preferencias.html"]').forEach(link => { link.hidden = true; });
+  nav.insertAdjacentHTML('beforeend', '<a href="login.html" class="btn btn-primary btn-sm">Entrar</a>');
+  document.getElementById('examples-group').hidden = true;
+  document.getElementById('profile-group').hidden = true;
+  document.getElementById('source-bar').hidden = true;
+  textarea.value = EXAMPLES.ciencias;
+  textarea.readOnly = true;
+  charCount.hidden = true;
+  document.getElementById('output-empty-text').innerHTML =
+    'Escolha um modo e clique em <strong style="color:var(--clr-text)">Adaptar</strong><br/>para ver o exemplo adaptado aqui.';
+} else {
+  try {
+    textarea.value = localStorage.getItem(DRAFT_KEY) || '';
+    // A reload in the same tab keeps the result on screen
+    const lastId = Number(sessionStorage.getItem('minded_last_result'));
+    const lastEntry = loadHistory().find(h => h.id === lastId);
+    if (lastEntry) restoreEntry(lastEntry, true);
+  } catch (_) {}
+}
+updateCharCount();
+

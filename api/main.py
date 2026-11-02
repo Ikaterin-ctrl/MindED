@@ -114,16 +114,24 @@ class Question(BaseModel):
     resposta: str = Field(description="A resposta completa")
 
 
+class MindMapBranch(BaseModel):
+    ideia: str = Field(description="Uma ideia ligada ao tema central, em poucas palavras")
+    detalhes: List[str] = Field(description="De 1 a 4 detalhes curtos sobre essa ideia")
+
+
+Modo = Literal["metaphor", "checklist", "summary", "questions", "mindmap"]
+
+
 class AdaptationRequest(BaseModel):
     texto: str = Field(..., min_length=10, max_length=MAX_TEXT_CHARS, description="Texto original a ser adaptado")
-    modo: Literal["metaphor", "checklist", "summary", "questions"] = "metaphor"
+    modo: Modo = "metaphor"
     perfil: Optional[str] = Field(default=None, max_length=300)
     simplificar: bool = False
     video_url: Optional[str] = Field(default=None, max_length=300)
 
 
 class AdaptationResponse(BaseModel):
-    modo: Literal["metaphor", "checklist", "summary", "questions"]
+    modo: Modo
     titulo: str
     universo_analogia: Optional[str] = None
     conteudo_principal: str
@@ -131,6 +139,7 @@ class AdaptationResponse(BaseModel):
     passos_acao: Optional[List[str]] = None
     pontos_de_atencao: Optional[str] = None
     perguntas: Optional[List[Question]] = None
+    ramos: Optional[List[MindMapBranch]] = None
 
 
 class ExplainRequest(BaseModel):
@@ -180,11 +189,18 @@ class QuestionsOutput(BaseModel):
     perguntas: List[Question]
 
 
+class MindMapOutput(BaseModel):
+    titulo: str
+    conteudo_principal: str
+    ramos: List[MindMapBranch]
+
+
 OUTPUT_SCHEMAS: dict[str, type[BaseModel]] = {
     "metaphor": MetaphorOutput,
     "checklist": ChecklistOutput,
     "summary": SummaryOutput,
     "questions": QuestionsOutput,
+    "mindmap": MindMapOutput,
 }
 
 
@@ -359,6 +375,22 @@ Texto a adaptar:
 Resuma o texto em português do Brasil:
 - titulo: título claro e direto do resumo
 - conteudo_principal: resumo em tópicos usando markdown — bullets com **palavra-chave** em negrito no início de cada ponto"""
+
+    if req.modo == "mindmap":
+        return f"""Você é um especialista em organização visual de ideias e acessibilidade cognitiva.
+Orientações de escrita: {orientacoes}
+{_SAFETY_NOTE}
+
+Texto a adaptar:
+\"\"\"
+{texto}
+\"\"\"
+
+Organize o texto como um mapa de ideias, em português do Brasil:
+- titulo: o tema central, em até 6 palavras
+- conteudo_principal: uma frase que explica o tema central
+- ramos: entre 3 e 6 ideias principais ligadas ao tema, cada uma com poucas palavras
+  e de 1 a 4 detalhes curtos (no máximo 12 palavras cada)"""
 
     # questions
     return f"""Você é um educador especialista em avaliação formativa e acessibilidade cognitiva.

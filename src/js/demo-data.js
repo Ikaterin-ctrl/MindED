@@ -57,4 +57,15 @@ const DEMO_RESULTS = {
       { pergunta: 'Por que é importante que as células-filhas sejam idênticas?', dica: 'Pense na informação genética.', resposta: 'Porque cada nova célula precisa receber a mesma informação genética para funcionar como a original.' },
     ],
   },
+  mindmap: {
+    modo: 'mindmap',
+    titulo: 'Mitose',
+    conteudo_principal: 'Uma célula-mãe se divide em duas células-filhas idênticas.',
+    ramos: [
+      { ideia: 'Prófase', detalhes: ['A cromatina vira cromossomos visíveis', 'O fuso começa a se formar'] },
+      { ideia: 'Metáfase', detalhes: ['Os cromossomos se alinham no meio da célula'] },
+      { ideia: 'Anáfase', detalhes: ['As cromátides-irmãs se separam', 'Cada uma vai para um polo'] },
+      { ideia: 'Telófase e citocinese', detalhes: ['Surge uma membrana em cada núcleo', 'O citoplasma se divide em dois'] },
+    ],
+  },
 };

@@ -1,5 +1,5 @@
 /* MindED service worker. Change VERSION on every release that edits this list. */
-const VERSION = 'minded-v5';
+const VERSION = 'minded-v6';
 
 const SHELL = [
   'index.html',
@@ -9,7 +9,9 @@ const SHELL = [
   'termos.html',
   'privacidade.html',
   'src/css/base.css',
+  'src/css/workspace.css',
   'src/js/demo-data.js',
+  'src/js/workspace.js',
   'src/js/pwa.js',
   'src/js/account.js',
   'src/js/theme.js',

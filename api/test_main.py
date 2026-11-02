@@ -47,6 +47,24 @@ def test_adapt_returns_mode_and_sends_schema(api, monkeypatch):
     assert "conteudo_principal" in models.calls[0]["config"].response_json_schema["properties"]
 
 
+def test_mindmap_returns_branches(api, monkeypatch):
+    saida = {"titulo": "Mitose", "conteudo_principal": "Uma célula vira duas.",
+             "ramos": [{"ideia": "Fases", "detalhes": ["Prófase", "Metáfase"]}]}
+    models = install_gemini(monkeypatch, text=json.dumps(saida))
+    res = api.post("/adapt", json={"texto": TEXTO, "modo": "mindmap"})
+    assert res.status_code == 200
+    assert res.json()["modo"] == "mindmap"
+    assert res.json()["ramos"][0]["detalhes"] == ["Prófase", "Metáfase"]
+    assert "ramos" in models.calls[0]["config"].response_json_schema["properties"]
+    assert "mapa de ideias" in models.calls[0]["contents"]
+
+
+def test_mindmap_without_branches_is_rejected(api, monkeypatch):
+    install_gemini(monkeypatch)
+    res = api.post("/adapt", json={"texto": TEXTO, "modo": "mindmap"})
+    assert res.status_code == 502
+
+
 def test_adapt_rejects_incomplete_model_output(api, monkeypatch):
     install_gemini(monkeypatch, text='{"titulo": "sem conteúdo"}')
     res = api.post("/adapt", json={"texto": TEXTO, "modo": "summary"})

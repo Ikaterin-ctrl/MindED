@@ -16,14 +16,15 @@ Pessoas neurodivergentes (TDAH, dislexia, autismo) e estudantes lidando com cont
 
 ## A solução
 
-Quatro lentes de assimilação do mesmo conteúdo:
+Cinco lentes de assimilação do mesmo conteúdo:
 
 | Modo | O que faz |
 |---|---|
 | 🧠 **Metáfora** | Converte a teoria em analogia do cotidiano com tabela termo → metáfora e alerta de limitações |
 | ✅ **Microtarefas** | Gera checklist sequencial e gamificado com barra de progresso em tempo real |
 | 📋 **Resumo Semântico** | Sintetiza em tópicos com palavras-chave em negrito para leitura dinâmica |
-| ❓ **Perguntas** | Gera perguntas de compreensão com dica e resposta para consolidar o que foi lido |
+| ❓ **Perguntas** | Gera perguntas com dica e resposta; as perguntas avaliadas voltam em revisão espaçada |
+| 🗺️ **Mapa de ideias** | Põe o tema no centro e organiza as ideias ligadas a ele, cada uma com seus detalhes |
 
 ---
 
@@ -32,17 +33,22 @@ Quatro lentes de assimilação do mesmo conteúdo:
 ```
 MindED/
 ├── index.html          # Landing page
-├── workspace.html      # Workspace principal (two-column layout)
+├── workspace.html      # Workspace principal (estrutura da página)
 ├── preferencias.html   # Preferências e controle dos dados locais
 ├── termos.html         # Termos de Uso
 ├── privacidade.html    # Política de Privacidade
 ├── src/
 │   ├── css/
-│   │   └── base.css    # Design system completo (tokens, glass, botões, header)
+│   │   ├── base.css      # Design system (tokens, botões, cabeçalho)
+│   │   └── workspace.css # Estilos do workspace
 │   └── js/
-│       └── demo-data.js # Resultados prontos da demonstração sem login
+│       ├── workspace.js  # Lógica do workspace (modos, histórico, revisão, foco)
+│       ├── account.js    # Separa os dados locais por conta
+│       ├── theme.js      # Aplica o tema antes da primeira pintura
+│       ├── pwa.js        # Instalação como app
+│       └── demo-data.js  # Resultados prontos da demonstração sem login
 ├── api/
-│   ├── main.py         # FastAPI — POST /adapt e POST /extract-url
+│   ├── main.py         # FastAPI — /adapt, /explain e /extract-url
 │   ├── test_main.py    # Testes da API (pytest)
 │   ├── Dockerfile      # Imagem para publicar a API
 │   ├── requirements.txt

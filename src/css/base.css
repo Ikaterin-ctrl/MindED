@@ -75,6 +75,9 @@
   padding: 0;
 }
 
+/* Components set their own display, which would otherwise beat the attribute */
+[hidden] { display: none !important; }
+
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
@@ -837,27 +840,64 @@ body.fontsize-lg  { --font-size-base: 19px; }
 }
 
 .history-item {
-  padding: 10px var(--sp-md);
+  display: flex;
+  align-items: stretch;
   background: var(--clr-surface);
   border: 1px solid var(--clr-border);
   border-radius: var(--r-md);
-  cursor: pointer;
   transition: border-color var(--t-base), background var(--t-base);
 }
 .history-item:hover { border-color: var(--clr-border-md); background: var(--clr-surface-md); }
+.history-item__open {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 10px var(--sp-md);
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.history-item__delete {
+  flex: none;
+  width: 44px;
+  display: grid;
+  place-items: center;
+  background: none;
+  border: 0;
+  border-left: 1px solid var(--clr-border);
+  color: var(--clr-text-subtle);
+  cursor: pointer;
+}
+.history-item__delete:hover { color: var(--clr-text); background: var(--clr-surface-md); }
+.history-item__open:focus-visible,
+.history-item__delete:focus-visible { outline: 2px solid var(--clr-accent); outline-offset: -2px; }
+.history-item__title,
+.history-item__source {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .history-item__title {
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--clr-text);
-  margin-bottom: 4px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  margin-bottom: 2px;
+}
+.history-item__source {
+  font-size: 0.8125rem;
+  color: var(--clr-text-muted);
+  margin-bottom: 6px;
 }
 .history-item__meta {
   font-size: 0.875rem;
   color: var(--clr-text-subtle);
   display: flex;
+  flex-wrap: wrap;
   gap: var(--sp-sm);
 }
 .history-item__badge {

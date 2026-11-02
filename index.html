@@ -205,9 +205,9 @@
 
       <nav class="main-nav" id="main-nav" role="navigation" aria-label="Principal">
         <a href="#lentes"           class="nav-link">Como funciona</a>
-        <a href="workspace.html"    class="nav-link">Workspace</a>
+        <a href="workspace.html"    class="nav-link" id="nav-workspace">Workspace</a>
         <a href="preferencias.html" class="nav-link">Preferências</a>
-        <a href="login.html"        class="btn btn-primary btn-sm">Entrar</a>
+        <a href="login.html"        class="btn btn-primary btn-sm" id="nav-enter">Entrar</a>
       </nav>
     </div>
   </header>
@@ -317,6 +317,17 @@
   </footer>
 
   <script>
+    // Someone already signed in goes straight to their workspace. The owner key is
+    // set on sign-in and removed on sign-out (src/js/account.js), so no Firebase is needed here.
+    try {
+      if (localStorage.getItem('minded_owner')) {
+        const enter = document.getElementById('nav-enter');
+        enter.textContent = 'Abrir o Workspace';
+        enter.href = 'workspace.html';
+        document.getElementById('nav-workspace').hidden = true;
+      }
+    } catch (_) {}
+
     const hamburger = document.getElementById('hamburger');
     const nav       = document.getElementById('main-nav');
     hamburger.addEventListener('click', () => {

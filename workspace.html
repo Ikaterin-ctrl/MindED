@@ -113,6 +113,15 @@
       line-height: 1.55;
     }
     .source-status:empty { display: none; }
+    .source-origin {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--sp-xs, 4px) var(--sp-sm);
+      margin-top: var(--sp-sm);
+      font-size: 0.875rem;
+      color: var(--clr-text-muted);
+    }
 
     /* Pane: text */
     .input-area__textarea {
@@ -829,6 +838,26 @@
       line-height: 1.5;
       cursor: default;
     }
+    .question-guess {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 0 var(--sp-md) var(--sp-md);
+    }
+    .question-guess__label { font-size: 0.8125rem; color: var(--clr-text-muted); }
+    .question-guess textarea {
+      width: 100%;
+      resize: vertical;
+      padding: var(--sp-sm);
+      background: var(--clr-bg);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--r-sm);
+      color: var(--clr-text);
+      font: inherit;
+      font-size: 0.875rem;
+      line-height: 1.5;
+    }
+    .question-guess textarea:focus-visible { outline: 2px solid var(--clr-accent); outline-offset: 1px; }
     .question-card__actions {
       display: flex;
       gap: var(--sp-sm);
@@ -894,8 +923,6 @@
       .mapping-table { page-break-inside: avoid; }
       .checklist-item.done .checklist-item__text { text-decoration: line-through; color: #888 !important; }
     }
-
-    [hidden] { display: none !important; }
 
     /* ── Focus session ──────────────────────────────────────── */
     .focus-start { align-self: flex-start; margin-top: var(--sp-sm); }
@@ -1028,6 +1055,9 @@
       background: var(--clr-bg-alt);
     }
 
+    /* Out of the way of panels that open over the page, such as the history close button */
+    body:has(.history-panel.open, .onboard-modal.open, #focus-session:not([hidden])) .a11y-bar { display: none; }
+
     /* ── Responsive ─────────────────────────────────────────── */
     @media (max-width: 900px) {
       .a11y-bar {
@@ -1036,10 +1066,15 @@
         right: var(--sp-sm);
         flex-direction: column-reverse;
       }
+      /* Icon only, with room above the first panel, so it never covers content */
+      .a11y-trigger { width: 44px; justify-content: center; padding: 0; position: relative; }
+      .a11y-trigger__label { display: none; }
+      .a11y-trigger__dot { position: absolute; top: 6px; right: 6px; }
       .workspace {
         grid-template-columns: minmax(0, 1fr);
-        padding: calc(64px + var(--sp-lg)) var(--sp-md) var(--sp-xl);
+        padding: calc(64px + 60px) var(--sp-md) var(--sp-xl);
       }
+      @media (hover: none) { .source-bar__hint { display: none; } }
       .panel { position: static; }
       .mode-options { grid-template-columns: repeat(2, 1fr); }
     }
@@ -1123,6 +1158,10 @@
             style="position:absolute;opacity:0;width:0;height:0;pointer-events:none;" />
         </div>
         <p class="source-status" id="source-status" role="status"></p>
+        <div class="source-origin" id="source-origin" hidden>
+          <span id="source-origin-text"></span>
+          <button type="button" class="btn btn-ghost btn-sm" id="source-origin-back">Voltar ao link</button>
+        </div>
         <form class="pdf-range" id="pdf-range" hidden>
           <p id="pdf-range-text"></p>
           <label>De <input type="number" id="pdf-from" min="1" required /></label>
@@ -1241,7 +1280,7 @@
         <div class="output-empty__icon" aria-hidden="true">
           <svg class="pixel" width="32" height="32" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" style="opacity:0.5"><path d="M5 2h6v1h-6zM4 3h1v1h-1zM11 3h1v1h-1zM3 4h1v3h-1zM12 4h1v3h-1zM3 7h1v1h-1zM6 7h1v1h-1zM9 7h1v1h-1zM12 7h1v1h-1zM4 8h1v1h-1zM7 8h2v1h-2zM11 8h1v1h-1zM5 9h1v2h-1zM10 9h1v2h-1zM5 11h6v2h-6zM6 13h4v1h-4z"/></svg>
         </div>
-        <p>Cole um texto ao lado e clique em <strong style="color:var(--clr-text)">Adaptar</strong><br/>para ver o resultado aqui.</p>
+        <p id="output-empty-text">Cole um texto, um link ou um PDF e clique em <strong style="color:var(--clr-text)">Adaptar</strong><br/>para ver o resultado aqui.</p>
       </div>
 
       <!-- Skeleton screen shown during API call -->
@@ -1286,7 +1325,7 @@
         <button class="onboard-opt" data-value="dislexia">Texto curto e bem espaçado</button>
         <button class="onboard-opt" data-value="autismo">Estrutura clara e direta</button>
         <button class="onboard-opt" data-value="criativo">Metáforas e histórias</button>
-        <button class="onboard-opt" data-value="auditivo">Prefiro ouvir</button>
+        <button class="onboard-opt" data-value="auditivo">Prefiro ouvir: o resultado toca sozinho</button>
       </div>
     </div>
 
@@ -1388,7 +1427,7 @@
             aria-expanded="false" aria-controls="a11y-panel"
             aria-label="Opções de acessibilidade">
       <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M3 2h2v1h-2zM0 3h16v1h-16zM3 4h2v1h-2zM10 6h2v1h-2zM0 7h16v1h-16zM10 8h2v1h-2zM4 10h2v1h-2zM0 11h16v1h-16zM4 12h2v1h-2z"/></svg>
-      Acessibilidade
+      <span class="a11y-trigger__label">Acessibilidade</span>
       <span class="a11y-trigger__dot" aria-hidden="true"></span>
     </button>
 
@@ -1696,6 +1735,23 @@
     // ═══════════════════════════════════════════════════════════════════════
     // BRIDGE: localStorage preferences → UI + a11y state
     // ═══════════════════════════════════════════════════════════════════════
+    // What each choice changes, shown instead of the category name, which may be
+    // a diagnosis the person would rather not have on screen.
+    const PROFILE_LABELS = {
+      tdah: 'Direto, com exemplos', autismo: 'Linguagem literal', dislexia: 'Frases curtas',
+      analitico: 'Com detalhes', criativo: 'Com conexões',
+      visual: 'Listas organizadas', auditivo: 'Leitura em voz alta',
+    };
+
+    function renderProfilePill(perfil) {
+      const pill = document.getElementById('profile-pill');
+      if (!pill || !perfil) return;
+      const names = perfil.split(', ').map(t => PROFILE_LABELS[t] || t).join(', ');
+      pill.textContent = 'Seu perfil';
+      pill.setAttribute('data-empty', 'false');
+      pill.setAttribute('aria-label', `Seu perfil: ${names}. Editar preferências`);
+    }
+
     function applyPreferences() {
       try {
         const prefs = JSON.parse(localStorage.getItem('minded_prefs') || '{}');
@@ -1704,14 +1760,9 @@
           const tags = prefs.perfil_cognitivo.split(', ');
 
           // Render profile tags in the panel
-          const labelMap = {
-            tdah: 'TDAH', autismo: 'Autismo', dislexia: 'Dislexia',
-            analitico: 'Analítico', criativo: 'Criativo',
-            visual: 'Visual', auditivo: 'Auditivo',
-          };
           if (profileTags) {
             profileTags.innerHTML = tags.map(t =>
-              `<span class="profile-tag">${labelMap[t] || t}</span>`
+              `<span class="profile-tag">${esc(PROFILE_LABELS[t] || t)}</span>`
             ).join('');
           }
           if (profileStatus) profileStatus.style.display = '';
@@ -1764,25 +1815,7 @@
     saveA11y();
 
     // ── Profile pill — shows active cognitive profile in header ───────────
-    (function renderProfilePill() {
-      const pill = document.getElementById('profile-pill');
-      if (!pill) return;
-      try {
-        const prefs = JSON.parse(localStorage.getItem('minded_prefs') || '{}');
-        const tags = prefs.perfil_cognitivo ? prefs.perfil_cognitivo.split(', ') : [];
-        const labelMap = {
-          tdah: 'TDAH', autismo: 'Autismo', dislexia: 'Dislexia',
-          analitico: 'Analítico', criativo: 'Criativo',
-          visual: 'Visual', auditivo: 'Auditivo',
-        };
-        if (tags.length) {
-          const names = tags.map(t => labelMap[t] || t).join(' + ');
-          pill.textContent = 'Perfil: ' + names;
-          pill.setAttribute('data-empty', 'false');
-          pill.setAttribute('aria-label', `Perfil ativo: ${names} — clique para editar preferências`);
-        }
-      } catch (_) {}
-    })();
+    try { renderProfilePill(JSON.parse(localStorage.getItem('minded_prefs') || '{}').perfil_cognitivo); } catch (_) {}
 
     // ═══════════════════════════════════════════════════════════════════════
     // PROFILE QUESTIONS MODAL
@@ -1835,7 +1868,8 @@
         backdrop.setAttribute('aria-hidden', 'false');
         // Use rAF so CSS transition fires (display:none → display:flex needs a tick)
         requestAnimationFrame(() => {
-          requestAnimationFrame(() => modal.classList.add('open'));
+          // Skipped if the modal was closed before the frame came
+          requestAnimationFrame(() => { if (!modal.inert) modal.classList.add('open'); });
         });
         releaseFocus = trapFocus(modal, closeModal);
         const first = modal.querySelector('button, [tabindex="0"]');
@@ -1887,20 +1921,9 @@
         } catch(_) {}
 
         // Apply all changes immediately
+        if (newPrefs.perfil_cognitivo) applyPreferences();
         applyA11y(); saveA11y();
-
-        // Re-render profile pill
-        const pill = document.getElementById('profile-pill');
-        if (pill && newPrefs.perfil_cognitivo) {
-          const labelMap = {
-            tdah: 'TDAH', autismo: 'Autismo', dislexia: 'Dislexia',
-            analitico: 'Analítico', criativo: 'Criativo',
-            visual: 'Visual', auditivo: 'Auditivo',
-          };
-          const names = newPrefs.perfil_cognitivo.split(', ').map(t => labelMap[t] || t).join(' + ');
-          pill.textContent = 'Perfil: ' + names;
-          pill.setAttribute('data-empty', 'false');
-        }
+        renderProfilePill(newPrefs.perfil_cognitivo);
 
         closeModal();
       });
@@ -1923,7 +1946,8 @@
     }
     let currentEntryId = null;
 
-    function addToHistory(data, mode, profile, texto) {
+    // extra: { fonte } for pages read from a link, { simplificado } for "Simplificar mais"
+    function addToHistory(data, mode, profile, texto, extra = {}) {
       const hist = loadHistory();
       const id = Date.now();
       hist.unshift({
@@ -1934,6 +1958,7 @@
         profile,
         texto,
         data,
+        ...extra,
       });
       saveHistory(hist);
       renderHistory();
@@ -1956,8 +1981,11 @@
 
     function restoreEntry(entry, quiet = false) {
       // Set first: the action bar reads it while the result is rendered
-      lastRequest = entry.texto ? { text: entry.texto, mode: entry.mode } : null;
+      lastRequest = entry.texto ? { text: entry.texto, mode: entry.mode, fonte: entry.fonte } : null;
       rememberResult(entry.id);
+      // The next Adaptar should produce the same kind of result that is on screen
+      const radio = document.querySelector(`input[name="mode"][value="${entry.mode}"]`);
+      if (radio) radio.checked = true;
       const html = entry.mode === 'metaphor'   ? renderMetaphor(entry.data)
                  : entry.mode === 'checklist'  ? renderChecklist(entry.data)
                  : entry.mode === 'questions'  ? renderQuestions(entry.data)
@@ -1976,26 +2004,50 @@
         return;
       }
       historyList.innerHTML = hist.map(h => `
-        <div class="history-item" role="button" data-id="${h.id}" tabindex="0"
-             aria-label="Restaurar: ${esc(h.titulo)}">
-          <div class="history-item__title">${esc(h.titulo)}</div>
-          <div class="history-item__meta">
-            <span class="history-item__badge">${modeLabels[h.mode] || h.mode}</span>
-            <span>${h.ts}</span>
-          </div>
+        <div class="history-item" data-id="${h.id}">
+          <button type="button" class="history-item__open" aria-label="Abrir: ${esc(h.titulo)}, ${esc(historySource(h))}">
+            <span class="history-item__title">${esc(h.titulo)}</span>
+            <span class="history-item__source">${esc(historySource(h))}</span>
+            <span class="history-item__meta">
+              <span class="history-item__badge">${modeLabels[h.mode] || h.mode}</span>
+              ${h.simplificado ? '<span class="history-item__badge">Mais simples</span>' : ''}
+              <span>${h.ts}</span>
+            </span>
+          </button>
+          <button type="button" class="history-item__delete" aria-label="Apagar do histórico: ${esc(h.titulo)}">
+            <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M3 3h2v1h-2zM11 3h2v1h-2zM4 4h2v1h-2zM10 4h2v1h-2zM5 5h2v1h-2zM9 5h2v1h-2zM6 6h4v1h-4zM7 7h2v2h-2zM6 9h4v1h-4zM5 10h2v1h-2zM9 10h2v1h-2zM4 11h2v1h-2zM10 11h2v1h-2zM3 12h2v1h-2zM11 12h2v1h-2z"/></svg>
+          </button>
         </div>`).join('');
 
       historyList.querySelectorAll('.history-item').forEach(el => {
-        const activate = () => {
-          const id = parseInt(el.dataset.id, 10);
+        const id = parseInt(el.dataset.id, 10);
+        el.querySelector('.history-item__open').addEventListener('click', () => {
           const entry = loadHistory().find(h => h.id === id);
           if (!entry) return;
           restoreEntry(entry);
           closeHistory();
-        };
-        el.addEventListener('click', activate);
-        el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(); }});
+        });
+        el.querySelector('.history-item__delete').addEventListener('click', () => {
+          // Focus moves to the neighbour, so keyboard users keep their place
+          const items = [...historyList.querySelectorAll('.history-item')];
+          const pos = items.indexOf(el);
+          saveHistory(loadHistory().filter(h => h.id !== id));
+          if (currentEntryId === id) rememberResult(null);
+          renderHistory();
+          const rest = historyList.querySelectorAll('.history-item__delete');
+          (rest[Math.min(pos, rest.length - 1)] || historyClose).focus();
+        });
       });
+    }
+
+    // A line that tells apart results with the same title
+    function historySource(h) {
+      const src = h.fonte || h.texto || '';
+      if (/^(https?:\/\/|www\.)/i.test(src)) {
+        try { return new URL(asUrl(src)).hostname.replace(/^www\./, ''); } catch (_) {}
+      }
+      const flat = src.replace(/\s+/g, ' ').trim();
+      return flat.length > 60 ? flat.slice(0, 60) + '…' : flat;
     }
 
     let releaseHistoryFocus = null;
@@ -2054,7 +2106,33 @@
       sourceStatus.textContent = describeSource(textarea.value.trim());
       scheduleDraftSave();
     }
-    textarea.addEventListener('input', updateCharCount);
+    textarea.addEventListener('input', () => {
+      // Edits to the page text keep its origin; clearing it or pasting a new source drops it
+      const value = textarea.value.trim();
+      if (!value || WEB_URL.test(value)) hideSourceOrigin();
+      updateCharCount();
+    });
+
+    // ── Origin of text read from a link, with a way back to the link ───────
+    const sourceOrigin = document.getElementById('source-origin');
+    let originUrl = '';
+    function showSourceOrigin(url) {
+      originUrl = url;
+      let host = url;
+      try { host = new URL(url).hostname.replace(/^www\./, ''); } catch (_) {}
+      document.getElementById('source-origin-text').textContent = `Texto lido de ${host}.`;
+      sourceOrigin.hidden = false;
+    }
+    function hideSourceOrigin() {
+      originUrl = '';
+      sourceOrigin.hidden = true;
+    }
+    document.getElementById('source-origin-back').addEventListener('click', () => {
+      textarea.value = originUrl;
+      hideSourceOrigin();
+      updateCharCount();
+      textarea.focus();
+    });
 
     // ── Draft — survives reloads, cleared on logout ───────────────────────
     const DRAFT_KEY = 'minded_draft';
@@ -2099,6 +2177,7 @@
 
     function usePdfText(text) {
       textarea.value = text;
+      hideSourceOrigin();
       updateCharCount();
       textarea.focus();
     }
@@ -2418,7 +2497,13 @@
       const qs = (data.perguntas || []);
       const cards = qs.map((q, i) => `
         <div class="question-card" data-qi="${i}">
-          <div class="question-card__q">${esc(q.pergunta)}</div>
+          <div class="question-card__q" id="q-text-${i}">${esc(q.pergunta)}</div>
+          <!-- Trying an answer first helps it stick; it stays on this screen only -->
+          <label class="question-guess">
+            <span class="question-guess__label">Seu palpite (opcional)</span>
+            <textarea rows="2" aria-describedby="q-text-${i}"
+                      placeholder="Escreva com suas palavras antes de ver a resposta"></textarea>
+          </label>
           <div class="question-card__actions">
             <button class="question-hint-btn" data-qi="${i}" aria-expanded="false">
               <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 2h6v1h-6zM4 3h1v1h-1zM11 3h1v1h-1zM3 4h1v1h-1zM12 4h1v1h-1zM3 5h1v1h-1zM12 5h1v1h-1zM3 6h1v1h-1zM12 6h1v1h-1zM3 7h1v1h-1zM6 7h1v1h-1zM9 7h1v1h-1zM12 7h1v1h-1zM4 8h1v1h-1zM7 8h2v1h-2zM11 8h1v1h-1zM5 9h1v1h-1zM10 9h1v1h-1zM5 10h1v1h-1zM10 10h1v1h-1zM5 11h6v1h-6zM5 12h6v1h-6zM6 13h4v1h-4z"/></svg>
@@ -2821,7 +2906,7 @@
         explainBlockBtn.className = 'btn btn-ghost btn-sm explain-block-btn';
         explainBlockBtn.textContent = 'Não entendi esta parte';
         explainBlockBtn.addEventListener('click', () => {
-          explainPassage(mainBlock.innerText.trim().slice(0, 1000), mainBlock);
+          explainPassage(mainBlock.innerText.trim().slice(0, 1000), mainBlock, true);
         });
         mainBlock.after(explainBlockBtn);
       }
@@ -2889,6 +2974,7 @@
       lastOptions = options;
       let text      = simplificar ? lastRequest.text : textarea.value.trim();
       const mode    = simplificar ? lastRequest.mode : getMode();
+      let fonte     = simplificar ? lastRequest.fonte : originUrl;
       const profile = buildPerfilString();   // rich profile from all prefs
 
       if (text.length < 10) return;
@@ -2909,9 +2995,11 @@
       try {
         if (isPage) {
           skeletonStatus.textContent = 'Lendo a página…';
-          const page = await apiPost('/extract-url', { url: asUrl(text) });
+          fonte = asUrl(text);
+          const page = await apiPost('/extract-url', { url: fonte });
           text = page.texto;
           textarea.value = text;
+          showSourceOrigin(fonte);
           if (page.truncado) notice = `Esta página é longa: usamos os primeiros ${MAX_TEXT_CHARS.toLocaleString('pt-BR')} caracteres.`;
         }
 
@@ -2921,7 +3009,7 @@
         const data = IS_DEMO
           ? await new Promise(r => setTimeout(() => r(DEMO_RESULTS[mode]), 700))
           : await apiPost('/adapt', body, isVideo ? 180000 : undefined);
-        lastRequest = IS_DEMO ? null : { text, mode };
+        lastRequest = IS_DEMO ? null : { text, mode, fonte };
         let html = '';
         if (data.modo === 'metaphor')        html = renderMetaphor(data);
         else if (data.modo === 'checklist')  html = renderChecklist(data);
@@ -2931,7 +3019,10 @@
         currentEntryId = null;
         showOutput(html, data);
         if (!IS_DEMO) {
-          addToHistory(data, mode, profile, text);
+          const extra = {};
+          if (fonte) extra.fonte = fonte;
+          if (simplificar) extra.simplificado = true;
+          addToHistory(data, mode, profile, text, extra);
           showProfileNudge();
         }
 
@@ -2962,6 +3053,7 @@
         const key = btn.dataset.example;
         if (!EXAMPLES[key]) return;
         textarea.value = EXAMPLES[key];
+        hideSourceOrigin();
         updateCharCount();
         textarea.focus();
         // Scroll textarea ao topo se estiver longo
@@ -3009,13 +3101,25 @@
       explainPassage(trecho, block);
     });
 
-    async function explainPassage(trecho, block) {
+    // wholeBlock: the person asked about the block they just read, so no need to quote it back
+    async function explainPassage(trecho, block, wholeBlock = false) {
+      // Asking again shows the explanation already there instead of paying for another
+      const existing = [...outputContent.querySelectorAll('.explain-card')].find(c => c.dataset.trecho === trecho);
+      if (existing && !existing.classList.contains('is-error')) {
+        existing.focus({ preventScroll: true });
+        existing.scrollIntoView({ block: 'nearest' });
+        return;
+      }
+      existing?.remove();
+
       const card = document.createElement('div');
       card.className = 'explain-card';
+      card.dataset.trecho = trecho;
       card.tabIndex = -1;
+      card.setAttribute('aria-live', 'polite');
       const quote = document.createElement('p');
       quote.className = 'explain-card__quote';
-      quote.textContent = `“${trecho}”`;
+      quote.textContent = wholeBlock ? 'Explicando de outro jeito:' : `“${trecho}”`;
       const answer = document.createElement('p');
       answer.textContent = 'Explicando…';
       card.append(quote, answer);
@@ -3037,6 +3141,7 @@
         }
       } catch (err) {
         answer.textContent = err.message;
+        card.classList.add('is-error');
       }
     }
 
@@ -3077,7 +3182,8 @@
       clearInterval(fs.interval);
       document.getElementById('fs-mascot').hidden = false;
       fsCount.textContent = 'Sessão concluída';
-      fsStep.textContent = `Você concluiu ${fs.done} de ${fs.steps.length} passos.`;
+      const ticked = checklistState.filter(Boolean).length;
+      fsStep.textContent = `Você concluiu ${ticked} de ${fs.steps.length} passos.`;
       fsTimer.textContent = '';
       fsFill.style.width = '100%';
       [fsDone, fsPause, fsSkip].forEach(btn => { btn.hidden = true; });
@@ -3085,8 +3191,15 @@
       fsExit.focus();
     }
 
+    // Steps already ticked in the checklist are not shown again
+    function nextPendingStep(from) {
+      let i = from;
+      while (i < fs.steps.length && checklistState[i]) i += 1;
+      return i;
+    }
+
     function fsAdvance() {
-      fs.index += 1;
+      fs.index = nextPendingStep(fs.index + 1);
       if (fs.index >= fs.steps.length) fsFinish();
       else fsShowStep();
     }
@@ -3104,7 +3217,9 @@
       let sessao = '';
       try { sessao = JSON.parse(localStorage.getItem('minded_prefs') || '{}').sessao; } catch (_) {}
       fs.steps = steps;
-      fs.index = 0;
+      // Starts at the first unticked step, or from the top when all are done
+      fs.index = nextPendingStep(0);
+      if (fs.index >= steps.length) fs.index = 0;
       fs.done = 0;
       fs.total = (FOCUS_MINUTES[sessao] || 5) * 60;
       document.getElementById('fs-mascot').hidden = true;
@@ -3146,6 +3261,8 @@
       textarea.value = EXAMPLES.ciencias;
       textarea.readOnly = true;
       charCount.hidden = true;
+      document.getElementById('output-empty-text').innerHTML =
+        'Escolha um modo e clique em <strong style="color:var(--clr-text)">Adaptar</strong><br/>para ver o exemplo adaptado aqui.';
     } else {
       try {
         textarea.value = localStorage.getItem(DRAFT_KEY) || '';

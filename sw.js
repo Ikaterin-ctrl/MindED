@@ -1,5 +1,5 @@
 /* MindED service worker. Change VERSION on every release that edits this list. */
-const VERSION = 'minded-v4';
+const VERSION = 'minded-v5';
 
 const SHELL = [
   'index.html',

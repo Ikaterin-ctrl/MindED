@@ -1,6 +1,6 @@
 # MindED
 
-**Estação cognitiva para neurodivergentes.** Adapta textos densos em metáforas do cotidiano, microtarefas acionáveis ou resumos semânticos de alto contraste — usando IA generativa (Gemini) e um design acessível.
+**Estação cognitiva para neurodivergentes.** Adapta textos densos em metáforas do cotidiano, microtarefas acionáveis ou resumos semânticos de alto contraste — usando IA generativa (Claude, da Anthropic) e um design acessível.
 
 Nasceu como projeto de Iniciação Científica sobre acessibilidade cognitiva. Evoluiu para um produto open-source.
 
@@ -82,7 +82,7 @@ Acesse `http://localhost:5500`.
 cd api
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env   # adicione sua GEMINI_API_KEY
+cp .env.example .env   # adicione sua ANTHROPIC_API_KEY
 # para testar sem login Firebase, adicione AUTH_DISABLED=true ao .env
 uvicorn main:app --host 127.0.0.1 --port 8000 --reload
 ```
@@ -95,7 +95,7 @@ Testes: `pip install pytest && pytest test_main.py`.
 
 O frontend está no Firebase Hosting; a API precisa de um host próprio (a imagem de `api/Dockerfile` serve para isso). Depois de publicar:
 
-1. Defina no host uma `GEMINI_API_KEY` com faturamento ativo — e nunca `AUTH_DISABLED`.
+1. Defina no host a `ANTHROPIC_API_KEY` (de console.anthropic.com) — e nunca `AUTH_DISABLED`.
 2. Preencha `PROD_API_BASE` no `workspace.html` com a URL pública da API.
 3. Se usar outro domínio no frontend, inclua-o em `ALLOWED_ORIGINS`.
 4. Preencha os campos `[PREENCHER: ...]` de `termos.html` e `privacidade.html` e faça revisão jurídica.
@@ -103,7 +103,7 @@ O frontend está no Firebase Hosting; a API precisa de um host próprio (a image
    O anônimo é o que permite testar com o próprio conteúdo sem criar conta (até `GUEST_DAILY_REQUESTS`
    usos por dia, textos de até `GUEST_MAX_CHARS` caracteres e sem vídeo).
 
-> **Obter chave Gemini:** [aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey). A chave gratuita serve só para testes com textos fictícios. Em produção, use uma chave com faturamento ativo: os termos do Google pedem para não enviar dados pessoais ou sensíveis ao plano gratuito.
+> **Obter a chave do Claude:** crie em [console.anthropic.com](https://console.anthropic.com) e defina `ANTHROPIC_API_KEY`. O uso da API é cobrado à parte: um plano Claude.ai (Pro ou Max) não inclui acesso à API.
 
 ---
 
@@ -113,7 +113,7 @@ O frontend está no Firebase Hosting; a API precisa de um host próprio (a image
 |---|---|
 | Frontend | HTML + CSS (Design System próprio) + Vanilla JS |
 | Backend | Python · FastAPI · Pydantic v2 |
-| IA | Google Gemini (modelo configurável em `GEMINI_MODEL`) |
+| IA | Claude, da Anthropic (modelo configurável em `CLAUDE_MODEL`, padrão `claude-opus-5-5`) |
 | Design | Preto e roxo com toques de pixel art · Atkinson Hyperlegible + Bricolage Grotesque + Pixelify Sans · WCAG AA |
 
 ---
@@ -135,7 +135,7 @@ O frontend está no Firebase Hosting; a API precisa de um host próprio (a image
 No `checklist`, cada item de `tarefas` tem um `tipo` (`escrever`, `multipla_escolha`, `ordenar`, `marcar_no_texto`)
 e o `trecho` do texto que usa; `passos_acao` traz só os textos, para quem precisa da lista simples.
 
-Para vídeo, envie também `video_url` com um link público do YouTube. A API analisa até `VIDEO_MAX_SECONDS` (30 minutos) e permite `VIDEO_DAILY_LIMIT` vídeos por dia para cada usuário.
+Links de vídeo do YouTube (`video_url`) recebem uma mensagem pedindo a transcrição: o Claude lê texto, não vídeos.
 
 As chamadas exigem `Authorization: Bearer <Firebase ID token>`.
 
@@ -150,10 +150,10 @@ Resposta completa segue o schema `AdaptationResponse` em [`api/main.py`](api/mai
 
 ## Segurança
 
-- `GEMINI_API_KEY` exclusivamente via variável de ambiente — nunca hardcoded
+- `ANTHROPIC_API_KEY` exclusivamente via variável de ambiente — nunca hardcoded
 - Token do Firebase verificado no servidor em todas as rotas que usam IA ou buscam links
 - Limites por usuário, por minuto e por dia (por processo, reiniciam com o servidor)
-- O nome do perfil (TDAH, autismo etc.) não chega ao Gemini: a API o converte em orientações de escrita
+- O nome do perfil (TDAH, autismo etc.) não chega à IA: a API o converte em orientações de escrita
 - `/extract-url` bloqueia endereços internos, inclusive em redirecionamentos
 - CORS restrito às origens em `ALLOWED_ORIGINS`
 - A chave `apiKey` do Firebase no frontend é pública por definição; a proteção vem das regras e dos domínios autorizados

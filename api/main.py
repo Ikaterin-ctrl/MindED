@@ -18,16 +18,15 @@ from pathlib import Path
 from typing import List, Literal, Optional
 from urllib.parse import parse_qs, urljoin, urlsplit, urlunsplit
 
+import anthropic
 import httpx
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from google import genai
 from google.auth.exceptions import GoogleAuthError
 from google.auth.transport import requests as google_requests
-from google.genai import types
 from google.oauth2 import id_token
 from pydantic import BaseModel, Field, ValidationError
 
@@ -43,19 +42,17 @@ logger = logging.getLogger("minded")
 # ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
-GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.8-flash")
+# Claude API key from console.anthropic.com (billed apart from a Claude.ai plan)
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
+CLAUDE_MODEL = os.environ.get("CLAUDE_MODEL", "claude-opus-5-5")
 FIREBASE_PROJECT_ID = os.environ.get("FIREBASE_PROJECT_ID", "minded-3d49a")
 # Local development only: skips Firebase token verification.
 AUTH_DISABLED = os.environ.get("AUTH_DISABLED", "").lower() == "true"
-# Cloud Run sets K_SERVICE. An open API there would let anyone spend the Gemini key.
+# Cloud Run sets K_SERVICE. An open API there would let anyone spend the Claude key.
 if AUTH_DISABLED and os.environ.get("K_SERVICE"):
     raise RuntimeError("AUTH_DISABLED must never be set on Cloud Run.")
 MAX_TEXT_CHARS = int(os.environ.get("MAX_TEXT_CHARS", "60000"))
 RATE_LIMIT_PER_MINUTE = int(os.environ.get("RATE_LIMIT_PER_MINUTE", "10"))
-# Video costs far more than text, so it has its own ceiling and a length cap.
-VIDEO_DAILY_LIMIT = int(os.environ.get("VIDEO_DAILY_LIMIT", "5"))
-VIDEO_MAX_SECONDS = int(os.environ.get("VIDEO_MAX_SECONDS", "1800"))
 ALLOWED_ORIGINS = [
     origin.strip()
     for origin in os.environ.get(
@@ -67,7 +64,7 @@ ALLOWED_ORIGINS = [
     if origin.strip()
 ]
 
-# Daily ceiling per user, to keep the cost of a paid Gemini key predictable.
+# Daily ceiling per user, to keep the cost of the Claude key predictable.
 DAILY_CHAR_LIMIT = int(os.environ.get("DAILY_CHAR_LIMIT", "400000"))
 
 # Visitors without an account (Firebase anonymous sign-in) try the real thing, briefly:
@@ -85,7 +82,7 @@ URL_ALLOWED_PORTS = {80, 443}
 # Largest request body accepted: the text limit in UTF-8 plus room for the JSON around it.
 MAX_BODY_BYTES = MAX_TEXT_CHARS * 4 + 16_384
 
-client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
+client = anthropic.AsyncAnthropic(api_key=ANTHROPIC_API_KEY) if ANTHROPIC_API_KEY else None
 
 # The interactive docs list every route, so they exist only in local development.
 app = FastAPI(
@@ -339,7 +336,7 @@ _requests_by_user: dict[str, deque[float]] = defaultdict(deque)
 
 
 def enforce_rate_limit(request: Request, uid: str = Depends(require_user)) -> str:
-    """Sliding one-minute window, per process, to protect the Gemini quota."""
+    """Sliding one-minute window, per process, to protect the Claude quota."""
     now = time.monotonic()
     window = _requests_by_user[uid]
     while window and now - window[0] > 60:
@@ -370,22 +367,6 @@ def spend_daily_quota(uid: str, chars: int) -> None:
             detail="Você chegou ao limite diário de adaptações. Tente de novo amanhã.",
         )
     usage.append((now, chars))
-
-
-_videos_by_user: dict[str, deque[float]] = defaultdict(deque)
-
-
-def enforce_video_limit(uid: str) -> None:
-    now = time.monotonic()
-    window = _videos_by_user[uid]
-    while window and now - window[0] > 86400:
-        window.popleft()
-    if len(window) >= VIDEO_DAILY_LIMIT:
-        raise HTTPException(
-            status_code=429,
-            detail=f"Você chegou ao limite de {VIDEO_DAILY_LIMIT} vídeos por dia. Tente de novo amanhã.",
-        )
-    window.append(now)
 
 
 # ---------------------------------------------------------------------------
@@ -423,8 +404,6 @@ def _writing_guidance(perfil: Optional[str]) -> str:
     return " ".join(dict.fromkeys(guidance)) or "Use linguagem clara e acessível."
 
 
-_VIDEO_CONTENT = "[O conteúdo a adaptar é o vídeo anexado. Use só o que é dito e mostrado nele.]"
-
 _SIMPLIFY_NOTE = (
     "\n\nUse uma linguagem ainda mais simples: frases curtas, palavras do dia a dia "
     "e nenhum jargão, como se explicasse a uma criança de 10 anos."
@@ -437,7 +416,7 @@ def _build_prompt(req: AdaptationRequest) -> str:
 
 def _base_prompt(req: AdaptationRequest) -> str:
     orientacoes = _writing_guidance(req.perfil)
-    texto = _VIDEO_CONTENT if req.video_url else req.texto.replace('"""', "'''")
+    texto = req.texto.replace('"""', "'''")
 
     if req.modo == "metaphor":
         return f"""Você é um educador especialista em acessibilidade cognitiva.
@@ -525,6 +504,66 @@ Escreva em português do Brasil:
 - perguntas: entre 4 e 6, variando entre factuais, de interpretação e de aplicação,
   cada uma com uma dica que orienta o raciocínio sem conter a resposta nem as palavras dela,
   e a resposta completa e acessível"""
+
+
+# ---------------------------------------------------------------------------
+# Claude
+# ---------------------------------------------------------------------------
+class ModelRefused(Exception):
+    """Claude declined the request (stop_reason "refusal") on every model it tried."""
+
+
+def _strict_schema(model: type[BaseModel]) -> dict:
+    """The Pydantic schema in the shape structured outputs accepts: nested models inlined,
+    every property required and nothing extra allowed. Defaults and titles are dropped."""
+    schema = model.model_json_schema()
+    defs = schema.pop("$defs", {})
+
+    def walk(node):
+        if isinstance(node, dict):
+            if "$ref" in node:
+                return walk(dict(defs[node["$ref"].split("/")[-1]]))
+            node = {k: walk(v) for k, v in node.items() if k not in ("default", "title")}
+            if node.get("type") == "object" and "properties" in node:
+                node["required"] = list(node["properties"])
+                node["additionalProperties"] = False
+            return node
+        if isinstance(node, list):
+            return [walk(item) for item in node]
+        return node
+
+    return walk(schema)
+
+
+async def ask_claude(prompt: str, schema: type[BaseModel], *, max_tokens: int, effort: str) -> BaseModel:
+    """Sends one prompt and returns Claude's answer validated against `schema`.
+    A policy decline is retried server-side on Anthropic's recommended fallback model."""
+    response = await client.beta.messages.create(
+        model=CLAUDE_MODEL,
+        max_tokens=max_tokens,
+        betas=["server-side-fallback-2026-07-01"],
+        fallbacks="default",
+        output_config={"effort": effort, "format": {"type": "json_schema", "schema": _strict_schema(schema)}},
+        messages=[{"role": "user", "content": prompt}],
+    )
+    if response.stop_reason == "refusal":
+        raise ModelRefused()
+    text = next((block.text for block in response.content if block.type == "text"), "")
+    return schema.model_validate_json(text)
+
+
+def claude_error(exc: Exception, what: str) -> HTTPException:
+    """Readable message for the person; provider details stay in the logs."""
+    if isinstance(exc, ModelRefused):
+        return HTTPException(status_code=422, detail="A IA não pôde trabalhar com este conteúdo. Tente outro texto.")
+    if isinstance(exc, (ValidationError, json.JSONDecodeError)):
+        logger.warning("Claude returned an invalid %s: %s", what, exc)
+        return HTTPException(status_code=502, detail="A IA devolveu uma resposta incompleta. Tente novamente.")
+    if isinstance(exc, anthropic.RateLimitError):
+        logger.warning("Claude rate limit on %s", what)
+        return HTTPException(status_code=503, detail="A IA está muito ocupada agora. Tente de novo em um minuto.")
+    logger.exception("Claude %s request failed", what)
+    return HTTPException(status_code=502, detail="A IA não respondeu agora. Tente novamente em instantes.")
 
 
 # ---------------------------------------------------------------------------
@@ -684,23 +723,9 @@ Explique só esse trecho em português do Brasil, com palavras mais simples:
 - exemplo: um exemplo do dia a dia em 1 frase, apresentado como comparação"""
 
     try:
-        result = await client.aio.models.generate_content(
-            model=GEMINI_MODEL,
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                temperature=0.5,
-                max_output_tokens=1024,
-                response_mime_type="application/json",
-                response_json_schema=ExplainResponse.model_json_schema(),
-            ),
-        )
-        return ExplainResponse.model_validate_json(result.text or "")
-    except ValidationError as exc:
-        logger.warning("Model returned an invalid explanation: %s", exc)
-        raise HTTPException(status_code=502, detail="A IA devolveu uma resposta incompleta. Tente novamente.") from exc
+        return await ask_claude(prompt, ExplainResponse, max_tokens=4000, effort="low")
     except Exception as exc:
-        logger.exception("Gemini explain request failed")
-        raise HTTPException(status_code=502, detail="A IA não respondeu agora. Tente novamente em instantes.") from exc
+        raise claude_error(exc, "explanation") from exc
 
 
 @app.post("/extract-url", response_model=ExtractUrlResponse)
@@ -731,50 +756,19 @@ async def adapt(req: AdaptationRequest, uid: str = Depends(enforce_rate_limit)) 
                 detail=f"No teste sem cadastro, use até {GUEST_MAX_CHARS:,} caracteres. Com uma conta, o limite é maior.".replace(",", "."),
             )
 
-    contents: str | list[types.Part] = _build_prompt(req)
-    media_resolution = None
-    if not req.video_url:
-        spend_daily_quota(uid, len(req.texto))
+    # Claude reads text, not YouTube videos
     if req.video_url:
-        video_url = canonical_youtube_url(req.video_url)
-        if not video_url:
-            raise HTTPException(status_code=422, detail="Use o link de um vídeo público do YouTube.")
-        enforce_video_limit(uid)
-        media_resolution = types.MediaResolution.MEDIA_RESOLUTION_LOW
-        contents = [
-            types.Part(
-                file_data=types.FileData(file_uri=video_url),
-                video_metadata=types.VideoMetadata(start_offset="0s", end_offset=f"{VIDEO_MAX_SECONDS}s"),
-            ),
-            types.Part(text=contents),
-        ]
+        raise HTTPException(
+            status_code=422,
+            detail="Vídeos do YouTube ainda não funcionam. Cole no campo a transcrição ou as legendas do vídeo.",
+        )
+    spend_daily_quota(uid, len(req.texto))
 
-    schema = OUTPUT_SCHEMAS[req.modo]
     try:
-        result = await client.aio.models.generate_content(
-            model=GEMINI_MODEL,
-            contents=contents,
-            config=types.GenerateContentConfig(
-                temperature=0.7,
-                max_output_tokens=8192,
-                media_resolution=media_resolution,
-                response_mime_type="application/json",
-                response_json_schema=schema.model_json_schema(),
-            ),
-        )
-        data = schema.model_validate_json(result.text or "").model_dump()
-    except (ValidationError, json.JSONDecodeError) as exc:
-        logger.warning("Model returned an invalid payload: %s", exc)
-        raise HTTPException(status_code=502, detail="A IA devolveu uma resposta incompleta. Tente novamente.") from exc
+        result = await ask_claude(_build_prompt(req), OUTPUT_SCHEMAS[req.modo], max_tokens=16000, effort="medium")
+        data = result.model_dump()
     except Exception as exc:
-        # Provider errors can carry internal details, so they stay in the logs.
-        logger.exception("Gemini request failed")
-        detail = (
-            "Não foi possível ler este vídeo. Confira se ele é público e tente novamente."
-            if req.video_url
-            else "A IA não respondeu agora. Tente novamente em instantes."
-        )
-        raise HTTPException(status_code=502, detail=detail) from exc
+        raise claude_error(exc, "adaptation") from exc
 
     if req.modo == "checklist":
         data["tarefas"] = [clean_task(t) for t in data["tarefas"]]
@@ -837,20 +831,6 @@ Avalie a resposta só com base no material, em português do Brasil:
 - dica: se faltar algo, uma pista que ajude a completar sem dar a resposta pronta; vazio se estiver certo"""
 
     try:
-        result = await client.aio.models.generate_content(
-            model=GEMINI_MODEL,
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                temperature=0.3,
-                max_output_tokens=512,
-                response_mime_type="application/json",
-                response_json_schema=CheckResponse.model_json_schema(),
-            ),
-        )
-        return CheckResponse.model_validate_json(result.text or "")
-    except ValidationError as exc:
-        logger.warning("Model returned an invalid check: %s", exc)
-        raise HTTPException(status_code=502, detail="A IA devolveu uma resposta incompleta. Tente novamente.") from exc
+        return await ask_claude(prompt, CheckResponse, max_tokens=4000, effort="low")
     except Exception as exc:
-        logger.exception("Gemini check request failed")
-        raise HTTPException(status_code=502, detail="A IA não respondeu agora. Tente novamente em instantes.") from exc
+        raise claude_error(exc, "check") from exc

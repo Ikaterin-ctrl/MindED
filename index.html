@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="MindED transforma textos, links, vídeos e PDFs difíceis em algo que faz sentido para o seu jeito de aprender." />
+  <meta name="description" content="MindED transforma textos, links e PDFs difíceis em algo que faz sentido para o seu jeito de aprender." />
   <title>MindED — Aprenda do seu jeito</title>
   <link rel="canonical" href="https://minded-3d49a.web.app/" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="MindED — Texto difícil entra. Clareza sai." />
-  <meta property="og:description" content="Transforme textos, links, vídeos e PDFs difíceis em algo que faz sentido para o seu jeito de aprender." />
+  <meta property="og:description" content="Transforme textos, links e PDFs difíceis em algo que faz sentido para o seu jeito de aprender." />
   <meta property="og:url" content="https://minded-3d49a.web.app/" />
   <meta property="og:image" content="https://minded-3d49a.web.app/img/og.png" />
   <meta property="og:image:width" content="1200" />
@@ -91,7 +91,8 @@
       color: var(--clr-text);
       transition: opacity var(--t-base);
     }
-    .lens__stage.swap { opacity: 0; }
+    .lens__stage.swap { animation: lens-in 180ms ease-out; }
+    @keyframes lens-in { from { opacity: 0.35; } to { opacity: 1; } }
     .lens__stage p { color: inherit; }
     .lens__stage ol, .lens__stage ul { display: grid; gap: var(--sp-sm); }
     .lens__stage li { display: grid; grid-template-columns: 2ch 1fr; gap: var(--sp-sm); }
@@ -100,7 +101,7 @@
     .lens__stage summary { color: var(--clr-accent); cursor: pointer; min-height: 44px; }
     .lens__controls {
       display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-columns: repeat(6, minmax(0, 1fr));
       border-top: 1px solid var(--clr-border);
     }
     .lens__btn {
@@ -227,7 +228,7 @@
         <p class="hero__tag">Para mentes que aprendem diferente</p>
         <h1 id="hero-title">Texto difícil entra. <span class="mark mark--load">Clareza</span> sai.</h1>
         <p class="hero__lead">
-          Cole um texto, um link, um vídeo do YouTube ou um PDF.
+          Cole um texto, um link ou um PDF.
           O MindED troca o jargão por um formato que funciona para a sua cabeça.
         </p>
         <div class="hero__cta">
@@ -247,9 +248,10 @@
         <div class="lens__controls">
           <button class="lens__btn" type="button" data-lens="original" aria-pressed="true"><svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M3 2h7v1h-7zM3 3h1v11h-1zM10 3h1v1h-1zM11 4h1v1h-1zM12 5h1v9h-1zM4 13h8v1h-8zM5 6h5v1h-5zM5 8h6v1h-6zM5 10h6v1h-6z"/></svg>Original</button>
           <button class="lens__btn" type="button" data-lens="metaphor" aria-pressed="false"><svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 2h6v1h-6zM4 3h1v1h-1zM11 3h1v1h-1zM3 4h1v1h-1zM12 4h1v1h-1zM3 5h1v1h-1zM12 5h1v1h-1zM3 6h1v1h-1zM12 6h1v1h-1zM3 7h1v1h-1zM6 7h1v1h-1zM9 7h1v1h-1zM12 7h1v1h-1zM4 8h1v1h-1zM7 8h2v1h-2zM11 8h1v1h-1zM5 9h1v1h-1zM10 9h1v1h-1zM5 10h1v1h-1zM10 10h1v1h-1zM5 11h6v1h-6zM5 12h6v1h-6zM6 13h4v1h-4z"/></svg>Metáfora</button>
-          <button class="lens__btn" type="button" data-lens="steps" aria-pressed="false"><svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2 3h8v1h-8zM2 4h1v1h-1zM9 4h1v1h-1zM13 4h2v1h-2zM2 5h1v1h-1zM9 5h1v1h-1zM12 5h2v1h-2zM2 6h1v1h-1zM9 6h1v1h-1zM11 6h2v1h-2zM2 7h1v1h-1zM5 7h1v1h-1zM9 7h2v1h-2zM2 8h1v1h-1zM5 8h2v1h-2zM8 8h2v1h-2zM11 8h1v1h-1zM2 9h1v1h-1zM6 9h3v1h-3zM11 9h1v1h-1zM2 10h1v1h-1zM7 10h1v1h-1zM11 10h1v1h-1zM2 11h1v1h-1zM11 11h1v1h-1zM2 12h10v1h-10z"/></svg>Passos</button>
+          <button class="lens__btn" type="button" data-lens="steps" aria-pressed="false"><svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2 3h8v1h-8zM2 4h1v1h-1zM9 4h1v1h-1zM13 4h2v1h-2zM2 5h1v1h-1zM9 5h1v1h-1zM12 5h2v1h-2zM2 6h1v1h-1zM9 6h1v1h-1zM11 6h2v1h-2zM2 7h1v1h-1zM5 7h1v1h-1zM9 7h2v1h-2zM2 8h1v1h-1zM5 8h2v1h-2zM8 8h2v1h-2zM11 8h1v1h-1zM2 9h1v1h-1zM6 9h3v1h-3zM11 9h1v1h-1zM2 10h1v1h-1zM7 10h1v1h-1zM11 10h1v1h-1zM2 11h1v1h-1zM11 11h1v1h-1zM2 12h10v1h-10z"/></svg>Passo a passo</button>
           <button class="lens__btn" type="button" data-lens="summary" aria-pressed="false"><svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2 4h2v1h-2zM6 4h8v1h-8zM2 5h2v1h-2zM6 5h8v1h-8zM2 7h2v1h-2zM6 7h8v1h-8zM2 8h2v1h-2zM6 8h8v1h-8zM2 10h2v1h-2zM6 10h5v1h-5zM2 11h2v1h-2zM6 11h5v1h-5z"/></svg>Resumo</button>
-          <button class="lens__btn" type="button" data-lens="question" aria-pressed="false"><svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 2h6v1h-6zM4 3h2v1h-2zM10 3h2v1h-2zM4 4h2v1h-2zM10 4h2v1h-2zM10 5h2v1h-2zM9 6h2v1h-2zM8 7h2v1h-2zM7 8h2v1h-2zM7 9h2v1h-2zM7 11h2v1h-2zM7 12h2v1h-2z"/></svg>Pergunta</button>
+          <button class="lens__btn" type="button" data-lens="question" aria-pressed="false"><svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 2h6v1h-6zM4 3h2v1h-2zM10 3h2v1h-2zM4 4h2v1h-2zM10 4h2v1h-2zM10 5h2v1h-2zM9 6h2v1h-2zM8 7h2v1h-2zM7 8h2v1h-2zM7 9h2v1h-2zM7 11h2v1h-2zM7 12h2v1h-2z"/></svg>Perguntas</button>
+          <button class="lens__btn" type="button" data-lens="mindmap" aria-pressed="false"><svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M1 1h4v3h-4zM11 1h4v3h-4zM4 4h1v1h-1zM11 4h1v1h-1zM5 5h1v1h-1zM10 5h1v1h-1zM6 6h4v4h-4zM5 10h1v1h-1zM10 10h1v1h-1zM4 11h1v1h-1zM11 11h1v1h-1zM1 12h4v3h-4zM11 12h4v3h-4z"/></svg>Mapa de ideias</button>
         </div>
       </div>
     </section>
@@ -258,7 +260,7 @@
       <div class="shell">
         <h2 id="fontes-title" class="reveal">Comece pelo que você tem em mãos.</h2>
         <div class="sources reveal" aria-label="Formatos aceitos">
-          <span>Texto</span><span>Link</span><span>Vídeo</span><span>PDF</span>
+          <span>Texto</span><span>Link</span><span>PDF</span>
         </div>
       </div>
     </section>
@@ -266,28 +268,28 @@
     <section class="band" id="lentes" aria-labelledby="lentes-title">
       <div class="shell">
         <h2 id="lentes-title" class="reveal">Cinco lentes para o mesmo assunto.</h2>
-        <div class="rows">
-          <article class="row reveal">
+        <div class="rows reveal">
+          <article class="row">
             <span class="row__num" aria-hidden="true">01</span>
             <h3>Metáfora</h3>
             <p>O conceito vira uma cena do cotidiano, com um aviso sobre o que a comparação não explica.</p>
           </article>
-          <article class="row reveal">
+          <article class="row">
             <span class="row__num" aria-hidden="true">02</span>
             <h3>Passo a passo</h3>
             <p>O conteúdo se divide em tarefas pequenas, e a sessão de foco mostra uma por vez.</p>
           </article>
-          <article class="row reveal">
+          <article class="row">
             <span class="row__num" aria-hidden="true">03</span>
             <h3>Resumo</h3>
             <p>Só o essencial, com as palavras-chave marcadas para uma leitura rápida.</p>
           </article>
-          <article class="row reveal">
+          <article class="row">
             <span class="row__num" aria-hidden="true">04</span>
             <h3>Perguntas</h3>
             <p>Teste o que ficou claro, com uma dica antes de abrir a resposta.</p>
           </article>
-          <article class="row reveal">
+          <article class="row">
             <span class="row__num" aria-hidden="true">05</span>
             <h3>Mapa de ideias</h3>
             <p>O tema fica no centro, e cada ideia ligada a ele aparece com seus detalhes.</p>
@@ -369,7 +371,7 @@
         html: '<p>Imagine uma biblioteca que vira duas. Os livros vão para <span class="mark">caixas</span>, as caixas se alinham no <span class="mark">corredor</span> e cada cópia é puxada para um lado. No fim, uma <span class="mark">parede</span> separa dois prédios iguais.</p><p class="lens__note">O que a comparação não explica: a célula não tem corredores nem paredes. Ela mostra a ordem das fases, não a forma da célula.</p>',
       },
       steps: {
-        label: 'Passos',
+        label: 'Passo a passo',
         html: '<ol><li><span>1</span><span>Os cromossomos ficam visíveis.</span></li><li><span>2</span><span>Eles se alinham no meio da célula.</span></li><li><span>3</span><span>As cópias vão para lados opostos.</span></li><li><span>4</span><span>A célula se divide em duas.</span></li></ol>',
       },
       summary: {
@@ -377,8 +379,12 @@
         html: '<p>Uma célula vira <span class="mark">duas células iguais</span>, em quatro fases: prófase, metáfase, anáfase e telófase.</p>',
       },
       question: {
-        label: 'Pergunta',
+        label: 'Perguntas',
         html: '<p>Quantas células existem ao fim da mitose?</p><details><summary>Ver resposta</summary><p>Duas, geneticamente idênticas à original.</p></details>',
+      },
+      mindmap: {
+        label: 'Mapa de ideias',
+        html: '<p><strong>Mitose</strong>: uma célula vira duas iguais.</p><ul><li><span>▪</span><span>Prófase: os cromossomos aparecem.</span></li><li><span>▪</span><span>Metáfase: eles se alinham no meio.</span></li><li><span>▪</span><span>Anáfase: as cópias se separam.</span></li><li><span>▪</span><span>Telófase: surgem dois núcleos.</span></li></ul>',
       },
     };
 
@@ -396,13 +402,14 @@
     buttons.forEach(btn => btn.addEventListener('click', () => {
       const lens = LENSES[btn.dataset.lens];
       buttons.forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
-      stage.classList.add('swap');
-      setTimeout(() => {
-        stage.innerHTML = lens.html;
-        label.textContent = lens.label;
+      stage.innerHTML = lens.html;
+      label.textContent = lens.label;
+      drawMarks(stage);
+      if (!calm) {
         stage.classList.remove('swap');
-        drawMarks(stage);
-      }, calm ? 0 : 200);
+        void stage.offsetWidth; // restarts the fade
+        stage.classList.add('swap');
+      }
     }));
 
     drawMarks(document.querySelector('.hero h1'));

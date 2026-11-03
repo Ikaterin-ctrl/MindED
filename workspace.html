@@ -129,7 +129,6 @@
         </div>
         <p class="demo-own-note" id="demo-own-note" role="tabpanel" aria-labelledby="demo-tab-own" hidden>
           Cole um texto ou um link, ou envie um PDF. São até 6 usos por dia, com textos de até 4.000 caracteres, e nada fica guardado.
-          Vídeos precisam de uma conta.
         </p>
       </div>
 
@@ -141,11 +140,15 @@
           <textarea
             id="text-input"
             class="input-area__textarea"
-            placeholder="Cole um texto, o link de uma página ou um vídeo do YouTube…"
-            aria-label="Texto, link de página ou vídeo do YouTube"
+            placeholder="Cole um texto ou o link de uma página…"
+            aria-label="Texto ou link de página"
             aria-describedby="source-status"
           ></textarea>
           <span class="char-count" id="char-count"></span>
+        </div>
+        <div class="source-origin" id="undo-example" hidden>
+          <span>Seu texto foi trocado pelo exemplo.</span>
+          <button type="button" class="btn btn-ghost btn-sm" id="undo-example-btn">Desfazer</button>
         </div>
         <p class="readonly-note" id="readonly-note" hidden>
           Este é um exemplo pronto. Para usar o seu, escolha "Meu próprio conteúdo" acima.
@@ -258,8 +261,7 @@
         </div>
         <!-- State B: no prefs -->
         <div class="profile-empty" id="profile-empty">
-          <span class="profile-empty__text">Nenhum perfil configurado.</span>
-          <a href="preferencias.html" class="profile-empty__link">Configurar preferências →</a>
+          <a href="preferencias.html" class="profile-empty__link">Personalize como você aprende →</a>
         </div>
       </div>
 
@@ -336,7 +338,7 @@
        aria-modal="true" aria-labelledby="onboard-title" aria-hidden="true" inert>
     <div class="onboard-modal__head">
       <h2 id="onboard-title">Como prefere aprender?</h2>
-      <p>Três perguntas rápidas. As respostas ficam neste navegador, e o Gemini recebe só orientações de escrita.</p>
+      <p>Três perguntas rápidas. As respostas ficam neste navegador, e a IA recebe só orientações de escrita.</p>
     </div>
 
     <div class="onboard-q">

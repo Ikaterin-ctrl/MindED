@@ -474,9 +474,11 @@ body.focus-mode .workspace {
   grid-template-columns: 1fr !important;
   max-width: 740px !important;
 }
-body.focus-mode .output-panel { display: none; }
-body.focus-mode.has-output .output-panel { display: flex !important; }
-body.focus-mode.has-output .panel:first-of-type { display: none; }
+body.focus-mode .examples-group,
+body.focus-mode .profile-group,
+body.focus-mode .shortcut-hint,
+body.focus-mode .source-bar__hint,
+body.focus-mode .today-goal { display: none; }
 
 /* ── OpenDyslexic font mode ───────────────────────────────── */
 body.font-dyslexic,
@@ -1062,3 +1064,33 @@ body.hcm .question-card, body.hcm .checklist-item { border-width: 2px; }
 body.hcm a { text-decoration: underline; }
 body.hcm.theme-light .btn-ghost { color: #000 !important; border-color: #000 !important; }
 body.hcm :focus-visible { outline-width: 3px !important; }
+
+/* ── Accessibility panel: steady size and visible on/off state ──
+   Its own text does not follow the page's font setting, so the − and +
+   buttons stay under the pointer while the page text grows. */
+.a11y-bar, .a11y-bar * { font-size: 14px; }
+.a11y-panel { width: 264px; min-width: 264px; }
+.a11y-panel__label { font-size: 12px; }
+.a11y-stepper span { width: 3.5em; }
+
+/* Each toggle shows a switch: grey and to the left when off, purple and to the right when on */
+.a11y-toggle[aria-pressed]::after {
+  content: '';
+  flex: none;
+  width: 34px;
+  height: 18px;
+  margin-left: auto;
+  border-radius: 0;
+  opacity: 1;
+  background:
+    linear-gradient(var(--clr-text-subtle), var(--clr-text-subtle)) 3px 50% / 12px 12px no-repeat,
+    var(--clr-surface-hi, rgba(255,255,255,0.12));
+  border: 1px solid var(--clr-border-md);
+  transition: background var(--t-fast);
+}
+.a11y-toggle[aria-pressed="true"]::after {
+  background:
+    linear-gradient(#fff, #fff) calc(100% - 3px) 50% / 12px 12px no-repeat,
+    #7C3AED;
+  border-color: #7C3AED;
+}

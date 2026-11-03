@@ -228,6 +228,14 @@
         <a href="index.html"        class="nav-link">Início</a>
         <a href="workspace.html"    class="nav-link">Workspace</a>
         <a href="preferencias.html" class="nav-link active" aria-current="page">Preferências</a>
+        <!-- Same account controls as the Workspace -->
+        <div style="display:flex;align-items:center;gap:8px;margin-left:4px">
+          <img id="user-avatar" src="" alt="" width="28" height="28" referrerpolicy="no-referrer"
+            style="border-radius:50%;display:none;border:1.5px solid rgba(255,255,255,0.20)" />
+          <button id="logout-btn" class="btn btn-ghost btn-sm" style="display:none"
+            aria-label="Sair da conta">Sair</button>
+          <a id="login-link" href="login.html?next=workspace.html" class="btn btn-primary btn-sm" style="display:none">Entrar</a>
+        </div>
       </nav>
     </div>
   </header>
@@ -305,7 +313,7 @@
           <legend>O que ajuda você a entender melhor?</legend>
           <p class="prefs-note">
             Marque tudo o que se aplica. Essas respostas ficam neste navegador. Para gerar o resultado,
-            o Gemini recebe só orientações de escrita, como “use frases curtas”, nunca o nome do que você marcou.
+            a IA recebe só orientações de escrita, como “use frases curtas”, nunca o nome do que você marcou.
             <a href="privacidade.html">Saiba mais</a>.
           </p>
           <div class="check-group">
@@ -427,6 +435,27 @@
       hamburger.setAttribute('aria-expanded', String(open));
       hamburger.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
     });
+
+    /* ── Account controls in the header ────────────────────────── */
+    function renderAccountControls() {
+      const user = window._mindedUser;
+      const signedIn = user && !user.isAnonymous;
+      const avatar = document.getElementById('user-avatar');
+      if (signedIn && user.photoURL) {
+        avatar.src = user.photoURL;
+        avatar.alt = user.displayName || 'Sua conta';
+        avatar.style.display = 'block';
+      }
+      document.getElementById('logout-btn').style.display = signedIn ? 'inline-flex' : 'none';
+      document.getElementById('login-link').style.display = signedIn ? 'none' : 'inline-flex';
+    }
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+      mindedLeaveAccount();
+      await firebase.auth().signOut();
+      window.location.replace('login.html');
+    });
+    renderAccountControls();
+    window.addEventListener('minded-user', renderAccountControls);
 
     /* ── Profile: identity, goal and progress ─────────────────── */
     (function initProfile() {

@@ -15,7 +15,7 @@ pip install -r requirements.txt
 
 # 3. Configure environment
 cp .env.example .env
-# → Edit .env and paste your GEMINI_API_KEY
+# → Edit .env and paste your ANTHROPIC_API_KEY (from console.anthropic.com)
 
 # 4. Run the server
 uvicorn main:app --host 127.0.0.1 --port 8000 --reload
@@ -48,6 +48,6 @@ Open `http://127.0.0.1:8000/docs` for the auto-generated Swagger UI.
 
 ## Security notes
 
-- GEMINI_API_KEY is read from environment variables, never hard-coded.
+- ANTHROPIC_API_KEY is read from environment variables, never hard-coded.
 - CORS is restricted to `localhost` origins only.
 - Server binds to `127.0.0.1` — not exposed to the network.

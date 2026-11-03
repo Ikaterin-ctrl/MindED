@@ -1,4 +1,4 @@
-/* Ready-made results for the no-login demo: no API call, no Gemini usage.
+/* Ready-made results for the no-login demo: no API call, no AI usage.
    One set per example text, keyed like the example buttons (EXAMPLES in workspace.js). */
 const DEMO_RESULTS = {
   ciencias: {

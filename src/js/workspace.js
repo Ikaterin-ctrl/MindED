@@ -43,7 +43,7 @@ function trapFocus(container, onEscape) {
 
 // ── Authenticated API call ────────────────────────────────────────────
 async function apiPost(path, body, timeoutMs = 90000) {
-  if (!API_BASE) throw new Error('O serviço de adaptação ainda não está disponível neste site.');
+  if (!API_BASE) throw new Error('A IA ainda não está no ar neste site. Enquanto isso, teste com os exemplos prontos (Ciências, História ou Matemática).');
 
   const headers = { 'Content-Type': 'application/json' };
   const user = firebase.auth().currentUser;
@@ -659,7 +659,6 @@ const GUEST_MAX_CHARS = 4000;   // same limit as the API applies to visitors
 let demoOwn = false;
 const canUseAI = () => !IS_DEMO || demoOwn;
 const maxChars = () => (IS_DEMO && demoOwn ? GUEST_MAX_CHARS : MAX_TEXT_CHARS);
-const VIDEO_MAX_MINUTES = 30;
 const WEB_URL = /^(https?:\/\/|www\.)\S+$/i;
 const YOUTUBE_URL = /^(https?:\/\/)?(www\.|m\.|music\.)?(youtube\.com\/(watch\?|shorts\/|live\/|embed\/)|youtu\.be\/)\S+$/i;
 const sourceStatus = document.getElementById('source-status');
@@ -668,7 +667,7 @@ function asUrl(value) {
   return /^https?:/i.test(value) ? value : `https://${value}`;
 }
 function describeSource(value) {
-  if (YOUTUBE_URL.test(value)) return `Vídeo do YouTube. Funciona com vídeos públicos, e usamos até os primeiros ${VIDEO_MAX_MINUTES} minutos.`;
+  if (YOUTUBE_URL.test(value)) return 'Vídeos do YouTube ainda não funcionam: o MindED lê texto. Cole aqui a transcrição ou as legendas do vídeo.';
   if (WEB_URL.test(value)) return 'Link de página. Vamos ler o texto dela quando você clicar em Adaptar.';
   return '';
 }
@@ -687,7 +686,21 @@ function updateCharCount() {
   sourceStatus.textContent = IS_DEMO && !demoOwn ? DEMO_TYPES[demoType].status : describeSource(textarea.value.trim());
   scheduleDraftSave();
 }
+let undoText = '';
+document.getElementById('undo-example-btn').addEventListener('click', () => {
+  textarea.value = undoText;
+  undoText = '';
+  exampleShown = null;
+  document.getElementById('undo-example').hidden = true;
+  updateCharCount();
+  textarea.focus();
+});
+
 textarea.addEventListener('input', () => {
+  // Editing the field makes it the person's own text: no example, no stale error
+  exampleShown = null;
+  document.getElementById('undo-example').hidden = true;
+  clearError();
   // Edits to the page text keep its origin; clearing it or pasting a new source drops it
   const value = textarea.value.trim();
   if (!value || WEB_URL.test(value)) hideSourceOrigin();
@@ -743,6 +756,28 @@ const PDF_MAX_BYTES = 50 * 1024 * 1024;
 
 // Rebuilds readable text from pdf.js pieces: words split into several pieces are
 // joined back, line ends become breaks, and words hyphenated across lines are rejoined.
+// LaTeX-made PDFs often store "ã" as "˜a": a spacing accent before the letter.
+// These become combining marks after the letter, then NFC joins them into one character.
+const SPACING_ACCENTS = {
+  '´': '́', 'ˊ': '́', 'ˋ': '̀', '`': '̀',
+  '˜': '̃', 'ˆ': '̂', '¨': '̈', '¸': '̧',
+  'ˇ': '̌', '˚': '̊',
+};
+// Each accent only joins a letter that can carry it, so "it´s" or "d´água" stay as they are
+const ACCENT_LETTERS = {
+  '́': 'aeiouAEIOUı', '̀': 'aeiouAEIOU', '̂': 'aeiouAEIOUı',
+  '̈': 'aeiouAEIOUı', '̃': 'aonAON', '̧': 'cC', '̌': 'csznrCSZNR', '̊': 'auAU',
+};
+function fixAccents(text) {
+  return text
+    .replace(/([´ˊˋ`˜ˆ¨¸ˇ˚])([A-Za-zı])/g, (m, accent, letter) => {
+      const mark = SPACING_ACCENTS[accent];
+      if (!ACCENT_LETTERS[mark].includes(letter)) return m;
+      return (letter === 'ı' ? 'i' : letter) + mark;
+    })
+    .normalize('NFC');
+}
+
 function pdfPageText(items) {
   let text = '';
   items.forEach(item => {
@@ -750,7 +785,7 @@ function pdfPageText(items) {
     text += item.str;
     if (item.hasEOL) text += '\n';
   });
-  return text
+  return fixAccents(text)
     .replace(/[ \t\u00a0]+/g, ' ')
     .replace(/(\p{L})-\n(\p{Ll})/gu, '$1$2')
     .replace(/ *\n */g, '\n')
@@ -900,6 +935,9 @@ if (/Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent)) {
 function getMode() {
   return document.querySelector('input[name="mode"]:checked').value;
 }
+document.querySelectorAll('input[name="mode"]').forEach(radio => radio.addEventListener('change', () => {
+  if (!IS_DEMO) { try { localStorage.setItem('minded_mode', radio.value); } catch (_) {} }
+}));
 
 // ── Escape HTML helper ────────────────────────────────────────────────
 function esc(str) {
@@ -1965,6 +2003,26 @@ function showOutput(html, responseData, quiet = false) {
   wireTts(outputContent);
 }
 
+// Scrolls the result panel into view when it is above or below the visible area
+function revealOutput() {
+  const panel = document.querySelector('.output-panel');
+  if (!panel) return;
+  const top = panel.getBoundingClientRect().top;
+  if (top < 72 || top > window.innerHeight - 160) {
+    panel.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+  }
+}
+
+// An error belongs to the last attempt: changing the text puts the empty state back
+function clearError() {
+  if (!outputContent.querySelector('.output-error')) return;
+  outputContent.innerHTML = '';
+  outputContent.classList.add('hidden');
+  outputContent.setAttribute('aria-hidden', 'true');
+  outputEmpty.classList.remove('hidden');
+  outputEmpty.setAttribute('aria-hidden', 'false');
+}
+
 // ── Error state with retry ────────────────────────────────────────────
 function showError(msg) {
   stopSkeleton();
@@ -1978,6 +2036,7 @@ function showError(msg) {
     </div>`;
   outputContent.classList.remove('hidden');
   outputContent.setAttribute('aria-hidden', 'false');
+  revealOutput();
 
   document.getElementById('retry-btn').addEventListener('click', () => {
     outputContent.classList.add('hidden');
@@ -2027,14 +2086,15 @@ async function doAdapt(options = {}) {
 
   const isVideo = canUseAI() && YOUTUBE_URL.test(text);
   const isPage  = canUseAI() && !isVideo && WEB_URL.test(text);
-  if (isVideo && IS_DEMO) {
-    showError('Vídeos precisam de uma conta. Crie a sua para usar, ou veja o exemplo pronto de vídeo.');
+  if (isVideo) {
+    showError('Vídeos do YouTube ainda não funcionam. Cole no campo a transcrição ou as legendas do vídeo.');
     return;
   }
   let notice = '';
 
   document.body.classList.remove('has-output');
   startSkeleton();
+  revealOutput();
   adaptBtn.classList.add('loading');
   adaptBtn.disabled = true;
 
@@ -2056,11 +2116,14 @@ async function doAdapt(options = {}) {
     const body = { texto: text, modo: mode, perfil: profile, simplificar };
     if (isVideo) body.video_url = asUrl(text);
 
+    // Ready-made results: the demo examples, and an untouched example for signed-in people
+    const readyTopic = IS_DEMO && !demoOwn ? demoTopic
+      : (!simplificar && exampleShown && textarea.value === EXAMPLES[exampleShown] ? exampleShown : null);
     if (IS_DEMO && demoOwn) await startGuestSession();
-    const data = IS_DEMO && !demoOwn
-      ? await new Promise(r => setTimeout(() => r(DEMO_RESULTS[demoTopic][mode]), 700))
-      : await apiPost('/adapt', body, isVideo ? 180000 : undefined);
-    lastRequest = IS_DEMO && !demoOwn ? null : { text, mode, fonte };
+    const data = readyTopic
+      ? await new Promise(r => setTimeout(() => r({ ...DEMO_RESULTS[readyTopic][mode], modo: mode }), 500))
+      : await apiPost('/adapt', body);
+    lastRequest = readyTopic ? null : { text, mode, fonte };
     const html = renderResult(data);
 
     currentEntryId = null;
@@ -2088,6 +2151,7 @@ adaptBtn.addEventListener('click', () => doAdapt());
 // TEXTOS DE EXEMPLO
 // ═══════════════════════════════════════════════════════════════════════
 let demoTopic = 'ciencias';   // subject shown in the demo
+let exampleShown = null;      // signed in: example currently in the field, untouched
 let demoType = 'texto';       // kind of source that example stands for
 
 // Each source type has a ready-made example; the video one stands in for a real video
@@ -2095,7 +2159,7 @@ const DEMO_TYPES = {
   texto: { topic: 'ciencias',     status: 'Exemplo de texto colado: biologia, sobre a mitose.' },
   link:  { topic: 'historia',     status: 'Exemplo de link: este é o texto que o MindED leu de uma página sobre a Revolução Industrial.' },
   pdf:   { topic: 'matematica',   status: 'Exemplo de PDF: o texto de uma apostila de 1 página sobre função quadrática.' },
-  video: { topic: 'fotossintese', status: 'Exemplo de vídeo: uma aula de 6 minutos. No campo, o que a aula explica.' },
+  video: { topic: 'fotossintese', status: 'Exemplo de vídeo: a transcrição de uma aula de 6 minutos. Para usar um vídeo seu, cole a transcrição dele.' },
 };
 
 // Anonymous sign-in, so the API can count a visitor's tests without an account
@@ -2156,7 +2220,16 @@ document.querySelectorAll('.example-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const key = btn.dataset.example;
     if (!EXAMPLES[key]) return;
+    // The person's own text can come back with one click
+    const previous = textarea.value;
+    const wasOwn = previous.trim() && !Object.values(EXAMPLES).includes(previous);
     textarea.value = EXAMPLES[key];
+    exampleShown = key;
+    clearError();
+    if (wasOwn && !IS_DEMO) {
+      undoText = previous;
+      document.getElementById('undo-example').hidden = false;
+    }
     if (IS_DEMO) {
       demoTopic = key;
       document.querySelectorAll('.example-btn').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
@@ -2560,6 +2633,9 @@ if (IS_DEMO) {
 } else {
   try {
     textarea.value = localStorage.getItem(DRAFT_KEY) || '';
+    const savedMode = localStorage.getItem('minded_mode');
+    const savedRadio = savedMode && document.querySelector(`input[name="mode"][value="${savedMode}"]`);
+    if (savedRadio) savedRadio.checked = true;
     // A reload in the same tab keeps the result on screen
     const lastId = Number(sessionStorage.getItem('minded_last_result'));
     const lastEntry = loadHistory().find(h => h.id === lastId);

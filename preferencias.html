@@ -10,16 +10,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="src/css/base.css" />
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg" />
-  <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" href="img/apple-touch-icon.png" />
   <meta name="theme-color" content="#0B0A0F" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="MindED" />
 
   <!-- Firebase auth guard -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="src/js/account.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" integrity="sha384-AQ3POAMqIhwS81FrUH95ekxqBZHeP5tG2JfEL3+7GuTtfRLWnrRh32UxwzM+//A9" crossorigin="anonymous"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" integrity="sha384-TnlRYaR4JYz/lpaGuaiU61PjNberSA4vjLjtF+oRC/IkohkJqnWxw5EmDSOt1vA1" crossorigin="anonymous"></script>
   <script>
     const _fbConfig = {
       apiKey:            "AIzaSyAOV3zKA6QtrLtGToO-dsfbONhKyw7S80Q",
@@ -32,8 +29,20 @@
     if (!firebase.apps.length) firebase.initializeApp(_fbConfig);
     document.documentElement.style.visibility = 'hidden';
     firebase.auth().onAuthStateChanged(user => {
-      if (!user) { window.location.replace('login.html'); }
-      else { document.documentElement.style.visibility = ''; window._mindedUser = user; }
+      if (!user) {
+        // Works without an account: the choices stay in this browser,
+        // and the account adopts them on the next sign-in
+        if (mindedLeaveAccount()) { window.location.reload(); return; }
+        document.documentElement.style.visibility = '';
+        const showGuest = () => { document.getElementById('prefs-guest').hidden = false; };
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', showGuest);
+        else showGuest();
+      } else if (mindedUseAccount(user.uid)) {
+        window.location.reload();
+      } else {
+        document.documentElement.style.visibility = '';
+        window._mindedUser = user;
+      }
     });
   </script>
 
@@ -49,6 +58,7 @@
     }
 
     .prefs-hero { text-align: center; }
+    .prefs-guest { margin-top: var(--sp-md); padding: var(--sp-sm) var(--sp-md); border: 1px solid var(--clr-border-md); font-size: 0.95rem; }
     .prefs-hero h1 {
       font-size: clamp(1.8rem, 3.5vw, 2.4rem);
       margin-bottom: var(--sp-sm);
@@ -156,12 +166,13 @@
   </style>
 </head>
 <body>
+  <script src="src/js/theme.js"></script>
   <a href="#conteudo" class="skip-link">Pular para o conteúdo</a>
 
   <!-- ── Header ─────────────────────────────────────────────── -->
   <header class="main-header">
     <div class="header-inner">
-      <a href="index.html" class="logo-link">
+      <a href="index.html" class="logo-link" aria-label="MindED, início">
         <span>Mind<b>ED</b></span>
       </a>
 
@@ -184,6 +195,10 @@
       <div class="prefs-hero">
         <h1>Como você aprende?</h1>
         <p>Quatro escolhas rápidas, todas opcionais. Você pode mudar quando quiser.</p>
+        <p class="prefs-guest" id="prefs-guest" hidden>
+          Você não entrou na sua conta: estas escolhas ficam só neste navegador.
+          <a href="login.html?next=workspace.html">Entre</a> para usar o Workspace com elas.
+        </p>
       </div>
 
       <form class="prefs-form" id="prefs-form">
@@ -255,6 +270,7 @@
             <label class="check-label"><input type="radio" name="modo" value="checklist" /><span class="check-label__name">Passo a passo</span></label>
             <label class="check-label"><input type="radio" name="modo" value="summary" /><span class="check-label__name">Resumo</span></label>
             <label class="check-label"><input type="radio" name="modo" value="questions" /><span class="check-label__name">Perguntas</span></label>
+            <label class="check-label"><input type="radio" name="modo" value="mindmap" /><span class="check-label__name">Mapa de ideias</span></label>
           </div>
         </fieldset>
 
@@ -287,8 +303,8 @@
       <section class="prefs-section glass" aria-labelledby="dados-title">
         <h2 id="dados-title">Seus dados</h2>
         <p class="prefs-note">
-          Preferências, histórico e rascunho ficam guardados só neste navegador. Em um computador compartilhado,
-          apague tudo antes de sair. Essa ação não pode ser desfeita.
+          Preferências, histórico e rascunho ficam guardados só neste navegador, separados por conta.
+          Em um computador compartilhado, apague tudo antes de sair. Essa ação não pode ser desfeita.
         </p>
         <button class="btn btn-ghost prefs-danger" id="erase-btn" type="button">Apagar meus dados deste navegador</button>
         <p class="prefs-status" id="erase-status" role="status"></p>
@@ -300,7 +316,7 @@
   <!-- ── Footer ─────────────────────────────────────────────── -->
   <footer class="site-footer">
     <p>&copy; 2026 MindED &mdash; Projeto open-source de acessibilidade cognitiva.</p>
-    <p><a href="termos.html">Termos de Uso</a> · <a href="privacidade.html">Política de Privacidade</a></p>
+    <p><a href="termos.html">Termos de Uso</a> · <a href="privacidade.html">Política de Privacidade</a> · <a href="https://github.com/Ikaterin-ctrl/MindED/issues/new?title=Sugest%C3%A3o%3A%20" target="_blank" rel="noopener">Enviar uma sugestão<span class="sr-only"> (abre o GitHub em outra aba)</span></a></p>
   </footer>
 
   <script>
@@ -311,6 +327,7 @@
       const open = nav.classList.toggle('open');
       hamburger.classList.toggle('open', open);
       hamburger.setAttribute('aria-expanded', String(open));
+      hamburger.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
     });
 
     /* ── Load & save ────────────────────────────────────────── */
@@ -372,7 +389,8 @@
         eraseStatus.textContent = 'Clique de novo para confirmar.';
         return;
       }
-      ['minded_prefs', 'minded_history', 'minded_a11y', 'minded_draft', 'minded_onboarded'].forEach(key => {
+      ['minded_prefs', 'minded_history', 'minded_a11y', 'minded_draft', 'minded_onboarded',
+       'minded_review', 'minded_tts_rate'].forEach(key => {
         try { localStorage.removeItem(key); } catch (_) {}
       });
       form.reset();
@@ -381,6 +399,5 @@
       eraseStatus.textContent = 'Seus dados foram apagados deste navegador.';
     });
   </script>
-  <script src="src/js/pwa.js"></script>
 </body>
 </html>

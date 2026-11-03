@@ -47,6 +47,32 @@ def test_adapt_returns_mode_and_sends_schema(api, monkeypatch):
     assert "conteudo_principal" in models.calls[0]["config"].response_json_schema["properties"]
 
 
+def test_mindmap_returns_branches(api, monkeypatch):
+    saida = {"titulo": "Mitose", "conteudo_principal": "Uma célula vira duas.",
+             "ramos": [{"ideia": "Fases", "detalhes": ["Prófase", "Metáfase"]}]}
+    models = install_gemini(monkeypatch, text=json.dumps(saida))
+    res = api.post("/adapt", json={"texto": TEXTO, "modo": "mindmap"})
+    assert res.status_code == 200
+    assert res.json()["modo"] == "mindmap"
+    assert res.json()["ramos"][0]["detalhes"] == ["Prófase", "Metáfase"]
+    assert "ramos" in models.calls[0]["config"].response_json_schema["properties"]
+    assert "mapa de ideias" in models.calls[0]["contents"]
+
+
+def test_checklist_steps_are_doable_on_screen(api, monkeypatch):
+    saida = {"titulo": "Passos", "conteudo_principal": "Intro", "passos_acao": ["Ler"]}
+    models = install_gemini(monkeypatch, text=json.dumps(saida))
+    api.post("/adapt", json={"texto": TEXTO, "modo": "checklist"})
+    prompt = models.calls[0]["contents"]
+    assert "própria tela" in prompt and "desenhar" in prompt
+
+
+def test_mindmap_without_branches_is_rejected(api, monkeypatch):
+    install_gemini(monkeypatch)
+    res = api.post("/adapt", json={"texto": TEXTO, "modo": "mindmap"})
+    assert res.status_code == 502
+
+
 def test_adapt_rejects_incomplete_model_output(api, monkeypatch):
     install_gemini(monkeypatch, text='{"titulo": "sem conteúdo"}')
     res = api.post("/adapt", json={"texto": TEXTO, "modo": "summary"})
@@ -302,6 +328,7 @@ def test_redirect_to_internal_address_is_blocked(monkeypatch):
     async def public_only(url):
         if "169.254" in url:
             raise HTTPException(status_code=400, detail="bloqueado")
+        return "93.184.216.34"
 
     def handler(request):
         return httpx.Response(302, headers={"location": "http://169.254.169.254/"})
@@ -326,3 +353,45 @@ def test_extract_text_drops_scripts_and_navigation():
     assert "importante" in texto and "aqui." in texto
     for ruido in ("Menu", "alert", "Rodapé"):
         assert ruido not in texto
+
+
+def test_fetch_connects_to_the_checked_ip(monkeypatch):
+    """A second DNS answer cannot redirect the request (DNS rebinding)."""
+    seen = {}
+
+    async def checked(url):
+        return "93.184.216.34"
+
+    def handler(request):
+        seen.update(host=request.url.host, header=request.headers["host"], sni=request.extensions.get("sni_hostname"))
+        return httpx.Response(200, headers={"content-type": "text/html"}, text="<p>ok</p>")
+
+    real_client = httpx.AsyncClient
+    monkeypatch.setattr(main, "_assert_public_host", checked)
+    monkeypatch.setattr(
+        main.httpx, "AsyncClient", lambda **kw: real_client(transport=httpx.MockTransport(handler), **kw)
+    )
+    asyncio.run(main._fetch_html("https://exemplo.com/artigo"))
+    assert seen == {"host": "93.184.216.34", "header": "exemplo.com", "sni": "exemplo.com"}
+
+
+@pytest.mark.parametrize("url", ["http://exemplo.com:6379/", "https://exemplo.com:22/", "http://exemplo.com:99999/"])
+def test_unusual_ports_are_blocked(url):
+    with pytest.raises(HTTPException) as err:
+        asyncio.run(main._assert_public_host(url))
+    assert err.value.status_code == 400
+
+
+def test_oversized_body_is_refused_before_reading(api, monkeypatch):
+    install_gemini(monkeypatch)
+    res = api.post(
+        "/adapt",
+        content=b"{}",
+        headers={"Content-Type": "application/json", "Content-Length": str(main.MAX_BODY_BYTES + 1)},
+    )
+    assert res.status_code == 413
+
+
+def test_docs_are_hidden_outside_local_development():
+    # The test process imports main without AUTH_DISABLED, like production
+    assert main.app.docs_url is None and main.app.openapi_url is None

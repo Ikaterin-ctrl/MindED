@@ -8,12 +8,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="src/css/base.css" />
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg" />
-  <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" href="img/apple-touch-icon.png" />
   <meta name="theme-color" content="#0B0A0F" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="MindED" />
   <style>
     .login-wrap {
       min-height: 100vh;
@@ -135,6 +131,7 @@
   </style>
 </head>
 <body>
+  <script src="src/js/theme.js"></script>
   <!-- Voltar -->
   <a href="index.html" class="login-back" aria-label="Voltar à página inicial">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
@@ -144,8 +141,8 @@
   <main class="login-wrap">
     <div class="login-card glass">
       <span class="logo-link"><span>Mind<b>ED</b></span></span>
-      <h1>Bem-vindo ao MindED</h1>
-      <p>Entre com a sua conta Google para começar a adaptar seus textos.</p>
+      <h1>Boas-vindas ao MindED</h1>
+      <p id="login-lead">Entre com a sua conta Google para começar a adaptar seus textos.</p>
 
       <div class="login-error" id="login-error" role="alert"></div>
 
@@ -174,8 +171,8 @@
   </main>
 
   <!-- Firebase SDK (compat — works without bundler) -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" integrity="sha384-AQ3POAMqIhwS81FrUH95ekxqBZHeP5tG2JfEL3+7GuTtfRLWnrRh32UxwzM+//A9" crossorigin="anonymous"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" integrity="sha384-TnlRYaR4JYz/lpaGuaiU61PjNberSA4vjLjtF+oRC/IkohkJqnWxw5EmDSOt1vA1" crossorigin="anonymous"></script>
 
   <script>
     /* ── Firebase config ─────────────────────────────────────────
@@ -190,6 +187,12 @@
       messagingSenderId: "1022129331298",
       appId:             "1:1022129331298:web:a1890d2c08c5333cd3853b",
     };
+
+    // Where to go after signing in. Only pages of this site are accepted.
+    const NEXT_PAGES = { 'workspace.html': 'Entre para usar o Workspace. Seus textos, o histórico e as revisões ficam guardados na sua conta.' };
+    const next = new URLSearchParams(location.search).get('next');
+    const target = NEXT_PAGES[next] ? next : 'workspace.html';
+    if (NEXT_PAGES[next]) document.getElementById('login-lead').textContent = NEXT_PAGES[next];
 
     firebase.initializeApp(firebaseConfig);
     const auth     = firebase.auth();
@@ -209,11 +212,13 @@
     document.body.style.visibility = 'hidden';
     auth.onAuthStateChanged(user => {
       if (user) {
-        window.location.replace('workspace.html');
+        window.location.replace(target);
       } else {
         document.body.style.visibility = '';
       }
     });
+
+    auth.getRedirectResult().catch(() => showError('Não foi possível entrar. Tente novamente.'));
 
     googleBtn.addEventListener('click', async () => {
       errorBox.classList.remove('visible');
@@ -237,6 +242,5 @@
       }
     });
   </script>
-  <script src="src/js/pwa.js"></script>
 </body>
 </html>

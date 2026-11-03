@@ -6,14 +6,6 @@ Nasceu como projeto de Iniciação Científica sobre acessibilidade cognitiva. E
 
 ---
 
-## Demonstração visual
-
-| Modo Metáfora | Modo Microtarefas |
-|:---:|:---:|
-| ![Workspace — Modo Metáfora](docs/demo-metaphor.svg) | ![Workspace — Modo Microtarefas](docs/demo-checklist.svg) |
-
----
-
 ## O problema
 
 Pessoas neurodivergentes (TDAH, dislexia, autismo) e estudantes lidando com conteúdos técnicos densos frequentemente encontram:
@@ -24,14 +16,15 @@ Pessoas neurodivergentes (TDAH, dislexia, autismo) e estudantes lidando com cont
 
 ## A solução
 
-Quatro lentes de assimilação do mesmo conteúdo:
+Cinco lentes de assimilação do mesmo conteúdo:
 
 | Modo | O que faz |
 |---|---|
 | 🧠 **Metáfora** | Converte a teoria em analogia do cotidiano com tabela termo → metáfora e alerta de limitações |
 | ✅ **Microtarefas** | Gera checklist sequencial e gamificado com barra de progresso em tempo real |
 | 📋 **Resumo Semântico** | Sintetiza em tópicos com palavras-chave em negrito para leitura dinâmica |
-| ❓ **Perguntas** | Gera perguntas de compreensão com dica e resposta para consolidar o que foi lido |
+| ❓ **Perguntas** | Gera perguntas com dica e resposta; as perguntas avaliadas voltam em revisão espaçada |
+| 🗺️ **Mapa de ideias** | Põe o tema no centro e organiza as ideias ligadas a ele, cada uma com seus detalhes |
 
 ---
 
@@ -40,17 +33,22 @@ Quatro lentes de assimilação do mesmo conteúdo:
 ```
 MindED/
 ├── index.html          # Landing page
-├── workspace.html      # Workspace principal (two-column layout)
+├── workspace.html      # Workspace principal (estrutura da página)
 ├── preferencias.html   # Preferências e controle dos dados locais
 ├── termos.html         # Termos de Uso
 ├── privacidade.html    # Política de Privacidade
 ├── src/
 │   ├── css/
-│   │   └── base.css    # Design system completo (tokens, glass, botões, header)
+│   │   ├── base.css      # Design system (tokens, botões, cabeçalho)
+│   │   └── workspace.css # Estilos do workspace
 │   └── js/
-│       └── demo-data.js # Resultados prontos da demonstração sem login
+│       ├── workspace.js  # Lógica do workspace (modos, histórico, revisão, foco)
+│       ├── account.js    # Separa os dados locais por conta
+│       ├── theme.js      # Aplica o tema antes da primeira pintura
+│       └── demo-data.js  # Resultados prontos da demonstração sem login
+│   └── vendor/pdfjs/     # pdf.js 5.4.394, servido pelo próprio site
 ├── api/
-│   ├── main.py         # FastAPI — POST /adapt e POST /extract-url
+│   ├── main.py         # FastAPI — /adapt, /explain e /extract-url
 │   ├── test_main.py    # Testes da API (pytest)
 │   ├── Dockerfile      # Imagem para publicar a API
 │   ├── requirements.txt
@@ -58,9 +56,6 @@ MindED/
 │   └── README.md       # Instruções detalhadas do backend
 ├── img/
 │   └── logominded.png
-└── docs/
-    ├── demo-metaphor.svg
-    └── demo-checklist.svg
 ```
 
 ---
@@ -106,13 +101,6 @@ O frontend está no Firebase Hosting; a API precisa de um host próprio (a image
 4. Preencha os campos `[PREENCHER: ...]` de `termos.html` e `privacidade.html` e faça revisão jurídica.
 
 > **Obter chave Gemini:** [aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey). A chave gratuita serve só para testes com textos fictícios. Em produção, use uma chave com faturamento ativo: os termos do Google pedem para não enviar dados pessoais ou sensíveis ao plano gratuito.
-
----
-
-## App
-
-O MindED é um PWA: em HTTPS, pode ser instalado pelo navegador (`manifest.webmanifest` e `sw.js`).
-Ao alterar a lista de arquivos do `sw.js`, aumente `VERSION`.
 
 ---
 
@@ -165,4 +153,4 @@ Resposta completa segue o schema `AdaptationResponse` em [`api/main.py`](api/mai
 
 ## Licença
 
-MIT — livre para usar, estudar e contribuir.
+[MIT](LICENSE) — livre para usar, estudar e contribuir.

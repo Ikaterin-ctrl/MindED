@@ -5,8 +5,6 @@
    ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400..700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Pixelify+Sans:wght@500..700&display=swap');
-/* OpenDyslexic via CDN — loaded conditionally by JS but declared here */
-@import url('https://fonts.cdnfonts.com/css/opendyslexic?display=swap');
 
 /* ── CSS Custom Properties ────────────────────────────────── */
 :root {
@@ -76,6 +74,9 @@
   margin: 0;
   padding: 0;
 }
+
+/* Components set their own display, which would otherwise beat the attribute */
+[hidden] { display: none !important; }
 
 html {
   scroll-behavior: smooth;
@@ -434,7 +435,8 @@ body.theme-light .input-area__textarea {
   color: #17131F !important;
   border-color: rgba(0,0,0,0.12) !important;
 }
-body.theme-light .input-area__textarea::placeholder { color: #bbb !important; }
+body.theme-light .input-area__textarea::placeholder { color: #5F5673 !important; }
+body.theme-light .output-error, body.theme-light .retry-btn, body.theme-light .login-error { color: #B91C1C !important; }
 body.theme-light .profile-tag {
   background: rgba(0,0,0,0.06) !important;
   border-color: rgba(0,0,0,0.12) !important;
@@ -838,27 +840,64 @@ body.fontsize-lg  { --font-size-base: 19px; }
 }
 
 .history-item {
-  padding: 10px var(--sp-md);
+  display: flex;
+  align-items: stretch;
   background: var(--clr-surface);
   border: 1px solid var(--clr-border);
   border-radius: var(--r-md);
-  cursor: pointer;
   transition: border-color var(--t-base), background var(--t-base);
 }
 .history-item:hover { border-color: var(--clr-border-md); background: var(--clr-surface-md); }
+.history-item__open {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 10px var(--sp-md);
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.history-item__delete {
+  flex: none;
+  width: 44px;
+  display: grid;
+  place-items: center;
+  background: none;
+  border: 0;
+  border-left: 1px solid var(--clr-border);
+  color: var(--clr-text-subtle);
+  cursor: pointer;
+}
+.history-item__delete:hover { color: var(--clr-text); background: var(--clr-surface-md); }
+.history-item__open:focus-visible,
+.history-item__delete:focus-visible { outline: 2px solid var(--clr-accent); outline-offset: -2px; }
+.history-item__title,
+.history-item__source {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .history-item__title {
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--clr-text);
-  margin-bottom: 4px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  margin-bottom: 2px;
+}
+.history-item__source {
+  font-size: 0.8125rem;
+  color: var(--clr-text-muted);
+  margin-bottom: 6px;
 }
 .history-item__meta {
   font-size: 0.875rem;
   color: var(--clr-text-subtle);
   display: flex;
+  flex-wrap: wrap;
   gap: var(--sp-sm);
 }
 .history-item__badge {
@@ -967,7 +1006,8 @@ body .checklist-progress__fill, body .focus-session__fill, body .flashcard-progr
   background: repeating-linear-gradient(90deg, #7C3AED 0 12px, transparent 12px 15px);
   transition: width 200ms steps(4, end);
 }
-.focus-session__count, #lens-label { font-family: var(--font-pixel); font-size: 1.2rem; font-weight: 600; }
+/* Small labels use the reading font: the pixel font is hard to read at this size */
+.focus-session__count, #lens-label { font-family: var(--font-body); font-size: 1rem; font-weight: 700; letter-spacing: 0.02em; }
 
 .glass { backdrop-filter: none; -webkit-backdrop-filter: none; }
 .main-header { background: var(--clr-bg); backdrop-filter: none; -webkit-backdrop-filter: none; }
@@ -984,3 +1024,41 @@ body .checklist-progress__fill, body .focus-session__fill, body .flashcard-progr
   .btn-primary:hover, .btn-primary:active { transform: none; }
   .mark { transition: none; }
 }
+
+/* ════════════════════════════════════════════════════════════
+   Usability report: solid surfaces and a real high contrast
+   ════════════════════════════════════════════════════════════ */
+/* Nothing behind the header, menu or panels shows through */
+body.theme-light .main-header { background: var(--clr-bg) !important; }
+body.theme-light .glass { background: #FFFFFF !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+@media (max-width: 768px) {
+  .main-nav { background: var(--clr-bg); backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
+
+/* Focus mode scrolls the header away instead of leaving an empty band */
+body.focus-mode .main-header { position: absolute; }
+
+/* High contrast: brighter text, firm borders, underlined links, in both themes */
+body.hcm {
+  --clr-text:        #FFFFFF;
+  --clr-text-muted:  #F0EBFA;
+  --clr-text-subtle: #E2DAF2;
+  --clr-border:      rgba(255,255,255,0.6);
+  --clr-border-md:   rgba(255,255,255,0.85);
+  --clr-accent:      #D9C7FF;
+}
+body.hcm.theme-light {
+  --clr-text:        #000000;
+  --clr-text-muted:  #111111;
+  --clr-text-subtle: #222222;
+  --clr-border:      rgba(0,0,0,0.65);
+  --clr-border-md:   #000000;
+  --clr-accent:      #3B0F8C;
+  background: #FFFFFF !important;
+}
+body.hcm.theme-light .glass, body.hcm.theme-light .main-header { background: #FFFFFF !important; border-color: #000 !important; }
+body.hcm .glass, body.hcm .btn-ghost, body.hcm .mode-option label,
+body.hcm .question-card, body.hcm .checklist-item { border-width: 2px; }
+body.hcm a { text-decoration: underline; }
+body.hcm.theme-light .btn-ghost { color: #000 !important; border-color: #000 !important; }
+body.hcm :focus-visible { outline-width: 3px !important; }

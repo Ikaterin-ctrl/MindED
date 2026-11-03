@@ -5,17 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="MindED transforma textos, links, vídeos e PDFs difíceis em algo que faz sentido para o seu jeito de aprender." />
   <title>MindED — Aprenda do seu jeito</title>
+  <link rel="canonical" href="https://minded-3d49a.web.app/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="MindED — Texto difícil entra. Clareza sai." />
+  <meta property="og:description" content="Transforme textos, links, vídeos e PDFs difíceis em algo que faz sentido para o seu jeito de aprender." />
+  <meta property="og:url" content="https://minded-3d49a.web.app/" />
+  <meta property="og:image" content="https://minded-3d49a.web.app/img/og.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta name="twitter:card" content="summary_large_image" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="src/css/base.css" />
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg" />
-  <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" href="img/apple-touch-icon.png" />
   <meta name="theme-color" content="#0B0A0F" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="MindED" />
 
   <style>
     .home { overflow-x: clip; }
@@ -48,7 +54,19 @@
       line-height: 1.65;
       margin-bottom: var(--sp-xl);
     }
-    .hero__cta { display: flex; flex-wrap: wrap; gap: var(--sp-md); }
+    .hero__cta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-md); }
+    /* A text link, so the three actions fit on one line on desktop */
+    .hero__more {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      color: var(--clr-text);
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+    .hero__more:hover { color: var(--clr-accent); }
+    .lens__note { margin-top: var(--sp-md); padding-left: var(--sp-sm); border-left: 3px solid var(--clr-amber, #FBBF24); font-size: 0.95em; color: var(--clr-text-muted) !important; }
 
     /* ── Lens playground ─────────────────────────────────────── */
     .lens {
@@ -82,7 +100,7 @@
     .lens__stage summary { color: var(--clr-accent); cursor: pointer; min-height: 44px; }
     .lens__controls {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       border-top: 1px solid var(--clr-border);
     }
     .lens__btn {
@@ -172,15 +190,16 @@
     @media (max-width: 640px) {
       .shell { padding: 0 var(--sp-md); }
       .row { grid-template-columns: minmax(0, 1fr); gap: var(--sp-xs); }
-      .lens__controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .lens__btn:nth-child(2) { border-right: 0; }
-      .lens__btn:nth-child(-n+2) { border-bottom: 1px solid var(--clr-border); }
+      .lens__controls { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .lens__btn:nth-child(3) { border-right: 0; }
+      .lens__btn:nth-child(-n+3) { border-bottom: 1px solid var(--clr-border); }
       .hero__cta .btn { width: 100%; }
       .lens__stage { min-height: 340px; font-size: 1.05rem; }
     }
   </style>
 </head>
 <body class="home">
+  <script src="src/js/theme.js"></script>
   <a href="#conteudo" class="skip-link">Pular para o conteúdo</a>
 
   <!-- ── Header ─────────────────────────────────────────────── -->
@@ -194,9 +213,9 @@
 
       <nav class="main-nav" id="main-nav" role="navigation" aria-label="Principal">
         <a href="#lentes"           class="nav-link">Como funciona</a>
-        <a href="workspace.html"    class="nav-link">Workspace</a>
+        <a href="workspace.html"    class="nav-link" id="nav-workspace">Workspace</a>
         <a href="preferencias.html" class="nav-link">Preferências</a>
-        <a href="login.html"        class="btn btn-primary btn-sm">Entrar</a>
+        <a href="login.html"        class="btn btn-primary btn-sm" id="nav-enter">Entrar</a>
       </nav>
     </div>
   </header>
@@ -213,12 +232,11 @@
         </p>
         <div class="hero__cta">
           <a href="workspace.html?demo=1" class="btn btn-primary">Experimentar sem cadastro</a>
-          <button class="btn btn-ghost" id="install-btn" type="button" hidden>Instalar o app</button>
-          <a href="#lentes" class="btn btn-ghost">Como funciona</a>
+          <a href="#lentes" class="hero__more">Como funciona</a>
         </div>
       </div>
 
-      <div class="lens" aria-label="Demonstração: o mesmo texto em quatro formatos" role="group">
+      <div class="lens" aria-label="Demonstração: o mesmo texto em formatos diferentes" role="group">
         <div class="lens__head">
           <span>Mesmo conteúdo, outra lente</span>
           <span id="lens-label">Original</span>
@@ -227,6 +245,7 @@
           <p>A mitose é o processo de divisão celular em que uma célula-mãe origina duas células-filhas geneticamente idênticas, passando por prófase, metáfase, anáfase e telófase.</p>
         </div>
         <div class="lens__controls">
+          <button class="lens__btn" type="button" data-lens="original" aria-pressed="true"><svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M3 2h7v1h-7zM3 3h1v11h-1zM10 3h1v1h-1zM11 4h1v1h-1zM12 5h1v9h-1zM4 13h8v1h-8zM5 6h5v1h-5zM5 8h6v1h-6zM5 10h6v1h-6z"/></svg>Original</button>
           <button class="lens__btn" type="button" data-lens="metaphor" aria-pressed="false"><svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 2h6v1h-6zM4 3h1v1h-1zM11 3h1v1h-1zM3 4h1v1h-1zM12 4h1v1h-1zM3 5h1v1h-1zM12 5h1v1h-1zM3 6h1v1h-1zM12 6h1v1h-1zM3 7h1v1h-1zM6 7h1v1h-1zM9 7h1v1h-1zM12 7h1v1h-1zM4 8h1v1h-1zM7 8h2v1h-2zM11 8h1v1h-1zM5 9h1v1h-1zM10 9h1v1h-1zM5 10h1v1h-1zM10 10h1v1h-1zM5 11h6v1h-6zM5 12h6v1h-6zM6 13h4v1h-4z"/></svg>Metáfora</button>
           <button class="lens__btn" type="button" data-lens="steps" aria-pressed="false"><svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2 3h8v1h-8zM2 4h1v1h-1zM9 4h1v1h-1zM13 4h2v1h-2zM2 5h1v1h-1zM9 5h1v1h-1zM12 5h2v1h-2zM2 6h1v1h-1zM9 6h1v1h-1zM11 6h2v1h-2zM2 7h1v1h-1zM5 7h1v1h-1zM9 7h2v1h-2zM2 8h1v1h-1zM5 8h2v1h-2zM8 8h2v1h-2zM11 8h1v1h-1zM2 9h1v1h-1zM6 9h3v1h-3zM11 9h1v1h-1zM2 10h1v1h-1zM7 10h1v1h-1zM11 10h1v1h-1zM2 11h1v1h-1zM11 11h1v1h-1zM2 12h10v1h-10z"/></svg>Passos</button>
           <button class="lens__btn" type="button" data-lens="summary" aria-pressed="false"><svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2 4h2v1h-2zM6 4h8v1h-8zM2 5h2v1h-2zM6 5h8v1h-8zM2 7h2v1h-2zM6 7h8v1h-8zM2 8h2v1h-2zM6 8h8v1h-8zM2 10h2v1h-2zM6 10h5v1h-5zM2 11h2v1h-2zM6 11h5v1h-5z"/></svg>Resumo</button>
@@ -246,7 +265,7 @@
 
     <section class="band" id="lentes" aria-labelledby="lentes-title">
       <div class="shell">
-        <h2 id="lentes-title" class="reveal">Quatro lentes para o mesmo assunto.</h2>
+        <h2 id="lentes-title" class="reveal">Cinco lentes para o mesmo assunto.</h2>
         <div class="rows">
           <article class="row reveal">
             <span class="row__num" aria-hidden="true">01</span>
@@ -267,6 +286,11 @@
             <span class="row__num" aria-hidden="true">04</span>
             <h3>Perguntas</h3>
             <p>Teste o que ficou claro, com uma dica antes de abrir a resposta.</p>
+          </article>
+          <article class="row reveal">
+            <span class="row__num" aria-hidden="true">05</span>
+            <h3>Mapa de ideias</h3>
+            <p>O tema fica no centro, e cada ideia ligada a ele aparece com seus detalhes.</p>
           </article>
         </div>
       </div>
@@ -302,30 +326,47 @@
 
   <footer class="site-footer">
     <p>&copy; 2026 MindED &mdash; Projeto open-source de acessibilidade cognitiva.</p>
-    <p><a href="termos.html">Termos de Uso</a> · <a href="privacidade.html">Política de Privacidade</a></p>
+    <p><a href="termos.html">Termos de Uso</a> · <a href="privacidade.html">Política de Privacidade</a> · <a href="https://github.com/Ikaterin-ctrl/MindED/issues/new?title=Sugest%C3%A3o%3A%20" target="_blank" rel="noopener">Enviar uma sugestão<span class="sr-only"> (abre o GitHub em outra aba)</span></a></p>
   </footer>
 
   <script>
+    // Someone already signed in goes straight to their workspace. The owner key is
+    // set on sign-in and removed on sign-out (src/js/account.js), so no Firebase is needed here.
+    try {
+      if (localStorage.getItem('minded_owner')) {
+        const enter = document.getElementById('nav-enter');
+        enter.textContent = 'Abrir o Workspace';
+        enter.href = 'workspace.html';
+        document.getElementById('nav-workspace').hidden = true;
+      }
+    } catch (_) {}
+
     const hamburger = document.getElementById('hamburger');
     const nav       = document.getElementById('main-nav');
     hamburger.addEventListener('click', () => {
       const open = nav.classList.toggle('open');
       hamburger.classList.toggle('open', open);
       hamburger.setAttribute('aria-expanded', String(open));
+      hamburger.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
     });
     nav.querySelectorAll('.nav-link, .btn').forEach(el => {
       el.addEventListener('click', () => {
         nav.classList.remove('open');
         hamburger.classList.remove('open');
         hamburger.setAttribute('aria-expanded', 'false');
+        hamburger.setAttribute('aria-label', 'Abrir menu');
       });
     });
 
     /* ── Lens playground ─────────────────────────────────────── */
     const LENSES = {
+      original: {
+        label: 'Original',
+        html: '<p>A mitose é o processo de divisão celular em que uma célula-mãe origina duas células-filhas geneticamente idênticas, passando por prófase, metáfase, anáfase e telófase.</p>',
+      },
       metaphor: {
         label: 'Metáfora',
-        html: '<p>Imagine uma biblioteca que vira duas. Os livros vão para <span class="mark">caixas</span>, as caixas se alinham no <span class="mark">corredor</span> e cada cópia é puxada para um lado. No fim, uma <span class="mark">parede</span> separa dois prédios iguais.</p>',
+        html: '<p>Imagine uma biblioteca que vira duas. Os livros vão para <span class="mark">caixas</span>, as caixas se alinham no <span class="mark">corredor</span> e cada cópia é puxada para um lado. No fim, uma <span class="mark">parede</span> separa dois prédios iguais.</p><p class="lens__note">O que a comparação não explica: a célula não tem corredores nem paredes. Ela mostra a ordem das fases, não a forma da célula.</p>',
       },
       steps: {
         label: 'Passos',
@@ -381,6 +422,5 @@
       });
     }
   </script>
-  <script src="src/js/pwa.js"></script>
 </body>
 </html>

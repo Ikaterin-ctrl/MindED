@@ -113,6 +113,35 @@
       line-height: 1.65;
     }
     .login-note a { color: var(--clr-violet); text-decoration: underline; }
+    .email-tabs { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--clr-border-md); }
+    .email-tabs button {
+      min-height: 44px; background: none; border: 0; color: var(--clr-text-muted);
+      font: inherit; font-weight: 600; cursor: pointer;
+    }
+    .email-tabs button[aria-selected="true"] { background: #7C3AED; color: #fff; }
+    .email-form { display: flex; flex-direction: column; gap: var(--sp-md); text-align: left; }
+    .email-field { display: flex; flex-direction: column; gap: 6px; font-size: 0.9rem; color: var(--clr-text); }
+    .email-field small { color: var(--clr-text-muted); font-size: 0.8125rem; }
+    .email-field input {
+      min-height: 44px; padding: 0 var(--sp-sm); width: 100%;
+      background: var(--clr-bg); border: 1px solid var(--clr-border-md); color: var(--clr-text); font: inherit;
+    }
+    .email-field input:focus-visible { outline: 2px solid var(--clr-accent); outline-offset: 1px; }
+    .password-wrap { display: flex; }
+    .password-wrap input { flex: 1; min-width: 0; }
+    .password-toggle {
+      min-width: 80px; background: var(--clr-surface-md); border: 1px solid var(--clr-border-md); border-left: 0;
+      color: var(--clr-text); font: inherit; font-size: 0.875rem; cursor: pointer;
+    }
+    .email-submit { width: 100%; justify-content: center; }
+    .link-btn {
+      align-self: center; min-height: 44px; background: none; border: 0; color: var(--clr-accent);
+      font: inherit; font-size: 0.9rem; text-decoration: underline; cursor: pointer;
+    }
+    .login-info { font-size: 0.9rem; color: var(--clr-text); }
+    .login-info:empty { display: none; }
+    .login-guest { width: 100%; justify-content: center; }
+    .email-tabs, .email-form { width: 100%; }
     /* Link de voltar */
     .login-back {
       position: fixed;
@@ -142,7 +171,7 @@
     <div class="login-card glass">
       <span class="logo-link"><span>Mind<b>ED</b></span></span>
       <h1>Boas-vindas ao MindED</h1>
-      <p id="login-lead">Entre com a sua conta Google para começar a adaptar seus textos.</p>
+      <p id="login-lead">Entre para adaptar seus textos e guardar seu progresso.</p>
 
       <div class="login-error" id="login-error" role="alert"></div>
 
@@ -160,7 +189,37 @@
         <div class="login-loading" role="status" aria-label="Autenticando…"></div>
       </button>
 
-      <div class="login-sep">início de sessão seguro</div>
+      <div class="login-sep">ou com seu e-mail</div>
+
+      <!-- E-mail and password: sign in, create an account, or reset the password -->
+      <div class="email-tabs" role="tablist" aria-label="Entrar ou criar conta">
+        <button type="button" role="tab" id="tab-entrar" aria-selected="true" aria-controls="email-form">Entrar</button>
+        <button type="button" role="tab" id="tab-criar" aria-selected="false" aria-controls="email-form">Criar conta</button>
+      </div>
+      <form class="email-form" id="email-form" role="tabpanel" aria-labelledby="tab-entrar" novalidate>
+        <label class="email-field" id="field-nome" hidden>
+          <span>Como quer ser chamada ou chamado</span>
+          <input type="text" id="email-nome" autocomplete="nickname" maxlength="40" />
+        </label>
+        <label class="email-field">
+          <span>E-mail</span>
+          <input type="email" id="email-endereco" autocomplete="email" required />
+        </label>
+        <label class="email-field">
+          <span>Senha</span>
+          <span class="password-wrap">
+            <input type="password" id="email-senha" autocomplete="current-password" minlength="8" required />
+            <button type="button" class="password-toggle" id="password-toggle" aria-pressed="false">Mostrar</button>
+          </span>
+          <small id="senha-ajuda">Pelo menos 8 caracteres.</small>
+        </label>
+        <button type="submit" class="btn btn-primary email-submit" id="email-submit">Entrar</button>
+        <button type="button" class="link-btn" id="forgot-btn">Esqueci minha senha</button>
+      </form>
+      <p class="login-info" id="login-info" role="status"></p>
+
+      <div class="login-sep">ou sem cadastro</div>
+      <a class="btn btn-ghost login-guest" href="workspace.html?demo=1">Experimentar sem criar conta</a>
 
       <p class="login-note">
         Ao entrar, você confirma ter 18 anos ou mais e aceita os
@@ -211,7 +270,7 @@
     // Hide page while auth resolves, redirect immediately if already signed in
     document.body.style.visibility = 'hidden';
     auth.onAuthStateChanged(user => {
-      if (user) {
+      if (user && !user.isAnonymous) {
         window.location.replace(target);
       } else {
         document.body.style.visibility = '';
@@ -219,6 +278,92 @@
     });
 
     auth.getRedirectResult().catch(() => showError('Não foi possível entrar. Tente novamente.'));
+
+    // ── E-mail and password ────────────────────────────────────────────
+    const AUTH_MESSAGES = {
+      'auth/invalid-email':          'Este e-mail não parece certo. Confira e tente de novo.',
+      'auth/missing-password':       'Digite a sua senha.',
+      'auth/weak-password':          'Use uma senha com pelo menos 8 caracteres.',
+      'auth/email-already-in-use':   'Já existe uma conta com este e-mail. Use a aba Entrar.',
+      'auth/invalid-credential':     'E-mail ou senha não conferem.',
+      'auth/wrong-password':         'E-mail ou senha não conferem.',
+      'auth/user-not-found':         'E-mail ou senha não conferem.',
+      'auth/too-many-requests':      'Muitas tentativas seguidas. Espere alguns minutos e tente de novo.',
+      'auth/network-request-failed': 'Erro de rede. Verifique sua conexão.',
+      'auth/operation-not-allowed':  'Entrar com e-mail ainda não está ativado no MindED. Use o Google por enquanto.',
+      'auth/user-disabled':          'Esta conta foi desativada.',
+    };
+    const form      = document.getElementById('email-form');
+    const tabEntrar = document.getElementById('tab-entrar');
+    const tabCriar  = document.getElementById('tab-criar');
+    const fieldNome = document.getElementById('field-nome');
+    const nomeInput = document.getElementById('email-nome');
+    const emailInput = document.getElementById('email-endereco');
+    const senhaInput = document.getElementById('email-senha');
+    const submitBtn = document.getElementById('email-submit');
+    const forgotBtn = document.getElementById('forgot-btn');
+    const infoBox   = document.getElementById('login-info');
+    let creating = false;
+
+    function setMode(create) {
+      creating = create;
+      tabEntrar.setAttribute('aria-selected', String(!create));
+      tabCriar.setAttribute('aria-selected', String(create));
+      form.setAttribute('aria-labelledby', create ? 'tab-criar' : 'tab-entrar');
+      fieldNome.hidden = !create;
+      forgotBtn.hidden = create;
+      submitBtn.textContent = create ? 'Criar conta' : 'Entrar';
+      senhaInput.autocomplete = create ? 'new-password' : 'current-password';
+      errorBox.classList.remove('visible');
+      infoBox.textContent = '';
+    }
+    tabEntrar.addEventListener('click', () => setMode(false));
+    tabCriar.addEventListener('click', () => setMode(true));
+
+    document.getElementById('password-toggle').addEventListener('click', e => {
+      const show = senhaInput.type === 'password';
+      senhaInput.type = show ? 'text' : 'password';
+      e.currentTarget.textContent = show ? 'Esconder' : 'Mostrar';
+      e.currentTarget.setAttribute('aria-pressed', String(show));
+    });
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      errorBox.classList.remove('visible');
+      infoBox.textContent = '';
+      const email = emailInput.value.trim();
+      const senha = senhaInput.value;
+      if (!email) { showError('Digite o seu e-mail.'); emailInput.focus(); return; }
+      if (senha.length < 8) { showError('A senha precisa ter pelo menos 8 caracteres.'); senhaInput.focus(); return; }
+      submitBtn.disabled = true;
+      try {
+        if (creating) {
+          const { user } = await auth.createUserWithEmailAndPassword(email, senha);
+          const nome = nomeInput.value.trim();
+          if (nome) await user.updateProfile({ displayName: nome });
+          await user.sendEmailVerification().catch(() => {});
+        } else {
+          await auth.signInWithEmailAndPassword(email, senha);
+        }
+        // onAuthStateChanged above will redirect
+      } catch (err) {
+        showError(AUTH_MESSAGES[err.code] || 'Não foi possível entrar agora. Tente de novo.');
+        submitBtn.disabled = false;
+      }
+    });
+
+    forgotBtn.addEventListener('click', async () => {
+      errorBox.classList.remove('visible');
+      const email = emailInput.value.trim();
+      if (!email) { showError('Digite o seu e-mail no campo acima e clique de novo.'); emailInput.focus(); return; }
+      try {
+        await auth.sendPasswordResetEmail(email);
+      } catch (err) {
+        if (err.code !== 'auth/user-not-found') { showError(AUTH_MESSAGES[err.code] || 'Não foi possível enviar agora. Tente de novo.'); return; }
+      }
+      // Same answer either way, so the page does not reveal who has an account
+      infoBox.textContent = `Se houver uma conta com ${email}, enviamos um link para criar uma nova senha.`;
+    });
 
     googleBtn.addEventListener('click', async () => {
       errorBox.classList.remove('visible');

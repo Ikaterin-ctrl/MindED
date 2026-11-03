@@ -99,6 +99,9 @@ O frontend está no Firebase Hosting; a API precisa de um host próprio (a image
 2. Preencha `PROD_API_BASE` no `workspace.html` com a URL pública da API.
 3. Se usar outro domínio no frontend, inclua-o em `ALLOWED_ORIGINS`.
 4. Preencha os campos `[PREENCHER: ...]` de `termos.html` e `privacidade.html` e faça revisão jurídica.
+5. No Firebase, em Authentication → Sign-in method, ative **Google**, **E-mail/senha** e **Anônimo**.
+   O anônimo é o que permite testar com o próprio conteúdo sem criar conta (até `GUEST_DAILY_REQUESTS`
+   usos por dia, textos de até `GUEST_MAX_CHARS` caracteres e sem vídeo).
 
 > **Obter chave Gemini:** [aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey). A chave gratuita serve só para testes com textos fictícios. Em produção, use uma chave com faturamento ativo: os termos do Google pedem para não enviar dados pessoais ou sensíveis ao plano gratuito.
 
@@ -127,13 +130,19 @@ O frontend está no Firebase Hosting; a API precisa de um host próprio (a image
 }
 ```
 
-`modo` aceita: `metaphor` · `checklist` · `summary` · `questions`
+`modo` aceita: `metaphor` · `checklist` · `summary` · `questions` · `mindmap`
+
+No `checklist`, cada item de `tarefas` tem um `tipo` (`escrever`, `multipla_escolha`, `ordenar`, `marcar_no_texto`)
+e o `trecho` do texto que usa; `passos_acao` traz só os textos, para quem precisa da lista simples.
 
 Para vídeo, envie também `video_url` com um link público do YouTube. A API analisa até `VIDEO_MAX_SECONDS` (30 minutos) e permite `VIDEO_DAILY_LIMIT` vídeos por dia para cada usuário.
 
 As chamadas exigem `Authorization: Bearer <Firebase ID token>`.
 
 `POST /explain` explica um trecho selecionado do resultado (`trecho`, `contexto`, `perfil`).
+
+`POST /check` dá um retorno curto sobre a resposta escrita num passo (`tarefa`, `resposta`, `trecho`, `contexto`, `perfil`)
+e devolve `avaliacao` (`certo`, `quase` ou `revisar`), `comentario` e `dica`.
 
 Resposta completa segue o schema `AdaptationResponse` em [`api/main.py`](api/main.py).
 

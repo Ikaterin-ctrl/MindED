@@ -527,6 +527,7 @@ function addToHistory(data, mode, profile, texto, extra = {}) {
     data,
     ...extra,
   });
+  MindedProgress.bump('adaptacoes');
   saveHistory(hist);
   renderHistory();
   rememberResult(id);
@@ -562,7 +563,9 @@ function restoreEntry(entry, quiet = false) {
     const btn = outputContent.querySelector(`.checklist-item[data-idx="${i}"] .checklist-item__do`);
     if (btn) btn.textContent = stepButtonLabel(i);
   });
+  restoring = true;
   (entry.done || []).forEach(i => setStepDone(i, true));
+  restoring = false;
 }
 
 function renderHistory() {
@@ -650,6 +653,12 @@ historyOverlay.addEventListener('click', closeHistory);
 
 // ── Source detection ──────────────────────────────────────────────────
 const MAX_TEXT_CHARS = 60000;
+const GUEST_MAX_CHARS = 4000;   // same limit as the API applies to visitors
+
+// Visitors testing with their own content use the real AI, with a smaller limit
+let demoOwn = false;
+const canUseAI = () => !IS_DEMO || demoOwn;
+const maxChars = () => (IS_DEMO && demoOwn ? GUEST_MAX_CHARS : MAX_TEXT_CHARS);
 const VIDEO_MAX_MINUTES = 30;
 const WEB_URL = /^(https?:\/\/|www\.)\S+$/i;
 const YOUTUBE_URL = /^(https?:\/\/)?(www\.|m\.|music\.)?(youtube\.com\/(watch\?|shorts\/|live\/|embed\/)|youtu\.be\/)\S+$/i;
@@ -668,13 +677,14 @@ function describeSource(value) {
 function updateCharCount() {
   const len = textarea.value.length;
   charCount.textContent = len > 0 ? `${len.toLocaleString('pt')} car.` : '';
-  const tooLong = len > MAX_TEXT_CHARS;
+  const tooLong = len > maxChars();
   adaptBtn.disabled = len < 10 || tooLong;
   adaptHint.hidden = len >= 10 && !tooLong;
   adaptHint.textContent = tooLong
-    ? `Este texto tem ${len.toLocaleString('pt-BR')} caracteres. O limite é ${MAX_TEXT_CHARS.toLocaleString('pt-BR')}: use um trecho menor.`
+    ? `Este texto tem ${len.toLocaleString('pt-BR')} caracteres. O limite é ${maxChars().toLocaleString('pt-BR')}: use um trecho menor.`
     : 'Escreva pelo menos 10 caracteres para adaptar.';
-  sourceStatus.textContent = describeSource(textarea.value.trim());
+  // In the demo examples, the line says which kind of source the example stands for
+  sourceStatus.textContent = IS_DEMO && !demoOwn ? DEMO_TYPES[demoType].status : describeSource(textarea.value.trim());
   scheduleDraftSave();
 }
 textarea.addEventListener('input', () => {
@@ -729,22 +739,67 @@ async function loadPdfJs() {
   pdfjsLib.GlobalWorkerOptions.workerSrc = new URL('src/vendor/pdfjs/pdf.worker.min.mjs', document.baseURI).href;
 }
 
-async function extractPdf(file) {
+const PDF_MAX_BYTES = 50 * 1024 * 1024;
+
+// Rebuilds readable text from pdf.js pieces: words split into several pieces are
+// joined back, line ends become breaks, and words hyphenated across lines are rejoined.
+function pdfPageText(items) {
+  let text = '';
+  items.forEach(item => {
+    if (typeof item.str !== 'string') return;
+    text += item.str;
+    if (item.hasEOL) text += '\n';
+  });
+  return text
+    .replace(/[ \t\u00a0]+/g, ' ')
+    .replace(/(\p{L})-\n(\p{Ll})/gu, '$1$2')
+    .replace(/ *\n */g, '\n')
+    // A line that continues a sentence joins the next one into a paragraph
+    .replace(/([^\n.!?:;])\n(?=\p{Ll})/gu, '$1 ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
+async function extractPdf(file, onPage) {
+  if (file.size > PDF_MAX_BYTES) throw new Error('Este PDF passa de 50 MB. Envie um arquivo menor ou só as páginas que você vai estudar.');
   await loadPdfJs();
-  const arrayBuffer = await file.arrayBuffer();
-  // No eval and no scripts from the file: a PDF here is only read for its text
-  const pdf = await pdfjsLib.getDocument({
-    data: arrayBuffer,
-    isEvalSupported: false,
-    enableScripting: false,
-  }).promise;
+  const data = new Uint8Array(await file.arrayBuffer());
+  const vendor = new URL('src/vendor/pdfjs/', document.baseURI).href;
+  let pdf;
+  try {
+    // No eval and no scripts from the file: a PDF here is only read for its text.
+    // The character maps and standard fonts decode PDFs whose fonts are not embedded.
+    pdf = await pdfjsLib.getDocument({
+      data,
+      isEvalSupported: false,
+      enableScripting: false,
+      cMapUrl: vendor + 'cmaps/',
+      cMapPacked: true,
+      standardFontDataUrl: vendor + 'standard_fonts/',
+    }).promise;
+  } catch (err) {
+    if (err?.name === 'PasswordException') throw new Error('Este PDF tem senha. Abra no seu leitor, salve uma cópia sem senha e tente de novo.');
+    if (err?.name === 'InvalidPDFException') throw new Error('Este arquivo não parece ser um PDF válido, ou está corrompido.');
+    throw new Error('Não foi possível abrir este PDF. Tente salvar uma nova cópia dele e enviar de novo.');
+  }
   const pages = [];
   for (let i = 1; i <= pdf.numPages; i++) {
+    onPage?.(i, pdf.numPages);
     const page    = await pdf.getPage(i);
     const content = await page.getTextContent();
-    pages.push(content.items.map(item => item.str).join(' '));
+    pages.push(pdfPageText(content.items));
+    page.cleanup();
   }
-  if (pages.join('').trim().length < 10) throw new Error('O PDF não tem texto extraível (pode ser uma imagem digitalizada).');
+  pdf.destroy();
+  const all = pages.join('');
+  if (all.replace(/\s/g, '').length < 10) {
+    throw new Error('Este PDF não tem texto para ler: parece ser uma imagem ou uma digitalização. Cole o texto no campo, se tiver.');
+  }
+  // Fonts without a character map come out as symbols; better to say so than to adapt nonsense
+  const letters = (all.match(/[\p{L}\p{N}]/gu) || []).length;
+  if (letters / all.replace(/\s/g, '').length < 0.5) {
+    throw new Error('O texto deste PDF saiu ilegível, porque ele usa fontes que não dá para decodificar. Tente copiar e colar o texto no campo.');
+  }
   return pages;
 }
 
@@ -764,14 +819,20 @@ async function handlePdfFile(file) {
     sourceStatus.textContent = 'Arquivo inválido. Use um PDF.';
     return;
   }
-  sourceStatus.textContent = 'Extraindo o texto…';
+  sourceStatus.textContent = 'Abrindo o PDF…';
   try {
-    const pages = await extractPdf(file);
+    const pages = await extractPdf(file, (i, total) => {
+      sourceStatus.textContent = `Lendo a página ${i} de ${total}…`;
+    });
     const text = pages.join('\n\n').trim();
-    if (text.length <= MAX_TEXT_CHARS) usePdfText(text);
-    else offerPageRange(pages);
+    if (text.length <= maxChars()) {
+      usePdfText(text);
+      sourceStatus.textContent = `PDF lido: ${pages.length} ${pages.length === 1 ? 'página' : 'páginas'}. Confira o texto antes de adaptar.`;
+    } else {
+      offerPageRange(pages);
+    }
   } catch (err) {
-    sourceStatus.textContent = 'Erro: ' + (err.message || err);
+    sourceStatus.textContent = err.message || 'Não foi possível ler este PDF.';
   } finally {
     pdfUpload.value = '';
   }
@@ -1023,6 +1084,7 @@ function renderMetaphor(data) {
 function setStepDone(idx, done) {
   if (checklistState[idx] === done) return;
   checklistState[idx] = done;
+  if (done && !IS_DEMO && !restoring) MindedProgress.bump('passos');
   const item = outputContent.querySelector(`.checklist-item[data-idx="${idx}"]`);
   if (item) {
     item.classList.toggle('done', done);
@@ -1053,12 +1115,230 @@ function stepButtonLabel(idx) {
   return checklistNotes[idx] ? 'Ver sua resposta' : 'Fazer agora';
 }
 
+// ── Study goal ────────────────────────────────────────────────────────
+function addStudyMinutes(n) {
+  if (!IS_DEMO) MindedProgress.addMinutes(n);
+}
+
+// "Oi, Ana! Hoje: 12 de 20 minutos." above the composer, when there is a goal for today
+function renderTodayGoal() {
+  const box = document.getElementById('today-goal');
+  if (IS_DEMO || !box) return;
+  const profile = MindedProfile.load();
+  const name = profile.apelido || window._mindedUser?.displayName?.split(' ')[0] || '';
+  const isGoalDay = profile.dias.includes(new Date().getDay());
+  const minutes = MindedProgress.minutesOn(new Date());
+  const streak = MindedProgress.streak();
+  const parts = [];
+  if (name) parts.push(`Oi, ${name}!`);
+  if (isGoalDay && profile.metaMinutos) {
+    parts.push(minutes >= profile.metaMinutos
+      ? `Meta de hoje cumprida: ${minutes} minutos.`
+      : `Hoje: ${minutes} de ${profile.metaMinutos} minutos.`);
+  }
+  if (streak > 1) parts.push(`${streak} dias seguidos estudando.`);
+  box.textContent = parts.join(' ');
+  box.hidden = !parts.length;
+}
+window.addEventListener('minded-progress', renderTodayGoal);
+
+// ── Doing a step: each task type, the AI check and the step timer ─────
+function setFeedback(work, text, kind) {
+  const box = work.querySelector('.step-feedback');
+  box.textContent = text;
+  box.dataset.kind = kind || '';
+}
+
+function wireTask(item, idx, task, data) {
+  const work = item.querySelector('.checklist-item__work');
+
+  if (task.tipo === 'multipla_escolha') {
+    work.querySelectorAll('.step-choice').forEach(btn => btn.addEventListener('click', () => {
+      const k = Number(btn.dataset.k);
+      const right = k === task.correta;
+      work.querySelectorAll('.step-choice').forEach(b => b.removeAttribute('data-result'));
+      btn.dataset.result = right ? 'certo' : 'errado';
+      setFeedback(work, right ? 'Isso mesmo!' : 'Ainda não. Releia o trecho e tente outra opção.', right ? 'certo' : 'revisar');
+      setStepNote(idx, `Escolhi: ${task.opcoes[k]}${right ? ' (certo)' : ''}`);
+      if (right) setStepDone(idx, true);
+    }));
+  }
+
+  if (task.tipo === 'ordenar') {
+    const list = work.querySelector('.step-order');
+    list.addEventListener('click', e => {
+      const btn = e.target.closest('button');
+      if (!btn) return;
+      const li = btn.closest('li');
+      if (btn.classList.contains('step-order__up') && li.previousElementSibling) li.previousElementSibling.before(li);
+      if (btn.classList.contains('step-order__down') && li.nextElementSibling) li.nextElementSibling.after(li);
+      btn.focus();
+      setFeedback(work, '');
+    });
+    work.querySelector('.step-order__check').addEventListener('click', () => {
+      const items = [...list.children];
+      items.forEach((li, pos) => { li.dataset.result = Number(li.dataset.k) === pos ? 'certo' : 'errado'; });
+      const right = items.filter(li => li.dataset.result === 'certo').length;
+      const all = right === items.length;
+      setFeedback(work, all ? 'Ordem certa!' : `${right} de ${items.length} no lugar certo. Os marcados em vermelho precisam mudar.`, all ? 'certo' : 'quase');
+      setStepNote(idx, 'Minha ordem: ' + items.map(li => li.querySelector('.step-order__text').textContent).join(' → '));
+      if (all) setStepDone(idx, true);
+    });
+  }
+
+  if (task.tipo === 'marcar_no_texto') {
+    work.querySelectorAll('.step-mark__sentence').forEach(btn => btn.addEventListener('click', () => {
+      const right = btn.textContent.trim() === task.frase_certa.trim();
+      work.querySelectorAll('.step-mark__sentence').forEach(b => b.removeAttribute('data-result'));
+      btn.dataset.result = right ? 'certo' : 'errado';
+      setFeedback(work, right ? 'Achou a frase certa!' : 'Não é essa. Procure a frase que responde ao passo.', right ? 'certo' : 'revisar');
+      setStepNote(idx, `Marquei: ${btn.textContent.trim()}${right ? ' (certo)' : ''}`);
+      if (right) setStepDone(idx, true);
+    }));
+  }
+
+  const checkBtn = work.querySelector('.step-check');
+  checkBtn?.addEventListener('click', async () => {
+    const resposta = (checklistNotes[idx] || '').trim();
+    if (!resposta) { setFeedback(work, 'Escreva sua resposta primeiro.', 'revisar'); return; }
+    if (!canUseAI()) {
+      setFeedback(work, 'Nos exemplos prontos a IA não confere respostas. Escolha "Meu próprio conteúdo" ou crie uma conta.', '');
+      return;
+    }
+    checkBtn.disabled = true;
+    setFeedback(work, 'Conferindo…');
+    try {
+      if (IS_DEMO) await startGuestSession();
+      const source = outputContent.querySelector('.source-text__body')?.textContent || '';
+      const r = await apiPost('/check', {
+        tarefa: task.texto,
+        resposta: resposta.slice(0, 3000),
+        trecho: (task.trecho || '').slice(0, 2000),
+        contexto: source.slice(0, 6000),
+        perfil: buildPerfilString(),
+      });
+      const label = { certo: 'Certo.', quase: 'Quase lá.', revisar: 'Vale revisar.' }[r.avaliacao] || '';
+      setFeedback(work, [label, r.comentario, r.dica && `Dica: ${r.dica}`].filter(Boolean).join(' '), r.avaliacao);
+    } catch (err) {
+      setFeedback(work, err.message, 'revisar');
+    } finally {
+      checkBtn.disabled = false;
+    }
+  });
+
+  // Optional stopwatch for this step; the time also counts toward the study goal
+  const timer = work.querySelector('.step-timer');
+  const timeEl = timer.querySelector('.step-timer__time');
+  const toggle = timer.querySelector('.step-timer__toggle');
+  const reset = timer.querySelector('.step-timer__reset');
+  let seconds = 0, interval = null;
+  const show = () => { timeEl.textContent = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`; };
+  toggle.addEventListener('click', () => {
+    if (interval) {
+      clearInterval(interval);
+      interval = null;
+      toggle.textContent = 'Continuar';
+    } else {
+      interval = setInterval(() => {
+        if (!item.isConnected) { clearInterval(interval); return; }
+        seconds += 1;
+        show();
+        if (seconds % 60 === 0) addStudyMinutes(1);
+      }, 1000);
+      toggle.textContent = 'Pausar';
+      reset.hidden = false;
+    }
+  });
+  reset.addEventListener('click', () => {
+    clearInterval(interval);
+    interval = null;
+    seconds = 0;
+    show();
+    toggle.textContent = 'Cronometrar';
+    reset.hidden = true;
+  });
+}
+
 // ── Render: Checklist mode ────────────────────────────────────────────
 let checklistState = [];
+let restoring = false;     // reopening a saved result does not count as new progress
 let checklistNotes = [];   // what the person wrote while doing each step
 
+function stepsOf(data) {
+  return data.tarefas?.length ? data.tarefas.map(t => t.texto) : (data.passos_acao || []);
+}
+
+// Old results only have plain steps: those become writing tasks
+function tasksOf(data) {
+  return data.tarefas?.length ? data.tarefas : (data.passos_acao || []).map(texto => ({ texto, tipo: 'escrever' }));
+}
+
+// Same order on every render, and never the right order
+function shuffledOrder(n, seed) {
+  const order = [...Array(n).keys()];
+  for (let i = n - 1; i > 0; i--) {
+    const j = (seed * 31 + i * 17) % (i + 1);
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  if (order.every((v, i) => v === i) && n > 1) order.push(order.shift());
+  return order;
+}
+
+function splitSentences(text) {
+  return (text.match(/[^.!?]+[.!?]+["”»)]*\s*|[^.!?]+$/g) || [text]).map(s => s.trim()).filter(Boolean);
+}
+
+function taskWorkHtml(task, i) {
+  const trecho = task.trecho && task.tipo !== 'marcar_no_texto'
+    ? `<blockquote class="step-trecho"><span class="step-trecho__label">Do texto:</span> ${esc(task.trecho)}</blockquote>` : '';
+  const timer = `
+    <div class="step-timer" data-idx="${i}">
+      <span class="step-timer__time" aria-live="off">0:00</span>
+      <button type="button" class="btn btn-ghost btn-sm step-timer__toggle">Cronometrar</button>
+      <button type="button" class="btn btn-ghost btn-sm step-timer__reset" hidden>Zerar</button>
+    </div>`;
+  let body = '';
+  if (task.tipo === 'multipla_escolha') {
+    body = `
+      <div class="step-choices" role="group" aria-label="Escolha uma opção">
+        ${task.opcoes.map((op, k) => `<button type="button" class="step-choice" data-k="${k}">${esc(op)}</button>`).join('')}
+      </div>`;
+  } else if (task.tipo === 'ordenar') {
+    const order = shuffledOrder(task.itens.length, i + 1);
+    body = `
+      <ol class="step-order" aria-label="Itens para ordenar">
+        ${order.map(k => `
+          <li class="step-order__item" data-k="${k}">
+            <span class="step-order__text">${esc(task.itens[k])}</span>
+            <span class="step-order__moves">
+              <button type="button" class="step-order__up" aria-label="Subir: ${esc(task.itens[k])}">↑</button>
+              <button type="button" class="step-order__down" aria-label="Descer: ${esc(task.itens[k])}">↓</button>
+            </span>
+          </li>`).join('')}
+      </ol>
+      <button type="button" class="btn btn-ghost btn-sm step-order__check">Conferir a ordem</button>`;
+  } else if (task.tipo === 'marcar_no_texto') {
+    body = `
+      <p class="step-mark__hint">Clique na frase certa:</p>
+      <div class="step-mark" role="group" aria-label="Frases do texto">
+        ${splitSentences(task.trecho).map(f => `<button type="button" class="step-mark__sentence">${esc(f)}</button>`).join('')}
+      </div>`;
+  } else {
+    body = `
+      <label class="checklist-item__label" for="step-note-${i}">Sua resposta</label>
+      <textarea class="checklist-item__note" id="step-note-${i}" data-idx="${i}" rows="3"
+                placeholder="${IS_DEMO ? 'Escreva aqui. Na demonstração, nada é guardado.' : 'Escreva aqui. Fica guardado junto com este resultado.'}"></textarea>
+      <button type="button" class="btn btn-ghost btn-sm step-check">Conferir com a IA</button>`;
+  }
+  return `${trecho}${body}
+    <p class="step-feedback" role="status"></p>
+    ${timer}
+    <button type="button" class="btn btn-primary btn-sm checklist-item__finish">Concluir passo</button>`;
+}
+
 function renderChecklist(data) {
-  const steps = data.passos_acao || [];
+  const steps = stepsOf(data);
+  const tasks = tasksOf(data);
   checklistState = steps.map(() => false);
   checklistNotes = steps.map(() => '');
 
@@ -1079,11 +1359,8 @@ function renderChecklist(data) {
       <div class="checklist-item__body">
         <span class="checklist-item__text" id="step-text-${i}">${esc(step)}</span>
         <button type="button" class="checklist-item__do" aria-expanded="false" aria-controls="step-work-${i}">Fazer agora</button>
-        <div class="checklist-item__work" id="step-work-${i}" hidden>
-          <label class="checklist-item__label" for="step-note-${i}">Sua resposta</label>
-          <textarea class="checklist-item__note" id="step-note-${i}" data-idx="${i}" rows="3"
-                    placeholder="${IS_DEMO ? 'Escreva aqui. Na demonstração, nada é guardado.' : 'Escreva aqui. Fica guardado junto com este resultado.'}"></textarea>
-          <button type="button" class="btn btn-primary btn-sm checklist-item__finish">Concluir passo</button>
+        <div class="checklist-item__work" id="step-work-${i}" data-tipo="${esc(tasks[i].tipo)}" hidden>
+          ${taskWorkHtml(tasks[i], i)}
         </div>
       </div>
     </div>`;
@@ -1248,9 +1525,9 @@ function toMarkdown(data) {
     ].join('\n'));
   }
   if (data.pontos_de_atencao) blocks.push(`## O que a metáfora não cobre\n\n${data.pontos_de_atencao}`);
-  if (data.passos_acao?.length) {
+  if (stepsOf(data).length) {
     const own = data === currentResult;
-    blocks.push(data.passos_acao.map((step, i) => {
+    blocks.push(stepsOf(data).map((step, i) => {
       const line = `- [${own && checklistState[i] ? 'x' : ' '}] ${step}`;
       const note = own && checklistNotes[i] ? `\n  - Minha resposta: ${checklistNotes[i].replace(/\s+/g, ' ')}` : '';
       return line + note;
@@ -1491,15 +1768,17 @@ function showOutput(html, responseData, quiet = false) {
       const doBtn = item.querySelector('.checklist-item__do');
       const work  = item.querySelector('.checklist-item__work');
       const note  = item.querySelector('.checklist-item__note');
+      const task  = tasksOf(responseData)[idx];
       item.querySelector('.checklist-item__check').addEventListener('click', () => setStepDone(idx, !checklistState[idx]));
       doBtn.addEventListener('click', () => {
         const open = work.hidden;
         work.hidden = !open;
         doBtn.setAttribute('aria-expanded', String(open));
         doBtn.textContent = open ? 'Fechar' : stepButtonLabel(idx);
-        if (open) note.focus();
+        if (open) (note || work.querySelector('button'))?.focus();
       });
-      note.addEventListener('input', () => setStepNote(idx, note.value));
+      note?.addEventListener('input', () => setStepNote(idx, note.value));
+      wireTask(item, idx, task, responseData);
       item.querySelector('.checklist-item__finish').addEventListener('click', () => {
         setStepDone(idx, true);
         work.hidden = true;
@@ -1667,7 +1946,7 @@ function showOutput(html, responseData, quiet = false) {
 
   // Button for touch and keyboard, where selecting text is hard
   const mainBlock = outputContent.querySelector('.output-prose, .summary-body');
-  if (!IS_DEMO && mainBlock && ['metaphor', 'summary'].includes(responseData?.modo)) {
+  if (canUseAI() && mainBlock && ['metaphor', 'summary'].includes(responseData?.modo)) {
     const explainBlockBtn = document.createElement('button');
     explainBlockBtn.type = 'button';
     explainBlockBtn.className = 'btn btn-ghost btn-sm explain-block-btn';
@@ -1679,7 +1958,7 @@ function showOutput(html, responseData, quiet = false) {
   }
 
   document.getElementById('focus-start')?.addEventListener('click', () => {
-    startFocusSession(responseData.passos_acao || []);
+    startFocusSession(stepsOf(responseData));
   });
 
   // TTS with word highlight
@@ -1746,8 +2025,12 @@ async function doAdapt(options = {}) {
 
   if (text.length < 10) return;
 
-  const isVideo = !IS_DEMO && YOUTUBE_URL.test(text);
-  const isPage  = !IS_DEMO && !isVideo && WEB_URL.test(text);
+  const isVideo = canUseAI() && YOUTUBE_URL.test(text);
+  const isPage  = canUseAI() && !isVideo && WEB_URL.test(text);
+  if (isVideo && IS_DEMO) {
+    showError('Vídeos precisam de uma conta. Crie a sua para usar, ou veja o exemplo pronto de vídeo.');
+    return;
+  }
   let notice = '';
 
   document.body.classList.remove('has-output');
@@ -1773,10 +2056,11 @@ async function doAdapt(options = {}) {
     const body = { texto: text, modo: mode, perfil: profile, simplificar };
     if (isVideo) body.video_url = asUrl(text);
 
-    const data = IS_DEMO
+    if (IS_DEMO && demoOwn) await startGuestSession();
+    const data = IS_DEMO && !demoOwn
       ? await new Promise(r => setTimeout(() => r(DEMO_RESULTS[demoTopic][mode]), 700))
       : await apiPost('/adapt', body, isVideo ? 180000 : undefined);
-    lastRequest = IS_DEMO ? null : { text, mode, fonte };
+    lastRequest = IS_DEMO && !demoOwn ? null : { text, mode, fonte };
     const html = renderResult(data);
 
     currentEntryId = null;
@@ -1804,8 +2088,63 @@ adaptBtn.addEventListener('click', () => doAdapt());
 // TEXTOS DE EXEMPLO
 // ═══════════════════════════════════════════════════════════════════════
 let demoTopic = 'ciencias';   // subject shown in the demo
+let demoType = 'texto';       // kind of source that example stands for
+
+// Each source type has a ready-made example; the video one stands in for a real video
+const DEMO_TYPES = {
+  texto: { topic: 'ciencias',     status: 'Exemplo de texto colado: biologia, sobre a mitose.' },
+  link:  { topic: 'historia',     status: 'Exemplo de link: este é o texto que o MindED leu de uma página sobre a Revolução Industrial.' },
+  pdf:   { topic: 'matematica',   status: 'Exemplo de PDF: o texto de uma apostila de 1 página sobre função quadrática.' },
+  video: { topic: 'fotossintese', status: 'Exemplo de vídeo: uma aula de 6 minutos. No campo, o que a aula explica.' },
+};
+
+// Anonymous sign-in, so the API can count a visitor's tests without an account
+async function startGuestSession() {
+  if (firebase.auth().currentUser) return;
+  try {
+    await firebase.auth().signInAnonymously();
+  } catch (err) {
+    throw new Error(err?.code === 'auth/operation-not-allowed'
+      ? 'O teste com o seu conteúdo ainda não foi ativado. Use os exemplos prontos por enquanto.'
+      : 'Não foi possível começar o teste agora. Tente de novo.');
+  }
+}
+
+function showDemoExample(type) {
+  const { topic } = DEMO_TYPES[type];
+  demoTopic = topic;
+  demoType = type;
+  textarea.value = EXAMPLES[topic];
+  textarea.scrollTop = 0;
+  document.querySelectorAll('.demo-type-btn').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.demoType === type)));
+  hideSourceOrigin();
+  updateCharCount();
+}
+
+function setDemoOwn(own) {
+  demoOwn = own;
+  document.getElementById('demo-tab-examples').setAttribute('aria-selected', String(!own));
+  document.getElementById('demo-tab-own').setAttribute('aria-selected', String(own));
+  document.getElementById('demo-examples').hidden = own;
+  document.getElementById('demo-own-note').hidden = !own;
+  document.getElementById('readonly-note').hidden = own;
+  document.getElementById('source-bar').hidden = !own;
+  charCount.hidden = !own;
+  textarea.readOnly = !own;
+  textarea.setAttribute('aria-describedby', own ? 'demo-own-note source-status' : 'readonly-note source-status');
+  if (own) {
+    textarea.value = '';
+    updateCharCount();
+    textarea.focus();
+  } else {
+    const current = document.querySelector('.demo-type-btn[aria-pressed="true"]')?.dataset.demoType || 'texto';
+    showDemoExample(current);
+  }
+}
 
 const EXAMPLES = {
+  fotossintese: `A fotossíntese é o processo em que as plantas usam a luz do sol para produzir o próprio alimento. Ela acontece nos cloroplastos, que ficam principalmente nas folhas. A clorofila, um pigmento verde, capta a energia da luz. A planta usa essa energia para juntar a água, que vem pela raiz, e o gás carbônico, que entra pelos estômatos das folhas. No fim, a planta produz glicose e libera oxigênio no ar. Esse oxigênio é o que os animais, e nós, respiramos.`,
+
   ciencias: `A mitose é um processo de divisão celular em que uma célula-mãe se divide em duas células-filhas geneticamente idênticas. Ocorre em quatro fases principais: prófase, metáfase, anáfase e telófase. Durante a prófase, a cromatina se condensa em cromossomos visíveis e o fuso mitótico começa a se formar. Na metáfase, os cromossomos se alinham no plano equatorial da célula. Na anáfase, as cromátides-irmãs se separam e migram para polos opostos da célula. Por fim, na telófase, uma nova membrana nuclear se forma em torno de cada conjunto de cromossomos, e ocorre a citocinese, dividindo o citoplasma em duas células distintas.`,
 
   historia: `A Revolução Industrial, iniciada na Grã-Bretanha por volta de 1760, foi uma transformação profunda nos processos de produção, com a substituição do trabalho manual por máquinas movidas a vapor. As fábricas substituíram os ateliês artesanais, e enormes contingentes populacionais migraram do campo para as cidades em busca de emprego. Este processo trouxe tanto avanços tecnológicos como sérias consequências sociais: jornadas de trabalho exaustivas, trabalho infantil, condições insalubres nas fábricas e o crescimento de bairros operários sem saneamento básico. A concentração de riqueza nas mãos dos industriais e a pauperização dos trabalhadores criaram as condições para o surgimento dos movimentos operários e das primeiras reivindicações por direitos laborais.`,
@@ -1845,7 +2184,7 @@ function hideExplainButton() {
 document.addEventListener('selectionchange', () => {
   const selection = document.getSelection();
   const text = selection ? selection.toString().trim() : '';
-  if (IS_DEMO || !currentResult || text.length < 3 || !selection.rangeCount
+  if (!canUseAI() || !currentResult || text.length < 3 || !selection.rangeCount
       || !outputContent.contains(selection.anchorNode)) {
     if (document.activeElement !== explainBtn) hideExplainButton();
     return;
@@ -2046,6 +2385,8 @@ function startFocusSession(steps) {
     if (fs.paused || fs.left <= 0) return;
     fs.left -= 1;
     fsRenderTimer();
+    // Every minute in the session counts toward the daily goal
+    if ((fs.total - fs.left) % 60 === 0) addStudyMinutes(1);
   }, 1000);
 }
 
@@ -2088,6 +2429,7 @@ function rateCard(q, titulo, grade) {
   }
   if (grade === 0) card.box = 0;
   if (grade === 2) card.box = Math.min(card.box + 1, REVIEW_DAYS.length - 1);
+  MindedProgress.bump('revisoes');
   const days = grade === 0 ? 1 : REVIEW_DAYS[card.box];
   card.due = startOfToday() + days * DAY_MS;
   saveReview(cards);
@@ -2187,28 +2529,28 @@ rvRateRow.querySelectorAll('button').forEach(b => b.addEventListener('click', ()
 rvExit.addEventListener('click', closeReview);
 document.getElementById('review-start').addEventListener('click', startReview);
 updateReviewDue();
+renderTodayGoal();
+// The account name arrives after sign-in resolves
+setTimeout(renderTodayGoal, 1500);
 
 // ── Boot: demo mode or saved draft ────────────────────────────────────
 if (IS_DEMO) {
   document.getElementById('demo-banner').hidden = false;
   nav.querySelectorAll('a[href="workspace.html"], a[href="preferencias.html"]').forEach(link => { link.hidden = true; });
   nav.insertAdjacentHTML('beforeend', '<a href="login.html" class="btn btn-primary btn-sm">Entrar</a>');
-  // The example buttons switch the subject; each has ready-made results
-  document.getElementById('examples-label').textContent = 'Escolha um assunto:';
-  document.querySelectorAll('.example-btn').forEach(btn => {
-    btn.setAttribute('aria-pressed', String(btn.dataset.example === demoTopic));
-  });
+  document.getElementById('examples-group').hidden = true;
   document.getElementById('profile-group').hidden = true;
-  document.getElementById('source-bar').hidden = true;
-  textarea.value = EXAMPLES.ciencias;
-  textarea.readOnly = true;
-  charCount.hidden = true;
+  document.getElementById('demo-chooser').hidden = false;
+  document.getElementById('demo-tab-examples').addEventListener('click', () => setDemoOwn(false));
+  document.getElementById('demo-tab-own').addEventListener('click', () => setDemoOwn(true));
+  document.querySelectorAll('.demo-type-btn').forEach(btn => {
+    btn.addEventListener('click', () => showDemoExample(btn.dataset.demoType));
+  });
+  setDemoOwn(false);
   // Typing in the fixed demo text explains why nothing happens
   const readonlyNote = document.getElementById('readonly-note');
-  readonlyNote.hidden = false;
-  textarea.setAttribute('aria-describedby', 'readonly-note');
   textarea.addEventListener('keydown', e => {
-    if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
+    if (textarea.readOnly && e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
       readonlyNote.classList.add('nudge');
       document.getElementById('sr-status').textContent = 'Na demonstração o texto é fixo.';
     }

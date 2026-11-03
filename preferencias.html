@@ -15,6 +15,7 @@
 
   <!-- Firebase auth guard -->
   <script src="src/js/account.js"></script>
+  <script src="src/js/progress.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" integrity="sha384-AQ3POAMqIhwS81FrUH95ekxqBZHeP5tG2JfEL3+7GuTtfRLWnrRh32UxwzM+//A9" crossorigin="anonymous"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" integrity="sha384-TnlRYaR4JYz/lpaGuaiU61PjNberSA4vjLjtF+oRC/IkohkJqnWxw5EmDSOt1vA1" crossorigin="anonymous"></script>
   <script>
@@ -29,7 +30,7 @@
     if (!firebase.apps.length) firebase.initializeApp(_fbConfig);
     document.documentElement.style.visibility = 'hidden';
     firebase.auth().onAuthStateChanged(user => {
-      if (!user) {
+      if (!user || user.isAnonymous) {
         // Works without an account: the choices stay in this browser,
         // and the account adopts them on the next sign-in
         if (mindedLeaveAccount()) { window.location.reload(); return; }
@@ -42,6 +43,7 @@
       } else {
         document.documentElement.style.visibility = '';
         window._mindedUser = user;
+        window.dispatchEvent(new Event('minded-user'));
       }
     });
   </script>
@@ -58,6 +60,48 @@
     }
 
     .prefs-hero { text-align: center; }
+    .prefs-hero__title { font-family: var(--font-display); font-size: clamp(1.4rem, 3vw, 1.8rem); }
+    .profile { display: flex; flex-direction: column; gap: var(--sp-lg); }
+    .profile__title { font-family: var(--font-display); font-size: clamp(1.7rem, 4vw, 2.3rem); }
+    .profile__identity { display: flex; align-items: center; gap: var(--sp-md); }
+    .profile__avatar { width: 64px; height: 64px; flex: none; display: grid; place-items: center; border: 2px solid var(--clr-border-md); overflow: hidden; }
+    .profile__avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .profile__avatar svg { width: 48px; height: 48px; }
+    .profile__name { font-weight: 700; font-size: 1.1rem; color: var(--clr-text); }
+    .profile__email { font-size: 0.9rem; color: var(--clr-text-muted); }
+    .profile__field { display: flex; flex-direction: column; gap: 6px; font-size: 0.95rem; color: var(--clr-text); }
+    .profile__field input, .profile__field select {
+      min-height: 44px; padding: 0 var(--sp-sm); max-width: 24rem;
+      background: var(--clr-bg); border: 1px solid var(--clr-border-md); color: var(--clr-text); font: inherit;
+    }
+    .profile__field--inline { flex-direction: row; align-items: center; gap: var(--sp-sm); }
+    .profile fieldset { border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--sp-sm); }
+    .profile legend { font-weight: 600; margin-bottom: var(--sp-sm); color: var(--clr-text); }
+    .profile__avatar-options { display: flex; flex-wrap: wrap; gap: var(--sp-sm); }
+    .profile__avatar-options label {
+      width: 56px; height: 56px; display: grid; place-items: center; cursor: pointer;
+      border: 2px solid var(--clr-border); overflow: hidden;
+    }
+    .profile__avatar-options label:has(input:checked) { border-color: var(--clr-accent); box-shadow: 3px 3px 0 #7C3AED; }
+    .profile__avatar-options label:has(input:focus-visible) { outline: 2px solid var(--clr-accent); outline-offset: 2px; }
+    .profile__avatar-options input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+    .profile__avatar-options img { width: 100%; height: 100%; object-fit: cover; }
+    .profile__avatar-options svg { width: 40px; height: 40px; }
+    .profile__days { display: flex; flex-wrap: wrap; gap: var(--sp-sm); }
+    .profile__days label {
+      display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px;
+      border: 1px solid var(--clr-border-md); cursor: pointer; font-size: 0.95rem;
+    }
+    .profile__days label:has(input:checked) { background: #7C3AED; border-color: #7C3AED; color: #fff; }
+    .profile__progress h2 { font-size: 1.05rem; font-weight: 700; margin-bottom: var(--sp-sm); }
+    .profile__stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: var(--sp-sm); margin: 0; }
+    .profile__stats div { padding: var(--sp-sm) var(--sp-md); border: 1px solid var(--clr-border-md); }
+    .profile__stats dt { font-size: 0.85rem; color: var(--clr-text-muted); }
+    .profile__stats dd { margin: 0; font-family: var(--font-display); font-size: 1.6rem; font-weight: 700; color: var(--clr-text); }
+    .profile__week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; align-items: end; height: 96px; margin-top: var(--sp-md); }
+    .profile__week span { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; height: 100%; gap: 4px; font-size: 0.75rem; color: var(--clr-text-muted); }
+    .profile__week i { display: block; width: 100%; min-height: 3px; background: #7C3AED; }
+    .profile__week i.goal { background: var(--clr-accent); }
     .prefs-guest { margin-top: var(--sp-md); padding: var(--sp-sm) var(--sp-md); border: 1px solid var(--clr-border-md); font-size: 0.95rem; }
     .prefs-hero h1 {
       font-size: clamp(1.8rem, 3.5vw, 2.4rem);
@@ -192,8 +236,62 @@
   <main class="page-wrap" id="conteudo" tabindex="-1">
     <div class="prefs-wrap">
 
+      <!-- ── Your profile: who you are here, your goal and your progress ── -->
+      <section class="prefs-section glass profile" aria-labelledby="perfil-title">
+        <h1 id="perfil-title" class="profile__title">Seu perfil</h1>
+
+        <div class="profile__identity">
+          <div class="profile__avatar" id="profile-avatar" aria-hidden="true"></div>
+          <div>
+            <p class="profile__name" id="profile-name">Visitante</p>
+            <p class="profile__email" id="profile-email"></p>
+          </div>
+        </div>
+
+        <label class="profile__field">
+          <span>Como quer ser chamada ou chamado</span>
+          <input type="text" id="profile-apelido" maxlength="40" autocomplete="nickname" />
+        </label>
+
+        <fieldset class="profile__avatars">
+          <legend>Imagem do perfil</legend>
+          <div class="profile__avatar-options" id="avatar-options"></div>
+        </fieldset>
+
+        <fieldset class="profile__goal">
+          <legend>Meta de estudo</legend>
+          <label class="profile__field profile__field--inline">
+            <span>Minutos por dia</span>
+            <select id="profile-meta">
+              <option value="0">Sem meta</option>
+              <option value="10">10</option><option value="15">15</option><option value="20">20</option>
+              <option value="30">30</option><option value="45">45</option><option value="60">60</option>
+            </select>
+          </label>
+          <div class="profile__days" role="group" aria-label="Dias da semana com meta">
+            <label><input type="checkbox" value="1" /> Seg</label>
+            <label><input type="checkbox" value="2" /> Ter</label>
+            <label><input type="checkbox" value="3" /> Qua</label>
+            <label><input type="checkbox" value="4" /> Qui</label>
+            <label><input type="checkbox" value="5" /> Sex</label>
+            <label><input type="checkbox" value="6" /> Sáb</label>
+            <label><input type="checkbox" value="0" /> Dom</label>
+          </div>
+          <p class="prefs-note">Contam o tempo da sessão de foco e o cronômetro dos passos.</p>
+        </fieldset>
+
+        <div class="profile__progress" aria-labelledby="progresso-title">
+          <h2 id="progresso-title">Seu progresso</h2>
+          <dl class="profile__stats" id="profile-stats"></dl>
+          <div class="profile__week" id="profile-week" role="img"></div>
+          <p class="prefs-note" id="profile-reviews"></p>
+        </div>
+
+        <p class="prefs-status" id="profile-status" role="status"></p>
+      </section>
+
       <div class="prefs-hero">
-        <h1>Como você aprende?</h1>
+        <h2 class="prefs-hero__title">Como você aprende?</h2>
         <p>Quatro escolhas rápidas, todas opcionais. Você pode mudar quando quiser.</p>
         <p class="prefs-guest" id="prefs-guest" hidden>
           Você não entrou na sua conta: estas escolhas ficam só neste navegador.
@@ -330,6 +428,99 @@
       hamburger.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
     });
 
+    /* ── Profile: identity, goal and progress ─────────────────── */
+    (function initProfile() {
+      const profile = MindedProfile.load();
+      const avatarBox = document.getElementById('profile-avatar');
+      const options = document.getElementById('avatar-options');
+      const apelido = document.getElementById('profile-apelido');
+      const meta = document.getElementById('profile-meta');
+      const days = [...document.querySelectorAll('.profile__days input')];
+      const statusBox = document.getElementById('profile-status');
+      let statusTimer = null;
+
+      function photo() { return window._mindedUser?.photoURL || ''; }
+
+      function avatarHtml(choice) {
+        if (choice === 'foto' && photo()) {
+          const img = document.createElement('img');
+          img.src = photo();
+          img.alt = '';
+          img.referrerPolicy = 'no-referrer';
+          return img.outerHTML;
+        }
+        return MINDED_AVATARS[choice] || MINDED_AVATARS.roxo;
+      }
+
+      function renderIdentity() {
+        const user = window._mindedUser;
+        document.getElementById('profile-name').textContent =
+          profile.apelido || user?.displayName || (user ? 'Sua conta' : 'Visitante');
+        document.getElementById('profile-email').textContent = user ? (user.email || '') : 'Sem conta: tudo fica só neste navegador.';
+        if (!profile.avatar) profile.avatar = photo() ? 'foto' : 'roxo';
+        avatarBox.innerHTML = avatarHtml(profile.avatar);
+        const choices = [...(photo() ? ['foto'] : []), ...Object.keys(MINDED_AVATARS)];
+        options.innerHTML = choices.map(c => `
+          <label title="${c === 'foto' ? 'Foto da conta' : 'Avatar ' + c}">
+            <input type="radio" name="avatar" value="${c}" ${c === profile.avatar ? 'checked' : ''}
+                   aria-label="${c === 'foto' ? 'Foto da conta' : 'Avatar ' + c}" />
+            ${avatarHtml(c)}
+          </label>`).join('');
+      }
+
+      function saveProfile() {
+        MindedProfile.save(profile);
+        renderIdentity();
+        statusBox.textContent = 'Perfil salvo.';
+        clearTimeout(statusTimer);
+        statusTimer = setTimeout(() => { statusBox.textContent = ''; }, 2500);
+      }
+
+      function renderProgress() {
+        const stats = MindedProgress.load();
+        const today = MindedProgress.minutesOn(new Date());
+        const tiles = [
+          ['Adaptações', stats.adaptacoes],
+          ['Passos concluídos', stats.passos],
+          ['Revisões feitas', stats.revisoes],
+          ['Dias seguidos', MindedProgress.streak()],
+          ['Minutos hoje', profile.metaMinutos ? `${today}/${profile.metaMinutos}` : today],
+        ];
+        document.getElementById('profile-stats').innerHTML = tiles
+          .map(([label, value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join('');
+        const week = MindedProgress.week();
+        const max = Math.max(profile.metaMinutos || 0, ...week.map(d => d.minutes), 1);
+        const names = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+        const chart = document.getElementById('profile-week');
+        chart.innerHTML = week.map(d => `
+          <span><i class="${profile.metaMinutos && d.minutes >= profile.metaMinutos ? 'goal' : ''}"
+                   style="height:${Math.round(d.minutes / max * 70)}px"></i>${names[d.date.getDay()]}</span>`).join('');
+        chart.setAttribute('aria-label', 'Minutos estudados nos últimos 7 dias: ' +
+          week.map(d => `${names[d.date.getDay()]} ${d.minutes}`).join(', '));
+        let due = 0;
+        try { due = JSON.parse(localStorage.getItem('minded_review') || '[]').filter(c => c.due <= Date.now()).length; } catch (_) {}
+        document.getElementById('profile-reviews').textContent = due
+          ? `Você tem ${due} ${due === 1 ? 'pergunta' : 'perguntas'} para revisar hoje, no Workspace.`
+          : 'Nenhuma revisão pendente hoje.';
+      }
+
+      apelido.value = profile.apelido;
+      meta.value = String(profile.metaMinutos);
+      days.forEach(d => { d.checked = profile.dias.includes(Number(d.value)); });
+
+      apelido.addEventListener('change', () => { profile.apelido = apelido.value.trim(); saveProfile(); });
+      options.addEventListener('change', e => { profile.avatar = e.target.value; saveProfile(); });
+      meta.addEventListener('change', () => { profile.metaMinutos = Number(meta.value); saveProfile(); renderProgress(); });
+      days.forEach(d => d.addEventListener('change', () => {
+        profile.dias = days.filter(x => x.checked).map(x => Number(x.value));
+        saveProfile();
+      }));
+
+      renderIdentity();
+      renderProgress();
+      window.addEventListener('minded-user', renderIdentity);
+    })();
+
     /* ── Load & save ────────────────────────────────────────── */
     const PREFS_KEY = 'minded_prefs';
     const A11Y_KEY  = 'minded_a11y';
@@ -390,7 +581,7 @@
         return;
       }
       ['minded_prefs', 'minded_history', 'minded_a11y', 'minded_draft', 'minded_onboarded',
-       'minded_review', 'minded_tts_rate'].forEach(key => {
+       'minded_review', 'minded_tts_rate', 'minded_profile', 'minded_stats'].forEach(key => {
         try { localStorage.removeItem(key); } catch (_) {}
       });
       form.reset();

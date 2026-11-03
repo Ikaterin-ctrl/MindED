@@ -32,8 +32,15 @@
     const IS_DEMO = new URLSearchParams(location.search).has('demo');
     document.documentElement.style.visibility = 'hidden';
     _auth.onAuthStateChanged(user => {
-      if (user && IS_DEMO) {
+      // A visitor testing without an account signs in anonymously and stays in the demo
+      const guest = user && user.isAnonymous;
+      if (user && !guest && IS_DEMO) {
         window.location.replace('workspace.html');
+      } else if (guest && !IS_DEMO) {
+        window.location.replace('login.html?next=workspace.html');
+      } else if (guest) {
+        document.documentElement.style.visibility = '';
+        window._mindedUser = user;
       } else if (!user) {
         const leftAccount = mindedLeaveAccount();
         if (!IS_DEMO) window.location.replace('login.html?next=workspace.html');
@@ -93,16 +100,38 @@
     <section class="panel glass input-panel" aria-labelledby="input-panel-title">
       <h2 class="panel__title" id="input-panel-title">O que você quer entender?</h2>
 
+      <p class="today-goal" id="today-goal" hidden></p>
+
       <div class="review-due" id="review-due" hidden>
         <p id="review-due-text"></p>
         <button class="btn btn-primary btn-sm" id="review-start" type="button">Revisar agora</button>
       </div>
 
       <p class="demo-banner" id="demo-banner" hidden>
-        <strong>Demonstração sem cadastro.</strong> Este é um exemplo com resultados prontos.
-        Escolha um modo e clique em Adaptar.
-        <a href="login.html">Entre para adaptar os seus textos</a>.
+        <strong>Teste sem cadastro.</strong> Veja exemplos prontos ou experimente com o seu próprio conteúdo.
+        <a href="login.html?next=workspace.html">Crie uma conta</a> para guardar tudo.
       </p>
+
+      <!-- Demo: ready-made examples by source type, or the visitor's own content -->
+      <div class="demo-chooser" id="demo-chooser" hidden>
+        <div class="demo-switch" role="tablist" aria-label="Como testar">
+          <button type="button" role="tab" id="demo-tab-examples" aria-selected="true" aria-controls="demo-examples">Exemplos prontos</button>
+          <button type="button" role="tab" id="demo-tab-own" aria-selected="false" aria-controls="demo-own-note">Meu próprio conteúdo</button>
+        </div>
+        <div class="demo-examples" id="demo-examples" role="tabpanel" aria-labelledby="demo-tab-examples">
+          <span class="examples-group__label" id="demo-types-label">Escolha um tipo de conteúdo:</span>
+          <div class="examples-btns" role="group" aria-labelledby="demo-types-label">
+            <button type="button" class="example-btn demo-type-btn" data-demo-type="texto" aria-pressed="true">Texto</button>
+            <button type="button" class="example-btn demo-type-btn" data-demo-type="link" aria-pressed="false">Link de página</button>
+            <button type="button" class="example-btn demo-type-btn" data-demo-type="pdf" aria-pressed="false">PDF</button>
+            <button type="button" class="example-btn demo-type-btn" data-demo-type="video" aria-pressed="false">Vídeo</button>
+          </div>
+        </div>
+        <p class="demo-own-note" id="demo-own-note" role="tabpanel" aria-labelledby="demo-tab-own" hidden>
+          Cole um texto ou um link, ou envie um PDF. São até 6 usos por dia, com textos de até 4.000 caracteres, e nada fica guardado.
+          Vídeos precisam de uma conta.
+        </p>
+      </div>
 
       <!-- Input: tabs + panes -->
       <div class="input-area">
@@ -119,7 +148,7 @@
           <span class="char-count" id="char-count"></span>
         </div>
         <p class="readonly-note" id="readonly-note" hidden>
-          Na demonstração o texto é fixo: troque o assunto abaixo ou <a href="login.html?next=workspace.html">entre para usar o seu</a>.
+          Este é um exemplo pronto. Para usar o seu, escolha "Meu próprio conteúdo" acima.
         </p>
 
         <div class="source-bar" id="source-bar">
@@ -456,6 +485,7 @@
   </div>
 
   <script src="src/js/demo-data.js"></script>
+  <script src="src/js/progress.js"></script>
   <script src="src/js/workspace.js"></script>
 </body>
 </html>

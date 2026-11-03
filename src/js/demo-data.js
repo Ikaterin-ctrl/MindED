@@ -26,15 +26,22 @@ const DEMO_RESULTS = {
     },
     checklist: {
       modo: 'checklist',
-      titulo: 'Entenda a mitose em 6 passos',
+      titulo: 'Entenda a mitose em 5 passos',
       conteudo_principal: 'Você vai acompanhar como uma célula se divide em duas células geneticamente idênticas.',
-      passos_acao: [
-        'Leia a primeira frase do texto e escreva, com suas palavras, o que a mitose produz.',
-        'Liste as quatro fases da mitose na ordem em que acontecem.',
-        'Explique em uma frase o que muda nos cromossomos durante a prófase.',
-        'Escreva onde os cromossomos ficam na metáfase.',
-        'Descreva para onde vão as cromátides-irmãs na anáfase.',
-        'Explique a diferença entre a telófase e a citocinese.',
+      tarefas: [
+        { texto: 'Explique com suas palavras o que a mitose produz.', tipo: 'escrever',
+          trecho: 'A mitose é um processo de divisão celular em que uma célula-mãe se divide em duas células-filhas geneticamente idênticas.' },
+        { texto: 'Coloque as quatro fases da mitose na ordem em que acontecem.', tipo: 'ordenar',
+          trecho: 'Ocorre em quatro fases principais: prófase, metáfase, anáfase e telófase.',
+          itens: ['Prófase', 'Metáfase', 'Anáfase', 'Telófase'] },
+        { texto: 'Onde os cromossomos se alinham na metáfase?', tipo: 'multipla_escolha',
+          trecho: 'Na metáfase, os cromossomos se alinham no plano equatorial da célula.',
+          opcoes: ['Nos polos da célula', 'No plano equatorial da célula', 'Fora do núcleo'], correta: 1 },
+        { texto: 'Marque a frase que explica o que acontece na anáfase.', tipo: 'marcar_no_texto',
+          trecho: 'Na metáfase, os cromossomos se alinham no plano equatorial da célula. Na anáfase, as cromátides-irmãs se separam e migram para polos opostos da célula. Por fim, na telófase, uma nova membrana nuclear se forma em torno de cada conjunto de cromossomos, e ocorre a citocinese, dividindo o citoplasma em duas células distintas.',
+          frase_certa: 'Na anáfase, as cromátides-irmãs se separam e migram para polos opostos da célula.' },
+        { texto: 'Explique a diferença entre a telófase e a citocinese.', tipo: 'escrever',
+          trecho: 'Por fim, na telófase, uma nova membrana nuclear se forma em torno de cada conjunto de cromossomos, e ocorre a citocinese, dividindo o citoplasma em duas células distintas.' },
       ],
     },
     summary: {
@@ -97,15 +104,21 @@ const DEMO_RESULTS = {
     },
     checklist: {
       modo: 'checklist',
-      titulo: 'Revolução Industrial em 6 passos',
+      titulo: 'Revolução Industrial em 5 passos',
       conteudo_principal: 'Você vai entender o que mudou no trabalho e na vida das pessoas com a Revolução Industrial.',
-      passos_acao: [
-        'Leia a primeira frase do texto e escreva onde e quando a Revolução Industrial começou.',
-        'Explique com suas palavras o que substituiu o trabalho manual.',
-        'Escreva por que tantas pessoas migraram do campo para as cidades.',
-        'Liste três problemas sociais citados no texto.',
-        'Compare em uma frase a situação dos industriais com a dos trabalhadores.',
-        'Explique o que surgiu como resposta a essas condições.',
+      tarefas: [
+        { texto: 'Onde e quando a Revolução Industrial começou?', tipo: 'multipla_escolha',
+          trecho: 'A Revolução Industrial, iniciada na Grã-Bretanha por volta de 1760, foi uma transformação profunda nos processos de produção, com a substituição do trabalho manual por máquinas movidas a vapor.',
+          opcoes: ['Na França, por volta de 1900', 'Na Grã-Bretanha, por volta de 1760', 'Nos Estados Unidos, por volta de 1800'], correta: 1 },
+        { texto: 'Explique com suas palavras o que substituiu o trabalho manual.', tipo: 'escrever',
+          trecho: 'A Revolução Industrial, iniciada na Grã-Bretanha por volta de 1760, foi uma transformação profunda nos processos de produção, com a substituição do trabalho manual por máquinas movidas a vapor.' },
+        { texto: 'Marque a frase que explica por que as cidades cresceram.', tipo: 'marcar_no_texto',
+          trecho: 'As fábricas substituíram os ateliês artesanais, e enormes contingentes populacionais migraram do campo para as cidades em busca de emprego.',
+          frase_certa: 'As fábricas substituíram os ateliês artesanais, e enormes contingentes populacionais migraram do campo para as cidades em busca de emprego.' },
+        { texto: 'Liste três problemas sociais citados no texto.', tipo: 'escrever',
+          trecho: 'Este processo trouxe tanto avanços tecnológicos como sérias consequências sociais: jornadas de trabalho exaustivas, trabalho infantil, condições insalubres nas fábricas e o crescimento de bairros operários sem saneamento básico.' },
+        { texto: 'Coloque os acontecimentos na ordem de causa e consequência.', tipo: 'ordenar',
+          itens: ['Máquinas a vapor chegam às fábricas', 'Pessoas migram do campo para as cidades', 'Trabalhadores enfrentam condições ruins', 'Surgem os movimentos operários'] },
       ],
     },
     summary: {
@@ -169,15 +182,21 @@ const DEMO_RESULTS = {
     },
     checklist: {
       modo: 'checklist',
-      titulo: 'Função quadrática em 6 passos',
+      titulo: 'Função quadrática em 5 passos',
       conteudo_principal: 'Você vai entender a forma do gráfico e como encontrar o vértice e as raízes.',
-      passos_acao: [
-        'Escreva a forma geral da função quadrática e diga por que a não pode ser zero.',
-        'Explique com suas palavras o que acontece com a parábola quando a > 0 e quando a < 0.',
-        'Copie as fórmulas de xv e yv do vértice.',
-        'Escreva a fórmula do discriminante Δ.',
-        'Liste o que cada caso de Δ diz sobre as raízes.',
-        'Calcule Δ para f(x) = x² − 4x + 3 e diga quantas raízes reais ela tem.',
+      tarefas: [
+        { texto: 'Explique por que a não pode ser zero.', tipo: 'escrever',
+          trecho: 'Uma função quadrática é uma função polinomial de segundo grau definida pela equação f(x) = ax² + bx + c, onde a ≠ 0.' },
+        { texto: 'Se a < 0, para onde a parábola abre?', tipo: 'multipla_escolha',
+          trecho: 'O gráfico de uma função quadrática é uma parábola: quando a > 0, a parábola abre para cima e tem um mínimo; quando a < 0, abre para baixo e tem um máximo.',
+          opcoes: ['Para cima, com um mínimo', 'Para baixo, com um máximo', 'Ela vira uma reta'], correta: 1 },
+        { texto: 'Coloque os passos para achar as raízes na ordem.', tipo: 'ordenar',
+          itens: ['Identificar a, b e c', 'Calcular Δ = b² − 4ac', 'Ver quantas raízes Δ indica', 'Usar a fórmula de Bhaskara'] },
+        { texto: 'Marque a frase que diz quantas raízes existem quando Δ = 0.', tipo: 'marcar_no_texto',
+          trecho: 'O discriminante determina o número de raízes reais: Δ > 0 indica duas raízes distintas, Δ = 0 uma raiz dupla, e Δ < 0 nenhuma raiz real.',
+          frase_certa: 'O discriminante determina o número de raízes reais: Δ > 0 indica duas raízes distintas, Δ = 0 uma raiz dupla, e Δ < 0 nenhuma raiz real.' },
+        { texto: 'Calcule Δ para f(x) = x² − 4x + 3 e diga quantas raízes reais ela tem.', tipo: 'escrever',
+          trecho: 'O vértice da parábola, ponto de máximo ou mínimo, pode ser calculado pela fórmula xv = -b/(2a) e yv = -Δ/(4a), onde Δ = b² - 4ac é o discriminante.' },
       ],
     },
     summary: {
@@ -211,6 +230,80 @@ const DEMO_RESULTS = {
         { ideia: 'Vértice', detalhes: ['xv = −b/(2a)', 'yv = −Δ/(4a)', 'É o mínimo ou o máximo'] },
         { ideia: 'Discriminante', detalhes: ['Δ = b² − 4ac', 'Diz quantas raízes reais existem'] },
         { ideia: 'Raízes', detalhes: ['x = (−b ± √Δ)/(2a)', 'Δ > 0: duas; Δ = 0: uma; Δ < 0: nenhuma'] },
+      ],
+    },
+  },
+
+  // The video example: what the lesson in the video explains, standing in for the video
+  fotossintese: {
+    metaphor: {
+      modo: 'metaphor',
+      titulo: 'A cozinha solar da folha',
+      universo_analogia: 'Cozinha',
+      conteudo_principal:
+        'Pense na folha como uma cozinha que funciona com energia solar. A luz do sol é o fogão ligado (a energia luminosa), ' +
+        'a água chega pela raiz como um cano (a água absorvida) e o ar entra pelas janelinhas da folha (o gás carbônico pelos estômatos).\n\n' +
+        'Quem cozinha é a clorofila, a cozinheira verde dentro dos cloroplastos. Ela usa a energia do fogão para juntar a água e o ar e ' +
+        'preparar um alimento doce (a glicose), que a planta guarda e usa para crescer.\n\n' +
+        'Sobra um cheiro que sai pela janela: o oxigênio, que vai para o ar e que nós respiramos.',
+      mapeamentos: [
+        { termo_tecnico: 'Luz do sol', equivalente_metafora: 'Fogão ligado', explicacao_conexao: 'É a fonte de energia da reação.' },
+        { termo_tecnico: 'Clorofila', equivalente_metafora: 'Cozinheira verde', explicacao_conexao: 'Capta a luz e faz a reação acontecer.' },
+        { termo_tecnico: 'Gás carbônico e água', equivalente_metafora: 'Ingredientes', explicacao_conexao: 'São o que a planta transforma em alimento.' },
+        { termo_tecnico: 'Glicose', equivalente_metafora: 'Alimento doce', explicacao_conexao: 'É a energia guardada que a planta usa.' },
+        { termo_tecnico: 'Oxigênio', equivalente_metafora: 'Cheiro que sai pela janela', explicacao_conexao: 'É liberado no ar como resultado.' },
+      ],
+      pontos_de_atencao: 'A planta não cozinha com calor: a energia vem da luz. A metáfora também não mostra as duas etapas da fotossíntese.',
+    },
+    checklist: {
+      modo: 'checklist',
+      titulo: 'Fotossíntese em 5 passos',
+      conteudo_principal: 'Você vai entender como a planta produz o próprio alimento a partir da luz.',
+      tarefas: [
+        { texto: 'Explique com suas palavras o que é a fotossíntese.', tipo: 'escrever',
+          trecho: 'A fotossíntese é o processo em que as plantas usam a luz do sol para produzir o próprio alimento.' },
+        { texto: 'O que a planta libera no ar durante a fotossíntese?', tipo: 'multipla_escolha',
+          trecho: 'No fim, a planta produz glicose e libera oxigênio no ar.',
+          opcoes: ['Gás carbônico', 'Oxigênio', 'Nitrogênio'], correta: 1 },
+        { texto: 'Coloque as etapas na ordem.', tipo: 'ordenar',
+          itens: ['A clorofila capta a luz', 'A planta usa água e gás carbônico', 'Forma-se a glicose', 'O oxigênio é liberado'] },
+        { texto: 'Marque a frase que diz onde a fotossíntese acontece.', tipo: 'marcar_no_texto',
+          trecho: 'A fotossíntese é o processo em que as plantas usam a luz do sol para produzir o próprio alimento. Ela acontece nos cloroplastos, que ficam principalmente nas folhas. A clorofila, um pigmento verde, capta a energia da luz.',
+          frase_certa: 'Ela acontece nos cloroplastos, que ficam principalmente nas folhas.' },
+        { texto: 'Explique por que a fotossíntese é importante para os animais.', tipo: 'escrever',
+          trecho: 'No fim, a planta produz glicose e libera oxigênio no ar. Esse oxigênio é o que os animais, e nós, respiramos.' },
+      ],
+    },
+    summary: {
+      modo: 'summary',
+      titulo: 'Fotossíntese: o essencial',
+      conteudo_principal:
+        '- **O que é**: a planta usa a luz do sol para produzir o próprio alimento.\n' +
+        '- **Onde**: nos cloroplastos, principalmente nas folhas.\n' +
+        '- **Quem capta a luz**: a clorofila, um pigmento verde.\n' +
+        '- **Ingredientes**: água, que vem da raiz, e gás carbônico, que entra pelos estômatos.\n' +
+        '- **Resultado**: glicose, que a planta usa como energia, e oxigênio, liberado no ar.',
+    },
+    questions: {
+      modo: 'questions',
+      titulo: 'A fotossíntese ficou clara?',
+      conteudo_principal: 'Tente responder antes de abrir a resposta.',
+      perguntas: [
+        { pergunta: 'De onde vem a energia da fotossíntese?', dica: 'Olhe para o céu durante o dia.', resposta: 'Da luz do sol.' },
+        { pergunta: 'Qual pigmento capta a luz?', dica: 'É ele que deixa as folhas verdes.', resposta: 'A clorofila.' },
+        { pergunta: 'Quais são os dois ingredientes que a planta usa?', dica: 'Um vem pela raiz e o outro pelo ar.', resposta: 'Água e gás carbônico.' },
+        { pergunta: 'O que a planta libera no ar?', dica: 'É o gás que respiramos.', resposta: 'Oxigênio.' },
+      ],
+    },
+    mindmap: {
+      modo: 'mindmap',
+      titulo: 'Fotossíntese',
+      conteudo_principal: 'A planta transforma luz, água e gás carbônico em alimento e oxigênio.',
+      ramos: [
+        { ideia: 'Onde', detalhes: ['Nos cloroplastos', 'Principalmente nas folhas'] },
+        { ideia: 'Entra', detalhes: ['Luz do sol', 'Água pela raiz', 'Gás carbônico pelos estômatos'] },
+        { ideia: 'Quem faz', detalhes: ['A clorofila capta a luz'] },
+        { ideia: 'Sai', detalhes: ['Glicose para a planta', 'Oxigênio para o ar'] },
       ],
     },
   },

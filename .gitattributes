@@ -1,2 +1,4 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+# Third-party files are kept byte for byte
+src/vendor/** -text

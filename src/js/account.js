@@ -2,7 +2,8 @@
    Only the signed-in account's data stays in the live keys; the rest waits in a
    per-account stash. Accessibility settings belong to the device, not the account. */
 (function () {
-  const PRIVATE_KEYS = ['minded_prefs', 'minded_history', 'minded_draft', 'minded_onboarded', 'minded_review'];
+  const PRIVATE_KEYS = ['minded_prefs', 'minded_history', 'minded_draft', 'minded_onboarded', 'minded_review',
+                        'minded_profile', 'minded_stats'];
   const OWNER_KEY = 'minded_owner';
   const STASH_PREFIX = 'minded_account_';
 

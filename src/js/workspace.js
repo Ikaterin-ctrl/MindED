@@ -575,14 +575,14 @@ function renderHistory() {
     return;
   }
   historyList.innerHTML = hist.map(h => `
-    <div class="history-item" data-id="${h.id}">
+    <div class="history-item" data-id="${esc(h.id)}">
       <button type="button" class="history-item__open" aria-label="Abrir: ${esc(h.titulo)}, ${esc(historySource(h))}">
         <span class="history-item__title">${esc(h.titulo)}</span>
         <span class="history-item__source">${esc(historySource(h))}</span>
         <span class="history-item__meta">
-          <span class="history-item__badge">${modeLabels[h.mode] || h.mode}</span>
+          <span class="history-item__badge">${esc(modeLabels[h.mode] || h.mode)}</span>
           ${h.simplificado ? '<span class="history-item__badge">Mais simples</span>' : ''}
-          <span>${h.ts}</span>
+          <span>${esc(h.ts)}</span>
         </span>
       </button>
       <button type="button" class="history-item__delete" aria-label="Apagar do histórico: ${esc(h.titulo)}">
@@ -720,22 +720,24 @@ function scheduleDraftSave() {
 window.addEventListener('pagehide', saveDraft);
 
 // ── PDF: load pdf.js ──────────────────────────────────────────────────
+// Served from this site (src/vendor/pdfjs), a version without CVE-2024-4367
+let pdfjsLib = null;
 async function loadPdfJs() {
-  if (window.pdfjsLib) return;
-  await new Promise((res, rej) => {
-    const s = document.createElement('script');
-    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
-    s.onload = res; s.onerror = rej;
-    document.head.appendChild(s);
-  });
-  window.pdfjsLib.GlobalWorkerOptions.workerSrc =
-    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  if (pdfjsLib) return;
+  // This is a classic script, so paths resolve from the page, not from this file
+  pdfjsLib = await import(new URL('src/vendor/pdfjs/pdf.min.mjs', document.baseURI).href);
+  pdfjsLib.GlobalWorkerOptions.workerSrc = new URL('src/vendor/pdfjs/pdf.worker.min.mjs', document.baseURI).href;
 }
 
 async function extractPdf(file) {
   await loadPdfJs();
   const arrayBuffer = await file.arrayBuffer();
-  const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  // No eval and no scripts from the file: a PDF here is only read for its text
+  const pdf = await pdfjsLib.getDocument({
+    data: arrayBuffer,
+    isEvalSupported: false,
+    enableScripting: false,
+  }).promise;
   const pages = [];
   for (let i = 1; i <= pdf.numPages; i++) {
     const page    = await pdf.getPage(i);

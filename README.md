@@ -46,6 +46,7 @@ MindED/
 │       ├── account.js    # Separa os dados locais por conta
 │       ├── theme.js      # Aplica o tema antes da primeira pintura
 │       └── demo-data.js  # Resultados prontos da demonstração sem login
+│   └── vendor/pdfjs/     # pdf.js 5.4.394, servido pelo próprio site
 ├── api/
 │   ├── main.py         # FastAPI — /adapt, /explain e /extract-url
 │   ├── test_main.py    # Testes da API (pytest)

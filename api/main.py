@@ -16,7 +16,7 @@ from collections import defaultdict, deque
 from html.parser import HTMLParser
 from pathlib import Path
 from typing import List, Literal, Optional
-from urllib.parse import parse_qs, urljoin, urlsplit
+from urllib.parse import parse_qs, urljoin, urlsplit, urlunsplit
 
 import httpx
 from dotenv import load_dotenv
@@ -48,6 +48,9 @@ GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.8-flash")
 FIREBASE_PROJECT_ID = os.environ.get("FIREBASE_PROJECT_ID", "minded-3d49a")
 # Local development only: skips Firebase token verification.
 AUTH_DISABLED = os.environ.get("AUTH_DISABLED", "").lower() == "true"
+# Cloud Run sets K_SERVICE. An open API there would let anyone spend the Gemini key.
+if AUTH_DISABLED and os.environ.get("K_SERVICE"):
+    raise RuntimeError("AUTH_DISABLED must never be set on Cloud Run.")
 MAX_TEXT_CHARS = int(os.environ.get("MAX_TEXT_CHARS", "60000"))
 RATE_LIMIT_PER_MINUTE = int(os.environ.get("RATE_LIMIT_PER_MINUTE", "10"))
 # Video costs far more than text, so it has its own ceiling and a length cap.
@@ -70,15 +73,48 @@ DAILY_CHAR_LIMIT = int(os.environ.get("DAILY_CHAR_LIMIT", "400000"))
 URL_MAX_BYTES = 2_000_000
 URL_MAX_REDIRECTS = 3
 URL_TIMEOUT_SECONDS = 10.0
+URL_ALLOWED_PORTS = {80, 443}
+
+# Largest request body accepted: the text limit in UTF-8 plus room for the JSON around it.
+MAX_BODY_BYTES = MAX_TEXT_CHARS * 4 + 16_384
 
 client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
 
+# The interactive docs list every route, so they exist only in local development.
 app = FastAPI(
     title="MindED API",
     description="Adaptive cognitive content engine for neurodivergent learners.",
     version="2.0.0",
+    docs_url="/docs" if AUTH_DISABLED else None,
+    redoc_url=None,
+    openapi_url="/openapi.json" if AUTH_DISABLED else None,
 )
 
+
+class BodySizeLimit:
+    """Refuses oversized bodies from their declared length, before anything is read into memory."""
+
+    def __init__(self, app, max_bytes: int) -> None:
+        self.app = app
+        self.max_bytes = max_bytes
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] == "http" and scope["method"] == "POST":
+            headers = dict(scope["headers"])
+            length = headers.get(b"content-length")
+            status, detail = None, ""
+            if length is None:
+                status, detail = 411, "O pedido precisa informar o tamanho."
+            elif not length.isdigit() or int(length) > self.max_bytes:
+                status, detail = 413, "Este texto é muito longo para ser enviado."
+            if status:
+                await JSONResponse(status_code=status, content={"detail": detail})(scope, receive, send)
+                return
+        await self.app(scope, receive, send)
+
+
+# Added before CORS, so CORS wraps it and the browser can read the refusal
+app.add_middleware(BodySizeLimit, max_bytes=MAX_BODY_BYTES)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
@@ -476,24 +512,48 @@ def canonical_youtube_url(url: str) -> Optional[str]:
     return f"https://www.youtube.com/watch?v={video_id}" if _YOUTUBE_ID.fullmatch(video_id) else None
 
 
-async def _assert_public_host(url: str) -> None:
-    """Block requests to internal addresses (SSRF)."""
+async def _assert_public_host(url: str) -> str:
+    """Block requests to internal addresses (SSRF) and return the checked IP to connect to."""
     parts = urlsplit(url)
     if parts.scheme not in {"http", "https"} or not parts.hostname:
         raise HTTPException(status_code=400, detail="Use um link que comece com http:// ou https://.")
     try:
-        infos = await asyncio.to_thread(socket.getaddrinfo, parts.hostname, parts.port or 443)
+        port = parts.port
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail="Este link não pode ser acessado.") from exc
+    if port is not None and port not in URL_ALLOWED_PORTS:
+        raise HTTPException(status_code=400, detail="Este link não pode ser acessado.")
+    try:
+        infos = await asyncio.to_thread(socket.getaddrinfo, parts.hostname, port or 443)
     except (socket.gaierror, UnicodeError) as exc:
         raise HTTPException(status_code=400, detail="Não encontramos esse site. Confira o link.") from exc
     if not infos or not all(ipaddress.ip_address(info[4][0]).is_global for info in infos):
         raise HTTPException(status_code=400, detail="Este link não pode ser acessado.")
+    return infos[0][4][0]
+
+
+def _pinned_request(url: str, ip: str) -> tuple[str, dict, dict]:
+    """Request the checked IP directly, so a second DNS answer (DNS rebinding) cannot
+    send it elsewhere. Host and TLS still use the site name, and the certificate is
+    verified against it."""
+    parts = urlsplit(url)
+    default_port = 443 if parts.scheme == "https" else 80
+    port = parts.port or default_port
+    host_ip = f"[{ip}]" if ":" in ip else ip
+    target = urlunsplit((parts.scheme, f"{host_ip}:{port}", parts.path or "/", parts.query, ""))
+    host_header = parts.hostname if port == default_port else f"{parts.hostname}:{port}"
+    # Sites such as Wikipedia refuse requests that do not say who is asking
+    headers = {"User-Agent": "MindED/2.0 (+https://minded-3d49a.web.app)", "Host": host_header}
+    extensions = {"sni_hostname": parts.hostname} if parts.scheme == "https" else {}
+    return target, headers, extensions
 
 
 async def _fetch_html(url: str) -> str:
-    async with httpx.AsyncClient(follow_redirects=False, timeout=URL_TIMEOUT_SECONDS) as http:
+    async with httpx.AsyncClient(follow_redirects=False, timeout=URL_TIMEOUT_SECONDS, trust_env=False) as http:
         for _ in range(URL_MAX_REDIRECTS + 1):
-            await _assert_public_host(url)
-            async with http.stream("GET", url, headers={"User-Agent": "MindED/2.0"}) as response:
+            ip = await _assert_public_host(url)
+            target, headers, extensions = _pinned_request(url, ip)
+            async with http.stream("GET", target, headers=headers, extensions=extensions) as response:
                 if response.is_redirect:
                     url = urljoin(url, response.headers.get("location", ""))
                     continue

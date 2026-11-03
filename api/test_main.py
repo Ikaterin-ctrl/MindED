@@ -328,6 +328,7 @@ def test_redirect_to_internal_address_is_blocked(monkeypatch):
     async def public_only(url):
         if "169.254" in url:
             raise HTTPException(status_code=400, detail="bloqueado")
+        return "93.184.216.34"
 
     def handler(request):
         return httpx.Response(302, headers={"location": "http://169.254.169.254/"})
@@ -352,3 +353,45 @@ def test_extract_text_drops_scripts_and_navigation():
     assert "importante" in texto and "aqui." in texto
     for ruido in ("Menu", "alert", "Rodapé"):
         assert ruido not in texto
+
+
+def test_fetch_connects_to_the_checked_ip(monkeypatch):
+    """A second DNS answer cannot redirect the request (DNS rebinding)."""
+    seen = {}
+
+    async def checked(url):
+        return "93.184.216.34"
+
+    def handler(request):
+        seen.update(host=request.url.host, header=request.headers["host"], sni=request.extensions.get("sni_hostname"))
+        return httpx.Response(200, headers={"content-type": "text/html"}, text="<p>ok</p>")
+
+    real_client = httpx.AsyncClient
+    monkeypatch.setattr(main, "_assert_public_host", checked)
+    monkeypatch.setattr(
+        main.httpx, "AsyncClient", lambda **kw: real_client(transport=httpx.MockTransport(handler), **kw)
+    )
+    asyncio.run(main._fetch_html("https://exemplo.com/artigo"))
+    assert seen == {"host": "93.184.216.34", "header": "exemplo.com", "sni": "exemplo.com"}
+
+
+@pytest.mark.parametrize("url", ["http://exemplo.com:6379/", "https://exemplo.com:22/", "http://exemplo.com:99999/"])
+def test_unusual_ports_are_blocked(url):
+    with pytest.raises(HTTPException) as err:
+        asyncio.run(main._assert_public_host(url))
+    assert err.value.status_code == 400
+
+
+def test_oversized_body_is_refused_before_reading(api, monkeypatch):
+    install_gemini(monkeypatch)
+    res = api.post(
+        "/adapt",
+        content=b"{}",
+        headers={"Content-Type": "application/json", "Content-Length": str(main.MAX_BODY_BYTES + 1)},
+    )
+    assert res.status_code == 413
+
+
+def test_docs_are_hidden_outside_local_development():
+    # The test process imports main without AUTH_DISABLED, like production
+    assert main.app.docs_url is None and main.app.openapi_url is None

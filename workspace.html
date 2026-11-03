@@ -10,12 +10,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="src/css/base.css" />
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg" />
-  <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" href="img/apple-touch-icon.png" />
   <meta name="theme-color" content="#0B0A0F" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="MindED" />
 
   <!-- Firebase auth guard — redirects to login.html if not signed in -->
   <script src="src/js/account.js"></script>
@@ -123,7 +119,7 @@
           <span class="char-count" id="char-count"></span>
         </div>
         <p class="readonly-note" id="readonly-note" hidden>
-          Na demonstração o texto é fixo. <a href="login.html?next=workspace.html">Entre para usar o seu</a>.
+          Na demonstração o texto é fixo: troque o assunto abaixo ou <a href="login.html?next=workspace.html">entre para usar o seu</a>.
         </p>
 
         <div class="source-bar" id="source-bar">
@@ -147,6 +143,16 @@
           <button class="btn btn-ghost btn-sm" type="submit">Usar estas páginas</button>
         </form>
 
+      </div>
+
+      <!-- Exemplos rápidos -->
+      <div class="examples-group" id="examples-group">
+        <span class="examples-group__label" id="examples-label">Experimentar com exemplo:</span>
+        <div class="examples-btns" role="group" aria-labelledby="examples-label">
+          <button class="example-btn" data-example="ciencias" type="button">Ciências</button>
+          <button class="example-btn" data-example="historia" type="button">História</button>
+          <button class="example-btn" data-example="matematica" type="button">Matemática</button>
+        </div>
       </div>
 
       <!-- Mode selector -->
@@ -212,15 +218,6 @@
         </div>
       </div>
 
-      <!-- Exemplos rápidos -->
-      <div class="examples-group" id="examples-group">
-        <span class="examples-group__label">Experimentar com exemplo:</span>
-        <div class="examples-btns">
-          <button class="example-btn" data-example="ciencias" type="button">Ciências</button>
-          <button class="example-btn" data-example="historia" type="button">História</button>
-          <button class="example-btn" data-example="matematica" type="button">Matemática</button>
-        </div>
-      </div>
 
       <!-- Profile — populated from saved prefs; shows link if no prefs set -->
       <div class="profile-group" id="profile-group">
@@ -355,6 +352,14 @@
     <p class="focus-session__count" id="fs-count"></p>
     <div class="focus-session__steps" id="fs-steps" aria-hidden="true"></div>
     <p class="focus-session__step" id="fs-step"></p>
+    <label class="question-guess focus-session__note" id="fs-note-wrap">
+      <span class="question-guess__label">Sua resposta</span>
+      <textarea id="fs-note" rows="3" placeholder="Faça o passo aqui mesmo, escrevendo com suas palavras."></textarea>
+    </label>
+    <details class="result-more focus-session__source" id="fs-source" hidden>
+      <summary>Ver o texto original</summary>
+      <div class="source-text__body" id="fs-source-body"></div>
+    </details>
     <p class="focus-session__paused" id="fs-paused" role="status" hidden>Pausado</p>
     <p class="focus-session__bar-label">Tempo deste passo</p>
     <div class="focus-session__bar" aria-hidden="true"><div class="focus-session__fill" id="fs-fill"></div></div>
@@ -452,6 +457,5 @@
 
   <script src="src/js/demo-data.js"></script>
   <script src="src/js/workspace.js"></script>
-  <script src="src/js/pwa.js"></script>
 </body>
 </html>

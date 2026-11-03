@@ -8,12 +8,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="src/css/base.css" />
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg" />
-  <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" href="img/apple-touch-icon.png" />
   <meta name="theme-color" content="#0B0A0F" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="MindED" />
   <style>
     .login-wrap {
       min-height: 100vh;
@@ -230,10 +226,7 @@
       googleBtn.disabled = true;
 
       try {
-        // Installed apps handle pop-ups poorly, especially on iPhone
-        const installed = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
-        if (installed) await auth.signInWithRedirect(provider);
-        else await auth.signInWithPopup(provider);
+        await auth.signInWithPopup(provider);
         // onAuthStateChanged above will redirect
       } catch (err) {
         googleBtn.classList.remove('loading');
@@ -249,6 +242,5 @@
       }
     });
   </script>
-  <script src="src/js/pwa.js"></script>
 </body>
 </html>

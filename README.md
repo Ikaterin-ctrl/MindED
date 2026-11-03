@@ -45,7 +45,6 @@ MindED/
 │       ├── workspace.js  # Lógica do workspace (modos, histórico, revisão, foco)
 │       ├── account.js    # Separa os dados locais por conta
 │       ├── theme.js      # Aplica o tema antes da primeira pintura
-│       ├── pwa.js        # Instalação como app
 │       └── demo-data.js  # Resultados prontos da demonstração sem login
 ├── api/
 │   ├── main.py         # FastAPI — /adapt, /explain e /extract-url
@@ -101,13 +100,6 @@ O frontend está no Firebase Hosting; a API precisa de um host próprio (a image
 4. Preencha os campos `[PREENCHER: ...]` de `termos.html` e `privacidade.html` e faça revisão jurídica.
 
 > **Obter chave Gemini:** [aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey). A chave gratuita serve só para testes com textos fictícios. Em produção, use uma chave com faturamento ativo: os termos do Google pedem para não enviar dados pessoais ou sensíveis ao plano gratuito.
-
----
-
-## App
-
-O MindED é um PWA: em HTTPS, pode ser instalado pelo navegador (`manifest.webmanifest` e `sw.js`).
-Ao alterar a lista de arquivos do `sw.js`, aumente `VERSION`.
 
 ---
 

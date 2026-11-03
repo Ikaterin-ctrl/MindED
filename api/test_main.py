@@ -59,6 +59,14 @@ def test_mindmap_returns_branches(api, monkeypatch):
     assert "mapa de ideias" in models.calls[0]["contents"]
 
 
+def test_checklist_steps_are_doable_on_screen(api, monkeypatch):
+    saida = {"titulo": "Passos", "conteudo_principal": "Intro", "passos_acao": ["Ler"]}
+    models = install_gemini(monkeypatch, text=json.dumps(saida))
+    api.post("/adapt", json={"texto": TEXTO, "modo": "checklist"})
+    prompt = models.calls[0]["contents"]
+    assert "própria tela" in prompt and "desenhar" in prompt
+
+
 def test_mindmap_without_branches_is_rejected(api, monkeypatch):
     install_gemini(monkeypatch)
     res = api.post("/adapt", json={"texto": TEXTO, "modo": "mindmap"})

@@ -543,6 +543,7 @@ function saveChecklistProgress() {
   const entry = hist.find(h => h.id === currentEntryId);
   if (!entry) return;
   entry.done = checklistState.flatMap((checked, i) => (checked ? [i] : []));
+  entry.notes = checklistNotes.some(Boolean) ? checklistNotes : undefined;
   saveHistory(hist);
 }
 
@@ -555,9 +556,13 @@ function restoreEntry(entry, quiet = false) {
   if (radio) radio.checked = true;
   const html = renderResult({ ...entry.data, modo: entry.mode });
   showOutput(html, entry.data, quiet);
-  (entry.done || []).forEach(i => {
-    outputContent.querySelector(`.checklist-item[data-idx="${i}"]`)?.click();
+  (entry.notes || []).forEach((text, i) => {
+    if (!text) return;
+    setStepNote(i, text);
+    const btn = outputContent.querySelector(`.checklist-item[data-idx="${i}"] .checklist-item__do`);
+    if (btn) btn.textContent = stepButtonLabel(i);
   });
+  (entry.done || []).forEach(i => setStepDone(i, true));
 }
 
 function renderHistory() {
@@ -1012,25 +1017,73 @@ function renderMetaphor(data) {
   `;
 }
 
+// ── Checklist state, shared by the list, the focus session and history ──
+function setStepDone(idx, done) {
+  if (checklistState[idx] === done) return;
+  checklistState[idx] = done;
+  const item = outputContent.querySelector(`.checklist-item[data-idx="${idx}"]`);
+  if (item) {
+    item.classList.toggle('done', done);
+    item.querySelector('.checklist-item__check')?.setAttribute('aria-checked', String(done));
+  }
+  const total = checklistState.length;
+  const count = checklistState.filter(Boolean).length;
+  const fill  = document.getElementById('progress-fill');
+  const label = document.getElementById('progress-label');
+  const wrap  = document.getElementById('progress-bar-wrap');
+  if (fill)  fill.style.width = (total ? Math.round(count / total * 100) : 0) + '%';
+  if (label) label.textContent = `${count} / ${total}`;
+  if (wrap)  wrap.setAttribute('aria-valuenow', String(count));
+  saveChecklistProgress();
+  updateFocusStartLabel();
+}
+
+let _notesTimer = null;
+function setStepNote(idx, text) {
+  checklistNotes[idx] = text;
+  const inline = outputContent.querySelector(`.checklist-item__note[data-idx="${idx}"]`);
+  if (inline && inline.value !== text) inline.value = text;
+  clearTimeout(_notesTimer);
+  _notesTimer = setTimeout(saveChecklistProgress, 400);
+}
+
+function stepButtonLabel(idx) {
+  return checklistNotes[idx] ? 'Ver sua resposta' : 'Fazer agora';
+}
+
 // ── Render: Checklist mode ────────────────────────────────────────────
 let checklistState = [];
+let checklistNotes = [];   // what the person wrote while doing each step
 
 function renderChecklist(data) {
   const steps = data.passos_acao || [];
   checklistState = steps.map(() => false);
+  checklistNotes = steps.map(() => '');
 
   const CHUNK = 5;
   const visible = steps.slice(0, CHUNK);
   const hidden  = steps.slice(CHUNK);
 
   const makeItem = (step, i) => `
-    <div class="checklist-item" role="checkbox" aria-checked="false" tabindex="0" data-idx="${i}">
-      <div class="checklist-item__checkbox" aria-hidden="true">
-        <svg class="checklist-item__check-svg" viewBox="0 0 12 10">
-          <polyline points="1.5 5.5 4.5 8.5 10.5 1.5"/>
-        </svg>
+    <div class="checklist-item" data-idx="${i}">
+      <button type="button" class="checklist-item__check" role="checkbox" aria-checked="false"
+              aria-labelledby="step-text-${i}">
+        <span class="checklist-item__checkbox" aria-hidden="true">
+          <svg class="checklist-item__check-svg" viewBox="0 0 12 10">
+            <polyline points="1.5 5.5 4.5 8.5 10.5 1.5"/>
+          </svg>
+        </span>
+      </button>
+      <div class="checklist-item__body">
+        <span class="checklist-item__text" id="step-text-${i}">${esc(step)}</span>
+        <button type="button" class="checklist-item__do" aria-expanded="false" aria-controls="step-work-${i}">Fazer agora</button>
+        <div class="checklist-item__work" id="step-work-${i}" hidden>
+          <label class="checklist-item__label" for="step-note-${i}">Sua resposta</label>
+          <textarea class="checklist-item__note" id="step-note-${i}" data-idx="${i}" rows="3"
+                    placeholder="${IS_DEMO ? 'Escreva aqui. Na demonstração, nada é guardado.' : 'Escreva aqui. Fica guardado junto com este resultado.'}"></textarea>
+          <button type="button" class="btn btn-primary btn-sm checklist-item__finish">Concluir passo</button>
+        </div>
       </div>
-      <span class="checklist-item__text">${esc(step)}</span>
     </div>`;
 
   const visibleHtml = visible.map((s, i) => makeItem(s, i)).join('');
@@ -1193,7 +1246,14 @@ function toMarkdown(data) {
     ].join('\n'));
   }
   if (data.pontos_de_atencao) blocks.push(`## O que a metáfora não cobre\n\n${data.pontos_de_atencao}`);
-  if (data.passos_acao?.length) blocks.push(data.passos_acao.map(step => `- [ ] ${step}`).join('\n'));
+  if (data.passos_acao?.length) {
+    const own = data === currentResult;
+    blocks.push(data.passos_acao.map((step, i) => {
+      const line = `- [${own && checklistState[i] ? 'x' : ' '}] ${step}`;
+      const note = own && checklistNotes[i] ? `\n  - Minha resposta: ${checklistNotes[i].replace(/\s+/g, ' ')}` : '';
+      return line + note;
+    }).join('\n'));
+  }
   (data.perguntas || []).forEach(q => {
     blocks.push(`## ${q.pergunta}\n\n**Dica:** ${q.dica}\n\n**Resposta:** ${q.resposta}`);
   });
@@ -1425,28 +1485,45 @@ function showOutput(html, responseData, quiet = false) {
   // Checklist interactions
   function wireChecklist(container) {
     container.querySelectorAll('.checklist-item').forEach(item => {
-      function toggle() {
-        const idx  = parseInt(item.dataset.idx, 10);
-        checklistState[idx] = !checklistState[idx];
-        item.classList.toggle('done', checklistState[idx]);
-        item.setAttribute('aria-checked', String(checklistState[idx]));
-        const done  = checklistState.filter(Boolean).length;
-        const total = checklistState.length;
-        const pct   = total ? Math.round(done / total * 100) : 0;
-        const fill  = document.getElementById('progress-fill');
-        const label = document.getElementById('progress-label');
-        const wrap  = document.getElementById('progress-bar-wrap');
-        if (fill)  fill.style.width  = pct + '%';
-        if (label) label.textContent = `${done} / ${total}`;
-        if (wrap)  wrap.setAttribute('aria-valuenow', String(done));
-        saveChecklistProgress();
-        updateFocusStartLabel();
-      }
-      item.addEventListener('click', toggle);
-      item.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggle(); } });
+      const idx   = parseInt(item.dataset.idx, 10);
+      const doBtn = item.querySelector('.checklist-item__do');
+      const work  = item.querySelector('.checklist-item__work');
+      const note  = item.querySelector('.checklist-item__note');
+      item.querySelector('.checklist-item__check').addEventListener('click', () => setStepDone(idx, !checklistState[idx]));
+      doBtn.addEventListener('click', () => {
+        const open = work.hidden;
+        work.hidden = !open;
+        doBtn.setAttribute('aria-expanded', String(open));
+        doBtn.textContent = open ? 'Fechar' : stepButtonLabel(idx);
+        if (open) note.focus();
+      });
+      note.addEventListener('input', () => setStepNote(idx, note.value));
+      item.querySelector('.checklist-item__finish').addEventListener('click', () => {
+        setStepDone(idx, true);
+        work.hidden = true;
+        doBtn.setAttribute('aria-expanded', 'false');
+        doBtn.textContent = stepButtonLabel(idx);
+        // Moves on to the next step still to do
+        const next = checklistState.findIndex((done, i) => !done && i > idx);
+        const nextBtn = next >= 0 && outputContent.querySelector(`.checklist-item[data-idx="${next}"] .checklist-item__do`);
+        if (nextBtn && nextBtn.offsetParent) nextBtn.click();
+        else doBtn.focus();
+      });
     });
   }
   wireChecklist(outputContent);
+
+  // The source stays one click away while doing the steps
+  if (outputContent.querySelector('#checklist-list')) {
+    const source = lastRequest?.text || (IS_DEMO ? textarea.value : '');
+    if (source && !WEB_URL.test(source.trim())) {
+      const details = document.createElement('details');
+      details.className = 'result-more source-text';
+      details.innerHTML = '<summary>Ver o texto original</summary><div class="source-text__body"></div>';
+      details.querySelector('.source-text__body').textContent = source;
+      outputContent.querySelector('#progress-bar-wrap')?.before(details);
+    }
+  }
 
   // Show more
   const chunkBtn = document.getElementById('chunk-more-btn');
@@ -1695,7 +1772,7 @@ async function doAdapt(options = {}) {
     if (isVideo) body.video_url = asUrl(text);
 
     const data = IS_DEMO
-      ? await new Promise(r => setTimeout(() => r(DEMO_RESULTS[mode]), 700))
+      ? await new Promise(r => setTimeout(() => r(DEMO_RESULTS[demoTopic][mode]), 700))
       : await apiPost('/adapt', body, isVideo ? 180000 : undefined);
     lastRequest = IS_DEMO ? null : { text, mode, fonte };
     const html = renderResult(data);
@@ -1724,6 +1801,8 @@ adaptBtn.addEventListener('click', () => doAdapt());
 // ═══════════════════════════════════════════════════════════════════════
 // TEXTOS DE EXEMPLO
 // ═══════════════════════════════════════════════════════════════════════
+let demoTopic = 'ciencias';   // subject shown in the demo
+
 const EXAMPLES = {
   ciencias: `A mitose é um processo de divisão celular em que uma célula-mãe se divide em duas células-filhas geneticamente idênticas. Ocorre em quatro fases principais: prófase, metáfase, anáfase e telófase. Durante a prófase, a cromatina se condensa em cromossomos visíveis e o fuso mitótico começa a se formar. Na metáfase, os cromossomos se alinham no plano equatorial da célula. Na anáfase, as cromátides-irmãs se separam e migram para polos opostos da célula. Por fim, na telófase, uma nova membrana nuclear se forma em torno de cada conjunto de cromossomos, e ocorre a citocinese, dividindo o citoplasma em duas células distintas.`,
 
@@ -1737,6 +1816,11 @@ document.querySelectorAll('.example-btn').forEach(btn => {
     const key = btn.dataset.example;
     if (!EXAMPLES[key]) return;
     textarea.value = EXAMPLES[key];
+    if (IS_DEMO) {
+      demoTopic = key;
+      document.querySelectorAll('.example-btn').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+      document.getElementById('sr-status').textContent = `Assunto: ${btn.textContent}. Escolha um modo e clique em Adaptar.`;
+    }
     hideSourceOrigin();
     updateCharCount();
     textarea.focus();
@@ -1864,9 +1948,18 @@ function fsSetPaused(paused) {
   document.getElementById('fs-paused').hidden = !paused;
 }
 
+const fsNote = document.getElementById('fs-note');
+fsNote.addEventListener('input', () => {
+  setStepNote(fs.index, fsNote.value);
+  const btn = outputContent.querySelector(`.checklist-item[data-idx="${fs.index}"] .checklist-item__do`);
+  if (btn && btn.getAttribute('aria-expanded') !== 'true') btn.textContent = stepButtonLabel(fs.index);
+});
+
 function fsShowStep() {
   fsCount.textContent = `Passo ${fs.index + 1} de ${fs.steps.length}`;
   fsStep.textContent = fs.steps[fs.index];
+  document.getElementById('fs-note-wrap').hidden = false;
+  fsNote.value = checklistNotes[fs.index] || '';
   fs.left = fs.total;
   fsSetPaused(false);
   fsRenderSteps();
@@ -1883,6 +1976,7 @@ function fsFinish() {
   fsStep.textContent = `Você concluiu ${ticked} de ${fs.steps.length} passos.`;
   fsTimer.textContent = '';
   fsFill.style.width = '100%';
+  document.getElementById('fs-note-wrap').hidden = true;
   fsSetPaused(false);
   fsRenderSteps();
   [fsDone, fsPause, fsSkip].forEach(btn => { btn.hidden = true; });
@@ -1934,6 +2028,10 @@ function startFocusSession(steps) {
   if (fs.index >= steps.length) fs.index = 0;
   fs.done = 0;
   fs.total = (FOCUS_MINUTES[sessao] || 5) * 60;
+  // The text being studied, for steps that ask to read a part of it
+  const source = outputContent.querySelector('.source-text .source-text__body')?.textContent || '';
+  document.getElementById('fs-source').hidden = !source;
+  document.getElementById('fs-source-body').textContent = source;
   document.getElementById('fs-mascot').hidden = true;
   [fsDone, fsPause, fsSkip].forEach(btn => { btn.hidden = false; });
   fsExit.textContent = 'Sair';
@@ -1950,8 +2048,7 @@ function startFocusSession(steps) {
 }
 
 fsDone.addEventListener('click', () => {
-  const item = outputContent.querySelector(`.checklist-item[data-idx="${fs.index}"]`);
-  if (item && item.getAttribute('aria-checked') !== 'true') item.click();
+  setStepDone(fs.index, true);
   fs.done += 1;
   fsAdvance();
 });
@@ -2094,7 +2191,11 @@ if (IS_DEMO) {
   document.getElementById('demo-banner').hidden = false;
   nav.querySelectorAll('a[href="workspace.html"], a[href="preferencias.html"]').forEach(link => { link.hidden = true; });
   nav.insertAdjacentHTML('beforeend', '<a href="login.html" class="btn btn-primary btn-sm">Entrar</a>');
-  document.getElementById('examples-group').hidden = true;
+  // The example buttons switch the subject; each has ready-made results
+  document.getElementById('examples-label').textContent = 'Escolha um assunto:';
+  document.querySelectorAll('.example-btn').forEach(btn => {
+    btn.setAttribute('aria-pressed', String(btn.dataset.example === demoTopic));
+  });
   document.getElementById('profile-group').hidden = true;
   document.getElementById('source-bar').hidden = true;
   textarea.value = EXAMPLES.ciencias;

@@ -360,7 +360,9 @@ Texto a adaptar:
 Transforme o texto em passos de estudo, em português do Brasil:
 - titulo: título motivador para o checklist
 - conteudo_principal: breve introdução do que será aprendido (1 parágrafo)
-- passos_acao: entre 5 e 10 passos, cada um com uma ação específica e mensurável"""
+- passos_acao: entre 5 e 10 passos, cada um com uma ação específica e mensurável que possa ser
+  feita na própria tela, escrevendo: ler um trecho do texto, explicar com suas palavras, listar,
+  comparar ou responder. Não peça para desenhar, imprimir nem usar materiais fora da tela"""
 
     if req.modo == "summary":
         return f"""Você é um especialista em síntese cognitiva e clareza textual.

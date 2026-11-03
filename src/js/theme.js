@@ -4,3 +4,10 @@ try {
     document.body.classList.add('theme-light');
   }
 } catch (_) {}
+
+/* The site used to install a service worker; this removes any that remain. */
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations()
+    .then(registrations => registrations.forEach(r => r.unregister()))
+    .catch(() => {});
+}

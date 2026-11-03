@@ -20,12 +20,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="src/css/base.css" />
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg" />
-  <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" href="img/apple-touch-icon.png" />
   <meta name="theme-color" content="#0B0A0F" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="MindED" />
 
   <style>
     .home { overflow-x: clip; }
@@ -70,7 +66,6 @@
       text-underline-offset: 4px;
     }
     .hero__more:hover { color: var(--clr-accent); }
-    .install-help { flex-basis: 100%; font-size: 0.95rem; color: var(--clr-text-muted); }
     .lens__note { margin-top: var(--sp-md); padding-left: var(--sp-sm); border-left: 3px solid var(--clr-amber, #FBBF24); font-size: 0.95em; color: var(--clr-text-muted) !important; }
 
     /* ── Lens playground ─────────────────────────────────────── */
@@ -237,9 +232,7 @@
         </p>
         <div class="hero__cta">
           <a href="workspace.html?demo=1" class="btn btn-primary">Experimentar sem cadastro</a>
-          <button class="btn btn-ghost" id="install-btn" type="button" hidden>Instalar o app</button>
           <a href="#lentes" class="hero__more">Como funciona</a>
-          <p class="install-help" id="install-help" role="status" hidden></p>
         </div>
       </div>
 
@@ -429,6 +422,5 @@
       });
     }
   </script>
-  <script src="src/js/pwa.js"></script>
 </body>
 </html>

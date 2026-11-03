@@ -51,7 +51,7 @@ const DEMO_RESULTS = {
     titulo: 'Será que a mitose ficou clara?',
     conteudo_principal: 'Tente responder antes de abrir a resposta.',
     perguntas: [
-      { pergunta: 'Quantas células existem ao fim da mitose?', dica: 'Pense em células-filhas.', resposta: 'Duas células-filhas, geneticamente idênticas à célula-mãe.' },
+      { pergunta: 'Quantas células existem ao fim da mitose?', dica: 'Lembre o que acontece com a célula-mãe no fim do processo.', resposta: 'Duas células-filhas, geneticamente idênticas à célula-mãe.' },
       { pergunta: 'Em qual fase os cromossomos se alinham no meio da célula?', dica: 'O nome começa com "meta".', resposta: 'Na metáfase.' },
       { pergunta: 'O que acontece na anáfase?', dica: 'Pense em movimento para os polos.', resposta: 'As cromátides-irmãs se separam e migram para polos opostos.' },
       { pergunta: 'Por que é importante que as células-filhas sejam idênticas?', dica: 'Pense na informação genética.', resposta: 'Porque cada nova célula precisa receber a mesma informação genética para funcionar como a original.' },

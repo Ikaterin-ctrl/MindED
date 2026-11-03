@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MindED — Página não encontrada</title>
+  <!-- This page answers for any missing path, so links resolve from the site root,
+       which is /MindED/ on GitHub Pages and / on Firebase Hosting -->
+  <script>
+    document.write('<base href="' + (location.pathname.indexOf('/MindED/') === 0 ? '/MindED/' : '/') + '">');
+  </script>
+  <link rel="stylesheet" href="src/css/base.css" />
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg" />
+  <meta name="theme-color" content="#0B0A0F" />
+  <style>
+    .notfound { max-width: 34rem; margin: 0 auto; padding: calc(64px + var(--sp-2xl, 64px)) var(--sp-md) var(--sp-2xl, 64px); }
+    .notfound__code { font-family: var(--font-pixel); font-size: 3rem; color: var(--clr-accent); line-height: 1; }
+    .notfound h1 { font-family: var(--font-display); font-size: clamp(1.8rem, 5vw, 2.6rem); margin: var(--sp-md) 0; }
+    .notfound p { color: var(--clr-text-muted); }
+    .notfound__actions { display: flex; flex-wrap: wrap; gap: var(--sp-md); margin-top: var(--sp-lg); }
+  </style>
+</head>
+<body>
+  <script src="src/js/theme.js"></script>
+  <a href="#conteudo" class="skip-link">Pular para o conteúdo</a>
+
+  <header class="main-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo-link" aria-label="MindED, início">
+        <span>Mind<b>ED</b></span>
+      </a>
+      <a href="index.html" class="nav-link legal-back">← Voltar ao início</a>
+    </div>
+  </header>
+
+  <main class="notfound" id="conteudo" tabindex="-1">
+    <p class="notfound__code" aria-hidden="true">404</p>
+    <h1>Esta página não existe.</h1>
+    <p>O link pode estar errado ou a página mudou de lugar. Nada do que você fez se perdeu.</p>
+    <div class="notfound__actions">
+      <a href="index.html" class="btn btn-primary">Ir para o início</a>
+      <a href="workspace.html?demo=1" class="btn btn-ghost">Ver a demonstração</a>
+    </div>
+  </main>
+</body>
+</html>

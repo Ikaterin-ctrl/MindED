@@ -40,7 +40,7 @@
         window.location.replace('workspace.html');
       } else if (!user) {
         const leftAccount = mindedLeaveAccount();
-        if (!IS_DEMO) window.location.replace('login.html');
+        if (!IS_DEMO) window.location.replace('login.html?next=workspace.html');
         else if (leftAccount) window.location.reload();
         else document.documentElement.style.visibility = '';
       } else if (mindedUseAccount(user.uid)) {
@@ -61,7 +61,7 @@
   <!-- ── Header ─────────────────────────────────────────────── -->
   <header class="main-header">
     <div class="header-inner">
-      <a href="index.html" class="logo-link">
+      <a href="index.html" class="logo-link" aria-label="MindED, início">
         <span>Mind<b>ED</b></span>
       </a>
 
@@ -122,6 +122,9 @@
           ></textarea>
           <span class="char-count" id="char-count"></span>
         </div>
+        <p class="readonly-note" id="readonly-note" hidden>
+          Na demonstração o texto é fixo. <a href="login.html?next=workspace.html">Entre para usar o seu</a>.
+        </p>
 
         <div class="source-bar" id="source-bar">
           <button type="button" class="pdf-upload-label" id="pdf-pick-btn">
@@ -152,57 +155,57 @@
         <div class="mode-options" role="radiogroup" aria-labelledby="mode-group-label">
 
           <div class="mode-option">
-            <input type="radio" name="mode" id="mode-metaphor" value="metaphor" checked />
+            <input type="radio" name="mode" id="mode-metaphor" value="metaphor" aria-label="Metáfora" aria-describedby="mode-metaphor-desc" checked />
             <label for="mode-metaphor">
               <span class="mode-option__icon" aria-hidden="true">
                 <svg class="pixel" width="32" height="32" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 2h6v1h-6zM4 3h1v1h-1zM11 3h1v1h-1zM3 4h1v1h-1zM12 4h1v1h-1zM3 5h1v1h-1zM12 5h1v1h-1zM3 6h1v1h-1zM12 6h1v1h-1zM3 7h1v1h-1zM6 7h1v1h-1zM9 7h1v1h-1zM12 7h1v1h-1zM4 8h1v1h-1zM7 8h2v1h-2zM11 8h1v1h-1zM5 9h1v1h-1zM10 9h1v1h-1zM5 10h1v1h-1zM10 10h1v1h-1zM5 11h6v1h-6zM5 12h6v1h-6zM6 13h4v1h-4z"/></svg>
               </span>
               <span class="mode-option__name">Metáfora</span>
-              <span class="mode-option__desc">Com exemplos do dia a dia</span>
+              <span class="mode-option__desc" id="mode-metaphor-desc">Com exemplos do dia a dia</span>
             </label>
           </div>
 
           <div class="mode-option">
-            <input type="radio" name="mode" id="mode-checklist" value="checklist" />
+            <input type="radio" name="mode" id="mode-checklist" value="checklist" aria-label="Passo a passo" aria-describedby="mode-checklist-desc" />
             <label for="mode-checklist">
               <span class="mode-option__icon" aria-hidden="true">
                 <svg class="pixel" width="32" height="32" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2 3h8v1h-8zM2 4h1v1h-1zM9 4h1v1h-1zM13 4h2v1h-2zM2 5h1v1h-1zM9 5h1v1h-1zM12 5h2v1h-2zM2 6h1v1h-1zM9 6h1v1h-1zM11 6h2v1h-2zM2 7h1v1h-1zM5 7h1v1h-1zM9 7h2v1h-2zM2 8h1v1h-1zM5 8h2v1h-2zM8 8h2v1h-2zM11 8h1v1h-1zM2 9h1v1h-1zM6 9h3v1h-3zM11 9h1v1h-1zM2 10h1v1h-1zM7 10h1v1h-1zM11 10h1v1h-1zM2 11h1v1h-1zM11 11h1v1h-1zM2 12h10v1h-10z"/></svg>
               </span>
               <span class="mode-option__name">Passo a passo</span>
-              <span class="mode-option__desc">Tarefas pequenas e sequenciais</span>
+              <span class="mode-option__desc" id="mode-checklist-desc">Tarefas pequenas e sequenciais</span>
             </label>
           </div>
 
           <div class="mode-option">
-            <input type="radio" name="mode" id="mode-summary" value="summary" />
+            <input type="radio" name="mode" id="mode-summary" value="summary" aria-label="Resumo" aria-describedby="mode-summary-desc" />
             <label for="mode-summary">
               <span class="mode-option__icon" aria-hidden="true">
                 <svg class="pixel" width="32" height="32" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2 4h2v1h-2zM6 4h8v1h-8zM2 5h2v1h-2zM6 5h8v1h-8zM2 7h2v1h-2zM6 7h8v1h-8zM2 8h2v1h-2zM6 8h8v1h-8zM2 10h2v1h-2zM6 10h5v1h-5zM2 11h2v1h-2zM6 11h5v1h-5z"/></svg>
               </span>
               <span class="mode-option__name">Resumo</span>
-              <span class="mode-option__desc">Só o essencial, sem rodeios</span>
+              <span class="mode-option__desc" id="mode-summary-desc">Só o essencial, sem rodeios</span>
             </label>
           </div>
 
           <div class="mode-option">
-            <input type="radio" name="mode" id="mode-questions" value="questions" />
+            <input type="radio" name="mode" id="mode-questions" value="questions" aria-label="Perguntas" aria-describedby="mode-questions-desc" />
             <label for="mode-questions">
               <span class="mode-option__icon" aria-hidden="true">
                 <svg class="pixel" width="32" height="32" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 2h6v1h-6zM4 3h2v1h-2zM10 3h2v1h-2zM4 4h2v1h-2zM10 4h2v1h-2zM10 5h2v1h-2zM9 6h2v1h-2zM8 7h2v1h-2zM7 8h2v1h-2zM7 9h2v1h-2zM7 11h2v1h-2zM7 12h2v1h-2z"/></svg>
               </span>
               <span class="mode-option__name">Perguntas</span>
-              <span class="mode-option__desc">Testa se entendeu o conteúdo</span>
+              <span class="mode-option__desc" id="mode-questions-desc">Testa se entendeu o conteúdo</span>
             </label>
           </div>
 
           <div class="mode-option">
-            <input type="radio" name="mode" id="mode-mindmap" value="mindmap" />
+            <input type="radio" name="mode" id="mode-mindmap" value="mindmap" aria-label="Mapa de ideias" aria-describedby="mode-mindmap-desc" />
             <label for="mode-mindmap">
               <span class="mode-option__icon" aria-hidden="true">
                 <svg class="pixel" width="32" height="32" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M1 1h4v3h-4zM11 1h4v3h-4zM4 4h1v1h-1zM11 4h1v1h-1zM5 5h1v1h-1zM10 5h1v1h-1zM6 6h4v4h-4zM5 10h1v1h-1zM10 10h1v1h-1zM4 11h1v1h-1zM11 11h1v1h-1zM1 12h4v3h-4zM11 12h4v3h-4z"/></svg>
               </span>
               <span class="mode-option__name">Mapa de ideias</span>
-              <span class="mode-option__desc">O tema no centro e o que se liga a ele</span>
+              <span class="mode-option__desc" id="mode-mindmap-desc">O tema no centro e o que se liga a ele</span>
             </label>
           </div>
 
@@ -251,15 +254,21 @@
         <div class="btn-spinner" role="status" aria-label="Processando…"></div>
       </button>
       </div>
-      <p class="shortcut-hint" aria-hidden="true">
-        <kbd>⌘</kbd><kbd>↵</kbd> ou <kbd>Ctrl</kbd><kbd>↵</kbd> para adaptar
+      <p class="shortcut-hint" id="shortcut-hint" aria-hidden="true">
+        <kbd>Ctrl</kbd><kbd>↵</kbd> para adaptar
       </p>
 
     </section>
 
     <!-- ═══ RIGHT: Output Panel ═══════════════════════════════ -->
     <section class="panel glass output-panel" aria-labelledby="output-panel-title">
-      <h2 class="panel__title" id="output-panel-title">Resultado</h2>
+      <div class="output-panel__head">
+        <h2 class="panel__title" id="output-panel-title">Resultado</h2>
+        <button class="btn btn-ghost btn-sm" id="history-btn" type="button" aria-expanded="false" aria-controls="history-panel">
+          <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 2h6v1h-6zM3 3h2v1h-2zM11 3h2v1h-2zM2 4h1v1h-1zM7 4h2v1h-2zM13 4h1v1h-1zM2 5h1v1h-1zM7 5h2v1h-2zM13 5h1v1h-1zM1 6h1v1h-1zM7 6h2v1h-2zM14 6h1v1h-1zM1 7h1v1h-1zM7 7h5v1h-5zM14 7h1v1h-1zM1 8h1v1h-1zM7 8h5v1h-5zM14 8h1v1h-1zM1 9h1v1h-1zM14 9h1v1h-1zM2 10h1v1h-1zM13 10h1v1h-1zM2 11h1v1h-1zM13 11h1v1h-1zM3 12h2v1h-2zM11 12h2v1h-2zM5 13h6v1h-6z"/></svg>
+          Histórico
+        </button>
+      </div>
 
       <!-- Empty state -->
       <div class="output-empty" id="output-empty" aria-hidden="false">
@@ -344,7 +353,10 @@
   <div class="focus-session" id="focus-session" role="dialog" aria-modal="true" aria-labelledby="fs-count" hidden>
     <svg class="pixel focus-session__mascot" id="fs-mascot" width="96" height="96" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" hidden><path d="M5 3h6v1h-6zM3 4h2v1h-2zM7 4h2v1h-2zM11 4h2v1h-2zM2 5h1v1h-1zM7 5h2v1h-2zM13 5h1v1h-1zM1 6h1v1h-1zM4 6h1v1h-1zM7 6h2v1h-2zM11 6h1v1h-1zM14 6h1v1h-1zM1 7h1v1h-1zM7 7h2v1h-2zM14 7h1v1h-1zM1 8h1v1h-1zM4 8h1v1h-1zM7 8h2v1h-2zM11 8h1v1h-1zM14 8h1v1h-1zM2 9h1v1h-1zM7 9h2v1h-2zM13 9h1v1h-1zM3 10h2v1h-2zM6 10h4v1h-4zM11 10h2v1h-2zM5 11h2v1h-2zM9 11h2v1h-2zM5 12h2v1h-2zM9 12h2v1h-2z"/></svg>
     <p class="focus-session__count" id="fs-count"></p>
+    <div class="focus-session__steps" id="fs-steps" aria-hidden="true"></div>
     <p class="focus-session__step" id="fs-step"></p>
+    <p class="focus-session__paused" id="fs-paused" role="status" hidden>Pausado</p>
+    <p class="focus-session__bar-label">Tempo deste passo</p>
     <div class="focus-session__bar" aria-hidden="true"><div class="focus-session__fill" id="fs-fill"></div></div>
     <p class="focus-session__timer" id="fs-timer"></p>
     <div class="focus-session__actions">
@@ -394,11 +406,6 @@
     <!-- Expandable panel (above the trigger) -->
     <div class="a11y-panel" id="a11y-panel" role="region" aria-label="Opções de acessibilidade">
 
-      <span class="a11y-panel__label">Histórico</span>
-      <button class="a11y-toggle" id="history-btn" aria-expanded="false" aria-controls="history-panel">
-        <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 2h6v1h-6zM3 3h2v1h-2zM11 3h2v1h-2zM2 4h1v1h-1zM7 4h2v1h-2zM13 4h1v1h-1zM2 5h1v1h-1zM7 5h2v1h-2zM13 5h1v1h-1zM1 6h1v1h-1zM7 6h2v1h-2zM14 6h1v1h-1zM1 7h1v1h-1zM7 7h5v1h-5zM14 7h1v1h-1zM1 8h1v1h-1zM7 8h5v1h-5zM14 8h1v1h-1zM1 9h1v1h-1zM14 9h1v1h-1zM2 10h1v1h-1zM13 10h1v1h-1zM2 11h1v1h-1zM13 11h1v1h-1zM3 12h2v1h-2zM11 12h2v1h-2zM5 13h6v1h-6z"/></svg>
-        Ver histórico
-      </button>
 
       <span class="a11y-panel__label">Visualização</span>
       <button class="a11y-toggle" id="hcm-btn" aria-pressed="false">

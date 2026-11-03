@@ -23,14 +23,24 @@ if ('serviceWorker' in navigator) {
   const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
   if (isIos) button.hidden = false;
 
+  // Says what is happening, since the browser's own dialog can open out of view
+  const help = document.getElementById('install-help');
+  function say(text) {
+    if (!help) return;
+    help.textContent = text;
+    help.hidden = !text;
+  }
+
   button.addEventListener('click', async () => {
     if (promptEvent) {
+      say('Confirme a instalação na janela que o navegador abriu.');
       promptEvent.prompt();
-      await promptEvent.userChoice;
+      const { outcome } = await promptEvent.userChoice;
       promptEvent = null;
       button.hidden = true;
+      say(outcome === 'accepted' ? 'Pronto: o MindED foi instalado.' : 'Instalação cancelada. Você pode instalar depois pelo menu do navegador.');
     } else if (isIos) {
-      button.textContent = 'No Safari: Compartilhar → Adicionar à Tela de Início';
+      say('No Safari, toque em Compartilhar e depois em Adicionar à Tela de Início.');
     }
   });
 

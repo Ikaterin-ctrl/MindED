@@ -408,7 +408,8 @@ Escreva em português do Brasil:
 - titulo: título motivador para o conjunto de perguntas
 - conteudo_principal: breve instrução sobre como usar as perguntas (1 frase)
 - perguntas: entre 4 e 6, variando entre factuais, de interpretação e de aplicação,
-  cada uma com uma dica que ajuda sem dar a resposta e a resposta completa e acessível"""
+  cada uma com uma dica que orienta o raciocínio sem conter a resposta nem as palavras dela,
+  e a resposta completa e acessível"""
 
 
 # ---------------------------------------------------------------------------

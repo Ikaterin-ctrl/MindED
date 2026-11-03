@@ -146,7 +146,7 @@
     <div class="login-card glass">
       <span class="logo-link"><span>Mind<b>ED</b></span></span>
       <h1>Boas-vindas ao MindED</h1>
-      <p>Entre com a sua conta Google para começar a adaptar seus textos.</p>
+      <p id="login-lead">Entre com a sua conta Google para começar a adaptar seus textos.</p>
 
       <div class="login-error" id="login-error" role="alert"></div>
 
@@ -192,6 +192,12 @@
       appId:             "1:1022129331298:web:a1890d2c08c5333cd3853b",
     };
 
+    // Where to go after signing in. Only pages of this site are accepted.
+    const NEXT_PAGES = { 'workspace.html': 'Entre para usar o Workspace. Seus textos, o histórico e as revisões ficam guardados na sua conta.' };
+    const next = new URLSearchParams(location.search).get('next');
+    const target = NEXT_PAGES[next] ? next : 'workspace.html';
+    if (NEXT_PAGES[next]) document.getElementById('login-lead').textContent = NEXT_PAGES[next];
+
     firebase.initializeApp(firebaseConfig);
     const auth     = firebase.auth();
     // Firebase persists the session in IndexedDB by default (LOCAL persistence).
@@ -210,7 +216,7 @@
     document.body.style.visibility = 'hidden';
     auth.onAuthStateChanged(user => {
       if (user) {
-        window.location.replace('workspace.html');
+        window.location.replace(target);
       } else {
         document.body.style.visibility = '';
       }

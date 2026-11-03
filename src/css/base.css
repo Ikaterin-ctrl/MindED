@@ -1006,7 +1006,8 @@ body .checklist-progress__fill, body .focus-session__fill, body .flashcard-progr
   background: repeating-linear-gradient(90deg, #7C3AED 0 12px, transparent 12px 15px);
   transition: width 200ms steps(4, end);
 }
-.focus-session__count, #lens-label { font-family: var(--font-pixel); font-size: 1.2rem; font-weight: 600; }
+/* Small labels use the reading font: the pixel font is hard to read at this size */
+.focus-session__count, #lens-label { font-family: var(--font-body); font-size: 1rem; font-weight: 700; letter-spacing: 0.02em; }
 
 .glass { backdrop-filter: none; -webkit-backdrop-filter: none; }
 .main-header { background: var(--clr-bg); backdrop-filter: none; -webkit-backdrop-filter: none; }
@@ -1023,3 +1024,41 @@ body .checklist-progress__fill, body .focus-session__fill, body .flashcard-progr
   .btn-primary:hover, .btn-primary:active { transform: none; }
   .mark { transition: none; }
 }
+
+/* ════════════════════════════════════════════════════════════
+   Usability report: solid surfaces and a real high contrast
+   ════════════════════════════════════════════════════════════ */
+/* Nothing behind the header, menu or panels shows through */
+body.theme-light .main-header { background: var(--clr-bg) !important; }
+body.theme-light .glass { background: #FFFFFF !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+@media (max-width: 768px) {
+  .main-nav { background: var(--clr-bg); backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
+
+/* Focus mode scrolls the header away instead of leaving an empty band */
+body.focus-mode .main-header { position: absolute; }
+
+/* High contrast: brighter text, firm borders, underlined links, in both themes */
+body.hcm {
+  --clr-text:        #FFFFFF;
+  --clr-text-muted:  #F0EBFA;
+  --clr-text-subtle: #E2DAF2;
+  --clr-border:      rgba(255,255,255,0.6);
+  --clr-border-md:   rgba(255,255,255,0.85);
+  --clr-accent:      #D9C7FF;
+}
+body.hcm.theme-light {
+  --clr-text:        #000000;
+  --clr-text-muted:  #111111;
+  --clr-text-subtle: #222222;
+  --clr-border:      rgba(0,0,0,0.65);
+  --clr-border-md:   #000000;
+  --clr-accent:      #3B0F8C;
+  background: #FFFFFF !important;
+}
+body.hcm.theme-light .glass, body.hcm.theme-light .main-header { background: #FFFFFF !important; border-color: #000 !important; }
+body.hcm .glass, body.hcm .btn-ghost, body.hcm .mode-option label,
+body.hcm .question-card, body.hcm .checklist-item { border-width: 2px; }
+body.hcm a { text-decoration: underline; }
+body.hcm.theme-light .btn-ghost { color: #000 !important; border-color: #000 !important; }
+body.hcm :focus-visible { outline-width: 3px !important; }

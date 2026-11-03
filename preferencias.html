@@ -34,8 +34,13 @@
     document.documentElement.style.visibility = 'hidden';
     firebase.auth().onAuthStateChanged(user => {
       if (!user) {
-        mindedLeaveAccount();
-        window.location.replace('login.html');
+        // Works without an account: the choices stay in this browser,
+        // and the account adopts them on the next sign-in
+        if (mindedLeaveAccount()) { window.location.reload(); return; }
+        document.documentElement.style.visibility = '';
+        const showGuest = () => { document.getElementById('prefs-guest').hidden = false; };
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', showGuest);
+        else showGuest();
       } else if (mindedUseAccount(user.uid)) {
         window.location.reload();
       } else {
@@ -57,6 +62,7 @@
     }
 
     .prefs-hero { text-align: center; }
+    .prefs-guest { margin-top: var(--sp-md); padding: var(--sp-sm) var(--sp-md); border: 1px solid var(--clr-border-md); font-size: 0.95rem; }
     .prefs-hero h1 {
       font-size: clamp(1.8rem, 3.5vw, 2.4rem);
       margin-bottom: var(--sp-sm);
@@ -170,7 +176,7 @@
   <!-- ── Header ─────────────────────────────────────────────── -->
   <header class="main-header">
     <div class="header-inner">
-      <a href="index.html" class="logo-link">
+      <a href="index.html" class="logo-link" aria-label="MindED, início">
         <span>Mind<b>ED</b></span>
       </a>
 
@@ -193,6 +199,10 @@
       <div class="prefs-hero">
         <h1>Como você aprende?</h1>
         <p>Quatro escolhas rápidas, todas opcionais. Você pode mudar quando quiser.</p>
+        <p class="prefs-guest" id="prefs-guest" hidden>
+          Você não entrou na sua conta: estas escolhas ficam só neste navegador.
+          <a href="login.html?next=workspace.html">Entre</a> para usar o Workspace com elas.
+        </p>
       </div>
 
       <form class="prefs-form" id="prefs-form">
@@ -321,6 +331,7 @@
       const open = nav.classList.toggle('open');
       hamburger.classList.toggle('open', open);
       hamburger.setAttribute('aria-expanded', String(open));
+      hamburger.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
     });
 
     /* ── Load & save ────────────────────────────────────────── */

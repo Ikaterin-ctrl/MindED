@@ -104,6 +104,7 @@ hamburger.addEventListener('click', () => {
   const open = nav.classList.toggle('open');
   hamburger.classList.toggle('open', open);
   hamburger.setAttribute('aria-expanded', String(open));
+  hamburger.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
 });
 
 // ── Firebase user UI ──────────────────────────────────────────────────
@@ -198,6 +199,8 @@ function applyA11y() {
   FONT_SIZES.forEach(f => f.cls && b.classList.remove(f.cls));
   const fs = FONT_SIZES[a11yState.fontIdx];
   if (fs.cls) b.classList.add(fs.cls);
+  // Root size too, so cards and buttons sized in rem grow with the text
+  document.documentElement.style.fontSize = a11yState.fontIdx ? fs.size : '';
   fontLabel.textContent = fs.label;
 
   // Light mode toggle (manual)
@@ -561,7 +564,9 @@ function renderHistory() {
   const hist = loadHistory();
   const modeLabels = { metaphor: 'Metáfora', checklist: 'Passo a passo', summary: 'Resumo', questions: 'Perguntas', mindmap: 'Mapa de ideias' };
   if (!hist.length) {
-    historyList.innerHTML = '<p class="history-empty">Nenhuma adaptação ainda.<br/>Adapte um texto para criar o histórico.</p>';
+    historyList.innerHTML = IS_DEMO
+      ? '<p class="history-empty">A demonstração não guarda histórico.<br/><a href="login.html?next=workspace.html">Entre</a> para guardar suas adaptações.</p>'
+      : '<p class="history-empty">Nenhuma adaptação ainda.<br/>Adapte um texto para criar o histórico.</p>';
     return;
   }
   historyList.innerHTML = hist.map(h => `
@@ -818,6 +823,10 @@ textarea.addEventListener('keydown', e => {
     if (!adaptBtn.disabled) adaptBtn.click();
   }
 });
+// The hint shows only the key this system uses
+if (/Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent)) {
+  document.getElementById('shortcut-hint').innerHTML = '<kbd>⌘</kbd><kbd>↵</kbd> para adaptar';
+}
 
 // ── Mode helper ───────────────────────────────────────────────────────
 function getMode() {
@@ -842,11 +851,23 @@ function mdToHtml(text) {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
-  // 2. Now safe to inject controlled HTML for bold and bullets
-  return escaped
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/^[-•] /gm, '<br/>• ')
-    .replace(/\n/g, '<br/>');
+  // 2. Now safe to inject controlled HTML: bullet lines become one list, other lines paragraphs
+  const html = [];
+  let items = [];
+  const flush = () => {
+    if (items.length) html.push(`<ul class="summary-list">${items.join('')}</ul>`);
+    items = [];
+  };
+  escaped.split('\n').forEach(raw => {
+    const line = raw.trim().replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    if (!line) return;
+    const bullet = line.match(/^[-•*]\s+(.*)$/);
+    if (bullet) { items.push(`<li>${bullet[1]}</li>`); return; }
+    flush();
+    html.push(`<p>${line}</p>`);
+  });
+  flush();
+  return html.join('');
 }
 
 // ── Skeleton phases ───────────────────────────────────────────────────
@@ -1106,13 +1127,12 @@ function renderQuestions(data) {
       </div>
       <div class="question-hint" data-qi="${i}">${esc(q.dica)}</div>
       <div class="question-answer" data-qi="${i}"><strong>Resposta:</strong> ${esc(q.resposta)}</div>
-      ${IS_DEMO ? '' : `
       <div class="question-rate" data-qi="${i}" role="group" aria-label="Como foi esta pergunta?" hidden>
         <span>Como foi?</span>
         <button class="btn btn-ghost btn-sm" type="button" data-grade="0">Errei</button>
         <button class="btn btn-ghost btn-sm" type="button" data-grade="1">Quase</button>
         <button class="btn btn-ghost btn-sm" type="button" data-grade="2">Acertei</button>
-      </div>`}
+      </div>
     </div>`).join('');
 
   return `
@@ -1151,7 +1171,7 @@ function buildFlashcards(mappings) {
         </div>
       </div>
       <div class="flashcard-nav">
-        <button class="btn btn-ghost btn-sm" id="fc-prev" aria-label="Anterior" ${total < 2 ? 'disabled' : ''}>←</button>
+        <button class="btn btn-ghost btn-sm" id="fc-prev" aria-label="Anterior" disabled>←</button>
         <span class="flashcard-counter" id="fc-counter" aria-live="polite">1 / ${total}</span>
         <button class="btn btn-ghost btn-sm" id="fc-next" aria-label="Próximo" ${total < 2 ? 'disabled' : ''}>→</button>
       </div>
@@ -1193,11 +1213,13 @@ function markdownFilename(data) {
 function actionBar(data) {
   const ttsSupported = 'speechSynthesis' in window;
   const ttsBtn = ttsSupported ? `
+    <span class="tts-group" role="group" aria-label="Leitura em voz alta">
     <button class="btn btn-ghost btn-sm" id="tts-btn" aria-label="Ouvir conteúdo via síntese de voz">
       <svg class="pixel" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M6 3h2v1h-2zM5 4h3v1h-3zM11 4h1v1h-1zM4 5h4v1h-4zM12 5h1v1h-1zM1 6h7v1h-7zM10 6h1v1h-1zM13 6h1v1h-1zM1 7h7v1h-7zM10 7h1v1h-1zM13 7h1v1h-1zM1 8h7v1h-7zM10 8h1v1h-1zM13 8h1v1h-1zM1 9h7v1h-7zM10 9h1v1h-1zM13 9h1v1h-1zM4 10h4v1h-4zM12 10h1v1h-1zM5 11h3v1h-3zM11 11h1v1h-1zM6 12h2v1h-2z"/></svg>
       <span class="tts-label">Ouvir</span>
     </button>
-    <button class="btn btn-ghost btn-sm" id="tts-rate-btn" type="button">${ttsRateLabel()}</button>` : '';
+    <button class="btn btn-ghost btn-sm" id="tts-rate-btn" type="button" aria-label="Ritmo da leitura: ${TTS_RATES[ttsRateIdx].label}. Trocar">${ttsRateLabel()}</button>
+    </span>` : '';
   return `
     <div class="output-actions">
       <button class="btn btn-ghost btn-sm" id="copy-btn" aria-label="Copiar texto adaptado">
@@ -1283,6 +1305,8 @@ function wireTts(container) {
   let speaking = false;
   let speech = null;
   let activeWord = null;
+  let wordIdx = 0;
+  let run = 0; // events from an utterance that was replaced are ignored
 
   function setActiveWord(span) {
     if (activeWord) activeWord.classList.remove('tts-active');
@@ -1297,41 +1321,47 @@ function wireTts(container) {
     setActiveWord(null);
   }
 
+  // Speaks from a given word, so a speed change continues where it was
+  function speakFrom(index) {
+    const id = ++run;
+    const offset = speech.starts[index] || 0;
+    const utterance = new SpeechSynthesisUtterance(speech.text.slice(offset));
+    utterance.lang = 'pt-BR';
+    utterance.rate = TTS_RATES[ttsRateIdx].rate;
+    utterance.onboundary = e => {
+      if (id !== run || e.name !== 'word') return;
+      const i = speech.starts.findLastIndex(start => start <= e.charIndex + offset);
+      if (i >= 0) { wordIdx = i; setActiveWord(speech.spans[i]); }
+    };
+    utterance.onend = utterance.onerror = () => { if (id === run) setTtsStopped(); };
+    window.speechSynthesis.speak(utterance);
+    speaking = true;
+    if (ttsLabel) ttsLabel.textContent = '⏹ Parar';
+    ttsBtn.setAttribute('aria-label', 'Parar síntese de voz');
+  }
+
   ttsBtn.addEventListener('click', () => {
     if (speaking) {
+      run++;
       window.speechSynthesis.cancel();
       setTtsStopped();
       return;
     }
     if (!speech) speech = prepareSpeech(container);
-
-    const utterance = new SpeechSynthesisUtterance(speech.text);
-    utterance.lang = 'pt-BR';
-    utterance.rate = TTS_RATES[ttsRateIdx].rate;
-
-    utterance.onboundary = e => {
-      if (e.name !== 'word') return;
-      let i = speech.starts.findLastIndex(start => start <= e.charIndex);
-      if (i >= 0) setActiveWord(speech.spans[i]);
-    };
-
-    utterance.onend  = setTtsStopped;
-    utterance.onerror = setTtsStopped;
-    window.speechSynthesis.speak(utterance);
-    speaking = true;
-    if (ttsLabel) ttsLabel.textContent = '⏹ Parar';
-    ttsBtn.setAttribute('aria-label', 'Parar síntese de voz');
+    wordIdx = 0;
+    speakFrom(0);
   });
 
   rateBtn?.addEventListener('click', () => {
     ttsRateIdx = (ttsRateIdx + 1) % TTS_RATES.length;
     rateBtn.textContent = ttsRateLabel();
+    rateBtn.setAttribute('aria-label', `Ritmo da leitura: ${TTS_RATES[ttsRateIdx].label}. Trocar`);
     try { localStorage.setItem('minded_tts_rate', String(ttsRateIdx)); } catch (_) {}
-    // Speech already playing restarts at the new speed
+    // Keeps reading from the current word at the new speed
     if (speaking) {
+      run++;
       window.speechSynthesis.cancel();
-      setTtsStopped();
-      ttsBtn.click();
+      setTimeout(() => speakFrom(wordIdx), 80);
     }
   });
 
@@ -1365,10 +1395,11 @@ function showOutput(html, responseData, quiet = false) {
       resultTitle.tabIndex = -1;
       resultTitle.focus({ preventScroll: true });
     }
-    if (window.innerWidth <= 900) {
-      requestAnimationFrame(() => {
-        document.querySelector('.output-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
+    // Brings the result into view on mobile, and on desktop when the page was
+    // scrolled so far that the fixed header would cover it
+    const panel = document.querySelector('.output-panel');
+    if (panel && (window.innerWidth <= 900 || panel.getBoundingClientRect().top < 72)) {
+      requestAnimationFrame(() => panel.scrollIntoView({ behavior: 'smooth', block: 'start' }));
     }
   }
 
@@ -1409,6 +1440,7 @@ function showOutput(html, responseData, quiet = false) {
         if (label) label.textContent = `${done} / ${total}`;
         if (wrap)  wrap.setAttribute('aria-valuenow', String(done));
         saveChecklistProgress();
+        updateFocusStartLabel();
       }
       item.addEventListener('click', toggle);
       item.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggle(); } });
@@ -1427,6 +1459,10 @@ function showOutput(html, responseData, quiet = false) {
       chunkBtn.textContent = isNowHidden
         ? `＋ Ver mais ${remaining} ${remaining === 1 ? 'tarefa' : 'tarefas'}`
         : '− Mostrar menos';
+      // "Mostrar menos" belongs after the extra tasks, "Ver mais" before them
+      if (isNowHidden) hiddenGroup.before(chunkBtn);
+      else hiddenGroup.after(chunkBtn);
+      chunkBtn.focus();
     });
   }
 
@@ -1490,6 +1526,11 @@ function showOutput(html, responseData, quiet = false) {
       fcEl.setAttribute('aria-label', 'Clique para revelar a metáfora');
       const wrap = fcEl.closest('[role="progressbar"]');
       if (wrap) wrap.setAttribute('aria-valuenow', String(fcIdx + 1));
+      // Arrows that lead nowhere are switched off
+      const prev = document.getElementById('fc-prev');
+      const next = document.getElementById('fc-next');
+      if (prev) prev.disabled = fcIdx === 0;
+      if (next) next.disabled = fcIdx === mappings.length - 1;
     }
 
     fcEl.addEventListener('click', () => {
@@ -1533,10 +1574,12 @@ function showOutput(html, responseData, quiet = false) {
     row.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
       const q = (responseData.perguntas || [])[row.dataset.qi];
       if (!q) return;
-      const days = rateCard(q, responseData.titulo, Number(b.dataset.grade));
       row.removeAttribute('role');
       row.removeAttribute('aria-label');
-      row.textContent = reviewMessage(days);
+      // The demo shows how it works but keeps nothing
+      row.textContent = IS_DEMO
+        ? 'Com uma conta, esta pergunta voltaria para revisão no dia certo.'
+        : reviewMessage(rateCard(q, responseData.titulo, Number(b.dataset.grade)));
       row.tabIndex = -1;
       row.focus();
       updateReviewDue();
@@ -1682,7 +1725,7 @@ adaptBtn.addEventListener('click', () => doAdapt());
 // TEXTOS DE EXEMPLO
 // ═══════════════════════════════════════════════════════════════════════
 const EXAMPLES = {
-  ciencias: `A mitose é um processo de divisão celular em que uma célula-mãe se divide em duas células-filhas geneticamente idênticas. Ocorre em quatro fases principais: prófase, metáfase, anáfase e telófase. Durante a prófase, a cromatina se condensa em cromossomos visíveis e o fuso mitótico começa a se formar. Na metáfase, os cromossomos se alinham no plano equatorial da célula. Na anáfase, as cromátides-irmãs se separam e migram para polos opostos da célula. Por fim, na telófase, uma nova membrana se forma nuclear em torno de cada conjunto de cromossomos, e ocorre a citocinese, dividindo o citoplasma em duas células distintas.`,
+  ciencias: `A mitose é um processo de divisão celular em que uma célula-mãe se divide em duas células-filhas geneticamente idênticas. Ocorre em quatro fases principais: prófase, metáfase, anáfase e telófase. Durante a prófase, a cromatina se condensa em cromossomos visíveis e o fuso mitótico começa a se formar. Na metáfase, os cromossomos se alinham no plano equatorial da célula. Na anáfase, as cromátides-irmãs se separam e migram para polos opostos da célula. Por fim, na telófase, uma nova membrana nuclear se forma em torno de cada conjunto de cromossomos, e ocorre a citocinese, dividindo o citoplasma em duas células distintas.`,
 
   historia: `A Revolução Industrial, iniciada na Grã-Bretanha por volta de 1760, foi uma transformação profunda nos processos de produção, com a substituição do trabalho manual por máquinas movidas a vapor. As fábricas substituíram os ateliês artesanais, e enormes contingentes populacionais migraram do campo para as cidades em busca de emprego. Este processo trouxe tanto avanços tecnológicos como sérias consequências sociais: jornadas de trabalho exaustivas, trabalho infantil, condições insalubres nas fábricas e o crescimento de bairros operários sem saneamento básico. A concentração de riqueza nas mãos dos industriais e a pauperização dos trabalhadores criaram as condições para o surgimento dos movimentos operários e das primeiras reivindicações por direitos laborais.`,
 
@@ -1808,12 +1851,25 @@ function fsRenderTimer() {
   fsFill.style.width = `${(1 - fs.left / fs.total) * 100}%`;
 }
 
+// One block per step: done, current and still to do
+function fsRenderSteps() {
+  document.getElementById('fs-steps').innerHTML = fs.steps.map((_, i) =>
+    `<span class="${checklistState[i] ? 'done' : i === fs.index ? 'current' : ''}"></span>`).join('');
+}
+
+function fsSetPaused(paused) {
+  fs.paused = paused;
+  fsPause.textContent = paused ? 'Continuar' : 'Pausar';
+  fsPanel.classList.toggle('is-paused', paused);
+  document.getElementById('fs-paused').hidden = !paused;
+}
+
 function fsShowStep() {
   fsCount.textContent = `Passo ${fs.index + 1} de ${fs.steps.length}`;
   fsStep.textContent = fs.steps[fs.index];
   fs.left = fs.total;
-  fs.paused = false;
-  fsPause.textContent = 'Pausar';
+  fsSetPaused(false);
+  fsRenderSteps();
   fsRenderTimer();
   fsStep.tabIndex = -1;
   fsStep.focus({ preventScroll: true });
@@ -1827,6 +1883,8 @@ function fsFinish() {
   fsStep.textContent = `Você concluiu ${ticked} de ${fs.steps.length} passos.`;
   fsTimer.textContent = '';
   fsFill.style.width = '100%';
+  fsSetPaused(false);
+  fsRenderSteps();
   [fsDone, fsPause, fsSkip].forEach(btn => { btn.hidden = true; });
   fsExit.textContent = 'Fechar';
   fsExit.focus();
@@ -1845,8 +1903,21 @@ function fsAdvance() {
   else fsShowStep();
 }
 
+// Leaving halfway offers to pick up where it stopped
+function updateFocusStartLabel() {
+  const btn = document.getElementById('focus-start');
+  if (!btn) return;
+  const done = checklistState.filter(Boolean).length;
+  const total = checklistState.length;
+  btn.textContent = done > 0 && done < total
+    ? `Continuar sessão de foco (${done}/${total})`
+    : 'Começar sessão de foco';
+}
+
 function closeFocusSession() {
   clearInterval(fs.interval);
+  fsSetPaused(false);
+  updateFocusStartLabel();
   fsPanel.hidden = true;
   document.body.style.overflow = '';
   if (fs.release) fs.release();
@@ -1886,10 +1957,7 @@ fsDone.addEventListener('click', () => {
 });
 fsSkip.addEventListener('click', fsAdvance);
 fsExit.addEventListener('click', closeFocusSession);
-fsPause.addEventListener('click', () => {
-  fs.paused = !fs.paused;
-  fsPause.textContent = fs.paused ? 'Continuar' : 'Pausar';
-});
+fsPause.addEventListener('click', () => fsSetPaused(!fs.paused));
 
 // ═══════════════════════════════════════════════════════════════════════
 // REVISÃO ESPAÇADA — rated questions come back after growing intervals
@@ -2032,6 +2100,16 @@ if (IS_DEMO) {
   textarea.value = EXAMPLES.ciencias;
   textarea.readOnly = true;
   charCount.hidden = true;
+  // Typing in the fixed demo text explains why nothing happens
+  const readonlyNote = document.getElementById('readonly-note');
+  readonlyNote.hidden = false;
+  textarea.setAttribute('aria-describedby', 'readonly-note');
+  textarea.addEventListener('keydown', e => {
+    if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
+      readonlyNote.classList.add('nudge');
+      document.getElementById('sr-status').textContent = 'Na demonstração o texto é fixo.';
+    }
+  });
   document.getElementById('output-empty-text').innerHTML =
     'Escolha um modo e clique em <strong style="color:var(--clr-text)">Adaptar</strong><br/>para ver o exemplo adaptado aqui.';
 } else {

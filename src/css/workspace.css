@@ -315,8 +315,11 @@
 /* ══════════════════════════════════════════════════════════
    OUTPUT PANEL
 ══════════════════════════════════════════════════════════ */
+/* Not sticky: it grows with the result. "top" is reset because the sticky offset
+   from .panel would otherwise push it down onto the footer. */
 .output-panel {
   position: relative;
+  top: auto;
   min-height: 400px;
 }
 
@@ -407,11 +410,16 @@ span.prose-highlight.lit {
   color: var(--clr-text-muted);
   margin-bottom: var(--sp-md);
 }
+/* Long terms wrap instead of pushing the table past the card */
 .mapping-table {
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
   font-size: 0.875rem;
+  overflow-wrap: anywhere;
 }
+.mapping-table th:nth-child(1) { width: 26%; }
+.mapping-table th:nth-child(2) { width: 26%; }
 .mapping-table th {
   text-align: left;
   padding: var(--sp-sm) var(--sp-md);
@@ -429,8 +437,8 @@ span.prose-highlight.lit {
 }
 .mapping-table tr:last-child td { border-bottom: none; }
 .mapping-table tbody tr:hover td { background: rgba(255,255,255,0.025); }
-.mapping-table td:first-child { font-weight: 600; color: var(--clr-accent); white-space: nowrap; }
-.mapping-table td:nth-child(2) { color: var(--clr-text-muted); white-space: nowrap; }
+.mapping-table td:first-child { font-weight: 600; color: var(--clr-accent); }
+.mapping-table td:nth-child(2) { color: var(--clr-text-muted); }
 
 /* Attention alert */
 .output-alert {
@@ -1119,5 +1127,109 @@ body:has(.history-panel.open, .onboard-modal.open, .focus-session:not([hidden]))
   .mode-option:last-child { grid-column: 1 / -1; }
 }
 @media (max-width: 520px) {
-  .mapping-table { display: block; overflow-x: auto; }
 }
+
+/* ══════════════════════════════════════════════════════════
+   Usability report fixes
+══════════════════════════════════════════════════════════ */
+/* Scrolling to a focused card accounts for the sticky Adaptar bar */
+html { scroll-padding-bottom: 110px; }
+
+/* The radio covers its whole card, so focusing it never scrolls to a corner */
+.mode-option input[type="radio"] { inset: 0; width: 100%; height: 100%; margin: 0; pointer-events: none; }
+
+/* Selected mode: solid fill and a check mark, hard to miss among five cards */
+.mode-option label { position: relative; }
+.mode-option input:checked + label {
+  background: #7C3AED;
+  border-color: #7C3AED;
+  box-shadow: 4px 4px 0 var(--shadow-hard, #000);
+}
+.mode-option input:checked + label .mode-option__name,
+.mode-option input:checked + label .mode-option__desc,
+.mode-option input:checked + label .mode-option__icon { color: #fff; }
+.mode-option input:checked + label::after {
+  content: '✓';
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* Result title with the history button beside it */
+.output-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-sm);
+  padding-bottom: var(--sp-sm);
+  border-bottom: 1px solid var(--clr-border);
+}
+.output-panel__head .panel__title { padding-bottom: 0; border-bottom: 0; }
+#history-btn.active { border-color: var(--clr-accent); color: var(--clr-text); }
+
+/* Demo text cannot be edited, so it should not look editable */
+.input-area__textarea[readonly] {
+  resize: none;
+  cursor: default;
+  background: transparent;
+  color: var(--clr-text-muted);
+  border-style: dashed;
+}
+.readonly-note {
+  margin-top: var(--sp-sm);
+  font-size: 0.875rem;
+  color: var(--clr-text-muted);
+}
+.readonly-note.nudge { color: var(--clr-text); font-weight: 600; }
+
+/* Summary as a real list, with room before the actions */
+.summary-body p + p, .summary-body p + .summary-list, .summary-list + p { margin-top: var(--sp-sm); }
+.summary-list { margin: 0 0 var(--sp-md); padding-left: 1.2em; }
+.summary-list li { margin-bottom: 6px; }
+.summary-list li::marker { color: var(--clr-accent); }
+
+/* Sections that open show an arrow that turns */
+.result-more > summary { list-style: none; gap: var(--sp-sm); }
+.result-more > summary::-webkit-details-marker { display: none; }
+.result-more > summary::before {
+  content: '▸';
+  color: var(--clr-accent);
+  transition: transform var(--t-fast);
+}
+.result-more[open] > summary::before { transform: rotate(90deg); }
+
+/* Done steps stay readable */
+.checklist-item.done .checklist-item__text {
+  color: var(--clr-text-muted);
+  text-decoration-thickness: 1px;
+}
+
+/* Listen and its speed sit together */
+.tts-group { display: inline-flex; flex-wrap: nowrap; }
+.tts-group > .btn + .btn { margin-left: -1px; }
+
+/* Focus session: overall progress and a visible paused state */
+.focus-session__steps { display: flex; gap: 4px; }
+.focus-session__bar-label { font-size: 0.875rem; color: var(--clr-text-muted); margin-bottom: calc(-1 * var(--sp-md)); }
+.focus-session__steps span { flex: 1; height: 8px; background: var(--clr-surface-hi); }
+.focus-session__steps span.done { background: #7C3AED; }
+.focus-session__steps span.current { background: var(--clr-accent); opacity: 0.6; }
+.focus-session__paused {
+  align-self: flex-start;
+  padding: 2px 10px;
+  border: 2px solid var(--clr-amber, #FBBF24);
+  color: var(--clr-amber, #FBBF24);
+  font-weight: 700;
+}
+.focus-session.is-paused .focus-session__timer,
+.focus-session.is-paused .focus-session__bar { opacity: 0.4; }
+
+/* Mobile: the cards end above the fixed Adaptar bar */
+@media (max-width: 900px) {
+  .input-panel { padding-bottom: calc(var(--sp-xl) + 24px); }
+}
+
+/* Keyboard shortcuts mean nothing on a touch screen */
+@media (hover: none) { .shortcut-hint { display: none; } }
